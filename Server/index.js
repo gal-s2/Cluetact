@@ -1,11 +1,20 @@
 const express = require('express');
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/');
+
 const app = express();
+
+app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-const userRoutes = require('./routes/userRoutes');
-app.use('/user', userRoutes);
+// Import enviroment variables file
+require('dotenv').config()
 
+// Import all routers from ./routes/index.js
+app.use(require('./routes'));
+
+// Server listens on enviroment defined port
 app.listen(PORT, () => {
-    console.log(`App running on port ${PORT}`);
+    console.log(`Cluetact Server is running on port ${PORT}`);
 });
