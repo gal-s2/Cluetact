@@ -15,11 +15,23 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    gender: {
+        type: String,
+        required: false
+    },
+    country: {
+        type: String,
+        required: false
+    },
+    level: {
+        type: Number,
+        required: false
     }
 });
 
 // static register method
-UserSchema.statics.register = async function (username, email, password) {
+UserSchema.statics.register = async function (username, email, password, gender, country) {
 
     // validate user
 
@@ -32,7 +44,7 @@ UserSchema.statics.register = async function (username, email, password) {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    const user = await this.create({ username, email, password: hash });
+    const user = await this.create({ username, email, password: hash, gender, country, level: 1 });
     return user;
 }
 
