@@ -20,9 +20,7 @@ const UserSchema = new mongoose.Schema({
 
 // static register method
 UserSchema.statics.register = async function (username, email, password) {
-
     // validate user
-
     const exists = await this.findOne({ email });
 
     if (exists) {
@@ -35,5 +33,20 @@ UserSchema.statics.register = async function (username, email, password) {
     const user = await this.create({ username, email, password: hash });
     return user;
 }
+
+UserSchema.statics.login = async function (email, password) {
+    const user = await this.findOne({ email });
+
+    if (!user) {
+        throw Error('User not found');
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        throw Error('Invalid credentials');
+    }
+
+    return user;
+};
 
 module.exports = mongoose.model('User', UserSchema);
