@@ -1,25 +1,36 @@
 const redis = require('../config/redis')
 const Player = require('./Player');
-const GameFactory = require('./GameFactory')
-const gameFactory = new GameFactory();
+// const GameFactory = require('./GameFactory')
+// const gameFactory = new GameFactory();
 
 class Room {
-    constructor(roomId,keeperId,listOfSeekersIds) {
+    constructor(roomId,status,keeperId,listOfSeekersIds) {
         this.roomId = roomId;
+        this.status = status;
         this.keeperId = keeperId;
         this.listOfSeekersIds = listOfSeekersIds;
-
+        this.initRoomInRedis();
     }
 
     async initRoomInRedis() {
-        
+        try {
+           redis.hset(`room:${this.roomId}`,"status",this.status, "keeperId", this.keeperId);
+           redis.sadd(`room:${this.roomId}:listOfSeekersIds`, ...this.listOfSeekersIds);
+        }
+        catch (err) {
+            console.log("Error: ", err);
+        }
     }
 
-    /*
-    const roomData = redis.hset(`room:${this.id}`, "name", this.name, "host", this.host, "status", this.status);
-    const playersData = redis.sadd(`room:${this.id}:players`, ...this.players);
-    return Promise.all([roomData, playersData]);
-    */
+    async updateStatus(status) {
+        try {
+            this.status = status;
+            redis.hset(`room:${this.roomId}`,"status",status);
+        }
+        catch (err) {
+            console.log("Error: ", err);
+        }
+    }
 
 
 
@@ -29,3 +40,5 @@ class Room {
     }
 
 }
+
+module.exports = Room;

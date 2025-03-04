@@ -13,4 +13,17 @@ redis.on('error', (err) => {
     console.log('Connected to Redis successfully.');
   });
 
-  module.exports = redis;
+  async function wipeAllDataFromRedis() {
+    try {
+        await redis.flushall();
+        console.log("All Redis data has been wiped successfully.");
+    } catch (err) {
+        console.error("Error wiping Redis data:", err);
+    } finally {
+        redis.quit();
+    }
+}
+
+//wipeAllDataFromRedis();
+
+module.exports = redis;
