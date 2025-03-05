@@ -15,9 +15,16 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login', (req, res) => {
-    console.log('in login');
-    res.status(200).json({msg: 'user login'});
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.login(email, password);
+        res.status(200).json({ user });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 });
+
 
 module.exports = router;
