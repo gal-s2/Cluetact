@@ -1,12 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const redis = require('./config/redis');
 const GameFactory = require('./game/GameFactory');
 const Room = require('./game/Room');
 
-
-
-mongoose.connect('mongodb://localhost:27017/');
+// Connect to dbs
+require('./config/redis');
+require('./config/mongo');
 
 const app = express();
 
