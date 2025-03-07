@@ -4,7 +4,8 @@ const GameFactory = require('./game/GameFactory');
 const Room = require('./game/Room');
 
 // Connect to dbs
-require('./config/redis');
+//require('./config/redis');
+
 require('./config/mongo');
 
 const app = express();
@@ -26,6 +27,8 @@ app.listen(PORT, () => {
 });
 
 const gameFactory = new GameFactory();
-const room1 = gameFactory.createRoom("start",1,[2,3,4]);
+gameFactory.addUserToQueue(1);
+gameFactory.addUserToQueue(2);
+gameFactory.addUserToQueue(3);
+
 console.log(gameFactory.rooms);
-gameFactory.getRoom(1).updateStatus("in progress");
