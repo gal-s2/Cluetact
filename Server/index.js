@@ -5,7 +5,6 @@ const Room = require('./game/Room');
 
 // Connect to dbs
 //require('./config/redis');
-
 require('./config/mongo');
 
 const app = express();

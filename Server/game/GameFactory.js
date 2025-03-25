@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const redis = require('../config/redis');
 const Room = require('./Room');
 const GameQueue = require('./GameQueue');
 
