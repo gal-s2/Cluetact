@@ -1,8 +1,8 @@
 const Redis = require("ioredis")
 
 const redis = new Redis({
-    //host: 'redis',
-    host: 'localhost',
+    host: 'redis',
+    //host: 'localhost',
     port: 6379
 });
 
@@ -10,11 +10,11 @@ redis.on('error', (err) => {
     console.error('Redis connection error:', err);
   });
 
-  redis.on('connect', () => {
+redis.on('connect', () => {
     console.log('Connected to Redis successfully.');
   });
 
-  async function wipeAllDataFromRedis() {
+async function wipeAllDataFromRedis() {
     try {
         await redis.flushall();
         console.log("All Redis data has been wiped successfully.");

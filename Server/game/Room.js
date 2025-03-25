@@ -7,14 +7,12 @@ class Room {
         this.status = status;
         this.keeperId = keeperId; 
         this.listOfSeekersIds = listOfSeekersIds;
+        this.word = null; // chosen word
     }
-
 
     updateStatus(status) {
-            this.status = status;
+        this.status = status;
     }
-
-
 
     addPlayer(userId) {
         const player = GameFactory.createPlayer(userId);
