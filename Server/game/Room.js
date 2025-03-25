@@ -5,7 +5,7 @@ class Room {
     constructor(roomId,status,keeperId,listOfSeekersIds) {
         this.roomId = roomId;
         this.status = status;
-        this.keeperId = keeperId;
+        this.keeperId = keeperId; 
         this.listOfSeekersIds = listOfSeekersIds;
     }
 

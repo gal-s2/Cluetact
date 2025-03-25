@@ -1,8 +1,10 @@
 class GameQueue {
 
     static minUsersInRoom = 3;
+    static userInstance = null;
 
-    constructor(){
+
+    constructor() {
         if (GameQueue.userInstance) return GameQueue.userInstance;
         this.awaitingUsers = [];
         GameQueue.userInstance = this;
