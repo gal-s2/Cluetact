@@ -19,3 +19,5 @@ class GameSession {
         this.status = 'ended';
     }
 }
+
+module.exports = GameSession;

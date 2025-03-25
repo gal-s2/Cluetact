@@ -26,9 +26,9 @@ app.use(require('./routes'));
 //     console.log(`Cluetact Server is running on port ${PORT}`);
 // });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Cluetact Server is running on port ${PORT}`);
-});
+// app.listen(PORT, '0.0.0.0', () => {
+//     console.log(`Cluetact Server is running on port ${PORT}`);
+// });
 
 const http = require('http');
 const { Server } = require('socket.io');
@@ -42,16 +42,23 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-    console.log('connected! ', socket.id);
+    console.log('connected! ', socket.id);  // This should print on the server when a client connects.
 
-    socket.on('set_keeper_word', ({roomId, word}) => {
-        console.log('keeper set word');
-    })
+    socket.on('set_keeper_word', ({ roomId, word }) => {
+        console.log('keeper set word' + word);
+    });
 
     socket.on('disconnect', () => {
         console.log('disconnect');
-    })
-})
+    });
+});
+
+// Start the server on port 3000
+server.listen(3000, () => {
+    console.log('Server is listening on port 3000');
+});
+
+
 
 const gameFactory = new GameFactory();
 gameFactory.addUserToQueue(1);

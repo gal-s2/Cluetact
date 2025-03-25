@@ -1,4 +1,5 @@
 const Player = require('./Player');
+const GameSession = require('./GameSession')
 
 class Room {
     constructor(roomId, status, keeperId, listOfSeekersIds) {
