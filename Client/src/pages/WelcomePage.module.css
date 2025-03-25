@@ -1,0 +1,31 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Takes full screen height */
+  text-align: center;
+}
+
+.button {
+  display: inline-block;
+  margin: 1rem;
+  padding: 0.8rem 2rem;
+  background-color: #85b71a;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  font-size: 1rem;
+}
+
+.button:hover {
+  background-color: #6d9e14;
+}
+
+.logo {
+  height: 15rem;
+  width: 15rem;
+}
