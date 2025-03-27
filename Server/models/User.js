@@ -27,8 +27,15 @@ const UserSchema = new mongoose.Schema({
     level: {
         type: Number,
         required: false
-    }
-});
+    },
+    statistics: {
+        gamesPlayed:         { type: Number, default: 0 },
+        gamesWon:            { type: Number, default: 0 },
+        winRate:             { type: Number, default: 0 }
+        // add more as needed
+      }
+    });
+
 
 // static register method
 UserSchema.statics.register = async function (username, email, password, gender, country) {
