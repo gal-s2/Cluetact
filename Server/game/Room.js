@@ -114,6 +114,9 @@ class Room {
     }
 
     rotateRoles() {
+        if (this.isGameOver()) {
+            this.endGame();
+        }
         this.keeperId = this.getNextKeeper();
         this.pastKeepers.add(this.keeperId);
         this.players[this.keeperId].setRole('keeper');
@@ -127,6 +130,36 @@ class Room {
     
         this.currentSession = new GameSession();
     }
+
+    isGameOver() {
+        const totalPlayers = Object.keys(this.players).length;
+        return this.pastKeepers.size >= totalPlayers;
+    }
+
+    endGame() {
+        this.status = 'ended';
+    
+        // Find the player(s) with the highest score
+        let maxScore = -Infinity;
+        let winners = [];
+    
+        for (const player of Object.values(this.players)) {
+            if (player.gameScore > maxScore) {
+                maxScore = player.gameScore;
+                winners = [player];
+            } else if (player.gameScore === maxScore) {
+                winners.push(player);
+            }
+        }
+    
+        console.log(`[Room ${this.roomId}] Game Over. Winner(s):`, winners.map(p => p.username));
+    
+        // TODO: Save to MongoDB (can do later)
+    }
+    
+
+
+    
     
     
     
