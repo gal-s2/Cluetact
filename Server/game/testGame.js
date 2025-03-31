@@ -14,34 +14,33 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 (async () => {
     console.log(`\n🎮 Game started. First keeper: ${usernamesMap[keeperId]}`);
 
-    // ROUND 1 - Alice is keeper, word = "dog"
+    //
+    // ROUND 1 – Keeper: Alice – Word: dog
+    //
     room.currentSession.setKeeperWord('dog');
     console.log(`\n🔑 ${usernamesMap[keeperId]} sets secret word: "dog"`);
     console.log(`🔤 Revealed: ${room.currentSession.revealedLetters}`);
 
-    // Clue 1: Bob defines "duck"
-    console.log(`\n💬 ${usernamesMap['u2']} defines: "A bird that quacks" (word: "duck")`);
+    console.log(`\n💬 Bob defines: "A bird that quacks" (word: "duck")`);
     room.startNewClueRound('u2', 'duck');
     await delay(2000);
-    console.log(`⚡ ${usernamesMap['u3']} guesses: "duck"`);
+    console.log(`⚡ Charlie guesses: "duck"`);
     room.submitGuess('u3', 'duck');
+    console.log(`🔤 Revealed letters: ${room.currentSession.revealedLetters}`);
 
-    console.log(`🔤 New revealed letters: ${room.currentSession.revealedLetters}`);
-
-    // Clue 2: Charlie defines "door"
-    console.log(`\n💬 ${usernamesMap['u3']} defines: "You open it to enter a room" (word: "door")`);
+    console.log(`\n💬 Charlie defines: "You open it to enter a room" (word: "door")`);
     room.startNewClueRound('u3', 'door');
     await delay(1500);
-    console.log(`⚡ ${usernamesMap['u2']} guesses: "door"`);
+    console.log(`⚡ Bob guesses: "door"`);
     room.submitGuess('u2', 'door');
+    console.log(`🔤 Revealed letters: ${room.currentSession.revealedLetters}`);
 
-    console.log(`🔤 New revealed letters: ${room.currentSession.revealedLetters}`);
-
-    // Bob attempts to guess the full keeper word "dog"
-    console.log(`\n🎯 ${usernamesMap['u2']} attempts to guess the keeper word: "dog"`);
+    console.log(`\n🎯 Bob attempts to guess keeper word: "dog"`);
     room.submitGuess('u2', 'dog');
 
-    // Should trigger rotation
+    //
+    // ROUND 2 – Keeper: Bob – Word: sun
+    //
     const nextKeeperId = room.getNextKeeper();
     room.keeperId = nextKeeperId;
     room.players[nextKeeperId].setRole('keeper');
@@ -51,26 +50,24 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
     room.pastKeepers.add(nextKeeperId);
     room.currentSession = new (require('./GameSession'))();
 
-    // ROUND 2 - New keeper sets word
     room.currentSession.setKeeperWord('sun');
     console.log(`\n🔁 New keeper: ${usernamesMap[nextKeeperId]}`);
-    console.log(`🔑 ${usernamesMap[nextKeeperId]} sets word: "sun"`);
+    console.log(`🔑 Sets secret word: "sun"`);
     console.log(`🔤 Revealed: ${room.currentSession.revealedLetters}`);
 
-    // Alice defines "snake"
-    console.log(`\n💬 ${usernamesMap['u1']} defines: "Long reptile that hisses" (word: "snake")`);
+    console.log(`\n💬 Alice defines: "Long reptile that hisses" (word: "snake")`);
     room.startNewClueRound('u1', 'snake');
     await delay(1800);
-    console.log(`⚡ ${usernamesMap['u3']} guesses: "snake"`);
+    console.log(`⚡ Charlie guesses: "snake"`);
     room.submitGuess('u3', 'snake');
+    console.log(`🔤 Revealed letters: ${room.currentSession.revealedLetters}`);
 
-    console.log(`🔤 New revealed letters: ${room.currentSession.revealedLetters}`);
-
-    // Charlie guesses full keeper word "sun"
-    console.log(`\n🎯 ${usernamesMap['u3']} guesses keeper word: "sun"`);
+    console.log(`\n🎯 Charlie guesses keeper word: "sun"`);
     room.submitGuess('u3', 'sun');
 
-    // Final keeper rotation
+    //
+    // ROUND 3 – Keeper: Charlie – Word: pen
+    //
     const finalKeeperId = room.getNextKeeper();
     room.keeperId = finalKeeperId;
     room.players[finalKeeperId].setRole('keeper');
@@ -80,12 +77,31 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
     room.pastKeepers.add(finalKeeperId);
     room.currentSession = new (require('./GameSession'))();
 
-    // Check for game over
+    room.currentSession.setKeeperWord('pen');
+    console.log(`\n🔁 Final keeper: ${usernamesMap[finalKeeperId]}`);
+    console.log(`🔑 Sets secret word: "pen"`);
+    console.log(`🔤 Revealed: ${room.currentSession.revealedLetters}`);
+
+    console.log(`\n💬 Bob defines: "You write with it" (word: "pencil")`);
+    room.startNewClueRound('u2', 'pencil');
+    await delay(2500);
+    console.log(`⚡ Alice guesses: "pencil"`);
+    room.submitGuess('u1', 'pencil');
+    console.log(`🔤 Revealed letters: ${room.currentSession.revealedLetters}`);
+
+    console.log(`\n🎯 Alice guesses keeper word: "pen"`);
+    room.submitGuess('u1', 'pen');
+
+    //
+    // ✅ NOW end game AFTER all 3 players were keepers
+    //
     if (room.isGameOver()) {
         room.endGame();
     }
 
-    // Final scoreboard
+    //
+    // 📊 Final Scores
+    //
     console.log(`\n📊 Final Scores:`);
     for (const id in room.players) {
         const p = room.players[id];

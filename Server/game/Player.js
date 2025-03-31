@@ -18,8 +18,9 @@ class Player {
     }
 
     addScore(points) {
-        this.points += points;
+        this.gameScore += points;
     }
+    
 
 
 }
