@@ -8,6 +8,7 @@ class Room {
         this.keeperId = keeperId; 
         this.listOfSeekersIds = listOfSeekersIds;
         this.currentSession = new GameSession();
+        this.raceTimer = null; // Holds the timeout reference
 
          // Add keeper
          const keeper = new Player(keeperId, usernamesMap[keeperId] || 'Unknown');
@@ -38,51 +39,55 @@ class Room {
         delete this.listOfSeekersIds[userId];
     }
 
-    startNewClueRound(clueGiverId, clueWord) {
-        this.currentSession.setClue(clueGiverId, clueWord);
-        console.log(`[Room ${this.roomId}] Clue set by ${clueGiverId} for word "${clueWord}". Race begins.`);
-    }
 
-    submitGuess(userId, guessWord) {
-        const session = this.currentSession;
-    
-        // Skip if session not active
-        if (session.status !== 'race') return;
-    
-        // If this word was already guessed, ignore
-        if (session.guesses.includes(guessWord)) return;
-    
-        session.addGuess(guessWord);
-    
-        // Check if guess matches clue target word
-        if (guessWord.toLowerCase() === session.clueTargetWord.toLowerCase()) {
-            this.handleCorrectGuess(userId);
+        startNewClueRound(clueGiverId, clueWord) {
+            this.currentSession.setClue(clueGiverId, clueWord);
+        
+            // Start the race timer
+            this.raceTimer = setTimeout(() => {
+                this.handleClueTimeout(); // called if time runs out
+            }, MAX_RACE_TIME);
+        
+            console.log(`[Room ${this.roomId}] Clue set by ${clueGiverId}, race started.`);
         }
-    
-        // Check if guess matches keeper word (risky guess)
-        else if (guessWord.toLowerCase() === session.keeperWord.toLowerCase()) {
-            this.handleKeeperWordGuess(userId);
-        }
-    }
+        
 
-    handleCorrectGuess(guesserId) {
-        const session = this.currentSession;
-        const clueGiverId = session.clueGiverId;
-    
-        console.log(`[Room ${this.roomId}] ${guesserId} guessed the clue word correctly!`);
-    
-        // Award points to clue giver and guesser
-        this.players[guesserId].addScore(10);       // Example value
-        this.players[clueGiverId].addScore(10);      // Example value
-    
-        // Reveal next letter
-        session.revealNextLetter();
-    
-        // Clear clue state
-        session.clueGiverId = null;
-        session.clueTargetWord = null;
-        session.status = 'waiting';
-    }
+
+        submitGuess(userId, guessWord) {
+            const session = this.currentSession;
+            if (session.status !== 'race') return;
+        
+            if (session.guesses.includes(guessWord)) return;
+            session.addGuess(guessWord);
+        
+            if (guessWord.toLowerCase() === session.clueTargetWord.toLowerCase()) {
+                const timeElapsed = (new Date() - session.raceStartTime) / 1000;
+                this.handleCorrectGuess(userId, timeElapsed);
+                clearTimeout(this.raceTimer); // stop the countdown
+            } else if (guessWord.toLowerCase() === session.keeperWord.toLowerCase()) {
+                this.handleKeeperWordGuess(userId);
+            }
+        }
+        
+
+        handleCorrectGuess(guesserId, timeElapsed) {
+            const session = this.currentSession;
+            const clueGiverId = session.clueGiverId;
+        
+            let pointsEarned = Math.ceil(BASE_POINTS - (timeElapsed * PENALTY_RATE));
+            if (pointsEarned < 1) pointsEarned = 1;
+        
+            this.players[guesserId].addScore(pointsEarned);
+            this.players[clueGiverId].addScore(pointsEarned);
+        
+            console.log(`[Room ${this.roomId}] ${guesserId} guessed correctly in ${timeElapsed.toFixed(2)}s. +${pointsEarned} pts`);
+        
+            session.revealNextLetter();
+            session.status = 'waiting';
+            session.clueGiverId = null;
+            session.clueTargetWord = null;
+        }
+        
 
     handleKeeperGuess(keeperId) {
         const session = this.currentSession;
@@ -130,6 +135,19 @@ class Room {
     
         this.currentSession = new GameSession();
     }
+    handleClueTimeout() {
+        const session = this.currentSession;
+        const clueGiverId = session.clueGiverId;
+    
+        console.log(`[Room ${this.roomId}] Time's up! No one guessed the clue word.`);
+    
+        this.players[clueGiverId].addScore(-CLUE_FAIL_PENALTY);
+    
+        session.clueGiverId = null;
+        session.clueTargetWord = null;
+        session.status = 'waiting';
+    }
+    
 
     isGameOver() {
         const totalPlayers = Object.keys(this.players).length;
