@@ -32,7 +32,6 @@ const UserSchema = new mongoose.Schema({
         gamesPlayed:         { type: Number, default: 0 },
         gamesWon:            { type: Number, default: 0 },
         winRate:             { type: Number, default: 0 }
-        // add more as needed
       }
     });
 
