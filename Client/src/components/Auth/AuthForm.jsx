@@ -60,8 +60,15 @@ function AuthForm({ type }) {
             <h2>{type === 'login' ? "Login" : "Register"}</h2>
             <form onSubmit={handleSubmit} className={styles.authForm}>
                 {type === 'register' && (
-                    <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                <input 
+                    type="text" 
+                    placeholder="Username" 
+                    value={username} 
+                    onChange={(e) => setUsername(e.target.value)} 
+                    required 
+                />
                 )}
+
                 <input 
                     type="text" 
                     placeholder="Email" 
@@ -70,6 +77,7 @@ function AuthForm({ type }) {
                     className={errors.email ? styles.invalidInput : ""} 
                     required 
                 />
+
                 {errors.email && <p className={styles.error}>{errors.email}</p>}
 
                 <input 
@@ -80,6 +88,7 @@ function AuthForm({ type }) {
                     className={errors.password ? styles.invalidInput : ""}
                     required 
                 />
+                
                 {errors.password && <p className={styles.error}>{errors.password}</p>}
                 {errors.server && <p className={styles.error}>{errors.server}</p>}
 
