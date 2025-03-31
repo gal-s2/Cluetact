@@ -20,6 +20,9 @@ class Room {
              seeker.setRole('seeker');
              this.players[id] = seeker;
          });
+         this.pastKeepers = new Set(); // track who has already been keeper
+         this.pastKeepers.add(keeperId); // add first keeper
+
     }
 
     updateStatus(status) {
@@ -112,6 +115,7 @@ class Room {
 
     rotateRoles() {
         this.keeperId = this.getNextKeeper();
+        this.pastKeepers.add(this.keeperId);
         this.players[this.keeperId].setRole('keeper');
     
         // Reset others to 'seeker'
