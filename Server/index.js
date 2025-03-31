@@ -53,16 +53,16 @@ io.on('connection', (socket) => {
     });
 });
 
-// Start the server on port 3000
-server.listen(3000, () => {
-    console.log('Server is listening on port 3000');
+// Start the server on port
+server.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
 });
 
 
 
-const gameFactory = new GameFactory();
-gameFactory.addUserToQueue(1);
-gameFactory.addUserToQueue(2);
-gameFactory.addUserToQueue(3);
+//const gameFactory = new GameFactory();
+//gameFactory.addUserToQueue(1);
+//gameFactory.addUserToQueue(2);
+//gameFactory.addUserToQueue(3);
 
-console.log(gameFactory.rooms);
+//console.log(gameFactory.rooms);

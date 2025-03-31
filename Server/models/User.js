@@ -28,19 +28,20 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         required: false
     },
-    statistics: {
+    /*statistics: {
         gamesPlayed:         { type: Number, default: 0 },
         gamesWon:            { type: Number, default: 0 },
         winRate:             { type: Number, default: 0 }
         // add more as needed
-      }
-    });
+      }*/
+});
 
 
 // static register method
-UserSchema.statics.register = async function (username, email, password, gender, country) {
+UserSchema.statics.register = async function (userData) {
+    const { username, email, password, gender, country} = userData;
 
-    // validate user
+    // validate user here
 
     const exists = await this.findOne({ email });
 
@@ -51,7 +52,15 @@ UserSchema.statics.register = async function (username, email, password, gender,
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    const user = await this.create({ username, email, password: hash, gender, country, level: 1 });
+    const user = await this.create({ 
+        username,
+        email,
+        password: hash, 
+        gender,
+        country,
+        level: 1
+    });
+
     return user;
 }
 
@@ -59,7 +68,7 @@ UserSchema.statics.login = async function (email, password) {
     const user = await this.findOne({ email });
 
     if (!user) {
-        throw Error('User not found');
+        throw Error('Invalid credentials');
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
