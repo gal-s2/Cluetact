@@ -1,28 +1,39 @@
 const Player = require('./Player');
 const GameSession = require('./GameSession')
+// Configurable constants (can change)
+const MAX_RACE_TIME = 10000;        // 10 seconds
+const BASE_POINTS = 15;             // max points for instant guess
+const PENALTY_RATE = 2;             // -2 points per second delay
+const CLUE_FAIL_PENALTY = 5;        // penalty for clue giver if time runs out
+
 
 class Room {
     constructor(roomId, status, keeperId, listOfSeekersIds, usernamesMap = {}) {
         this.roomId = roomId;
-        this.status = status; // Created, inProgress, Ended
-        this.keeperId = keeperId; 
-        this.listOfSeekersIds = listOfSeekersIds;
+        this.status = status;
+    
+        this.keeperId = keeperId;
+        this.players = {}; //  must come before assigning keeper
+    
         this.currentSession = new GameSession();
-        this.raceTimer = null; // Holds the timeout reference
 
-         // Add keeper
-         const keeper = new Player(keeperId, usernamesMap[keeperId] || 'Unknown');
-         keeper.setRole('keeper');
-         this.players[keeperId] = keeper;
- 
-         // Add seekers
-         listOfSeekersIds.forEach((id) => {
-             const seeker = new Player(id, usernamesMap[id] || 'Unknown');
-             seeker.setRole('seeker');
-             this.players[id] = seeker;
-         });
-         this.pastKeepers = new Set(); // track who has already been keeper
-         this.pastKeepers.add(keeperId); // add first keeper
+        this.turnQueue = listOfSeekersIds.slice(); // Clone the seekers list
+
+    
+        // ✅ Now define the keeper
+        const keeper = new Player(keeperId, usernamesMap[keeperId] || 'Unknown');
+        keeper.setRole('keeper');
+        this.players[keeperId] = keeper;
+    
+        // ✅ Then add seekers
+        listOfSeekersIds.forEach((id) => {
+            const seeker = new Player(id, usernamesMap[id] || 'Unknown');
+            seeker.setRole('seeker');
+            this.players[id] = seeker;
+        });
+
+        this.pastKeepers = new Set();
+        this.pastKeepers.add(keeperId);
 
     }
 
@@ -147,6 +158,13 @@ class Room {
         session.clueTargetWord = null;
         session.status = 'waiting';
     }
+
+    getNextKeeper() {
+        const currentIndex = this.turnQueue.indexOf(this.keeperId);
+        const nextIndex = (currentIndex + 1) % this.turnQueue.length;
+        return this.turnQueue[nextIndex];
+    }
+    
     
 
     isGameOver() {
