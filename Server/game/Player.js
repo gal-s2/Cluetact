@@ -18,7 +18,7 @@ class Player {
     }
 
     addScore(points) {
-        this.score += points;
+        this.points += points;
     }
 
 
