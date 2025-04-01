@@ -55,36 +55,69 @@ class Room {
     }
 
 
-    startNewClueRound(clueGiverId, clueWord) {
-        this.currentSession.setClue(clueGiverId, clueWord);
-
-        // Start the race timer
+    startNewClueRound(clueGiverId, clueWord, clueDefinition) {
+        // Rule 1: Only seekers can give clues
+        if (clueGiverId === this.keeperId) {
+            console.log(`[Room ${this.roomId}]  Keeper cannot give clues.`);
+            return false;
+        }
+    
+        // Rule 2: Clue word must start with the LAST revealed letter
+        const lastLetter = this.currentSession.revealedLetters.slice(-1).toLowerCase();
+        if (!clueWord.toLowerCase().startsWith(lastLetter)) {
+            console.log(`[Room ${this.roomId}]  Clue word "${clueWord}" must start with '${lastLetter}'`);
+            return false;
+        }
+    
+        // Set clue word + definition into session
+        this.currentSession.setClue(clueGiverId, clueWord, clueDefinition);
+    
+        // Share the definition before race starts (for UI, logs, etc.)
+        console.log(`[Room ${this.roomId}]  Clue set by ${clueGiverId}: "${clueDefinition}"`);
+    
+        // Start timer for guessing race
         this.raceTimer = setTimeout(() => {
-            this.handleClueTimeout(); // called if time runs out
+            this.handleClueTimeout();
         }, MAX_RACE_TIME);
-
-        console.log(`[Room ${this.roomId}] Clue set by ${clueGiverId}, race started.`);
+    
+        return true;
     }
+    
 
 
 
     submitGuess(userId, guessWord) {
         const session = this.currentSession;
-        if (session.status !== 'race') return;
-
-        if (session.guesses.includes(guessWord)) return;
-        session.addGuess(guessWord);
-
-        if (guessWord.toLowerCase() === session.clueTargetWord.toLowerCase()) {
+        const revealed = session.revealedLetters;
+        const lastLetter = revealed[revealed.length - 1].toLowerCase();
+        const guessFirstLetter = guessWord[0].toLowerCase();
+    
+        if (guessFirstLetter !== lastLetter) {
+            console.log(` Invalid guess "${guessWord}" — must start with '${lastLetter}'`);
+            return false;
+        }
+    
+        if (session.guesses.find(g => g.word === guessWord)) {
+            console.log(`[Room ${this.roomId}] Word "${guessWord}" was already guessed.`);
+            return false;
+        }
+    
+        session.addGuess(userId, guessWord);
+    
+        if (guessWord.toLowerCase() === session.clueTargetWord?.toLowerCase()) {
             const timeElapsed = (new Date() - session.raceStartTime) / 1000;
             this.handleCorrectGuess(userId, timeElapsed);
-            clearTimeout(this.raceTimer); // stop the countdown
-        } else if (guessWord.toLowerCase() === session.keeperWord.toLowerCase()) {
-            this.handleKeeperWordGuess(userId);
+            clearTimeout(this.raceTimer);
+            return true;
         }
+    
+        if (guessWord.toLowerCase() === session.keeperWord?.toLowerCase()) {
+            this.handleKeeperWordGuess(userId);
+            return true;
+        }
+    
+        return false; // Guess was valid format but incorrect
     }
-
-
     handleCorrectGuess(guesserId, timeElapsed) {
         const session = this.currentSession;
         const clueGiverId = session.clueGiverId;
@@ -104,13 +137,11 @@ class Room {
         session.clueTargetWord = null;
         session.status = 'waiting';
     
-        //  If the full word has been revealed, rotate keeper
         if (isWordFullyRevealed) {
             const nextKeeper = this.getNextKeeper();
             this.keeperId = nextKeeper;
             this.players[nextKeeper].setRole('keeper');
     
-            // Set others as seekers
             Object.keys(this.players).forEach(id => {
                 if (id !== nextKeeper) this.players[id].setRole('seeker');
             });
@@ -125,6 +156,8 @@ class Room {
             }
         }
     }
+    
+    
     
 
 
