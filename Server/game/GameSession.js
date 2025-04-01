@@ -6,7 +6,7 @@ class GameSession {
         this.clueGiverId = null;          // ID of the seeker who gave the clue
         this.clueTargetWord = null;       // The word the clue is describing
         this.raceStartTime = null;        // When the keeper/seeker race started
-        this.guesses = [];                // List of seeker guesses for the current race only
+        this.guesses = [];                // List of { userId, word, time }
         this.status = 'waiting';          // "waiting", "race", "ended"
     }
 
@@ -32,8 +32,14 @@ class GameSession {
         const currentLength = this.revealedLetters.length;
         if (this.keeperWord && currentLength < this.keeperWord.length) {
             this.revealedLetters += this.keeperWord[currentLength];
+    
+            // Return true if this was the last letter
+            return this.revealedLetters.length === this.keeperWord.length;
         }
+    
+        return false; // Already fully revealed
     }
+    
 
     endSession() {
         this.status = 'ended';
