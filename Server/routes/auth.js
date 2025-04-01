@@ -5,13 +5,14 @@ const User = require('../models/User');
 router.post('/register', async (req, res) => {
     console.log('in register', req.body);
 
-    const { username, email, password } = req.body;
+    const userData = req.body;
 
     try {
-        const user = await User.register(username, email, password);
+        const user = await User.register(userData);
         res.status(200).json({ user });
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        console.log(err.message);
+        res.status(401).json({ error: err.message });
     }
 });
 
@@ -22,9 +23,8 @@ router.post('/login', async (req, res) => {
         const user = await User.login(email, password);
         res.status(200).json({ user });
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        res.status(401).json({ error: err.message });
     }
 });
-
 
 module.exports = router;

@@ -1,0 +1,74 @@
+.authContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f4f4f9;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 320px;
+    color: #333;
+}
+
+.logo {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 1rem;
+}
+
+.authForm {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.authForm input {
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    background: #fff;
+    color: #333;
+    transition: 0.3s ease;
+}
+
+.authForm input .invalidInput {
+    border: 1px solid red;
+    background-color: #ffe6e6;
+}
+
+.authForm button {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.authForm button:hover {
+    background-color: #e68900;
+}
+
+.toggle {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.toggle:hover {
+    color: #0056b3;
+}
+
+.invalidInput {
+    border: 1px solid red !important;
+    background-color: #ffe6e6;
+}
+
+.error {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
