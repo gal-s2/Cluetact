@@ -5,7 +5,7 @@ const GameQueue = require('./GameQueue');
 
 class GameFactory {
 
-    static currentId = 1;
+    static roomId = 1;
 
     constructor() {
         this.rooms = {};
@@ -13,7 +13,7 @@ class GameFactory {
     }
 
     createRoom(status,keeperId,listOfSeekersIds) {
-        const room = new Room(GameFactory.currentId,status,keeperId,listOfSeekersIds);
+        const room = new Room(GameFactory.roomId,status,keeperId,listOfSeekersIds, usernamesMap);
         this.rooms[GameFactory.currentId] = room;
         console.log("room created: ",GameFactory.currentId);
         GameFactory.currentId++;

@@ -24,16 +24,6 @@ class GameQueue {
         return {roomCreationPossible,chosenUsers};
     }
 
-    // removeUser(id) {
-    //     this.awaitingUsers.delete(id);
-    // }
-
-    // removeChosenUsers(ids) {
-    //     this.awaitingUsers.forEach((id) => {
-    //         this.removeUser(id);
-    //     });
-    // }
-
     }
 
     module.exports = GameQueue;

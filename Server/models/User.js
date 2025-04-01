@@ -36,7 +36,6 @@ const UserSchema = new mongoose.Schema({
       }*/
 });
 
-
 // static register method
 UserSchema.statics.register = async function (userData) {
     const { username, email, password, gender, country} = userData;
