@@ -20,7 +20,7 @@ class Logger {
     }
 
     static logRevealedLetters(roomId, revealed) {
-        console.log(`[Room ${roomId}] Revealed: ${revealed}`);
+        console.log(`[Room ${roomId}] Revealed: ${revealed}\n`);
     }
 
     static logNextKeeper(roomId, nextKeeperName) {
@@ -68,6 +68,10 @@ class Logger {
     static logManualTestComplete() {
         console.log(`Manual test complete.`);
     }
+    static logCannotClueWithoutKeeperWord(roomId) {
+        console.log(`[Room ${roomId}]  Cannot give clue — keeper hasn't set a word yet.`);
+    }
+    
     
     
 }

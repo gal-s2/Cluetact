@@ -58,31 +58,32 @@ class Room {
 
 
     startNewClueRound(clueGiverId, clueWord, clueDefinition) {
-        // Rule 1: Only seekers can give clues
+        if (!this.currentSession.keeperWord) {
+            Logger.logCannotClueWithoutKeeperWord(this.roomId);
+            return false;
+        }
+    
         if (clueGiverId === this.keeperId) {
             Logger.logClueNotAllowed(this.roomId);
             return false;
         }
     
-        // Rule 2: Clue word must start with the LAST revealed letter
         const lastLetter = this.currentSession.revealedLetters.slice(-1).toLowerCase();
         if (!clueWord.toLowerCase().startsWith(lastLetter)) {
             Logger.logInvalidClue(this.roomId, clueWord, lastLetter);
             return false;
         }
     
-        // Set clue word + definition into session
         this.currentSession.setClue(clueGiverId, clueWord, clueDefinition);
+        Logger.logClueSet(this.roomId, clueGiverId, clueDefinition);
     
-        // Share the definition before race starts (for UI, logs, etc.)
-        Logger.logClueSet(this.roomId, clueGiverId, clueDefinition);    
-        // Start timer for guessing race
         this.raceTimer = setTimeout(() => {
             this.handleClueTimeout();
         }, MAX_RACE_TIME);
     
         return true;
     }
+    
     
 
 
@@ -138,23 +139,28 @@ class Room {
         session.status = 'waiting';
     
         if (isWordFullyRevealed) {
-            const nextKeeper = this.getNextKeeper();
+            const currentKeeperId = this.keeperId;          // Store the one who just finished
+            this.pastKeepers.add(currentKeeperId);          // Mark them as done
+        
+            const nextKeeper = this.getNextKeeper();        // Assign new one
             this.keeperId = nextKeeper;
             this.players[nextKeeper].setRole('keeper');
-    
+        
             Object.keys(this.players).forEach(id => {
                 if (id !== nextKeeper) this.players[id].setRole('seeker');
             });
-    
-            this.pastKeepers.add(nextKeeper);
+        
             this.currentSession = new (require('./GameSession'))();
-    
-            Logger.logNextKeeper(this.roomId, this.players[nextKeeper].username);    
-            if (this.isGameOver()) {
+            
+            Logger.logNextKeeper(this.roomId, this.players[nextKeeper].username);
+        
+            // ✅ Only end if the NEXT keeper has already played
+            if (this.pastKeepers.has(nextKeeper)) {
                 this.endGame();
             }
         }
     }
+        
     
     
     
@@ -201,9 +207,15 @@ class Room {
         if (this.isGameOver()) {
             this.endGame();
         }
-        this.keeperId = this.getNextKeeper();
-        this.pastKeepers.add(this.keeperId);
-        this.players[this.keeperId].setRole('keeper');
+        this.pastKeepers.add(this.keeperId); // Add the keeper who just finished
+
+this.keeperId = nextKeeper;
+this.players[nextKeeper].setRole('keeper');
+
+Object.keys(this.players).forEach(id => {
+    if (id !== nextKeeper) this.players[id].setRole('seeker');
+});
+
 
         // Reset others to 'seeker'
         for (const id in this.players) {
