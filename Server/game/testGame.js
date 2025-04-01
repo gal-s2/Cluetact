@@ -2,6 +2,7 @@
 const prompt = require('prompt-sync')();
 const Room = require('./Room');
 const isValidEnglishWord = require('./validateWord');
+const Logger = require('./Logger');
 
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
@@ -18,17 +19,16 @@ const room = new Room(1, 'Created', keeperId, seekers, usernames);
 
 // --- Game Loop
 (async () => {
-    console.log(`\nGame started with players: ${Object.values(usernames).join(', ')}`);
+    Logger.logGameStart(usernames);
 
     while (!room.isGameOver()) {
-        console.log(`\n Current keeper: ${usernames[room.keeperId]}`);
+        Logger.logCurrentKeeper(room.roomId, usernames[room.keeperId]);
 
         // Ask keeper for a valid word
         let wordSet = false;
         while (!wordSet) {
-            const keeperWord = prompt(` ${usernames[room.keeperId]}, enter your secret word: `);
+            const keeperWord = prompt(`🔑 ${usernames[room.keeperId]}, enter your secret word: `);
             wordSet = await room.setKeeperWordWithValidation(keeperWord);
-            if (!wordSet) console.log(' Not a valid English word. Try again.\n');
         }
 
         let roundOver = false;
@@ -37,45 +37,28 @@ const room = new Room(1, 'Created', keeperId, seekers, usernames);
             // Ask for clue giver and clue word + definition
             let clueAccepted = false;
             while (!clueAccepted) {
-                const clueGiverId = prompt(` Who gives the clue? (u1/u2/u3): `);
-                if (clueGiverId === room.keeperId) {
-                    console.log(` Keeper (${usernames[clueGiverId]}) cannot give clues.`);
-                    continue;
-                }
-
+                const clueGiverId = prompt(`💬 Who gives the clue? (u1/u2/u3): `);
                 const lastLetter = room.currentSession.revealedLetters.slice(-1).toLowerCase();
-                const clueWord = prompt(` What is the clue word? (must start with '${lastLetter}'): `);
-                if (!clueWord.toLowerCase().startsWith(lastLetter)) {
-                    console.log(` "${clueWord}" must start with '${lastLetter}'. Try again.`);
-                    continue;
-                }
+                const clueWord = prompt(`📘 What is the clue word (must start with '${lastLetter}')? `);
+                const clueDefinition = prompt(`💡 Enter the definition for "${clueWord}": `);
 
-                const clueDefinition = prompt(` Enter the definition for "${clueWord}": `);
                 clueAccepted = room.startNewClueRound(clueGiverId, clueWord, clueDefinition);
-                if (!clueAccepted) console.log(' Failed to start clue round. Try again.');
-                else console.log(` Definition: "${clueDefinition}"`);
             }
 
             // Ask for guesses (allow multiple guess attempts)
             let guessAccepted = false;
             while (!guessAccepted) {
-                const guesserId = prompt(` Who guesses the clue word? (u1/u2/u3): `);
+                const guesserId = prompt(`🧠 Who guesses first? (u1/u2/u3): `);
                 const lastLetter = room.currentSession.revealedLetters.slice(-1).toLowerCase();
-                const guess = prompt(` What word does ${usernames[guesserId]} guess? (must start with '${lastLetter}'): `);
-                if (!guess.toLowerCase().startsWith(lastLetter)) {
-                    console.log(`"${guess}" must start with '${lastLetter}'. Try again.`);
-                    continue;
-                }
+                const guess = prompt(`🤔 What word does ${usernames[guesserId]} guess? (must start with '${lastLetter}'): `);
 
                 guessAccepted = room.submitGuess(guesserId, guess);
-                if (!guessAccepted) console.log('Guess rejected or incorrect.');
             }
 
             if (
                 room.currentSession.keeperWord &&
                 room.currentSession.revealedLetters.length === room.currentSession.keeperWord.length
             ) {
-                console.log(' Keeper word fully revealed!');
                 roundOver = true;
 
                 const nextKeeperId = room.getNextKeeper();
@@ -92,10 +75,9 @@ const room = new Room(1, 'Created', keeperId, seekers, usernames);
 
     room.endGame();
 
-    console.log('\n Final Scores:');
     for (const id in room.players) {
-        console.log(`${usernames[id]}: ${room.players[id].gameScore}`);
+        Logger.logFinalScore(usernames[id], room.players[id].gameScore);
     }
 
-    console.log('\n Manual test complete.');
+    Logger.logManualTestComplete();
 })();
