@@ -60,14 +60,14 @@ class Room {
     startNewClueRound(clueGiverId, clueWord, clueDefinition) {
         // Rule 1: Only seekers can give clues
         if (clueGiverId === this.keeperId) {
-            console.log(`[Room ${this.roomId}]  Keeper cannot give clues.`);
+            Logger.logClueNotAllowed(this.roomId);
             return false;
         }
     
         // Rule 2: Clue word must start with the LAST revealed letter
         const lastLetter = this.currentSession.revealedLetters.slice(-1).toLowerCase();
         if (!clueWord.toLowerCase().startsWith(lastLetter)) {
-            console.log(`[Room ${this.roomId}]  Clue word "${clueWord}" must start with '${lastLetter}'`);
+            Logger.logInvalidClue(this.roomId, clueWord, lastLetter);
             return false;
         }
     
@@ -75,8 +75,7 @@ class Room {
         this.currentSession.setClue(clueGiverId, clueWord, clueDefinition);
     
         // Share the definition before race starts (for UI, logs, etc.)
-        console.log(`[Room ${this.roomId}]  Clue set by ${clueGiverId}: "${clueDefinition}"`);
-    
+        Logger.logClueSet(this.roomId, clueGiverId, clueDefinition);    
         // Start timer for guessing race
         this.raceTimer = setTimeout(() => {
             this.handleClueTimeout();
@@ -95,13 +94,12 @@ class Room {
         const guessFirstLetter = guessWord[0].toLowerCase();
     
         if (guessFirstLetter !== lastLetter) {
-            console.log(` Invalid guess "${guessWord}" — must start with '${lastLetter}'`);
+            Logger.logInvalidGuess(this.roomId, guessWord, lastLetter);
             return false;
         }
     
         if (session.guesses.find(g => g.word === guessWord)) {
-            console.log(`[Room ${this.roomId}] Word "${guessWord}" was already guessed.`);
-            return false;
+            Logger.logDuplicateGuess(this.roomId, guessWord);            return false;
         }
     
         session.addGuess(userId, guessWord);
@@ -132,8 +130,8 @@ class Room {
     
         const isWordFullyRevealed = session.revealNextLetter();
     
-        console.log(`[Room ${this.roomId}] ${guesserId} guessed the clue word. +${pointsEarned} pts`);
-        console.log(`[Room ${this.roomId}] Revealed: ${session.revealedLetters}`);
+        Logger.logGuessCorrect(this.roomId, guesserId, pointsEarned);
+        Logger.logRevealedLetters(this.roomId, session.revealedLetters);
     
         session.clueGiverId = null;
         session.clueTargetWord = null;
@@ -151,8 +149,7 @@ class Room {
             this.pastKeepers.add(nextKeeper);
             this.currentSession = new (require('./GameSession'))();
     
-            console.log(`[Room ${this.roomId}] Word fully revealed. Next keeper: ${this.players[nextKeeper].username}`);
-    
+            Logger.logNextKeeper(this.roomId, this.players[nextKeeper].username);    
             if (this.isGameOver()) {
                 this.endGame();
             }
@@ -165,8 +162,7 @@ class Room {
 
     handleKeeperGuess(keeperId) {
         const session = this.currentSession;
-        console.log(`[Room ${this.roomId}] Keeper ${keeperId} guessed the clue word correctly.`);
-
+        Logger.logKeeperGuessedClue(this.roomId, keeperId);
         this.players[keeperId].addScore(15); 
         session.clueGiverId = null;
         session.clueTargetWord = null;
@@ -176,7 +172,7 @@ class Room {
     handleKeeperWordGuess(userId) {
         const keeperWord = this.currentSession.keeperWord;
 
-        console.log(`[Room ${this.roomId}] ${userId} attempted to guess the keeper's word!`);
+        Logger.logKeeperWordGuessAttempt(this.roomId, userId);
 
         if (this.currentSession.status === 'ended') return;
 
@@ -191,12 +187,12 @@ class Room {
     async setKeeperWordWithValidation(word) {
         const valid = await isValidEnglishWord(word);
         if (!valid) {
-            console.log(`[Room ${this.roomId}]  Keeper word "${word}" is invalid.`);
+            Logger.logInvalidKeeperWord(this.roomId, word);
             return false;
         }
     
         this.currentSession.setKeeperWord(word);
-        console.log(`[Room ${this.roomId}]  Keeper word set: "${word}"`);
+        Logger.logKeeperWordSet(this.roomId, word);
         return true;
     }
     
@@ -222,8 +218,7 @@ class Room {
         const session = this.currentSession;
         const clueGiverId = session.clueGiverId;
 
-        console.log(`[Room ${this.roomId}] Time's up! No one guessed the clue word.`);
-
+        Logger.logTimeUp(this.roomId);
         this.players[clueGiverId].addScore(-CLUE_FAIL_PENALTY);
 
         session.clueGiverId = null;
@@ -260,8 +255,7 @@ class Room {
             }
         }
 
-        console.log(`[Room ${this.roomId}] Game Over. Winner(s):`, winners.map(p => p.username));
-
+        Logger.logGameOver(this.roomId, winners.map(p => p.username));
         // TODO: Save to MongoDB (can do later)
     }
 

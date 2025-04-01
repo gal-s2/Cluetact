@@ -42,6 +42,22 @@ class Logger {
     static logTimeUp(roomId) {
         console.log(`[Room ${roomId}]  Time's up! No one guessed the clue word.`);
     }
+    static logClueNotAllowed(roomId) {
+        console.log(`[Room ${roomId}]  Keeper cannot give clues.`);
+    }
+    
+    static logKeeperGuessedClue(roomId, keeperId) {
+        console.log(`[Room ${roomId}]  Keeper ${keeperId} guessed the clue word.`);
+    }
+    
+    static logKeeperWordGuessAttempt(roomId, userId) {
+        console.log(`[Room ${roomId}] ${userId} attempted to guess the keeper's word!`);
+    }
+    
+    static logInvalidKeeperWord(roomId, word) {
+        console.log(`[Room ${roomId}] Keeper word "${word}" is invalid.`);
+    }
+    
 }
 
 module.exports = Logger;
