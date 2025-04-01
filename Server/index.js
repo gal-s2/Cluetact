@@ -1,34 +1,26 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const GameFactory = require('./game/GameFactory');
-const Room = require('./game/Room');
+
+// Import enviroment variables file
+require('dotenv').config();
 
 // Connect to dbs
 //require('./config/redis');
 require('./config/mongo');
 
+const PORT = process.env.PORT || 8000;
 const app = express();
 const cors = require('cors');
+const { requestLogger } = require("./logger");
 
 app.use(cors());
 app.use(express.json());
-
-// Import enviroment variables file
-require('dotenv').config()
-
-const PORT = process.env.PORT || 8000;
+app.use((req, res, next) => {
+    requestLogger.info(`${req.method} ${req.url}`);
+    next();
+});
 
 // Import all routers from ./routes/index.js
 app.use(require('./routes'));
-
-// Server listens on enviroment defined port
-// app.listen(PORT, () => {
-//     console.log(`Cluetact Server is running on port ${PORT}`);
-// });
-
-// app.listen(PORT, '0.0.0.0', () => {
-//     console.log(`Cluetact Server is running on port ${PORT}`);
-// });
 
 const http = require('http');
 const { Server } = require('socket.io');
