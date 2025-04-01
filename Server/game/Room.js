@@ -1,6 +1,8 @@
 const Player = require('./Player');
 const GameSession = require('./GameSession')
 const isValidEnglishWord = require('./validateWord');
+const Logger = require('./Logger');
+
 
 // Configurable constants (can be change)
 const MAX_RACE_TIME = 10000;        // 10 seconds
