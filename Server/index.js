@@ -57,12 +57,3 @@ io.on('connection', (socket) => {
 server.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });
-
-
-
-//const gameFactory = new GameFactory();
-//gameFactory.addUserToQueue(1);
-//gameFactory.addUserToQueue(2);
-//gameFactory.addUserToQueue(3);
-
-//console.log(gameFactory.rooms);

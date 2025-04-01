@@ -12,4 +12,3 @@ async function isValidEnglishWord(word) {
 }
 
 module.exports = isValidEnglishWord;
-

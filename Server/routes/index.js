@@ -1,18 +1,24 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const Room = require('../game/Room.js'); // Adjust path based on your structure
+const router = require('express').Router();
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const PORT = 3000;
+/*const PORT = 3000;
 
 app.get('/', (req, res) => {
   res.send('Cluetact server is running');
-});
+});*/
 
+const authRoutes = require('./auth');
+router.use('/auth', authRoutes);
+
+module.exports = router;
+
+/*
 io.on('connection', (socket) => {
   console.log(`New client connected: ${socket.id}`);
 
@@ -29,4 +35,4 @@ io.on('connection', (socket) => {
 
 server.listen(PORT, () => {
   console.log(` Server listening at http://localhost:${PORT}`);
-});
+});*/
