@@ -1,5 +1,7 @@
 const Player = require('./Player');
 const GameSession = require('./GameSession')
+const isValidEnglishWord = require('./validateWord');
+
 // Configurable constants (can be change)
 const MAX_RACE_TIME = 10000;        // 10 seconds
 const BASE_POINTS = 15;             // max points for instant guess
@@ -37,6 +39,7 @@ class Room {
         this.pastKeepers.add(keeperId);
 
     }
+
 
     updateStatus(status) {
         this.status = status;
@@ -150,6 +153,18 @@ class Room {
             this.players[userId].addScore(-20); // Risky penalty
         }
     }
+    async setKeeperWordWithValidation(word) {
+        const valid = await isValidEnglishWord(word);
+        if (!valid) {
+            console.log(`[Room ${this.roomId}]  Keeper word "${word}" is invalid.`);
+            return false;
+        }
+    
+        this.currentSession.setKeeperWord(word);
+        console.log(`[Room ${this.roomId}]  Keeper word set: "${word}"`);
+        return true;
+    }
+    
 
     rotateRoles() {
         if (this.isGameOver()) {
