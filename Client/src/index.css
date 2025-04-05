@@ -1,4 +1,10 @@
-/* Ensure body and html take full height */
+/* Google Fonts import - Montserrat */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+  font-family: "Montserrat", sans-serif;
+}
+
 html, body, #root {
   height: 100%;
   margin: 0;
@@ -6,5 +12,5 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #efefeb; /* Optional: Light background */
+  background-color: #efefeb;
 }
