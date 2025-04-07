@@ -1,7 +1,4 @@
 class Logger {
-    static logGameStart(usernames) {
-        console.log(`\n Game started with players: ${Object.values(usernames).join(', ')}`);
-    }
 
     static logKeeperWordSet(roomId, word) {
         console.log(`[Room ${roomId}]  Keeper word set: "${word}"`);
@@ -70,6 +67,10 @@ class Logger {
     }
     static logCannotClueWithoutKeeperWord(roomId) {
         console.log(`[Room ${roomId}]  Cannot give clue — keeper hasn't set a word yet.`);
+    }
+
+    static logRoomCreated(roomId, players) {
+        console.log(`Room ${roomId} created with ${Object.values(players).join(', ')}`);
     }
     
     

@@ -154,7 +154,6 @@ class Room {
             
             Logger.logNextKeeper(this.roomId, this.players[nextKeeper].username);
         
-            // ✅ Only end if the NEXT keeper has already played
             if (this.pastKeepers.has(nextKeeper)) {
                 this.endGame();
             }

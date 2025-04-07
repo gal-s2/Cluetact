@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Room = require('./Room');
 const GameQueue = require('./GameQueue');
+const Logger = require('./Logger');
 
 
 class GameFactory {
@@ -15,7 +16,7 @@ class GameFactory {
     createRoom(status,keeperId,listOfSeekersIds) {
         const room = new Room(GameFactory.roomId,status,keeperId,listOfSeekersIds, usernamesMap);
         this.rooms[GameFactory.currentId] = room;
-        console.log("room created: ",GameFactory.currentId);
+        Logger.logRoomCreated(this.roomId, this.rooms[this.currentId]);
         GameFactory.currentId++;
         
 

@@ -36,10 +36,6 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
     console.log('connected! ', socket.id);  // This should print on the server when a client connects.
 
-    socket.on('set_keeper_word', ({ roomId, word }) => {
-        console.log('keeper set word' + word);
-    });
-
     socket.on('disconnect', () => {
         console.log('disconnect');
     });

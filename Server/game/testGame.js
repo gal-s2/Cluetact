@@ -1,10 +1,20 @@
-
-const prompt = require('prompt-sync')();
+const readline = require('readline');
 const Room = require('./Room');
 const isValidEnglishWord = require('./validateWord');
 const Logger = require('./Logger');
+const GameSession = require('./GameSession');
 
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
+
+// Readline setup
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+function ask(question) {
+    return new Promise(resolve => rl.question(question, resolve));
+}
 
 // --- Setup players and room
 const usernames = {
@@ -19,7 +29,7 @@ const room = new Room(1, 'Created', keeperId, seekers, usernames);
 
 // --- Game Loop
 (async () => {
-    Logger.logGameStart(usernames);
+    Logger.logRoomCreated(room.roomId, usernames);
 
     while (!room.isGameOver()) {
         Logger.logCurrentKeeper(room.roomId, usernames[room.keeperId]);
@@ -27,7 +37,7 @@ const room = new Room(1, 'Created', keeperId, seekers, usernames);
         if (!room.currentSession.keeperWord) {
             let wordSet = false;
             while (!wordSet) {
-                const keeperWord = prompt(`🔑 ${usernames[room.keeperId]}, enter your secret word: `);
+                const keeperWord = await ask(`🔑 ${usernames[room.keeperId]}, enter your secret word: `);
                 wordSet = await room.setKeeperWordWithValidation(keeperWord);
             }
         }
@@ -38,26 +48,36 @@ const room = new Room(1, 'Created', keeperId, seekers, usernames);
             if (!room.currentSession.keeperWord) break;
 
             // Ask for clue giver and clue word + definition
+            let clueGiverId = null;
             let clueAccepted = false;
+
             while (!clueAccepted) {
-                const clueGiverId = prompt(`💬 Who gives the clue? (u1/u2/u3): `);
+                const seekersUsernames = Object.keys(room.players).filter(id => id !== room.keeperId);
+                clueGiverId = await ask(`💬 Who gives the clue? (${seekersUsernames.join('/')}) : `);
+
                 const lastLetter = room.currentSession.revealedLetters.slice(-1).toLowerCase();
-                const clueWord = prompt(`📘 What is the clue word (must start with '${lastLetter}')? `);
-                const clueDefinition = prompt(`💡 Enter the definition for "${clueWord}": `);
+                const clueWord = await ask(`📘 What is the clue word (must start with '${lastLetter}')? `);
+                const clueDefinition = await ask(`💡 Enter the definition for "${clueWord}": `);
 
                 clueAccepted = room.startNewClueRound(clueGiverId, clueWord, clueDefinition);
+                if (!clueAccepted) clueGiverId = null; // try again
             }
 
             // Ask for guesses (allow multiple guess attempts)
             let guessAccepted = false;
             while (!guessAccepted) {
-                const guesserId = prompt(`🧠 Who guesses first? (u1/u2/u3): `);
+                const eligibleGuessers = Object.keys(room.players).filter(id =>id !== clueGiverId
+                );
+
+                const guesserId = await ask(`🧠 Who guesses first? (${eligibleGuessers.join('/')}) : `);
+
                 const lastLetter = room.currentSession.revealedLetters.slice(-1).toLowerCase();
-                const guess = prompt(`🤔 What word does ${usernames[guesserId]} guess? (must start with '${lastLetter}'): `);
+                const guess = await ask(`🤔 What word does ${usernames[guesserId]} guess? (must start with '${lastLetter}'): `);
 
                 guessAccepted = room.submitGuess(guesserId, guess);
             }
 
+            // Check if all letters were revealed
             if (
                 room.currentSession.keeperWord &&
                 room.currentSession.revealedLetters.length === room.currentSession.keeperWord.length
@@ -71,7 +91,7 @@ const room = new Room(1, 'Created', keeperId, seekers, usernames);
                     if (id !== nextKeeperId) room.players[id].setRole('seeker');
                 });
                 room.pastKeepers.add(nextKeeperId);
-                room.currentSession = new (require('./GameSession'))();
+                room.currentSession = new GameSession();
             }
         }
     }
@@ -83,4 +103,6 @@ const room = new Room(1, 'Created', keeperId, seekers, usernames);
     }
 
     Logger.logManualTestComplete();
+    rl.close();
 })();
+
