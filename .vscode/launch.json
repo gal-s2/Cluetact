@@ -4,13 +4,13 @@
       {
         "type": "node",
         "request": "launch",
-        "name": "Debug testGame.js",
-        "program": "${workspaceFolder}/server/game/testGame.js",
+        "name": "Debug Server",
+        "program": "${workspaceFolder}/Server/index.js", // הנתיב לקובץ השרת שלך
         "console": "integratedTerminal",
         "internalConsoleOptions": "neverOpen",
-        "skipFiles": ["<node_internals>/**"],
-        "stopAtEntry": true
+        "skipFiles": ["<node_internals>/**"]
       }
     ]
   }
+  
   
