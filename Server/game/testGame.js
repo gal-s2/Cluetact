@@ -29,6 +29,8 @@ const room = new Room(1, 'Created', keeperId, seekers, usernames);
 
 // --- Game Loop
 (async () => {
+    debugger; // 🛑 VS Code will pause here when launched with the debugger
+
     Logger.logRoomCreated(room.roomId, usernames);
 
     while (!room.isGameOver()) {
@@ -60,21 +62,24 @@ const room = new Room(1, 'Created', keeperId, seekers, usernames);
                 const clueDefinition = await ask(`💡 Enter the definition for "${clueWord}": `);
 
                 clueAccepted = room.startNewClueRound(clueGiverId, clueWord, clueDefinition);
-                if (!clueAccepted) clueGiverId = null; // try again
+                if (!clueAccepted) clueGiverId = null; // retry
             }
 
-            // Ask for guesses (allow multiple guess attempts)
+            // Ask for guesses
             let guessAccepted = false;
             while (!guessAccepted) {
-                const eligibleGuessers = Object.keys(room.players).filter(id =>id !== clueGiverId
-                );
+                const eligibleGuessers = Object.keys(room.players).filter(id => id !== clueGiverId);
 
                 const guesserId = await ask(`🧠 Who guesses first? (${eligibleGuessers.join('/')}) : `);
-
                 const lastLetter = room.currentSession.revealedLetters.slice(-1).toLowerCase();
                 const guess = await ask(`🤔 What word does ${usernames[guesserId]} guess? (must start with '${lastLetter}'): `);
 
-                guessAccepted = room.submitGuess(guesserId, guess);
+                const result = room.submitGuess(guesserId, guess);
+                guessAccepted = result.correct;
+
+                if (result.correct && !result.revealed) {
+                    console.log(`❗ The guess was correct, but no letter was revealed.`);
+                }
             }
 
             // Check if all letters were revealed
@@ -105,4 +110,3 @@ const room = new Room(1, 'Created', keeperId, seekers, usernames);
     Logger.logManualTestComplete();
     rl.close();
 })();
-

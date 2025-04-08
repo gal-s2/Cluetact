@@ -8,7 +8,8 @@
         "program": "${workspaceFolder}/server/game/testGame.js",
         "console": "integratedTerminal",
         "internalConsoleOptions": "neverOpen",
-        "skipFiles": ["<node_internals>/**"]
+        "skipFiles": ["<node_internals>/**"],
+        "stopAtEntry": false
       }
     ]
   }

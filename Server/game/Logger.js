@@ -72,6 +72,10 @@ class Logger {
     static logRoomCreated(roomId, players) {
         console.log(`Room ${roomId} created with ${Object.values(players).join(', ')}`);
     }
+    static logClueWordAlreadyUsed(roomId, word) {
+        console.log(`[Room ${roomId}] ❌ Clue word "${word}" was already used in this session.`);
+    }
+    
     
     
     
