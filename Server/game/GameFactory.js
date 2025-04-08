@@ -13,7 +13,7 @@ class GameFactory {
         this.gameQueue = new GameQueue();
     }
 
-    createRoom(status,keeperId,listOfSeekersIds) {
+    createRoom(status,keeperId,listOfSeekersIds,usernamesMap) {
         const room = new Room(GameFactory.roomId,status,keeperId,listOfSeekersIds, usernamesMap);
         this.rooms[GameFactory.currentId] = room;
         Logger.logRoomCreated(this.roomId, this.rooms[this.currentId]);
@@ -28,7 +28,7 @@ class GameFactory {
         if (ans.roomCreationPossible === true) {
             let keeperID = ans.chosenUsers[0];
             let listOfSeekersIds = ans.chosenUsers.splice(1);
-            this.createRoom("Created",keeperID,listOfSeekersIds);
+            this.createRoom("Created",keeperID,listOfSeekersIds,usernamesMap);
         }
     }
 
