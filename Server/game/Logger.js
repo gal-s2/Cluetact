@@ -54,6 +54,9 @@ class Logger {
     static logInvalidKeeperWord(roomId, word) {
         console.log(`[Room ${roomId}] Keeper word "${word}" is invalid.`);
     }
+    static logInvalidSeekerWord(roomId, word) {
+        console.log(`[Room ${roomId}] Seeker word "${word}" is invalid.`);
+    }
     static logCurrentKeeper(roomId, keeperName) {
         console.log(`\nCurrent keeper: ${keeperName}`);
     }

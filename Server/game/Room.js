@@ -37,6 +37,80 @@ class Room {
         this.status = status;
     }
 
+    async runGame(prompt) {
+        const usernames = Object.fromEntries(
+            Object.entries(this.players).map(([id, player]) => [id, player.username])
+        );
+    
+        while (!this.isGameOver()) {
+            Logger.logCurrentKeeper(this.roomId, usernames[this.keeperId]);
+    
+        
+            while (!this.currentSession.keeperWord) {
+                const word = await prompt(`🔑 ${usernames[this.keeperId]}, enter your secret word: `);
+                await this.setKeeperWordWithValidation(word);
+            }
+    
+            let roundOver = false;
+    
+            while (!roundOver) {
+                if (!this.currentSession.keeperWord) break;
+    
+                let clueAccepted = false;
+                let clueGiverId = null;
+                while (!clueAccepted) {
+                    const seekers = Object.keys(this.players).filter(id => id !== this.keeperId);
+                    clueGiverId = await prompt(` Who gives the clue? (${seekers.join('/')}) : `);
+                    const lastLetter = this.currentSession.revealedLetters.slice(-1).toLowerCase();
+                    const clueWord = await prompt(` Clue word (starts with '${lastLetter}'): `);
+                    const clueDef = await prompt(` Definition for "${clueWord}": `);
+                    clueAccepted = await this.startNewClueRound(clueGiverId, clueWord, clueDef);
+                    if (!clueAccepted) clueGiverId = null;
+                }
+    
+                let guessAccepted = false;
+                while (!guessAccepted) {
+                    const eligibleGuessers = Object.keys(this.players).filter(id => id !== clueGiverId);
+                    const guesserId = await prompt(` Who guesses first? (${eligibleGuessers.join('/')}) : `);
+                    const lastLetter = this.currentSession.revealedLetters.slice(-1).toLowerCase();
+                    const guess = await prompt(` What does ${usernames[guesserId]} guess? (starts with '${lastLetter}'): `);
+    
+                    const result = await this.submitGuess(guesserId, guess);
+                    guessAccepted = result.correct;
+    
+                    if (result.correct && !result.revealed) {
+                        console.log(` The guess was correct, but no letter was revealed.`);
+                    }
+                }
+    
+                if (
+                    this.currentSession.keeperWord &&
+                    this.currentSession.revealedLetters.length === this.currentSession.keeperWord.length
+                ) {
+                    roundOver = true;
+                    const nextKeeperId = this.getNextKeeper();
+                    this.keeperId = nextKeeperId;
+                    this.players[nextKeeperId].setRole('keeper');
+    
+                    Object.keys(this.players).forEach(id => {
+                        if (id !== nextKeeperId) this.players[id].setRole('seeker');
+                    });
+    
+                    this.pastKeepers.add(nextKeeperId);
+                    this.currentSession = new (require('./GameSession'))();
+                }
+            }
+        }
+    
+        this.endGame();
+    
+        for (const id in this.players) {
+            Logger.logFinalScore(usernames[id], this.players[id].gameScore);
+        }
+    
+        Logger.logManualTestComplete();
+    }
+
     startNewClueRound(clueGiverId, clueWord, clueDefinition) {
         if (!this.currentSession.keeperWord) {
             Logger.logCannotClueWithoutKeeperWord(this.roomId);
@@ -59,7 +133,6 @@ class Room {
             return false;
         }
 
-        // ✅ Save the clue word to the global usedWords set
         this.usedWords.add(clueWord.toLowerCase());
 
         this.currentSession.setClue(clueGiverId, clueWord, clueDefinition);
@@ -72,11 +145,16 @@ class Room {
         return true;
     }
 
-    submitGuess(userId, guessWord) {
+    async submitGuess(userId, guessWord) {
         const session = this.currentSession;
         const revealed = session.revealedLetters;
         const lastLetter = revealed[revealed.length - 1].toLowerCase();
         const guessFirstLetter = guessWord[0].toLowerCase();
+        const valid = await isValidEnglishWord(guessWord);
+        if (!valid) {
+            Logger.logInvalidSeekerWord(this.roomId, word);
+            return { correct: false };
+        }
 
         if (guessFirstLetter !== lastLetter) {
             Logger.logInvalidGuess(this.roomId, guessWord, lastLetter);
@@ -225,6 +303,7 @@ class Room {
             Logger.logInvalidKeeperWord(this.roomId, word);
             return false;
         }
+      
 
         this.currentSession.setKeeperWord(word);
         Logger.logKeeperWordSet(this.roomId, word);
