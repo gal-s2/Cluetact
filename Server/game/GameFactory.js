@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Room = require('./Room');
 const GameQueue = require('./GameQueue');
+const Logger = require('./Logger');
 
 
 class GameFactory {
@@ -12,10 +13,10 @@ class GameFactory {
         this.gameQueue = new GameQueue();
     }
 
-    createRoom(status,keeperId,listOfSeekersIds) {
+    createRoom(status,keeperId,listOfSeekersIds,usernamesMap) {
         const room = new Room(GameFactory.roomId,status,keeperId,listOfSeekersIds, usernamesMap);
         this.rooms[GameFactory.currentId] = room;
-        console.log("room created: ",GameFactory.currentId);
+        Logger.logRoomCreated(this.roomId, this.rooms[this.currentId]);
         GameFactory.currentId++;
         
 
@@ -27,7 +28,7 @@ class GameFactory {
         if (ans.roomCreationPossible === true) {
             let keeperID = ans.chosenUsers[0];
             let listOfSeekersIds = ans.chosenUsers.splice(1);
-            this.createRoom("Created",keeperID,listOfSeekersIds);
+            this.createRoom("Created",keeperID,listOfSeekersIds,usernamesMap);
         }
     }
 
