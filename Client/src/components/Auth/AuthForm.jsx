@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import styles from './AuthForm.module.css';
@@ -8,6 +8,7 @@ import logo from '../../assets/Cluetact.jpeg';
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function AuthForm({ type }) {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
@@ -44,7 +45,7 @@ function AuthForm({ type }) {
             const response = await axios.post(url, { email, password, username });
 
             if (response.status === 200) {
-                alert(`${type === 'login' ? 'Login' : 'Registration'} successful!`);
+                navigate('/lobby');
             } else {
                 alert(`${type === 'login' ? 'Login' : 'Registration'} failed`);
             }        
