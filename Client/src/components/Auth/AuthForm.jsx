@@ -7,12 +7,16 @@ import logo from '../../assets/Cluetact.jpeg';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+import { useUser } from '../UserContext';
+
 function AuthForm({ type }) {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
     const [errors, setErrors] = useState({});
+
+    const { setUser } = useUser();
 
     const validateForm = () => {
         const newErrors = {};
@@ -36,15 +40,16 @@ function AuthForm({ type }) {
 
         let url;
         if (type === 'login') {
-            url = "http://localhost:3000/auth/login";
+            url = "http://localhost:8000/auth/login";
         } else {
-            url = "http://localhost:3000/auth/register";
+            url = "http://localhost:8000/auth/register";
         }
 
         try {
             const response = await axios.post(url, { email, password, username });
 
             if (response.status === 200) {
+                setUser(response.data.user); 
                 navigate('/lobby');
             } else {
                 alert(`${type === 'login' ? 'Login' : 'Registration'} failed`);

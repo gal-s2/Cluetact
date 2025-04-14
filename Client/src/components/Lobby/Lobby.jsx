@@ -1,8 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
+import { useUser } from '../UserContext';
 
 function Lobby() {
     const socketRef = useRef(null);
+    const { user } = useUser();
 
     useEffect(() => {
         // Create socket connection once
@@ -16,8 +18,7 @@ function Lobby() {
 
     const findGame = () => {
         if (socketRef.current) {
-            socketRef.current.emit('join game');
-            console.log('Join game message sent');
+            socketRef.current.emit('join_game', { userId: user._id, username: user.username });
         }
     }
 
