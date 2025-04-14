@@ -12,7 +12,6 @@ function App() {
             <Routes>
                 <Route 
                     path="/login" 
-                    title="Cluetact | Login"
                     element={
                         <PublicRoute>
                             <AuthForm type="login" />
@@ -22,7 +21,6 @@ function App() {
 
                 <Route 
                     path="/register" 
-                    title="Cluetact | Sign Up"
                     element={
                         <PublicRoute>
                             <AuthForm type="register" />

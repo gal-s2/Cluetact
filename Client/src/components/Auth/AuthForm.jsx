@@ -62,50 +62,52 @@ function AuthForm({ type }) {
 
     return (
         <div className={styles.authContainer}>
-            <img src={logo} alt="Cluetact Logo" className={styles.logo} />
-            <h2>{type === 'login' ? "Login" : "Register"}</h2>
-            <form onSubmit={handleSubmit} className={styles.authForm}>
-                {type === 'register' && (
-                <input 
-                    type="text" 
-                    placeholder="Username" 
-                    value={username} 
-                    onChange={(e) => setUsername(e.target.value)} 
-                    required 
-                />
-                )}
+            <div className={styles.content}>
+                <img src={logo} alt="Cluetact Logo" className={styles.logo} />
+                <h2>{type === 'login' ? "Login" : "Register"}</h2>
+                <form onSubmit={handleSubmit} className={styles.authForm}>
+                    {type === 'register' && (
+                    <input 
+                        type="text" 
+                        placeholder="Username" 
+                        value={username} 
+                        onChange={(e) => setUsername(e.target.value)} 
+                        required 
+                    />
+                    )}
 
-                <input 
-                    type="text" 
-                    placeholder="Email" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    className={errors.email ? styles.invalidInput : ""} 
-                    required 
-                />
+                    <input 
+                        type="text" 
+                        placeholder="Email" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        className={errors.email ? styles.invalidInput : ""} 
+                        required 
+                    />
 
-                {errors.email && <p className={styles.error}>{errors.email}</p>}
+                    {errors.email && <p className={styles.error}>{errors.email}</p>}
 
-                <input 
-                    type="password" 
-                    placeholder="Password" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    className={errors.password ? styles.invalidInput : ""}
-                    required 
-                />
-                
-                {errors.password && <p className={styles.error}>{errors.password}</p>}
-                {errors.server && <p className={styles.error}>{errors.server}</p>}
+                    <input 
+                        type="password" 
+                        placeholder="Password" 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        className={errors.password ? styles.invalidInput : ""}
+                        required 
+                    />
+                    
+                    {errors.password && <p className={styles.error}>{errors.password}</p>}
+                    {errors.server && <p className={styles.error}>{errors.server}</p>}
 
-                <button type="submit">{type === 'login' ? "Login" : "Sign Up"}</button>
-            </form>
-            <p>
-                {type === "login" ? "Don't have an account? " : "Already have an account? "}
-                <Link to={type === "login" ? "/register" : "/login"} className="toggle">
-                    {type === "login" ? "Sign up" : "Login"}
-                </Link>
-            </p>
+                    <button type="submit">{type === 'login' ? "Login" : "Sign Up"}</button>
+                </form>
+                <p>
+                    {type === "login" ? "Don't have an account? " : "Already have an account? "}
+                    <Link to={type === "login" ? "/register" : "/login"} className="toggle">
+                        {type === "login" ? "Sign up" : "Login"}
+                    </Link>
+                </p>
+            </div>
         </div>
     );
 }

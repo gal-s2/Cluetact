@@ -27,4 +27,14 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.post('/logout', async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(req.body.id, { online: false});
+        if (!user) return res.status(404).json({ error: "User not found" });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: "Server error" });
+    }
+})
+
 module.exports = router;

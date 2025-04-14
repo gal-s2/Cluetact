@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useUser } from '../UserContext';
@@ -25,22 +26,33 @@ function Lobby() {
         }
     }
 
-    const disconnect = () => {
-        console.log(socketRef.current);
+    const disconnect = async () => {
         if (socketRef.current) {
             socketRef.current.disconnect();
         }
 
         setUser(null);
-        navigate('/')
+        navigate('/');
+
+        console.log(user)
+
+        try {
+            const response = await axios.post("http://localhost:8000/auth/logout", { id: user._id });
+            console.log(response);
+        } catch (error) {
+            console.log('Error in disconnect');
+        }
     }
 
     return (
-        <>
-            <button className={styles.blue} onClick={findGame}>Find Game</button>
-            <button className={styles.green}>Join Room</button>
-            <button className={styles.red} onClick={disconnect}>Disconnect</button>
-        </>
+        <div className={styles.container}>
+            <h3>Hello, {user.username}</h3>
+            <div>
+                <button className={styles.blue} onClick={findGame}>Find Game</button>
+                <button className={styles.green}>Join Room</button>
+                <button className={styles.red} onClick={disconnect}>Disconnect</button>
+            </div>
+        </div>
     );
 }
 
