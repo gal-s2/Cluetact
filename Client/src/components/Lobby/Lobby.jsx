@@ -1,14 +1,17 @@
 import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useUser } from '../UserContext';
+import { useNavigate } from 'react-router-dom';
+import styles from './Lobby.module.css';
 
 function Lobby() {
     const socketRef = useRef(null);
-    const { user } = useUser();
+    const { user, setUser } = useUser();
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Create socket connection once
-        socketRef.current = io('http://localhost:8000'); // your server URL
+        socketRef.current = io('http://localhost:8000');
   
         return () => {
             // Clean up on unmount
@@ -22,10 +25,21 @@ function Lobby() {
         }
     }
 
+    const disconnect = () => {
+        console.log(socketRef.current);
+        if (socketRef.current) {
+            socketRef.current.disconnect();
+        }
+
+        setUser(null);
+        navigate('/')
+    }
+
     return (
         <>
-            <button onClick={findGame}>Find Game</button>
-            <button>Join Room</button>
+            <button className={styles.blue} onClick={findGame}>Find Game</button>
+            <button className={styles.green}>Join Room</button>
+            <button className={styles.red} onClick={disconnect}>Disconnect</button>
         </>
     );
 }

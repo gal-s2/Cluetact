@@ -1,19 +1,63 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import AuthForm from "./components/Auth/AuthForm";
-import NotFoundPage from "./components/NotFoundPage";
+import NotFoundPage from "./components/Routes/NotFoundPage";
 import GameRoom from "./components/Game/GameRoom";
 import Lobby from "./components/Lobby/Lobby";
+import PrivateRoute from "./components/Routes/PrivateRoute";
+import PublicRoute from "./components/Routes/PublicRoute";
 
 function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/login" element={<AuthForm type="login" />} />
-                <Route path="/register" element={<AuthForm type="register" />} />
-                <Route path="/" element={<Navigate to="/login" />} />
-                <Route path="/lobby" element={<Lobby />} />
-                <Route path="/game" element={<GameRoom /> } />
-                <Route path="*" element={<NotFoundPage />}/>
+                <Route 
+                    path="/login" 
+                    title="Cluetact | Login"
+                    element={
+                        <PublicRoute>
+                            <AuthForm type="login" />
+                        </PublicRoute>
+                    }
+                />
+
+                <Route 
+                    path="/register" 
+                    title="Cluetact | Sign Up"
+                    element={
+                        <PublicRoute>
+                            <AuthForm type="register" />
+                        </PublicRoute>        
+                    }
+
+                />
+
+                <Route 
+                    path="/" 
+                    element={<Navigate to="/login" />} 
+                />
+
+                <Route 
+                    path="/lobby" 
+                    element={
+                        <PrivateRoute>
+                            <Lobby />
+                        </PrivateRoute>
+                    } 
+                />
+
+                <Route 
+                    path="/game" 
+                    element={
+                        <PrivateRoute>
+                            <GameRoom /> 
+                        </PrivateRoute>
+                    } 
+                />
+
+                <Route 
+                    path="*" 
+                    element={<NotFoundPage />}
+                />
             </Routes>
         </Router>
     )
