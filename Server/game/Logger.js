@@ -39,49 +39,58 @@ class Logger {
     static logTimeUp(roomId) {
         console.log(`[Room ${roomId}]  Time's up! No one guessed the clue word.`);
     }
+
     static logClueNotAllowed(roomId) {
         console.log(`[Room ${roomId}]  Keeper cannot give clues.`);
     }
-    
+
     static logKeeperGuessedClue(roomId, keeperId) {
         console.log(`[Room ${roomId}]  Keeper ${keeperId} guessed the clue word.`);
     }
-    
+
     static logKeeperWordGuessAttempt(roomId, userId) {
         console.log(`[Room ${roomId}] ${userId} attempted to guess the keeper's word!`);
     }
-    
+
     static logInvalidKeeperWord(roomId, word) {
         console.log(`[Room ${roomId}] Keeper word "${word}" is invalid.`);
     }
+
     static logInvalidSeekerWord(roomId, word) {
         console.log(`[Room ${roomId}] Seeker word "${word}" is invalid.`);
     }
+
     static logCurrentKeeper(roomId, keeperName) {
         console.log(`\nCurrent keeper: ${keeperName}`);
     }
-    
+
     static logFinalScore(username, score) {
         console.log(` ${username}: ${score} pts`);
+    }
+
+    static logCorrectGuessNoReveal(roomId, username) {
+        console.log(`[Room ${roomId}] ${username} guessed correctly, but no letter was revealed.`);
     }
     
     static logManualTestComplete() {
         console.log(`Manual test complete.`);
     }
+
     static logCannotClueWithoutKeeperWord(roomId) {
         console.log(`[Room ${roomId}]  Cannot give clue — keeper hasn't set a word yet.`);
     }
 
     static logRoomCreated(roomId, players) {
-        console.log(`Room ${roomId} created with ${Object.values(players).join(', ')}`);
+        const formattedPlayers = Object.values(players).map(player =>
+            player.username
+        );
+        console.log(` Room ${roomId} created with: ${formattedPlayers.join(', ')}`);
     }
+
     static logClueWordAlreadyUsed(roomId, word) {
-        console.log(`[Room ${roomId}] ❌ Clue word "${word}" was already used in this session.`);
+        console.log(`[Room ${roomId}]  Clue word "${word}" was already used in this session.`);
     }
-    
-    
-    
-    
 }
 
 module.exports = Logger;
+

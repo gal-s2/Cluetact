@@ -1,11 +1,8 @@
-const mongoose = require('mongoose');
 const Room = require('./Room');
 const GameQueue = require('./GameQueue');
 const Logger = require('./Logger');
 
-
 class GameFactory {
-
     static roomId = 1;
 
     constructor() {
@@ -13,29 +10,41 @@ class GameFactory {
         this.gameQueue = new GameQueue();
     }
 
-    createRoom(status,keeperId,listOfSeekersIds,usernamesMap) {
-        const room = new Room(GameFactory.roomId,status,keeperId,listOfSeekersIds, usernamesMap);
-        this.rooms[GameFactory.currentId] = room;
-        Logger.logRoomCreated(this.roomId, this.rooms[this.currentId]);
-        GameFactory.currentId++;
-        
+    createRoom(status, keeperUsername, seekersUsernames) {
+        const room = new Room(
+            GameFactory.roomId,
+            status,
+            keeperUsername,
+            seekersUsernames
+        );
+
+        this.rooms[GameFactory.roomId] = room;
+        Logger.logRoomCreated(GameFactory.roomId, room.players);
+        GameFactory.roomId++;
 
         return room;
     }
 
-    addUserToQueue(userId) {
-        let ans = this.gameQueue.addUser(userId);
-        if (ans.roomCreationPossible === true) {
-            let keeperID = ans.chosenUsers[0];
-            let listOfSeekersIds = ans.chosenUsers.splice(1);
-            this.createRoom("Created",keeperID,listOfSeekersIds,usernamesMap);
+    async addUserToQueue(username) {
+        const result = this.gameQueue.addUser(username);
+    
+        if (result.roomCreationPossible) {
+            const keeperUsername = result.chosenUsers[0];
+            const seekersUsernames = result.chosenUsers.slice(1);
+    
+            const room = await this.createRoom("Created", keeperUsername, seekersUsernames);
+    
+            await room.runGame(require('prompt-sync')()); 
+            return room;
         }
+    
+        return null; 
     }
+    
 
     getRoom(roomId) {
         return this.rooms[roomId];
     }
-
 }
 
 module.exports = GameFactory;
