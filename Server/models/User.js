@@ -28,6 +28,11 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         required: false
     },
+    online: {
+        type: Boolean,
+        default: false,
+        required: true
+    }
     /*statistics: {
         gamesPlayed:         { type: Number, default: 0 },
         gamesWon:            { type: Number, default: 0 },

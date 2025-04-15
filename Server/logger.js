@@ -19,6 +19,18 @@ const requestLogger = winston.createLogger({
     ]
 });
 
+const socketLogger = winston.createLogger({
+    level: 'debug',
+    format: format.combine(
+        format.timestamp({ format: "DD-MM-YYYY HH:mm:ss.SSS" }),
+        logFormat
+    ),
+    transports: [
+      new transports.Console()
+    ]
+});
+
 module.exports = {
     requestLogger,
+    socketLogger
 }

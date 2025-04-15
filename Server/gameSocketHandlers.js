@@ -9,6 +9,10 @@ module.exports = function(io) {
   const game = new GameFactory();
 
   io.on('connection', (socket) => {
+    socket.onAny((event, ...args) => {
+      socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);
+    });
+
     console.log('Client connected:', socket.id);
 
     socket.on('joinRoom', async ({ username }) => {
