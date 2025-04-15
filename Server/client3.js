@@ -2,15 +2,13 @@ const io = require('socket.io-client');
 const prompt = require("prompt-sync")();
 const socket = io('http://localhost:8000'); 
 
-const userId = 'u3';
-const username = 'Charlie';
+const username = 'Charlie22'; 
 
 socket.on('connect', async () => {
-    console.log('you connected to the server');
-    socket.emit('join_game', { userId, username });
-  });
-
-socket.on('disconnect', async () => {
-  console.log('you disconnected from server');
+    console.log('You connected to the server');
+    socket.emit('joinRoom', { username });
 });
 
+socket.on('disconnect', async () => {
+    console.log('You disconnected from server');
+});

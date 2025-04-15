@@ -11,18 +11,19 @@ class GameQueue {
 
     // return value: [boolean,arr] where boolean is true if there are enough users to start a room
     // arr is the id's of these users (only appear if true)
-    addUser(id) {
+    addUser(username) {
         let roomCreationPossible = false;
         let chosenUsers = [];
-
-        this.awaitingUsers.push(id);
-        if (this.awaitingUsers.length >= GameQueue.minUsersInRoom)  {
+    
+        this.awaitingUsers.push(username);
+        if (this.awaitingUsers.length >= GameQueue.minUsersInRoom) {
             roomCreationPossible = true;
-            chosenUsers = this.awaitingUsers.splice(0,3);
+            chosenUsers = this.awaitingUsers.splice(0, 3);
         }
-
-        return {roomCreationPossible,chosenUsers};
+    
+        return { roomCreationPossible, chosenUsers };
     }
+    
 
     }
 

@@ -1,12 +1,9 @@
 class Player {
-
-    constructor(userId, username) {
-        this.userId = userId;
+    constructor(username) {
         this.username = username;
         this.gameScore = 0;
-        this.role = null; 
+        this.role = null;
         this.isReady = false;
-       
     }
 
     setRole(role) {
@@ -14,15 +11,12 @@ class Player {
     }
 
     markReady(isReady) {
-        this.isReady = true;
+        this.isReady = isReady;
     }
 
     addScore(points) {
         this.gameScore += points;
     }
-    
-
-
 }
 
 module.exports = Player;
