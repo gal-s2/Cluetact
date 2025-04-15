@@ -34,7 +34,7 @@ class GameFactory {
     
             const room = await this.createRoom("Created", keeperUsername, seekersUsernames);
     
-            await room.runGame(require('prompt-sync')()); 
+            //await room.runGame(require('prompt-sync')()); 
             return room;
         }
     

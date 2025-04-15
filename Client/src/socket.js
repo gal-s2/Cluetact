@@ -7,4 +7,8 @@ socket.onAny((event, ...args) => {
   console.log(`[Client] Received event: ${event} | Data:`, args);
 });
 
+socket.on('welcome', (data) => {
+  console.log('Received welcome:', data.message);
+});
+
 export default socket;
