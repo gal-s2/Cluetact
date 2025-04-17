@@ -1,40 +1,32 @@
 import axios from "axios";
-import { useEffect, useRef } from 'react';
-import { io } from 'socket.io-client';
+import { useEffect } from 'react';
 import { useUser } from '../UserContext';
 import { useNavigate } from 'react-router-dom';
+import socket from '../../socket';
 import styles from './Lobby.module.css';
 
 function Lobby() {
-    const socketRef = useRef(null);
     const { user, setUser } = useUser();
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Create socket connection once
-        socketRef.current = io('http://localhost:8000');
-  
-        return () => {
-            // Clean up on unmount
-            socketRef.current.disconnect();
-        };
+        console.log(socket);
     }, []);
 
     const findGame = () => {
-        if (socketRef.current) {
-            socketRef.current.emit('join_game', { userId: user._id, username: user.username });
+        if (socket) {
+            console.log(socket)
+            socket.emit('join_game', { userId: user._id, username: user.username });
         }
     }
 
     const disconnect = async () => {
-        if (socketRef.current) {
-            socketRef.current.disconnect();
+        if (socket.current) {
+            socket.current.disconnect();
         }
 
         setUser(null);
         navigate('/');
-
-        console.log(user)
 
         try {
             const response = await axios.post("http://localhost:8000/auth/logout", { id: user._id });

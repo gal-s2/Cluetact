@@ -23,4 +23,3 @@ module.exports = function(io) {
     socket.on('disconnect', (args) => disconnect(socket, args, { socketUsernameMap, usernameSocketMap }));
   });
 };
-
