@@ -44,7 +44,7 @@ function App() {
                 />
 
                 <Route 
-                    path="/game" 
+                    path="/game/:roomId" 
                     element={
                         <PrivateRoute>
                             <GameRoom /> 

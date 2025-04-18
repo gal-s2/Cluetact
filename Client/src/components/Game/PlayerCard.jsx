@@ -6,6 +6,7 @@ const PlayerCard = ({ player, position }) => {
             <div className={styles.inner}>
             <h3>{player.name}</h3>
             <p>{player.score} pts</p>
+            <p>{player.role}</p>
             </div>
         </div> 
     );

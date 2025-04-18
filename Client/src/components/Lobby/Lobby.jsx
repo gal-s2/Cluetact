@@ -9,22 +9,22 @@ function Lobby() {
     const { user, setUser } = useUser();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        console.log(socket);
+    useEffect(() => {    
+        socket.on('new_room', (data) => {
+            if (data.roomId) navigate(`/game/${data.roomId}`);
+        });
+
+        return () => {
+            socket.off('new_room');
+        }
     }, []);
 
     const findGame = () => {
-        if (socket) {
-            console.log(socket)
-            socket.emit('join_game', { userId: user._id, username: user.username });
-        }
+        socket?.emit('find_game', { userId: user._id, username: user.username });
     }
 
     const disconnect = async () => {
-        if (socket.current) {
-            socket.current.disconnect();
-        }
-
+        socket?.disconnect();
         setUser(null);
         navigate('/');
 
@@ -41,7 +41,7 @@ function Lobby() {
             <h3>Hello, {user.username}</h3>
             <div>
                 <button className={styles.blue} onClick={findGame}>Find Game</button>
-                <button className={styles.green}>Join Room</button>
+                <button className={styles.green} disabled>Join Room</button>
                 <button className={styles.red} onClick={disconnect}>Disconnect</button>
             </div>
         </div>

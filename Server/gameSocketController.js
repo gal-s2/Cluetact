@@ -1,9 +1,10 @@
-const handleJoinGame = async (socket, args, { game, socketUsernameMap, usernameSocketMap }) => {
+// Handle join queue logic.
+// If a room was creted, new_room is being sent to players in room.
+const handleJoinQueue = async (socket, args, { game, socketUsernameMap, usernameSocketMap }) => {
     const { username } = args;
   
     socketUsernameMap.set(socket.id, username);
     usernameSocketMap.set(username, socket);
-    console.log('Mapped socket to username:', username, socket.id);
   
     const room = await game.addUserToQueue(username);
   
@@ -21,15 +22,12 @@ const handleJoinGame = async (socket, args, { game, socketUsernameMap, usernameS
         
                 console.log(`→ Emitting 'welcome' to ${player.username} (${playerSocket.id})`);
 
-                playerSocket.emit('welcome', {
-                    message: ''
-                });
-                
-                console.log('here4');
+                playerSocket.emit('new_room', {
+                    roomId: room.roomId,
+                    players: room.players
+                });                
             }
         });
-
-
     
         // Ask keeper for a word
         /*const keeper = room.players[room.keeperUsername];
@@ -40,6 +38,21 @@ const handleJoinGame = async (socket, args, { game, socketUsernameMap, usernameS
             });
         }*/
     }
+};
+
+const handleJoinRoom = async (socket, args, { game, socketUsernameMap, usernameSocketMap}) => {
+    // find the user id of this player
+    // find the room id hes in
+    // send room data to user
+
+    //let username = socketUsernameMap[socket.id];
+    //console.log(username);
+
+    //const roomId = game.getRoomByUserId(userId);
+    //if (roomId) {
+    //    console.log('roomId', roomId)
+    //}
+    //console.log('join room');
 };
 
 const handleKeeperWordSubmission = async (socket, data, { socketUsernameMap, findRoomByUsername }) => {
@@ -74,7 +87,8 @@ const disconnect = (socket, data, { socketUsernameMap, usernameSocketMap }) => {
 };
 
 module.exports = { 
-    handleJoinGame,
+    handleJoinQueue,
+    handleJoinRoom,
     handleKeeperWordSubmission,
     disconnect
 };

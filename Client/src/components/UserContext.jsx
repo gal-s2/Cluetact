@@ -9,21 +9,25 @@ export const UserProvider = ({ children }) => {
 
     // Load user from localStorage on first render
     useEffect(() => {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        setUserState(JSON.parse(storedUser));
-      }
-      setLoading(false);
+        const token = localStorage.getItem('token');  
+        const storedUser = localStorage.getItem('user');
+        if (storedUser && token) {
+            setUserState(JSON.parse(storedUser));
+        }
+        setLoading(false);
     }, []);
   
     // Wrap setUser to also store in localStorage
     const setUser = (userData) => {
-      if (userData) {
-        localStorage.setItem('user', JSON.stringify(userData));
-      } else {
-        localStorage.removeItem('user');
-      }
-      setUserState(userData);
+        console.log('in setUser', userData);
+        if (userData) {
+            localStorage.setItem('token', userData.token);
+            localStorage.setItem('user', JSON.stringify(userData.user));
+        } else {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+        }
+        setUserState(userData.user);
     };  
 
   return (

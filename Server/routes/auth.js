@@ -1,6 +1,6 @@
 const router = require('express').Router();
-
 const User = require('../models/User');
+const { generateToken } = require('../auth');
 
 router.post('/register', async (req, res) => {
     console.log('in register', req.body);
@@ -9,7 +9,8 @@ router.post('/register', async (req, res) => {
 
     try {
         const user = await User.register(userData);
-        res.status(200).json({ user });
+        const token = generateToken(user);
+        res.status(200).json({ user, token });
     } catch (err) {
         console.log(err.message);
         res.status(401).json({ error: err.message });
@@ -21,7 +22,8 @@ router.post('/login', async (req, res) => {
 
     try {
         const user = await User.login(email, password);
-        res.status(200).json({ user });
+        const token = generateToken(user);
+        res.status(200).json({ user, token });
     } catch (err) {
         res.status(401).json({ error: err.message });
     }

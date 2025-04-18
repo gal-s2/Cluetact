@@ -2,25 +2,31 @@ const Room = require('./Room');
 const GameQueue = require('./GameQueue');
 const Logger = require('./Logger');
 
-class GameFactory {
+class GameManager {
     static roomId = 1;
 
     constructor() {
         this.rooms = {};
+        this.userToRoom = new Map();
         this.gameQueue = new GameQueue();
     }
 
     createRoom(status, keeperUsername, seekersUsernames) {
         const room = new Room(
-            GameFactory.roomId,
+            GameManager.roomId,
             status,
             keeperUsername,
             seekersUsernames
         );
 
-        this.rooms[GameFactory.roomId] = room;
-        Logger.logRoomCreated(GameFactory.roomId, room.players);
-        GameFactory.roomId++;
+        this.rooms[GameManager.roomId] = room;
+        Logger.logRoomCreated(GameManager.roomId, room.players);
+        GameManager.roomId++;
+
+        Object.keys(room.players).forEach(player => {
+            console.log(player);
+            this.userToRoom.set(player.id, room.roomId);
+        });
 
         return room;
     }
@@ -41,10 +47,13 @@ class GameFactory {
         return null; 
     }
     
-
     getRoom(roomId) {
         return this.rooms[roomId];
     }
+
+    getRoomByUserId(userId) {
+        return this.userToRoom.get(userId);
+    }
 }
 
-module.exports = GameFactory;
+module.exports = GameManager;

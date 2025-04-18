@@ -47,9 +47,10 @@ function AuthForm({ type }) {
 
         try {
             const response = await axios.post(url, { email, password, username });
+            console.log(response);
 
             if (response.status === 200) {
-                setUser(response.data.user); 
+                setUser(response.data); 
                 navigate('/lobby');
             } else {
                 alert(`${type === 'login' ? 'Login' : 'Registration'} failed`);
