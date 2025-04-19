@@ -23,3 +23,5 @@ Cluetact is a fast-paced, real-time multiplayer word game where players race to 
 ## 📦 Installation
 
 - TBD
+
+© 2025 Cluetact — built with love as part of a college project. Please don’t reuse the name or logo without asking. 
