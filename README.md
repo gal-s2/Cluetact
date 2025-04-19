@@ -24,5 +24,4 @@ Cluetact is a fast-paced, real-time multiplayer word game where players race to 
 
 - TBD
 
-© 2025 Cluetact — built with love as part of a college project. Please don’t reuse the name or logo without asking.  
-This project is open source under the MIT license.
+© 2025 Cluetact — built with love as part of a college project. Please don’t reuse the name or logo without asking. 
