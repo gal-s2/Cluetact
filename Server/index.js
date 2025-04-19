@@ -1,8 +1,8 @@
 const express = require('express');
 
 //test words api
-const { getNounsByMeaning,getNounsByPrefix,testWordUtils } = require('./game/wordUtils');
-testWordUtils();
+//const { getNounsByMeaning,getNounsByPrefix,testWordUtils } = require('./game/wordUtils');
+//testWordUtils();
 
 
 // Import enviroment variables file

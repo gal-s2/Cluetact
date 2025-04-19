@@ -6,8 +6,6 @@ const socket = io("http://localhost:8000", {
     }
 });
 
-console.log(socket);
-
 // Log everything received from server
 socket.onAny((event, ...args) => {
   console.log(`[Client] Received event: ${event} | Data:`, args);

@@ -1,7 +1,6 @@
 // Handle join queue logic.
 // If a room was creted, new_room is being sent to players in room.
 
-
 const handleJoinQueue = async (socket, args, { game, socketUsernameMap, usernameSocketMap }) => {
     const { username } = args;
   
@@ -43,29 +42,23 @@ const handleJoinQueue = async (socket, args, { game, socketUsernameMap, username
 };
 
 const handleJoinRoom = async (socket, args, { game, socketUsernameMap, usernameSocketMap}) => {
-    // find the user id of this player
-    // find the room id hes in
-    // send room data to user
-
     const username = socket.user.username;
     const roomId = game.getRoomByUsername(username);
     const room = game.getRoom(roomId);
-    console.log("roomid",roomId);
-    console.log("room",room);
-    console.log("Sockets map: " + usernameSocketMap);
-    console.log("room.players:", room?.players);
-
 
     socket.emit('game_start', { room });
 
     for (const player of Object.values(room.players)) {
         if (player.role === 'keeper') {
-            console.log(`👑 Keeper found! It's ${player.username}`);
             usernameSocketMap.get(player.username).emit('request_keeper_word', {
-                message: `${player.username}, please enter your secret English word:`
-                });
+                message: `${player.username}, please enter your secret English word:`,
+                isKeeper: true
+            });
         } else {
-            console.log(`🕵️ Seeker found! It's ${player.username}`);
+            usernameSocketMap.get(player.username).emit('request_keeper_word', {
+                message: `keeper is choosing a word`,
+                isKeeper: false
+            });
         }
     }
 };
@@ -80,16 +73,18 @@ const handleKeeperWordSubmission = async (socket, data, { socketUsernameMap, fin
   
     if (valid) {
       socket.emit('log_message', {
+        success: true,
         message: 'Your word was accepted!'
       });
       // Continue game logic if needed here
     } else {
       socket.emit('log_message', {
+        success: false,
         message: 'Invalid word. Please enter a valid English word.'
       });
-      socket.emit('request_keeper_word', {
-        message: 'Please try again:'
-      });
+      //socket.emit('request_keeper_word', {
+      //  message: 'Please try again:'
+      //});
     }
 };
 

@@ -7,15 +7,16 @@ import PlayerCard from './PlayerCard';
 import Spinner from '../Routes/Spinner';
 
 import styles from './GameRoom.module.css';
+import KeeperWordPopup from './KeeperWordPopup';
 
 function GameRoom() {
+    const { roomId } = useParams(); 
+
     const [ players, setPlayers ] = useState();
     const [ loading, setLoading ] = useState(true);
-    const { roomId } = useParams(); 
-    const [isKeeper, setIsKeeper] = useState(false);
-  const [keeperWord, setKeeperWord] = useState('');
-  const [logMessage, setLogMessage] = useState('');
-
+    const [ isKeeper, setIsKeeper ] = useState(false);
+    const [ keeperWord, setKeeperWord ] = useState('');
+    const [ logMessage, setLogMessage ] = useState('');
 
     // were currently using ref here becuase of react strict mode
     // which will call useEffect twice
@@ -35,19 +36,19 @@ function GameRoom() {
         });
 
         socket.on('request_keeper_word', (data) => {
-          console.log('request_keeper_word', data);
-          setIsKeeper(true);
-          setLogMessage(data.message || '');
+            setIsKeeper(data.isKeeper);
+            setLogMessage(data.message || '');
         });
 
         socket.on('log_message', (data) => {
-          console.log('log_message', data);
-          setLogMessage(data.message);
+            console.log('log_message', data);
+            setLogMessage(data.message);
         
-          if (data.message === 'Your word was accepted!') {
-            setIsKeeper(false);
-            setKeeperWord('');
-          }
+            if (data.success) {
+                setIsKeeper(false);
+                setKeeperWord('');
+                setLogMessage('');
+            }
         });
         
 
@@ -64,37 +65,21 @@ function GameRoom() {
 
     return (
         <div className={styles.room}>
-          <div className={styles.wordDisplay}>
-            <WordDisplay word={""} length={0} />
-          </div>
+            <div className={styles.wordDisplay}>
+                <WordDisplay word={""} length={0} />
+            </div>
           
-          {isKeeper && (
-  <div className={styles.keeperPopup}>
-    <p>{logMessage}</p>
-    <input
-      type="text"
-      value={keeperWord}
-      onChange={(e) => setKeeperWord(e.target.value)}
-      placeholder="Enter your secret word"
-    />
-    <button
-      onClick={() => {
-        socket.emit('keeper_word_submission', { word: keeperWord });
-      }}
-      disabled={keeperWord.trim() === ''}
-    >
-      Submit
-    </button>
-  </div>
-)}
+            {isKeeper && <KeeperWordPopup 
+                keeperWord={keeperWord}
+                setKeeperWord={setKeeperWord}
+                logMessage={logMessage}
+            />}
 
-
-      
-          <div className={styles.table}>
-            {Object.values(players).map((player, index) => (
-              <PlayerCard key={player.username} player={player} position={index} />
-            ))}
-          </div>
+            <div className={styles.table}>
+                {Object.values(players).map((player, index) => (
+                    <PlayerCard key={player.username} player={player} position={index} />
+                ))}
+            </div>
         </div>
     );
 };
