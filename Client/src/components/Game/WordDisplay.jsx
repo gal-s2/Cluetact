@@ -1,17 +1,11 @@
-import styles from './WordDisplay.module.css';
+import styles from "./WordDisplay.module.css";
 
 function WordDisplay({ word, length }) {
-    let currentDisplay = word;
-
-    for (let i = word.length; i < length; i++) {
-        currentDisplay += '_';
-    }
+    const currentDisplay = word ? word : "_ ".repeat(length).trim();
 
     return (
         <div className={styles.wrapper}>
-            <b className={styles.word}>
-                { currentDisplay }
-            </b>
+            <b className={styles.word}>{currentDisplay}</b>
         </div>
     );
 }

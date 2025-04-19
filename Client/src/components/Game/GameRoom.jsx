@@ -18,6 +18,10 @@ function GameRoom() {
     const [keeperWord, setKeeperWord] = useState("");
     const [logMessage, setLogMessage] = useState("");
 
+    // Word data for word component
+    const [revealedWord, setRevealedWord] = useState("");
+    const [wordLength, setWordLength] = useState(0);
+
     // were currently using ref here becuase of react strict mode
     // which will call useEffect twice
     // and therefore will send join room to server twice
@@ -40,13 +44,13 @@ function GameRoom() {
             setLogMessage(data.message || "");
         });
 
-        socket.on("log_message", (data) => {
-            console.log("log_message", data);
+        socket.on("keeper_word_chosen", (data) => {
             setLogMessage(data.message);
 
             if (data.success) {
                 setIsKeeper(false);
                 setKeeperWord("");
+                setWordLength(data.length);
                 setLogMessage("");
             }
         });
@@ -56,7 +60,7 @@ function GameRoom() {
             //every function that we want to run only ONCE - has to be added below
             socket.off("game_start");
             socket.off("request_keeper_word");
-            socket.off("log_message");
+            socket.off("keeper_word_chosen");
         };
     }, [roomId]);
 
@@ -65,7 +69,7 @@ function GameRoom() {
     return (
         <div className={styles.room}>
             <div className={styles.wordDisplay}>
-                <WordDisplay word={""} length={0} />
+                <WordDisplay word={revealedWord} length={wordLength} />
             </div>
 
             {isKeeper && (
@@ -88,7 +92,5 @@ function GameRoom() {
         </div>
     );
 }
-/*
 
-*/
 export default GameRoom;

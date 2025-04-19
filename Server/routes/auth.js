@@ -1,22 +1,22 @@
-const router = require('express').Router();
-const User = require('../models/User');
-const { generateToken } = require('../auth');
+const router = require("express").Router();
+const User = require("../models/User");
+const { generateToken } = require("../utils/jwt");
 
-router.post('/guest', (req, res) => {
+router.post("/guest", (req, res) => {
     try {
         const user = {
             username: `Guest_1`,
-            _id: 1
-        }
+            _id: 1,
+        };
         const token = generateToken(user);
         res.status(200).json({ user, token });
     } catch (err) {
         console.log(err.message);
         res.status(401).json({ error: err.message });
     }
-})
+});
 
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
     const userData = req.body;
 
     try {
@@ -29,7 +29,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -41,14 +41,16 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/logout', async (req, res) => {
+router.post("/logout", async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.body.id, { online: false});
+        const user = await User.findByIdAndUpdate(req.body.id, {
+            online: false,
+        });
         if (!user) return res.status(404).json({ error: "User not found" });
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: "Server error" });
     }
-})
+});
 
 module.exports = router;
