@@ -11,7 +11,7 @@
     box-sizing: border-box;
     overflow-x: hidden; /* Prevent horizontal scroll */
 }
-  
+
 .wordDisplay {
     margin-bottom: 2rem;
     background-color: #fff3e0; /* soft orange bg */
@@ -22,66 +22,79 @@
     font-weight: 600;
     color: #fb8c00;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     width: 100%;
     max-width: 1000px;
 }
-  
+
 .table {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 2rem;
     width: 100%;
-    max-width: 1600px;  /* Increased max-width */
+    max-width: 1600px; /* Increased max-width */
     box-sizing: border-box;
     padding: 1rem;
 }
 
 .keeperPopup {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: linear-gradient(145deg, #00d4ff, #3cff88);
-    border: 4px solid #ffffff;
+    background-color: #ffffff;
+    border: 2px solid #ffd180;
     border-radius: 20px;
-    padding: 30px;
-    z-index: 999;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 400px;
     text-align: center;
-    max-width: 90%;
-  }
-  
-  .keeperPopup p {
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 15px;
-  }
-  
-  .keeperPopup input {
-    padding: 10px 15px;
-    font-size: 16px;
-    border-radius: 10px;
-    border: none;
-    margin-bottom: 15px;
+    z-index: 1000;
+}
+
+.keeperPopup p {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.keeperPopup input {
     width: 100%;
-    outline: none;
-  }
-  
-  .keeperPopup button {
-    background-color: #ffcb05;
-    color: #1e1e1e;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
     border-radius: 10px;
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+}
+
+.keeperPopup button {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 12px;
+    background-color: #81c784;
+    color: white;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .keeperPopup button:hover {
-    background-color: #ffe066;
-  }
-  
+    transition: background-color 0.3s ease;
+}
+
+.keeperPopup button:disabled {
+    background-color: #c8e6c9;
+    cursor: not-allowed;
+}
+
+.keeperPopup button:hover:enabled {
+    background-color: #66bb6a;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+}
