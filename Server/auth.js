@@ -5,7 +5,7 @@ function generateToken(user) {
     return jwt.sign({ 
         userId: user._id,
         username: user.username
-    }, JWT_SECRET, { expiresIn: '1h' });
+    }, JWT_SECRET);
 }
 
 function verifyToken(token) {

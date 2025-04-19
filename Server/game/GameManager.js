@@ -7,7 +7,7 @@ class GameManager {
 
     constructor() {
         this.rooms = {};
-        this.userToRoom = new Map();
+        this.playerToRoom = new Map();
         this.gameQueue = new GameQueue();
     }
 
@@ -24,8 +24,8 @@ class GameManager {
         GameManager.roomId++;
 
         Object.keys(room.players).forEach(player => {
-            console.log(player);
-            this.userToRoom.set(player.id, room.roomId);
+            console.log('player', player);
+            this.playerToRoom.set(player, room.roomId);
         });
 
         return room;
@@ -51,8 +51,10 @@ class GameManager {
         return this.rooms[roomId];
     }
 
-    getRoomByUserId(userId) {
-        return this.userToRoom.get(userId);
+    getRoomByUsername(username) {
+        console.log('map:', this.playerToRoom)
+        console.log(username)
+        return this.playerToRoom.get(username);
     }
 }
 

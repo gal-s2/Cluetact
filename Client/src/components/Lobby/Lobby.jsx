@@ -20,11 +20,12 @@ function Lobby() {
     }, []);
 
     const findGame = () => {
-        socket?.emit('find_game', { userId: user._id, username: user.username });
+        console.log(socket);
+        socket.emit('find_game', { userId: user._id, username: user.username });
     }
 
     const disconnect = async () => {
-        socket?.disconnect();
+        socket.disconnect();
         setUser(null);
         navigate('/');
 

@@ -45,14 +45,11 @@ const handleJoinRoom = async (socket, args, { game, socketUsernameMap, usernameS
     // find the room id hes in
     // send room data to user
 
-    //let username = socketUsernameMap[socket.id];
-    //console.log(username);
+    const username = socket.user.username;
+    const roomId = game.getRoomByUsername(username);
+    const room = game.getRoom(roomId);
 
-    //const roomId = game.getRoomByUserId(userId);
-    //if (roomId) {
-    //    console.log('roomId', roomId)
-    //}
-    //console.log('join room');
+    socket.emit('game_start', { room });
 };
 
 const handleKeeperWordSubmission = async (socket, data, { socketUsernameMap, findRoomByUsername }) => {

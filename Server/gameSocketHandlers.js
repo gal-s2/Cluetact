@@ -2,7 +2,6 @@
 const GameManager = require('./game/GameManager');
 const { socketLogger } = require("./logger");
 const { verifyToken } = require('./auth');
-
 const { handleJoinQueue, handleJoinRoom, disconnect } = require('./gameSocketController');
 
 const socketUsernameMap = new Map(); // socket.id → username
@@ -15,7 +14,7 @@ module.exports = function(io) {
     // checks if jwt is valid
     io.use((socket, next) => {
         const token = socket.handshake.auth.token;
-        try {
+        try { 
             const decoded = verifyToken(token);
             socket.user = decoded; // { userId, username }
             next();

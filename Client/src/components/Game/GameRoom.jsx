@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import socket from '../../socket';
 import WordDisplay from './WordDisplay';
@@ -13,15 +13,25 @@ function GameRoom() {
     const [ loading, setLoading ] = useState(true);
     const { roomId } = useParams(); 
 
-    useEffect(() => { // send to server that player joined the room in client
-        socket.emit('join_room', { roomId });
+    // were currently using ref here becuase of react strict mode
+    // which will call useEffect twice
+    // and therefore will send join room to server twice
+    const hasJoinedRef = useRef(false); 
+
+    useEffect(() => {
+        if (!hasJoinedRef.current) {
+            socket.emit('join_room', { roomId });
+            hasJoinedRef.current = true;
+        }
 
         socket.on('game_start', (data) => {
             setLoading(false);
-            setPlayers(data.players);
+            console.log('data', data.room);
+            setPlayers(data.room.players);
         });
-    
+
         return () => {
+            console.log('Cleaning up game_start listener');
             socket.off('game_start');
         };
     }, [roomId]);
@@ -30,16 +40,19 @@ function GameRoom() {
 
     return (
         <div className={styles.room}>
+          <div className={styles.wordDisplay}>
             <WordDisplay word={""} length={0} />
-            <Table>
-                
-            </Table>
+          </div>
+      
+          <div className={styles.table}>
+            {Object.values(players).map((player, index) => (
+              <PlayerCard key={player.username} player={player} position={index} />
+            ))}
+          </div>
         </div>
-    )
+    );
 };
 /*
-{players.map((player, index) => {
-                    <PlayerCard key={player.id} player={player} position={index} />
-                })}
+
 */
 export default GameRoom;

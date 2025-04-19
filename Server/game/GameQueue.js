@@ -1,5 +1,4 @@
 class GameQueue {
-
     static minUsersInRoom = 3;
     static userInstance = null;
 
@@ -23,12 +22,6 @@ class GameQueue {
     
         return { roomCreationPossible, chosenUsers };
     }
-    
+}
 
-    }
-
-    module.exports = GameQueue;
-    
-
-
-
+module.exports = GameQueue;
