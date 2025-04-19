@@ -2,7 +2,7 @@
 const GameManager = require('./game/GameManager');
 const { socketLogger } = require("./logger");
 const { verifyToken } = require('./auth');
-const { handleJoinQueue, handleJoinRoom, disconnect } = require('./gameSocketController');
+const { handleJoinQueue, handleJoinRoom, handleKeeperWordSubmission, disconnect } = require('./gameSocketController');
 
 const socketUsernameMap = new Map(); // socket.id → username
 const usernameSocketMap = new Map(); // username → socket
@@ -34,7 +34,19 @@ module.exports = function(io) {
 
         socket.on('find_game', (args) => handleJoinQueue(socket, args, { game, socketUsernameMap, usernameSocketMap }));
         socket.on('join_room', (args) => handleJoinRoom(socket, args, { game, socketUsernameMap, usernameSocketMap }));
-        socket.on('keeper_word_submission', (args) => handleKeeperWordSubmission(socket, args, { socketUsernameMap, findRoomByUsername }));
+        //socket.on('keeper_word_submission', (args) => handleKeeperWordSubmission(socket, args, { socketUsernameMap, findRoomByUsername }));
+        //consider if bring back the above line
+        socket.on('keeper_word_submission', (data) => {
+            handleKeeperWordSubmission(socket, data, {
+                socketUsernameMap,
+                findRoomByUsername: (username) => {
+                    const roomId = game.getRoomByUsername(username);
+                    return game.getRoom(roomId);
+                }
+            });
+        });
         socket.on('disconnect', (args) => disconnect(socket, args, { socketUsernameMap, usernameSocketMap }));
+        
+        
     });
 };

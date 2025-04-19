@@ -26,7 +26,7 @@ class Room {
         // יצירת ה-Seekers
         seekersUsernames.forEach((username) => {
             const seeker = new Player(username);
-            seeker.setRole('seeker');
+            seeker.setRole('keeper'); //hardcoded - need to change back to seeker
             this.players[username] = seeker;
         });
 

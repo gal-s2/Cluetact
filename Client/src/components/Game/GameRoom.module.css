@@ -36,3 +36,52 @@
     box-sizing: border-box;
     padding: 1rem;
 }
+
+.keeperPopup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(145deg, #00d4ff, #3cff88);
+    border: 4px solid #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    z-index: 999;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 90%;
+  }
+  
+  .keeperPopup p {
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+  .keeperPopup input {
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 15px;
+    width: 100%;
+    outline: none;
+  }
+  
+  .keeperPopup button {
+    background-color: #ffcb05;
+    color: #1e1e1e;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .keeperPopup button:hover {
+    background-color: #ffe066;
+  }
+  

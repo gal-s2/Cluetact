@@ -1,5 +1,7 @@
 // Handle join queue logic.
 // If a room was creted, new_room is being sent to players in room.
+
+
 const handleJoinQueue = async (socket, args, { game, socketUsernameMap, usernameSocketMap }) => {
     const { username } = args;
   
@@ -48,8 +50,24 @@ const handleJoinRoom = async (socket, args, { game, socketUsernameMap, usernameS
     const username = socket.user.username;
     const roomId = game.getRoomByUsername(username);
     const room = game.getRoom(roomId);
+    console.log("roomid",roomId);
+    console.log("room",room);
+    console.log("Sockets map: " + usernameSocketMap);
+    console.log("room.players:", room?.players);
+
 
     socket.emit('game_start', { room });
+
+    for (const player of Object.values(room.players)) {
+        if (player.role === 'keeper') {
+            console.log(`👑 Keeper found! It's ${player.username}`);
+            usernameSocketMap.get(player.username).emit('request_keeper_word', {
+                message: `${player.username}, please enter your secret English word:`
+                });
+        } else {
+            console.log(`🕵️ Seeker found! It's ${player.username}`);
+        }
+    }
 };
 
 const handleKeeperWordSubmission = async (socket, data, { socketUsernameMap, findRoomByUsername }) => {
