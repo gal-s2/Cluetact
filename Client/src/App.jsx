@@ -5,6 +5,7 @@ import GameRoom from "./components/Game/GameRoom";
 import Lobby from "./components/Lobby/Lobby";
 import PrivateRoute from "./components/Routes/PrivateRoute";
 import PublicRoute from "./components/Routes/PublicRoute";
+import WelcomePage from "./components/Welcome/WelcomePage";
 
 function App() {
     return (
@@ -31,7 +32,11 @@ function App() {
 
                 <Route 
                     path="/" 
-                    element={<Navigate to="/login" />} 
+                    element={
+                        <PublicRoute>
+                            <WelcomePage />
+                        </PublicRoute>
+                    } 
                 />
 
                 <Route 

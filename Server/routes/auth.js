@@ -2,9 +2,21 @@ const router = require('express').Router();
 const User = require('../models/User');
 const { generateToken } = require('../auth');
 
-router.post('/register', async (req, res) => {
-    console.log('in register', req.body);
+router.post('/guest', (req, res) => {
+    try {
+        const user = {
+            username: `Guest_1`,
+            _id: 1
+        }
+        const token = generateToken(user);
+        res.status(200).json({ user, token });
+    } catch (err) {
+        console.log(err.message);
+        res.status(401).json({ error: err.message });
+    }
+})
 
+router.post('/register', async (req, res) => {
     const userData = req.body;
 
     try {
