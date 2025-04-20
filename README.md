@@ -4,6 +4,9 @@
 
 Cluetact is a fast-paced, real-time multiplayer word game where players race to solve clues before their opponents. Built with React, Node.js, and Socket.IO, it's designed to be competitive, fun, and responsive on both desktop and mobile.
 
+## Status
+⚠️ Work in progress 
+
 ## 🚀 Features
 
 - Real-time multiplayer gameplay
