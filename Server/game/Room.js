@@ -2,6 +2,7 @@ const Player = require("./Player");
 const GameSession = require("./GameSession");
 const isValidEnglishWord = require("./validateWord");
 const Logger = require("./Logger");
+const User = require("../models/User");
 
 const MAX_RACE_TIME = 10000;
 const BASE_POINTS = 15;
@@ -327,10 +328,12 @@ class Room {
         return this.pastKeepers.size >= Object.keys(this.players).length;
     }
 
-    endGame() {
+    async endGame() {
         this.status = "ended";
 
         let maxScore = -Infinity;
+
+        // can be multiple winners
         let winners = [];
 
         for (const player of Object.values(this.players)) {
@@ -346,6 +349,40 @@ class Room {
             this.roomId,
             winners.map((p) => p.username)
         );
+
+        // map on usernames of the winners
+        const winnerUsernames = new Set(winners.map((p) => p.username));
+
+        // update the mongo
+        for (const player of Object.values(this.players)) {
+            try {
+                const isWinner = winnerUsernames.has(player.username);
+                const increment = {
+                    "statistics.totalGames": 1,
+                    [`statistics.${isWinner ? "Wins" : "Losses"}`]: 1,
+                };
+
+                const user = await User.findOneAndUpdate(
+                    { username: player.username },
+                    { $inc: increment },
+                    { new: true }
+                );
+
+                if (user) {
+                    const { Wins, totalGames } = user.statistics;
+                    const newWinRate = ((Wins / totalGames) * 100).toFixed(2);
+                    await User.updateOne(
+                        { username: player.username },
+                        { $set: { "statistics.winRate": newWinRate } }
+                    );
+                }
+            } catch (err) {
+                console.error(
+                    `Failed to update stats for ${player.username}:`,
+                    err
+                );
+            }
+        }
     }
 
     async setKeeperWordWithValidation(word) {
