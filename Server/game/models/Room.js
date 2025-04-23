@@ -1,7 +1,7 @@
 const Player = require("./Player");
 const GameSession = require("./GameSession");
-const isValidEnglishWord = require("../utils/validateWord");
-const Logger = require("./Logger");
+const isValidEnglishWord = require("../../utils/validateWord");
+const Logger = require("../Logger");
 
 const MAX_RACE_TIME = 10000;
 const BASE_POINTS = 15;

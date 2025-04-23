@@ -1,15 +1,15 @@
-const GameManager = require("./game/GameManager");
-const SocketManager = require("./game/SocketManager");
+const GameManager = require("../managers/GameManager");
+const SocketManager = require("../managers/SocketManager");
 
-const { socketLogger } = require("./utils/logger");
-const { verifyToken } = require("./utils/jwt");
+const { socketLogger } = require("../../utils/logger");
+const { verifyToken } = require("../../utils/jwt");
 const waitingLobbyHandlers = require("./waitingLobbyHandlers");
 const {
     handleJoinQueue,
     handleJoinRoom,
     handleKeeperWordSubmission,
     disconnect,
-} = require("./gameSocketController");
+} = require("../controllers/gameSocketController");
 
 module.exports = function (io) {
     const gameManager = new GameManager();
