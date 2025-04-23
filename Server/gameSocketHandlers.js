@@ -2,6 +2,7 @@
 const GameManager = require("./game/GameManager");
 const { socketLogger } = require("./utils/logger");
 const { verifyToken } = require("./utils/jwt");
+const waitingLobbyHandlers = require("./waitingLobbyHandlers");
 const {
     handleJoinQueue,
     handleJoinRoom,
@@ -11,6 +12,7 @@ const {
 
 const socketUsernameMap = new Map(); // socket.id → username
 const usernameSocketMap = new Map(); // username → socket
+
 
 module.exports = function (io) {
     const game = new GameManager();
@@ -31,6 +33,7 @@ module.exports = function (io) {
 
     io.on("connection", (socket) => {
         console.log("Client connected:", socket.id);
+        waitingLobbyHandlers(io, socket);
 
         // Log every incoming message
         socket.onAny((event, ...args) => {
@@ -68,5 +71,7 @@ module.exports = function (io) {
         socket.on("disconnect", (args) =>
             disconnect(socket, args, { socketUsernameMap, usernameSocketMap })
         );
+
+        
     });
 };

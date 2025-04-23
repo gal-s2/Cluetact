@@ -12,6 +12,8 @@ import PrivateRoute from "./components/Routes/PrivateRoute";
 import PublicRoute from "./components/Routes/PublicRoute";
 import WelcomePage from "./components/Welcome/WelcomePage";
 import StatsPage from "./components/statistics/StatsPage";
+import WaitingRoom from './components/Game/WaitingRoom';
+
 
 function App() {
     return (
@@ -71,6 +73,7 @@ function App() {
                 />
 
                 <Route path="*" element={<NotFoundPage />} />
+                <Route path="/waiting/:roomId" element={<WaitingRoom />} />
             </Routes>
         </Router>
     );

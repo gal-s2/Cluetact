@@ -1,0 +1,14 @@
+instructions on how to run the server:
+-run the container in docker desktop on port 27017 (container name can be "cluetact-backend")
+
+how to reset all site date (cookies, other local stuff...) saved on ms edge:
+1. Open DevTools (F12 or right-click > Inspect).
+2. Go to the Console tab.
+3. Run this snippet:
+    localStorage.clear();
+    sessionStorage.clear();
+    document.cookie.split(";").forEach(cookie => {
+    document.cookie = cookie.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date(0).toUTCString() + ";path=/");
+    });
+4. reload the page
+
