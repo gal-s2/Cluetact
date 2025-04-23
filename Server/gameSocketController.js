@@ -1,21 +1,27 @@
-// Handle join queue logic.
-// If a room was creted, new_room is being sent to players in room.
+/**
+ * Handles the logic for joining the queue.
+ * If a room is created, a "new_room" event is sent to players in the room.
+ * @param {Socket} socket - The socket of the user joining the queue.
+ * @param {Object} args - The arguments passed to the event.
+ * @param {Object} params - Additional parameters, including gameManager and socketManager.
+ * @param {GameManager} params.gameManager - The game manager instance to interact with game data.
+ * @param {SocketManager} params.socketManager - The socket manager instance to interact with socket connections.
+ */
 const handleJoinQueue = async (
     socket,
     args,
-    { game, socketUsernameMap, usernameSocketMap }
+    { gameManager, socketManager }
 ) => {
     const { username } = args;
 
-    socketUsernameMap.set(socket.id, username);
-    usernameSocketMap.set(username, socket);
-
-    const room = await game.addUserToQueue(username);
+    const room = await gameManager.addUserToQueue(username);
 
     if (room) {
         // Send welcome messages to all players
         Object.values(room.players).forEach((player) => {
-            const playerSocket = usernameSocketMap.get(player.username);
+            const playerSocket = socketManager.getSocketByUsername(
+                player.username
+            );
             if (playerSocket) {
                 const role = player.role;
                 const message =
@@ -32,23 +38,30 @@ const handleJoinQueue = async (
     }
 };
 
-const handleJoinRoom = async (
-    socket,
-    args,
-    { game, socketUsernameMap, usernameSocketMap }
-) => {
-    const room = game.getRoomBySocket(socket);
+/**
+ * Handles the logic for joining a room.
+ * Sends a "game_start" event with the room data to the joining user.
+ * Sends a "request_keeper_word" event to each player to request their word submission.
+ * @param {Socket} socket - The socket of the user joining the room.
+ * @param {Object} args - The arguments passed to the event.
+ * @param {Object} params - Additional parameters, including gameManager and socketManager.
+ * @param {GameManager} params.gameManager - The game manager instance to interact with game data.
+ * @param {SocketManager} params.socketManager - The socket manager instance to interact with socket connections.
+ */
+const handleJoinRoom = async (socket, args, { gameManager, socketManager }) => {
+    const room = gameManager.getRoomBySocket(socket);
 
     socket.emit("game_start", { room });
 
     for (const player of Object.values(room.players)) {
+        const playerSocket = socketManager.getSocketByUsername(player.username);
         if (player.role === "keeper") {
-            usernameSocketMap.get(player.username).emit("request_keeper_word", {
+            playerSocket.emit("request_keeper_word", {
                 message: `${player.username}, please enter your secret English word:`,
                 isKeeper: true,
             });
         } else {
-            usernameSocketMap.get(player.username).emit("request_keeper_word", {
+            playerSocket.emit("request_keeper_word", {
                 message: `keeper is choosing a word`,
                 isKeeper: false,
             });
@@ -56,13 +69,22 @@ const handleJoinRoom = async (
     }
 };
 
+/**
+ * Handles the logic for submitting the keeper's word.
+ * Validates the word and sends a "keeper_word_chosen" event to all players in the room.
+ * @param {Socket} socket - The socket of the user submitting the word.
+ * @param {Object} args - The arguments passed to the event.
+ * @param {Object} params - Additional parameters, including gameManager and socketManager.
+ * @param {GameManager} params.gameManager - The game manager instance to interact with game data.
+ * @param {SocketManager} params.socketManager - The socket manager instance to interact with socket connections.
+ */
 const handleKeeperWordSubmission = async (
     socket,
-    data,
-    { game, socketUsernameMap, usernameSocketMap }
+    args,
+    { gameManager, socketManager }
 ) => {
-    const { word } = data;
-    const room = game.getRoomBySocket(socket);
+    const { word } = args;
+    const room = gameManager.getRoomBySocket(socket);
     if (!room) return;
 
     const valid = await room.setKeeperWordWithValidation(word);
@@ -70,7 +92,7 @@ const handleKeeperWordSubmission = async (
     if (valid) {
         // send all players in room a word chosen
         for (const username in room.players) {
-            let playerSocket = usernameSocketMap.get(username);
+            let playerSocket = socketManager.getSocketByUsername(username);
             let player = room.getPlayerByUsername(username);
 
             let message = {
@@ -91,12 +113,18 @@ const handleKeeperWordSubmission = async (
     }
 };
 
-const disconnect = (socket, data, { socketUsernameMap, usernameSocketMap }) => {
-    const username = socketUsernameMap.get(socket.id);
-    console.log("Client disconnected:", socket.id, "(", username, ")");
-
-    socketUsernameMap.delete(socket.id);
-    usernameSocketMap.delete(username);
+/**
+ * Handles the logic for socket disconnections.
+ * Unregisters the socket from the socket manager when a user disconnects.
+ * @param {Socket} socket - The socket of the user disconnecting.
+ * @param {Object} args - The arguments passed to the event.
+ * @param {Object} params - Additional parameters, including gameManager and socketManager.
+ * @param {GameManager} params.gameManager - The game manager instance to interact with game data.
+ * @param {SocketManager} params.socketManager - The socket manager instance to interact with socket connections.
+ */
+const disconnect = (socket, args, { gameManager, socketManager }) => {
+    console.log(`${socket?.user?.username} disconnected: ${args}`);
+    socketManager.unregister(socket);
 };
 
 module.exports = {
