@@ -19,8 +19,8 @@
     width: 64px;
     height: 64px;
     margin: 8px;
-    border: 6px solid #00c853;
-    border-top-color: #2979ff;
+    border: 6px solid #7ada32;
+    border-top-color: #fb9a12;
     border-radius: 50%;
     animation: spin 1.2s linear infinite;
 }

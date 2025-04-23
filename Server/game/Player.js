@@ -4,6 +4,11 @@ class Player {
         this.gameScore = 0;
         this.role = null;
         this.isReady = false;
+        this.socket = null;
+    }
+
+    setSocket(socket) {
+        this.socket = socket;
     }
 
     setRole(role) {

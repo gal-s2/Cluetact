@@ -1,7 +1,7 @@
-function Table() {
+function Table({ children }) {
     return (
         <div className="table">
-            
+            {children}
         </div>
     )
 }

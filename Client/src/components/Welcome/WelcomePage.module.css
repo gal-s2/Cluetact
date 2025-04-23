@@ -1,0 +1,66 @@
+.container {
+    width: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 1s ease;
+}
+
+.logo {
+    max-width: 300px;
+    width: 80%;
+    margin-bottom: 3rem;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+.primaryButton,
+.secondaryButton {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 1.5rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.primaryButton {
+    background-color: #ff9800;
+    color: #1b1b1b;
+}
+
+.primaryButton:hover {
+    background-color: #ff9800;
+    transform: scale(1.02);
+}
+
+.secondaryButton {
+    background-color: #ffffff;
+    border: 2px solid #ff9800;
+    color: #4d4d4d;
+}
+
+.secondaryButton:hover {
+    background-color: #f3fdf0;
+    transform: scale(1.02);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
