@@ -8,7 +8,7 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/Cluetact";
     await mongoose.connect(MONGO_URI);
     const users = await User.find({});
     console.log(
-        "📋 Users in DB:",
+        "Users in DB:",
         users.map((u) => u.username)
     );
     await mongoose.disconnect();
