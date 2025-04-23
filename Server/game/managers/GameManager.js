@@ -1,6 +1,6 @@
-const Room = require("./Room");
-const GameQueue = require("./GameQueue");
-const Logger = require("./Logger");
+const Room = require("../models/Room");
+const GameQueue = require("../models/GameQueue");
+const Logger = require("../Logger");
 
 class GameManager {
     static roomId = 1;

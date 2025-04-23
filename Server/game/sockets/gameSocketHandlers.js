@@ -1,29 +1,26 @@
-// gameSocketHandlers.js
-const GameManager = require("./game/GameManager");
-const { socketLogger } = require("./utils/logger");
-const { verifyToken } = require("./utils/jwt");
+const GameManager = require("../managers/GameManager");
+const SocketManager = require("../managers/SocketManager");
+
+const { socketLogger } = require("../../utils/logger");
+const { verifyToken } = require("../../utils/jwt");
 const waitingLobbyHandlers = require("./waitingLobbyHandlers");
 const {
     handleJoinQueue,
     handleJoinRoom,
     handleKeeperWordSubmission,
     disconnect,
-} = require("./gameSocketController");
-
-const socketUsernameMap = new Map(); // socket.id → username
-const usernameSocketMap = new Map(); // username → socket
-
+} = require("../controllers/gameSocketController");
 
 module.exports = function (io) {
-    const game = new GameManager();
+    const gameManager = new GameManager();
+    const socketManager = new SocketManager();
 
-    // middleware for socket message.
-    // checks if jwt is valid
+    // middleware for socket message
     io.use((socket, next) => {
         const token = socket.handshake.auth.token;
         try {
-            const decoded = verifyToken(token);
-            socket.user = decoded; // { userId, username }
+            const decoded = verifyToken(token); // verify jwt
+            socket.user = decoded;
             next();
         } catch (err) {
             console.log("Auth error");
@@ -34,6 +31,8 @@ module.exports = function (io) {
     io.on("connection", (socket) => {
         console.log("Client connected:", socket.id);
         waitingLobbyHandlers(io, socket);
+
+        socketManager.register(socket, socket.user.username);
 
         // Log every incoming message
         socket.onAny((event, ...args) => {
@@ -46,32 +45,30 @@ module.exports = function (io) {
 
         socket.on("find_game", (args) =>
             handleJoinQueue(socket, args, {
-                game,
-                socketUsernameMap,
-                usernameSocketMap,
+                gameManager,
+                socketManager,
             })
         );
 
         socket.on("join_room", (args) =>
             handleJoinRoom(socket, args, {
-                game,
-                socketUsernameMap,
-                usernameSocketMap,
+                gameManager,
+                socketManager,
             })
         );
 
-        socket.on("keeper_word_submission", (data) => {
-            handleKeeperWordSubmission(socket, data, {
-                game,
-                socketUsernameMap,
-                usernameSocketMap,
+        socket.on("keeper_word_submission", (args) => {
+            handleKeeperWordSubmission(socket, args, {
+                gameManager,
+                socketManager,
             });
         });
 
-        socket.on("disconnect", (args) =>
-            disconnect(socket, args, { socketUsernameMap, usernameSocketMap })
-        );
-
-        
+        socket.on("disconnect", (args) => {
+            disconnect(socket, args, {
+                gameManager,
+                socketManager,
+            });
+        });
     });
 };
