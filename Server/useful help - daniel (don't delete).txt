@@ -1,0 +1,35 @@
+instructions on how to run the server:
+-run the container in docker desktop on port 27017 (container name can be "cluetact-backend")
+
+how to reset all site date (cookies, other local stuff...) saved on ms edge:
+1. Open DevTools (F12 or right-click > Inspect).
+2. Go to the Console tab.
+3. Run this snippet:
+    localStorage.clear();
+    sessionStorage.clear();
+    document.cookie.split(";").forEach(cookie => {
+    document.cookie = cookie.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date(0).toUTCString() + ";path=/");
+    });
+4. reload the page
+
+//things done on 23.4.2025 (wednesday):
+Cluetact Waiting Room Summary
+🔧 Created temporary waiting lobbies using WaitingLobbyManager.js (not full rooms yet)
+🎯 Added Socket.IO handlers in waitingLobbyHandlers.js for:
+create_waiting_lobby
+join_waiting_lobby
+start_game_from_lobby
+📡 Integrated those handlers into gameSocketHandlers.js
+🧱 In the frontend:
+Built WaitingRoom.jsx page with:
+List of current users
+Pass-key display
+Copy-to-clipboard button
+QR code for sharing the join link
+“Start Game” button (visible only to lobby creator when enough users)
+🔄 Hooked up Join/Create Room buttons in Lobby.jsx to:
+Emit to server
+Navigate to /waiting/:roomId
+
+
+
