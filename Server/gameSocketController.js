@@ -77,6 +77,7 @@ const handleKeeperWordSubmission = async (
                 success: true,
                 message: "Your word was accepted!",
                 word: player.role === "keeper" ? word : undefined,
+                revealedWord: room.getRevealedLetters(),
                 length: word.length,
             };
 

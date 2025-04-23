@@ -35,6 +35,14 @@ class Room {
     }
 
     /**
+     * Get the part of the word that is currently revealed to all players in room
+     * @returns {string}
+     */
+    getRevealedLetters() {
+        return this.currentSession.revealedLetters;
+    }
+
+    /**
      * returns player object by username
      * @param {string} username
      * @returns {Player}
