@@ -1,5 +1,5 @@
 const readline = require("readline");
-const Room = require("../game/Room");
+const Room = require("./game");
 
 const rl = readline.createInterface({
     input: process.stdin,

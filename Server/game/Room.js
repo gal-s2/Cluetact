@@ -539,6 +539,7 @@ class Room {
         return this.turnQueue[nextIndex];
     }
     async endGame() {
+        console.log("ending now");
         this.status = "ended";
 
         let maxScore = -Infinity;
@@ -567,6 +568,7 @@ class Room {
                     "statistics.totalGames": 1,
                     [`statistics.${isWinner ? "Wins" : "Losses"}`]: 1,
                 };
+                console.log(`Updating stats for ${player.username}`, increment);
 
                 const user = await User.findOneAndUpdate(
                     { username: player.username },
@@ -738,7 +740,6 @@ class Room {
                 }
             }
         }
-
         await this.endGame();
 
         for (const username in this.players) {
