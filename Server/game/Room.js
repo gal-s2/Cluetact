@@ -1,6 +1,6 @@
 const Player = require("./Player");
 const GameSession = require("./GameSession");
-const isValidEnglishWord = require("./validateWord");
+const isValidEnglishWord = require("../utils/validateWord");
 const Logger = require("./Logger");
 
 const MAX_RACE_TIME = 10000;
@@ -18,12 +18,12 @@ class Room {
         this.turnQueue = seekersUsernames.slice();
         this.usedWords = new Set();
 
-        // יצירת ה-Keeper
+        // Keeper Creation
         const keeper = new Player(keeperUsername);
         keeper.setRole("keeper");
         this.players[keeperUsername] = keeper;
 
-        // יצירת ה-Seekers
+        // Seekers Creation
         seekersUsernames.forEach((username) => {
             const seeker = new Player(username);
             seeker.setRole("keeper"); //hardcoded - need to change back to seeker
