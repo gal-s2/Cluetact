@@ -39,6 +39,10 @@ const UserSchema = new mongoose.Schema({
         Wins: { type: Number, default: 0 },
         winRate: { type: Number, default: 0 },
     },
+    avatar: {
+        type: String,
+        default: "",
+    },
 });
 
 // static register method

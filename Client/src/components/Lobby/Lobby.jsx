@@ -1,13 +1,16 @@
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../UserContext";
 import { useNavigate } from "react-router-dom";
 import socket from "../../socket";
 import styles from "./Lobby.module.css";
+import AvatarPicker from "../Profile/AvatarPicker";
 
 function Lobby() {
     const { user, setUser } = useUser();
     const navigate = useNavigate();
+
+    const [selectedAvatar, setSelectedAvatar] = useState(null);
 
     useEffect(() => {
         socket.on("new_room", (data) => {
@@ -20,14 +23,12 @@ function Lobby() {
     }, []);
 
     const findGame = () => {
-        console.log(socket);
         socket.emit("find_game", { userId: user._id, username: user.username });
     };
 
     const disconnect = async () => {
         console.log("Disconnecting...");
-
-        const currentUser = user; // שמירה לפני reset
+        const currentUser = user;
 
         socket.disconnect();
 
@@ -39,7 +40,7 @@ function Lobby() {
             console.log("Error in disconnect");
         }
 
-        setUser(null); // נקה אחרי השימוש
+        setUser(null);
         navigate("/");
     };
 
@@ -57,6 +58,25 @@ function Lobby() {
                 <button className={styles.red} onClick={disconnect}>
                     Disconnect
                 </button>
+
+                {selectedAvatar && (
+                    <div className={styles.avatarDisplay}>
+                        <img
+                            src={selectedAvatar}
+                            alt="Selected Avatar"
+                            style={{
+                                width: "80px",
+                                height: "80px",
+                                borderRadius: "50%",
+                                marginTop: "10px",
+                                border: "2px solid #444",
+                            }}
+                        />
+                    </div>
+                )}
+
+                <h4>Select Your Avatar:</h4>
+                <AvatarPicker onSelect={(src) => setSelectedAvatar(src)} />
             </div>
         </div>
     );

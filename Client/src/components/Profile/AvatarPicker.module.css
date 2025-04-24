@@ -1,0 +1,22 @@
+.avatarGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    justify-items: center;
+}
+
+.avatar {
+    width: 100px;
+    height: auto;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.2s, border 0.2s;
+}
+
+.avatar:hover {
+    transform: scale(1.05);
+}
+
+.selected {
+    border: 3px solid #0077ff;
+}

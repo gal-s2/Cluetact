@@ -15,9 +15,16 @@ button {
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid #007bff;
+    margin-bottom: 1rem;
+}
 
 button:active {
-    transform: scale(0.98);;
+    transform: scale(0.98);
 }
 
 .blue {
