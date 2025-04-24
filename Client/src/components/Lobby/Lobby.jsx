@@ -1,16 +1,16 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "../UserContext";
 import { useNavigate } from "react-router-dom";
 import socket from "../../socket";
 import styles from "./Lobby.module.css";
 import AvatarPicker from "../Profile/AvatarPicker";
+import axios from "axios";
 
 function Lobby() {
     const { user, setUser } = useUser();
     const navigate = useNavigate();
-
-    const [selectedAvatar, setSelectedAvatar] = useState(null);
+    const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+    const [playMenuOpen, setPlayMenuOpen] = useState(false);
 
     useEffect(() => {
         socket.on("new_room", (data) => {
@@ -27,9 +27,7 @@ function Lobby() {
     };
 
     const disconnect = async () => {
-        console.log("Disconnecting...");
         const currentUser = user;
-
         socket.disconnect();
 
         try {
@@ -47,37 +45,57 @@ function Lobby() {
     return (
         <div className={styles.container}>
             <h3>Hello, {user.username}</h3>
-            <div>
-                <button className={styles.blue} onClick={findGame}>
-                    Find Game
-                </button>
-                <button className={styles.green} disabled>
-                    Join Room
-                </button>
-                <button onClick={() => navigate("/stats")}>My Stats</button>
-                <button className={styles.red} onClick={disconnect}>
-                    Disconnect
-                </button>
 
-                {selectedAvatar && (
-                    <div className={styles.avatarDisplay}>
-                        <img
-                            src={selectedAvatar}
-                            alt="Selected Avatar"
-                            style={{
-                                width: "80px",
-                                height: "80px",
-                                borderRadius: "50%",
-                                marginTop: "10px",
-                                border: "2px solid #444",
-                            }}
-                        />
-                    </div>
-                )}
+            <div className={styles.sectionGroup}>
+                <div className={styles.playSection}>
+                    <button
+                        className={styles.blue}
+                        onClick={() => setPlayMenuOpen((prev) => !prev)}
+                    >
+                        Play
+                    </button>
 
-                <h4>Select Your Avatar:</h4>
-                <AvatarPicker onSelect={(src) => setSelectedAvatar(src)} />
+                    {playMenuOpen && (
+                        <div className={styles.dropdown}>
+                            <button onClick={findGame}>Find Game</button>
+                            <button disabled>Join Room</button>
+                        </div>
+                    )}
+                </div>
+
+                <div className={styles.profileSection}>
+                    <button
+                        className={styles.orange}
+                        onClick={() => setProfileMenuOpen((prev) => !prev)}
+                    >
+                        My Profile
+                    </button>
+
+                    {profileMenuOpen && (
+                        <div className={styles.dropdown}>
+                            <button onClick={() => navigate("/stats")}>
+                                My Stats
+                            </button>
+                            <button onClick={disconnect}>Disconnect</button>
+                        </div>
+                    )}
+                </div>
             </div>
+
+            <div>
+                <img
+                    src={`https://api.dicebear.com/7.x/fun-emoji/svg?seed=${user.username}`}
+                    alt={`${user.username}'s avatar`}
+                    className={styles.avatar}
+                    style={{
+                        width: "60px",
+                        height: "60px",
+                        borderRadius: "50%",
+                    }}
+                />
+            </div>
+
+            <AvatarPicker />
         </div>
     );
 }
