@@ -26,19 +26,21 @@ function Lobby() {
 
     const disconnect = async () => {
         console.log("Disconnecting...");
+
+        const currentUser = user; // שמירה לפני reset
+
         socket.disconnect();
-        setUser(null);
-        navigate("/");
 
         try {
-            const response = await axios.post(
-                "http://localhost:8000/auth/logout",
-                { id: user._id }
-            );
-            console.log(response);
+            await axios.post("http://localhost:8000/auth/logout", {
+                id: currentUser._id,
+            });
         } catch (error) {
             console.log("Error in disconnect");
         }
+
+        setUser(null); // נקה אחרי השימוש
+        navigate("/");
     };
 
     return (
@@ -52,13 +54,6 @@ function Lobby() {
                     Join Room
                 </button>
                 <button onClick={() => navigate("/stats")}>My Stats</button>
-
-                {/* <button
-                    className={styles.orange}
-                    onClick={() => navigate("/stats")}
-                >
-                    My Stats
-                </button> */}
                 <button className={styles.red} onClick={disconnect}>
                     Disconnect
                 </button>
