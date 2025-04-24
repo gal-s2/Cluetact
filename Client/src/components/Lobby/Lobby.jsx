@@ -76,6 +76,10 @@ function Lobby() {
                             <button onClick={() => navigate("/stats")}>
                                 My Stats
                             </button>
+                            <button onClick={() => navigate("/profile")}>
+                                View & Edit Details
+                            </button>
+
                             <button onClick={disconnect}>Disconnect</button>
                         </div>
                     )}

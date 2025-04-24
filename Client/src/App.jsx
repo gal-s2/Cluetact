@@ -12,6 +12,7 @@ import PrivateRoute from "./components/Routes/PrivateRoute";
 import PublicRoute from "./components/Routes/PublicRoute";
 import WelcomePage from "./components/Welcome/WelcomePage";
 import StatsPage from "./components/statistics/StatsPage";
+import ProfileDetails from "./components/Profile/ProfileDetails";
 
 function App() {
     return (
@@ -66,6 +67,14 @@ function App() {
                     element={
                         <PrivateRoute>
                             <StatsPage />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/profile"
+                    element={
+                        <PrivateRoute>
+                            <ProfileDetails />
                         </PrivateRoute>
                     }
                 />
