@@ -25,6 +25,7 @@ function Lobby() {
     };
 
     const disconnect = async () => {
+        console.log("Disconnecting...");
         socket.disconnect();
         setUser(null);
         navigate("/");

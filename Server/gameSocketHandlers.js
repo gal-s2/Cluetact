@@ -22,6 +22,9 @@ module.exports = function (io) {
         try {
             const decoded = verifyToken(token);
             socket.user = decoded; // { userId, username }
+            socketUsernameMap.set(socket.id, decoded.username);
+            usernameSocketMap.set(decoded.username, socket);
+
             next();
         } catch (err) {
             console.log("Auth error");
