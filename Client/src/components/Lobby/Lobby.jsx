@@ -82,19 +82,6 @@ function Lobby() {
                 </div>
             </div>
 
-            <div>
-                <img
-                    src={`https://api.dicebear.com/7.x/fun-emoji/svg?seed=${user.username}`}
-                    alt={`${user.username}'s avatar`}
-                    className={styles.avatar}
-                    style={{
-                        width: "60px",
-                        height: "60px",
-                        borderRadius: "50%",
-                    }}
-                />
-            </div>
-
             <AvatarPicker />
         </div>
     );
