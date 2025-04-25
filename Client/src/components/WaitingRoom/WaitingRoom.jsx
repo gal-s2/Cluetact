@@ -7,7 +7,7 @@ import styles from "./WaitingRoom.module.css";
 import { useUser } from "../UserContext";
 import { useLocation } from "react-router-dom";
 
-export default function WaitingRoom() {
+function WaitingRoom() {
     const { roomId } = useParams();
     const navigate = useNavigate();
     const { user } = useUser();
@@ -17,20 +17,25 @@ export default function WaitingRoom() {
     const isCreator = location.state?.isCreator || false;
 
     useEffect(() => {
-        if (!isCreator && user?.username) {
+        if (user && !isCreator) {
             socket.emit("join_waiting_lobby", {
                 lobbyId: roomId,
                 username: user.username,
             });
         }
-    }, [roomId, user.username]);
+    }, [roomId, user, isCreator]);
 
     useEffect(() => {
-        const handleLobbyUpdate = (userList) => setUsers(userList);
+        const handleLobbyUpdate = (userList) => {
+            console.log("Received lobby_update with users:", userList);
+            setUsers(userList);
+        };
         const handleGameStarted = ({ roomId }) => navigate(`/game/${roomId}`);
 
         socket.on("lobby_update", handleLobbyUpdate);
         socket.on("game_started", handleGameStarted);
+
+        socket.emit("get_lobby_users", { lobbyId: roomId });
 
         return () => {
             socket.off("lobby_update", handleLobbyUpdate);
@@ -77,7 +82,7 @@ export default function WaitingRoom() {
                     ))}
                 </ul>
 
-                {user.username === users[0] && users.length >= 3 && (
+                {user && user.username === users[0] && users.length >= 3 && (
                     <button
                         className={styles.startButton}
                         onClick={handleStart}
@@ -89,3 +94,5 @@ export default function WaitingRoom() {
         </div>
     );
 }
+
+export default WaitingRoom;

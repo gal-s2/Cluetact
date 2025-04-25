@@ -15,7 +15,7 @@ function generateRoomCode(length = 5) {
 }
 
 function Lobby() {
-    const { user, setUser } = useUser();
+    const { user, setUser, loading } = useUser();
     const navigate = useNavigate();
     const [showJoinModal, setShowJoinModal] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -23,42 +23,65 @@ function Lobby() {
     const [createdRoomCode, setCreatedRoomCode] = useState("");
 
     useEffect(() => {
-        socket.on("new_room", (data) => {
+        if (!user && !loading) {
+            navigate("/login");
+        }
+    }, [user, loading, navigate]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    useEffect(() => {
+        const handleNewRoom = (data) => {
             if (data.roomId) navigate(`/game/${data.roomId}`);
-        });
+        };
+
+        socket.on("new_room", handleNewRoom);
 
         return () => {
-            socket.off("new_room");
+            socket.off("new_room", handleNewRoom);
         };
-    }, []);
+    }, [navigate]);
 
     const findGame = () => {
-        console.log(socket);
+        if (!user) return;
         socket.emit("find_game", { userId: user._id, username: user.username });
     };
 
     const disconnect = async () => {
-        socket.disconnect();
-        setUser(null);
-        navigate("/");
+        if (!user) return;
 
         try {
-            const response = await axios.post(
-                "http://localhost:8000/auth/logout",
-                { id: user._id }
-            );
-            console.log(response);
+            await axios.post("http://localhost:8000/auth/logout", {
+                id: user._id,
+            });
+            console.log("Logout successful");
         } catch (error) {
-            console.log("Error in disconnect");
+            console.log("Error in disconnect", error);
         }
+
+        // 🔥 Properly wait for socket to disconnect
+        await new Promise((resolve) => {
+            if (socket.connected) {
+                socket.once("disconnect", resolve);
+                socket.disconnect();
+            } else {
+                resolve();
+            }
+        });
+
+        socket.auth = {}; // clear auth
+        setUser(null); // now cleanly set user to null
     };
 
     const handleCreateRoom = () => {
+        if (!user) return;
+
         const newCode = generateRoomCode();
         setCreatedRoomCode(newCode);
         setShowCreateModal(true);
 
-        // Emit immediately if needed
         socket.emit("create_waiting_lobby", {
             lobbyId: newCode,
             username: user.username,
@@ -68,6 +91,8 @@ function Lobby() {
     };
 
     const handleJoinRoom = () => {
+        if (!user) return;
+
         socket.emit("join_waiting_lobby", {
             lobbyId: roomCodeInput,
             username: user.username,
@@ -79,6 +104,7 @@ function Lobby() {
     return (
         <div className={styles.container}>
             <h3>Hello, {user.username}</h3>
+
             <div>
                 <button className={styles.blue} onClick={findGame}>
                     Find Game
@@ -98,6 +124,7 @@ function Lobby() {
                 </button>
             </div>
 
+            {/* Join Modal */}
             {showJoinModal && (
                 <div className={styles.modal}>
                     <h3>Enter Room Code</h3>
@@ -107,43 +134,22 @@ function Lobby() {
                         onChange={(e) => setRoomCodeInput(e.target.value)}
                         placeholder="ABCD1234"
                     />
-                    <button
-                        onClick={() => {
-                            socket.emit("join_waiting_lobby", {
-                                lobbyId: roomCodeInput,
-                                username: user.username,
-                            });
-                            setShowJoinModal(false);
-                            navigate(`/waiting/${roomCodeInput}`);
-                        }}
-                    >
-                        Join
-                    </button>
+                    <button onClick={handleJoinRoom}>Join</button>
                     <button onClick={() => setShowJoinModal(false)}>
                         Cancel
                     </button>
                 </div>
             )}
 
+            {/* Create Modal */}
             {showCreateModal && (
                 <div className={styles.modal}>
                     <h3>Room Created</h3>
                     <p>
                         Pass-key: <strong>{createdRoomCode}</strong>
                     </p>
-                    <button
-                        onClick={() => {
-                            socket.emit("create_room", {
-                                roomId: createdRoomCode,
-                                userId: user._id,
-                            });
-                            setShowCreateModal(false);
-                        }}
-                    >
-                        Start Room
-                    </button>
                     <button onClick={() => setShowCreateModal(false)}>
-                        Cancel
+                        OK
                     </button>
                 </div>
             )}
