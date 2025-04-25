@@ -43,11 +43,11 @@ function WaitingRoom() {
                 username: user.username,
             });
         }
-    }, [roomId, user, isCreator]);
+    }, [roomId, user]);
 
     useEffect(() => {
         const handleConnect = () => {
-            if (user && !isCreator) {
+            if (user && roomId) {
                 console.log("Socket reconnected, joining waiting room...");
                 socket.emit("join_waiting_lobby", {
                     lobbyId: roomId,
@@ -61,7 +61,7 @@ function WaitingRoom() {
         return () => {
             socket.off("connect", handleConnect);
         };
-    }, [roomId, user, isCreator]);
+    }, [roomId, user]);
 
     useEffect(() => {
         const handleLobbyUpdate = (userList) => {
