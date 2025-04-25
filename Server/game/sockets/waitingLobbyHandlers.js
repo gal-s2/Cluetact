@@ -51,6 +51,16 @@ module.exports = function waitingLobbyHandlers(io, socket) {
         WaitingLobbyManager.deleteLobby(lobbyId);
     });
 
+    socket.on("leave_waiting_lobby", ({ lobbyId, username }) => {
+        console.log(`${username} left lobby ${lobbyId}`);
+
+        WaitingLobbyManager.leaveLobby(lobbyId, username);
+        io.to(lobbyId).emit(
+            "lobby_update",
+            WaitingLobbyManager.getLobbyUsers(lobbyId)
+        );
+    });
+
     socket.on("disconnect", () => {
         console.log("disconnectinggggg....");
         const lobbyId = WaitingLobbyManager.removeUserFromLobby(socket.id);

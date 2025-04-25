@@ -1,4 +1,5 @@
 const waitingLobbies = {};
+const socketManager = require("../managers/globalSocketManager");
 
 // Create a new lobby
 function createLobby(lobbyId, creatorUsername, socketId) {
@@ -19,12 +20,13 @@ function joinLobby(lobbyId, username, socketId) {
     const lobby = waitingLobbies[lobbyId];
     if (!lobby) return;
 
-    // Prevent duplicates
-    const alreadyJoined = lobby.users.some(
-        (user) => user.username === username
+    const alreadyActive = lobby.users.some(
+        (user) =>
+            user.username === username &&
+            socketManager.isConnected(user.username)
     );
 
-    if (!alreadyJoined) {
+    if (!alreadyActive) {
         lobby.users.push({ username, socketId });
     }
 }
@@ -49,6 +51,18 @@ function findLobbyBySocketId(socketId) {
         }
     }
     return null;
+}
+
+function leaveLobby(lobbyId, username) {
+    const lobby = waitingLobbies[lobbyId];
+    if (lobby) {
+        lobby.users = lobby.users.filter((user) => user !== username);
+
+        // Optionally: if no users left, delete lobby
+        if (lobby.users.length === 0) {
+            delete waitingLobbies[lobbyId];
+        }
+    }
 }
 
 // Remove a user from a lobby by socketId
@@ -102,4 +116,5 @@ module.exports = {
     findLobbyBySocketId,
     removeUserFromLobby,
     printWaitingLobbies,
+    leaveLobby,
 };

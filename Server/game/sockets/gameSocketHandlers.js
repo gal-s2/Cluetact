@@ -1,5 +1,5 @@
 const GameManager = require("../managers/GameManager");
-const SocketManager = require("../managers/SocketManager");
+const socketManager = require("../managers/globalSocketManager");
 
 const { socketLogger } = require("../../utils/logger");
 const { verifyToken } = require("../../utils/jwt");
@@ -13,7 +13,6 @@ const {
 
 module.exports = function (io) {
     const gameManager = new GameManager();
-    const socketManager = new SocketManager();
 
     // middleware for socket message
     io.use((socket, next) => {

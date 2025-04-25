@@ -13,8 +13,27 @@ function WaitingRoom() {
     const { user } = useUser();
     const [users, setUsers] = useState([]);
     const [copied, setCopied] = useState(false);
+    const [savedUsername, setSavedUsername] = useState("");
     const location = useLocation();
     const isCreator = location.state?.isCreator || false;
+
+    useEffect(() => {
+        if (user?.username) {
+            setSavedUsername(user.username);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        return () => {
+            if (savedUsername) {
+                console.log(`Leaving room ${roomId} as ${savedUsername}`);
+                socket.emit("leave_waiting_lobby", {
+                    lobbyId: roomId,
+                    username: savedUsername,
+                });
+            }
+        };
+    }, [roomId, savedUsername]);
 
     useEffect(() => {
         if (user && !isCreator) {
@@ -23,6 +42,24 @@ function WaitingRoom() {
                 username: user.username,
             });
         }
+    }, [roomId, user, isCreator]);
+
+    useEffect(() => {
+        const handleConnect = () => {
+            if (user && !isCreator) {
+                console.log("Socket reconnected, joining waiting room...");
+                socket.emit("join_waiting_lobby", {
+                    lobbyId: roomId,
+                    username: user.username,
+                });
+            }
+        };
+
+        socket.on("connect", handleConnect);
+
+        return () => {
+            socket.off("connect", handleConnect);
+        };
     }, [roomId, user, isCreator]);
 
     useEffect(() => {
