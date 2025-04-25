@@ -36,7 +36,8 @@ function WaitingRoom() {
     }, [roomId, savedUsername]);
 
     useEffect(() => {
-        if (user && !isCreator) {
+        if (user && roomId) {
+            console.log("Emitting join_waiting_lobby for user:", user.username);
             socket.emit("join_waiting_lobby", {
                 lobbyId: roomId,
                 username: user.username,
