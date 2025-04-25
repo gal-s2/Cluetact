@@ -108,6 +108,20 @@ function printWaitingLobbies() {
     }
 }
 
+function leaveLobbyByUsername(username) {
+    for (const lobbyId in waitingLobbies) {
+        const lobby = waitingLobbies[lobbyId];
+        const userIndex = lobby.users.findIndex((u) => u.username === username);
+
+        if (userIndex !== -1) {
+            lobby.users.splice(userIndex, 1);
+            // After removing, notify others
+            io.to(lobbyId).emit("lobby_update", lobby.users);
+            break;
+        }
+    }
+}
+
 module.exports = {
     createLobby,
     joinLobby,
@@ -117,4 +131,5 @@ module.exports = {
     removeUserFromLobby,
     printWaitingLobbies,
     leaveLobby,
+    leaveLobbyByUsername,
 };

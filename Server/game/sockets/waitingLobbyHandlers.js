@@ -60,23 +60,4 @@ module.exports = function waitingLobbyHandlers(io, socket) {
             WaitingLobbyManager.getLobbyUsers(lobbyId)
         );
     });
-
-    socket.on("disconnect", () => {
-        console.log("disconnectinggggg....");
-        const lobbyId = WaitingLobbyManager.removeUserFromLobby(socket.id);
-        if (lobbyId) {
-            console.log(
-                `[Socket ${socket.id}] disconnected. Updated lobby: ${lobbyId}`
-            );
-            socket.leave(lobbyId);
-            io.to(lobbyId).emit(
-                "lobby_update",
-                WaitingLobbyManager.getLobbyUsers(lobbyId)
-            );
-        } else {
-            console.log(
-                `[Socket ${socket.id}] disconnected. Not part of any waiting lobby.`
-            );
-        }
-    });
 };

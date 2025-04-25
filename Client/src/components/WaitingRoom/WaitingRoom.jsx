@@ -36,19 +36,9 @@ function WaitingRoom() {
     }, [roomId, savedUsername]);
 
     useEffect(() => {
-        if (user && roomId) {
-            console.log("Emitting join_waiting_lobby for user:", user.username);
-            socket.emit("join_waiting_lobby", {
-                lobbyId: roomId,
-                username: user.username,
-            });
-        }
-    }, [roomId, user]);
-
-    useEffect(() => {
         const handleConnect = () => {
+            console.log("Connected, now joining waiting lobby...");
             if (user && roomId) {
-                console.log("Socket reconnected, joining waiting room...");
                 socket.emit("join_waiting_lobby", {
                     lobbyId: roomId,
                     username: user.username,
@@ -56,27 +46,39 @@ function WaitingRoom() {
             }
         };
 
+        const handleLobbyUpdate = (users) => {
+            console.log("Received lobby update:", users);
+            setUsers(users);
+        };
+
+        socket.on("connect_error", (error) => {
+            console.error("Socket connect error:", error.message);
+        });
+
         socket.on("connect", handleConnect);
+        socket.on("lobby_update", handleLobbyUpdate);
+
+        if (!socket.connected && socket.disconnected) {
+            socket.connect();
+        } else {
+            // If already connected (fast refresh?), emit immediately
+            handleConnect();
+        }
 
         return () => {
             socket.off("connect", handleConnect);
+            socket.off("lobby_update", handleLobbyUpdate);
         };
     }, [roomId, user]);
 
     useEffect(() => {
-        const handleLobbyUpdate = (userList) => {
-            console.log("Received lobby_update with users:", userList);
-            setUsers(userList);
-        };
         const handleGameStarted = ({ roomId }) => navigate(`/game/${roomId}`);
 
-        socket.on("lobby_update", handleLobbyUpdate);
         socket.on("game_started", handleGameStarted);
 
         socket.emit("get_lobby_users", { lobbyId: roomId });
 
         return () => {
-            socket.off("lobby_update", handleLobbyUpdate);
             socket.off("game_started", handleGameStarted);
         };
     }, []);
