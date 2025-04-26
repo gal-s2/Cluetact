@@ -1,40 +1,40 @@
 const waitingLobbies = {};
 const socketManager = require("../managers/globalSocketManager");
 
-// Create a new lobby
 function createLobby(lobbyId, creatorUsername, socketId) {
     if (waitingLobbies[lobbyId]) return null;
 
-    console.log("room created");
+    console.log("new room created: ", lobbyId, "by ", creatorUsername);
     waitingLobbies[lobbyId] = {
         creator: creatorUsername,
-        users: [{ username: creatorUsername, socketId }],
+        users: new Set([creatorUsername]),
         started: false,
     };
 
     return waitingLobbies[lobbyId];
 }
 
-// Join an existing lobby
+function isLobbyExist(lobbyId) {
+    return waitingLobbies[lobbyId] !== undefined;
+}
+
 function joinLobby(lobbyId, username, socketId) {
+    console.log("trying to join the lobby ", lobbyId, "with user ", username);
+    printWaitingLobbies();
     const lobby = waitingLobbies[lobbyId];
-    if (!lobby) return;
+    if (lobby) {
+        const alreadyActive =
+            lobby.users.has(username) && socketManager.isConnected(username);
 
-    const alreadyActive = lobby.users.some(
-        (user) =>
-            user.username === username &&
-            socketManager.isConnected(user.username)
-    );
-
-    if (!alreadyActive) {
-        lobby.users.push({ username, socketId });
+        if (!alreadyActive) {
+            lobby.users.add(username);
+        }
     }
 }
 
-// Get list of usernames for a lobby
 function getLobbyUsers(lobbyId) {
     const lobby = waitingLobbies[lobbyId];
-    return lobby ? lobby.users.map((u) => u.username) : [];
+    return lobby ? Array.from(lobby.users) : [];
 }
 
 // Optional helper for debugging
@@ -42,47 +42,22 @@ function getAllLobbies() {
     return waitingLobbies;
 }
 
-// Find a lobby that contains a user by their socketId
-function findLobbyBySocketId(socketId) {
-    for (const lobbyId in waitingLobbies) {
-        const lobby = waitingLobbies[lobbyId];
-        if (lobby.users.some((u) => u.socketId === socketId)) {
-            return { lobbyId, lobby };
-        }
-    }
-    return null;
-}
-
 function leaveLobby(lobbyId, username) {
     const lobby = waitingLobbies[lobbyId];
     if (lobby) {
-        lobby.users = lobby.users.filter((user) => user !== username);
+        const existed = lobby.users.has(username);
 
-        // Optionally: if no users left, delete lobby
-        if (lobby.users.length === 0) {
-            delete waitingLobbies[lobbyId];
-        }
-    }
-}
+        if (existed) {
+            lobby.users.delete(username);
 
-// Remove a user from a lobby by socketId
-function removeUserFromLobby(socketId) {
-    for (const lobbyId in waitingLobbies) {
-        const lobby = waitingLobbies[lobbyId];
-        const index = lobby.users.findIndex((u) => u.socketId === socketId);
-        if (index !== -1) {
-            lobby.users.splice(index, 1);
-
-            // Delete the entire lobby if it's now empty
-            if (lobby.users.length === 0) {
+            if (lobby.users.size === 0) {
                 delete waitingLobbies[lobbyId];
             }
 
-            return lobbyId; // return the lobbyId we updated
+            return true;
         }
     }
-
-    return null;
+    return false;
 }
 
 function printWaitingLobbies() {
@@ -99,27 +74,32 @@ function printWaitingLobbies() {
         console.log(`👤 Creator: ${lobby.creator}`);
         console.log(`🎮 Started: ${lobby.started}`);
         console.log(`👥 Users:`);
-        lobby.users.forEach((user, index) => {
-            console.log(
-                `   ${index + 1}. ${user.username} (socket: ${user.socketId})`
-            );
+        let i = 1;
+        lobby.users.forEach((username) => {
+            console.log(`   ${i}. ${username}`);
+            i++;
         });
         console.log("─────────────────────────────");
     }
 }
 
-function leaveLobbyByUsername(username) {
+function removeUserFromItsLobbies(socketId) {
+    const username = socketManager.getUsernameBySocketId(socketId);
+    const lobbies = [];
+    if (!username) {
+        console.log(`No username found for socket ${socketId}`);
+        return;
+    }
+
+    console.log(`Removing user ${username} from all lobbies...`);
+
     for (const lobbyId in waitingLobbies) {
         const lobby = waitingLobbies[lobbyId];
-        const userIndex = lobby.users.findIndex((u) => u.username === username);
-
-        if (userIndex !== -1) {
-            lobby.users.splice(userIndex, 1);
-            // After removing, notify others
-            io.to(lobbyId).emit("lobby_update", lobby.users);
-            break;
+        if (lobby.users.has(username)) {
+            if (leaveLobby(lobbyId, username)) lobbies.push(lobbyId);
         }
     }
+    return lobbies;
 }
 
 module.exports = {
@@ -127,9 +107,8 @@ module.exports = {
     joinLobby,
     getLobbyUsers,
     getAllLobbies,
-    findLobbyBySocketId,
-    removeUserFromLobby,
     printWaitingLobbies,
     leaveLobby,
-    leaveLobbyByUsername,
+    isLobbyExist,
+    removeUserFromItsLobbies,
 };

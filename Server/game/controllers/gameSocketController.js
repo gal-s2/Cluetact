@@ -127,26 +127,17 @@ const WaitingLobbyManager = require("../managers/WaitingLobbyManager");
 const disconnect = (socket, args, { gameManager, socketManager }) => {
     console.log(`${socket?.user?.username} disconnected: ${args}`);
 
-    // 1. Remove from Waiting Lobby
-    const lobbyId = WaitingLobbyManager.removeUserFromLobby(socket.id);
-    if (lobbyId) {
-        console.log(
-            `[Socket ${socket.id}] disconnected. Updated lobby: ${lobbyId}`
-        );
+    const lobbies = WaitingLobbyManager.removeUserFromItsLobbies(socket.id);
+    lobbies.forEach((lobbyId) => {
         socket.leave(lobbyId);
         socket
             .to(lobbyId)
             .emit("lobby_update", WaitingLobbyManager.getLobbyUsers(lobbyId));
-    } else {
-        console.log(
-            `[Socket ${socket.id}] disconnected. Not part of any waiting lobby.`
-        );
-    }
+    });
 
-    // 2. Remove from SocketManager
     socketManager.unregister(socket);
 
-    // 3. (Optional) If you want: Also remove from gameManager if needed
+    console.log(`[Socket ${socket.id}] disconnected.`);
 };
 
 module.exports = {

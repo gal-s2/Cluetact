@@ -72,6 +72,30 @@ function WaitingRoom() {
     }, [roomId, user]);
 
     useEffect(() => {
+        const handleError = (message) => {
+            alert(message);
+        };
+
+        socket.on("error_message", handleError);
+
+        return () => {
+            socket.off("error_message", handleError);
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleRedirectToLobby = () => {
+            navigate("/lobby");
+        };
+
+        socket.on("redirect_to_lobby", handleRedirectToLobby);
+
+        return () => {
+            socket.off("redirect_to_lobby", handleRedirectToLobby);
+        };
+    }, []);
+
+    useEffect(() => {
         const handleGameStarted = ({ roomId }) => navigate(`/game/${roomId}`);
 
         socket.on("game_started", handleGameStarted);

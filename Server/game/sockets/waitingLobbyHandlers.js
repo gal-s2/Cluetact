@@ -20,12 +20,19 @@ module.exports = function waitingLobbyHandlers(io, socket) {
             "lobby_update",
             WaitingLobbyManager.getLobbyUsers(lobbyId)
         );
-        WaitingLobbyManager.printWaitingLobbies();
     });
 
     socket.on("join_waiting_lobby", ({ lobbyId, username }) => {
+        isLobbyExist = WaitingLobbyManager.isLobbyExist(lobbyId);
+        if (!isLobbyExist) {
+            console.log("Lobby does not exist");
+            socket.emit("error_message", "Lobby does not exist.");
+            socket.emit("redirect_to_lobby");
+            return;
+        }
         socket.join(lobbyId);
         WaitingLobbyManager.joinLobby(lobbyId, username, socket.id);
+        console.log("Found users", WaitingLobbyManager.getLobbyUsers(lobbyId));
         io.to(lobbyId).emit(
             "lobby_update",
             WaitingLobbyManager.getLobbyUsers(lobbyId)
@@ -34,6 +41,16 @@ module.exports = function waitingLobbyHandlers(io, socket) {
 
     socket.on("get_lobby_users", ({ lobbyId }) => {
         socket.emit("lobby_update", WaitingLobbyManager.getLobbyUsers(lobbyId));
+    });
+
+    socket.on("leave_waiting_lobby", ({ lobbyId, username }) => {
+        console.log(`${username} left lobby ${lobbyId}`);
+
+        WaitingLobbyManager.leaveLobby(lobbyId, username);
+        io.to(lobbyId).emit(
+            "lobby_update",
+            WaitingLobbyManager.getLobbyUsers(lobbyId)
+        );
     });
 
     socket.on("start_game_from_lobby", ({ lobbyId }) => {
@@ -49,15 +66,5 @@ module.exports = function waitingLobbyHandlers(io, socket) {
 
         io.to(lobbyId).emit("game_started", { roomId: room.roomId });
         WaitingLobbyManager.deleteLobby(lobbyId);
-    });
-
-    socket.on("leave_waiting_lobby", ({ lobbyId, username }) => {
-        console.log(`${username} left lobby ${lobbyId}`);
-
-        WaitingLobbyManager.leaveLobby(lobbyId, username);
-        io.to(lobbyId).emit(
-            "lobby_update",
-            WaitingLobbyManager.getLobbyUsers(lobbyId)
-        );
     });
 };
