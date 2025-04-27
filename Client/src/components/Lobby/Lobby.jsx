@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import socket from "../../socket";
 import styles from "./Lobby.module.css";
 import AvatarPicker from "../Profile/AvatarPicker";
-import axios from "axios";
 
 function generateRoomCode(length = 5) {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
