@@ -1,8 +1,13 @@
 const Player = require("./Player");
 const GameSession = require("./GameSession");
+<<<<<<< HEAD:Server/game/Room.js
 const isValidEnglishWord = require("./validateWord");
 const Logger = require("./Logger");
 const User = require("../models/User");
+=======
+const isValidEnglishWord = require("../../utils/validateWord");
+const Logger = require("../Logger");
+>>>>>>> origin/main:Server/game/models/Room.js
 
 const MAX_RACE_TIME = 10000;
 const BASE_POINTS = 15;
@@ -411,10 +416,18 @@ class Room {
         this.turnQueue = seekersUsernames.slice();
         this.usedWords = new Set();
 
+<<<<<<< HEAD:Server/game/Room.js
+=======
+        // Keeper Creation
+>>>>>>> origin/main:Server/game/models/Room.js
         const keeper = new Player(keeperUsername);
         keeper.setRole("keeper");
         this.players[keeperUsername] = keeper;
 
+<<<<<<< HEAD:Server/game/Room.js
+=======
+        // Seekers Creation
+>>>>>>> origin/main:Server/game/models/Room.js
         seekersUsernames.forEach((username) => {
             const seeker = new Player(username);
             seeker.setRole("seeker");
@@ -424,8 +437,27 @@ class Room {
         this.pastKeepers = new Set();
         this.pastKeepers.add(keeperUsername);
     }
+<<<<<<< HEAD:Server/game/Room.js
     isGameOver() {
         return this.pastKeepers.size >= Object.keys(this.players).length;
+=======
+
+    /**
+     * Get the part of the word that is currently revealed to all players in room
+     * @returns {string}
+     */
+    getRevealedLetters() {
+        return this.currentSession.revealedLetters;
+    }
+
+    /**
+     * returns player object by username
+     * @param {string} username
+     * @returns {Player}
+     */
+    getPlayerByUsername(username) {
+        return this.players[username];
+>>>>>>> origin/main:Server/game/models/Room.js
     }
 
     // async setKeeperWordWithValidation(word) {

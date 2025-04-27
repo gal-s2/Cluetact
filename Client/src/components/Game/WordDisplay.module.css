@@ -17,3 +17,11 @@
     font-weight: 600;
     word-wrap: break-word;
 }
+
+.revealed {
+    color: green;
+}
+
+.hidden {
+    color: gray;
+}

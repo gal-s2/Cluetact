@@ -12,12 +12,16 @@ import PrivateRoute from "./components/Routes/PrivateRoute";
 import PublicRoute from "./components/Routes/PublicRoute";
 import WelcomePage from "./components/Welcome/WelcomePage";
 import StatsPage from "./components/statistics/StatsPage";
+import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
+import { useUser } from "./components/UserContext";
 import ProfileDetails from "./components/Profile/ProfileDetails";
 
 function App() {
+    const { user } = useUser();
+
     return (
         <Router>
-            <Routes>
+            <Routes key={user ? "logged-in" : "logged-out"}>
                 <Route
                     path="/login"
                     element={
@@ -80,6 +84,7 @@ function App() {
                 />
 
                 <Route path="*" element={<NotFoundPage />} />
+                <Route path="/waiting/:roomId" element={<WaitingRoom />} />
             </Routes>
         </Router>
     );

@@ -35,7 +35,7 @@ const io = new Server(server, {
     cors: { origin: "*", methods: ["GET", "POST"] },
 });
 
-require("./gameSocketHandlers.js")(io);
+require("./game/sockets/gameSocketHandlers.js")(io);
 
 server.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);

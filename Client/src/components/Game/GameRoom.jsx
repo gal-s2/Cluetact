@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import socket from "../../socket";
 import WordDisplay from "./WordDisplay";
-import Table from "./Table";
 import PlayerCard from "./PlayerCard";
 import Spinner from "../Routes/Spinner";
 
@@ -10,6 +9,13 @@ import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./KeeperWordPopup";
 
 function GameRoom() {
+    // -----
+    // were currently using ref here becuase of react strict mode
+    // which will call useEffect twice
+    // and therefore will send join room to server twice
+    // -----
+    const hasJoinedRef = useRef(false);
+
     const { roomId } = useParams();
 
     const [players, setPlayers] = useState();
@@ -18,14 +24,12 @@ function GameRoom() {
     const [keeperWord, setKeeperWord] = useState("");
     const [logMessage, setLogMessage] = useState("");
 
-    // Word data for word component
-    const [revealedWord, setRevealedWord] = useState("");
-    const [wordLength, setWordLength] = useState(0);
-
-    // were currently using ref here becuase of react strict mode
-    // which will call useEffect twice
-    // and therefore will send join room to server twice
-    const hasJoinedRef = useRef(false);
+    // state for word data
+    const [word, setWord] = useState({
+        revealedWord: "",
+        wordLength: 0,
+        word: "",
+    });
 
     useEffect(() => {
         if (!hasJoinedRef.current) {
@@ -35,7 +39,6 @@ function GameRoom() {
 
         socket.on("game_start", (data) => {
             setLoading(false);
-            console.log("data", data.room);
             setPlayers(data.room.players);
         });
 
@@ -50,14 +53,21 @@ function GameRoom() {
             if (data.success) {
                 setIsKeeper(false);
                 setKeeperWord("");
-                setWordLength(data.length);
+
+                setWord((prev) => ({
+                    ...prev,
+                    wordLength: data.length,
+                    revealedWord: data.revealedWord,
+                    word: data.word,
+                }));
                 setLogMessage("");
             }
         });
 
         return () => {
             console.log("Cleaning up game_start listener");
-            //every function that we want to run only ONCE - has to be added below
+
+            // every function that we want to run only ONCE - has to be added below
             socket.off("game_start");
             socket.off("request_keeper_word");
             socket.off("keeper_word_chosen");
@@ -69,7 +79,12 @@ function GameRoom() {
     return (
         <div className={styles.room}>
             <div className={styles.wordDisplay}>
-                <WordDisplay word={revealedWord} length={wordLength} />
+                <WordDisplay
+                    isKeeper={true}
+                    revealedWord={word.revealedWord}
+                    word={word.word}
+                    length={word.wordLength}
+                />
             </div>
 
             {isKeeper && (
