@@ -20,7 +20,7 @@ export const UserProvider = ({ children }) => {
     // Wrap setUser to also store in localStorage
     const setUser = (userData) => {
         console.log("in setUser", userData);
-        if (userData) {
+        if (userData && userData.user) {
             localStorage.setItem("token", userData.token);
             localStorage.setItem("user", JSON.stringify(userData.user));
             setUserState(userData.user);
@@ -29,7 +29,6 @@ export const UserProvider = ({ children }) => {
             localStorage.removeItem("user");
             setUserState(null);
         }
-        setLoading(false);
     };
 
     return (

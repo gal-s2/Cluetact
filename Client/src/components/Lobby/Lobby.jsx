@@ -4,6 +4,7 @@ import { useUser } from "../UserContext";
 import { useNavigate } from "react-router-dom";
 import socket from "../../socket";
 import styles from "./Lobby.module.css";
+import AvatarPicker from "../Profile/AvatarPicker";
 
 function generateRoomCode(length = 5) {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -21,6 +22,8 @@ function Lobby() {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [roomCodeInput, setRoomCodeInput] = useState("");
     const [createdRoomCode, setCreatedRoomCode] = useState("");
+    const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+    const [playMenuOpen, setPlayMenuOpen] = useState(false);
 
     useEffect(() => {
         if (!user && !loading) {
@@ -103,54 +106,111 @@ function Lobby() {
 
     return (
         <div className={styles.container}>
-            <h3>Hello, {user.username}</h3>
+            <header className={styles.header}>
+                <img
+                    src="src/assets/Cluetact.jpeg"
+                    alt="Cluetact Logo"
+                    className={styles.logo}
+                />
+                <h1>Welcome, {user.username}!</h1>
+            </header>
 
-            <div>
-                <button className={styles.blue} onClick={findGame}>
-                    Find Game
-                </button>
-                <button
-                    className={styles.green}
-                    onClick={() => setShowJoinModal(true)}
-                >
-                    Join Room
-                </button>
-                <button className={styles.orange} onClick={handleCreateRoom}>
-                    Create Room
-                </button>
-                <button onClick={() => navigate("/stats")}>My Stats</button>
-                <button className={styles.red} onClick={disconnect}>
-                    Disconnect
-                </button>
-            </div>
+            <main className={styles.main}>
+                <div className={styles.sectionGroup}>
+                    {/* Play Section */}
+                    <div className={styles.card}>
+                        <button
+                            className={styles.buttonPrimary}
+                            onClick={() => setPlayMenuOpen((prev) => !prev)}
+                        >
+                            Play
+                        </button>
 
-            {/* Join Modal */}
+                        {playMenuOpen && (
+                            <div className={styles.dropdown}>
+                                <button onClick={findGame}>Find Game</button>
+                                <button onClick={() => setShowJoinModal(true)}>
+                                    Join Room
+                                </button>
+                                <button onClick={handleCreateRoom}>
+                                    Create Room
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Profile Section */}
+                    <div className={styles.card}>
+                        <button
+                            className={styles.buttonSecondary}
+                            onClick={() => setProfileMenuOpen((prev) => !prev)}
+                        >
+                            My Profile
+                        </button>
+
+                        {profileMenuOpen && (
+                            <div className={styles.dropdown}>
+                                <button onClick={() => navigate("/stats")}>
+                                    My Stats
+                                </button>
+                                <button onClick={() => navigate("/profile")}>
+                                    View & Edit Details
+                                </button>
+                                <button
+                                    className={styles.buttonDanger}
+                                    onClick={disconnect}
+                                >
+                                    Disconnect
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </main>
+
+            {/* Modals */}
             {showJoinModal && (
-                <div className={styles.modal}>
-                    <h3>Enter Room Code</h3>
-                    <input
-                        type="text"
-                        value={roomCodeInput}
-                        onChange={(e) => setRoomCodeInput(e.target.value)}
-                        placeholder="ABCD1234"
-                    />
-                    <button onClick={handleJoinRoom}>Join</button>
-                    <button onClick={() => setShowJoinModal(false)}>
-                        Cancel
-                    </button>
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                        <h2>Enter Room Code</h2>
+                        <input
+                            type="text"
+                            value={roomCodeInput}
+                            onChange={(e) => setRoomCodeInput(e.target.value)}
+                            placeholder="e.g. ABCD1234"
+                        />
+                        <div className={styles.modalActions}>
+                            <button
+                                className={styles.buttonPrimary}
+                                onClick={handleJoinRoom}
+                            >
+                                Join
+                            </button>
+                            <button
+                                className={styles.buttonSecondary}
+                                onClick={() => setShowJoinModal(false)}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
 
-            {/* Create Modal */}
             {showCreateModal && (
-                <div className={styles.modal}>
-                    <h3>Room Created</h3>
-                    <p>
-                        Pass-key: <strong>{createdRoomCode}</strong>
-                    </p>
-                    <button onClick={() => setShowCreateModal(false)}>
-                        OK
-                    </button>
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                        <h2>Room Created!</h2>
+                        <p>
+                            Pass-key: <strong>{createdRoomCode}</strong>
+                        </p>
+                        <button
+                            className={styles.buttonPrimary}
+                            onClick={() => setShowCreateModal(false)}
+                        >
+                            OK
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

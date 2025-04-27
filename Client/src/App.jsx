@@ -14,6 +14,7 @@ import WelcomePage from "./components/Welcome/WelcomePage";
 import StatsPage from "./components/statistics/StatsPage";
 import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
 import { useUser } from "./components/UserContext";
+import ProfileDetails from "./components/Profile/ProfileDetails";
 
 function App() {
     const { user } = useUser();
@@ -70,6 +71,14 @@ function App() {
                     element={
                         <PrivateRoute>
                             <StatsPage />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/profile"
+                    element={
+                        <PrivateRoute>
+                            <ProfileDetails />
                         </PrivateRoute>
                     }
                 />

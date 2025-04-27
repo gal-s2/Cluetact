@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 
 // Import all routers from ./routes/index.js
 app.use(require("./routes"));
+app.use("/api/stats", require("./routes/stats"));
 
 const http = require("http");
 const { Server } = require("socket.io");
