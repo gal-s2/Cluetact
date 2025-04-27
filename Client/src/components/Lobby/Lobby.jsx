@@ -54,16 +54,13 @@ function Lobby() {
     };
 
     const disconnect = async () => {
-        socket.disconnect();
-        setUser(null);
-        navigate("/");
+        if (!user) return;
 
         try {
-            const response = await axios.post(
-                "http://localhost:8000/auth/logout",
-                { id: user._id }
-            );
-            console.log(response);
+            await axios.post("http://localhost:8000/auth/logout", {
+                id: user._id,
+            });
+            console.log("Logout successful");
         } catch (error) {
             console.log("Error in disconnect", error);
         }
