@@ -14,7 +14,7 @@ how to reset all site date (cookies, other local stuff...) saved on ms edge:
 
 //things done on 23.4.2025 (wednesday):
 Cluetact Waiting Room Summary
-🔧 Created temporary waiting lobbies using WaitingLobbyManager.js (not full rooms yet)
+🔧 Created temporary waiting lobbies using WaitingLobbyManager.js (not full rooms yet )
 🎯 Added Socket.IO handlers in waitingLobbyHandlers.js for:
 create_waiting_lobby
 join_waiting_lobby
