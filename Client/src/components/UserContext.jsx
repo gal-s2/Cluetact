@@ -1,40 +1,42 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from "react";
 import socket from "../socket";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [ user, setUserState ] = useState(null);
-  const [ loading, setLoading ] = useState(true);
+    const [user, setUserState] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     // Load user from localStorage on first render
     useEffect(() => {
-        const token = localStorage.getItem('token');  
-        const storedUser = localStorage.getItem('user');
+        const token = localStorage.getItem("token");
+        const storedUser = localStorage.getItem("user");
         if (storedUser && token) {
             setUserState(JSON.parse(storedUser));
         }
         setLoading(false);
     }, []);
-  
+
     // Wrap setUser to also store in localStorage
     const setUser = (userData) => {
-        console.log('in setUser', userData);
+        console.log("in setUser", userData);
         if (userData) {
-            localStorage.setItem('token', userData.token);
-            localStorage.setItem('user', JSON.stringify(userData.user));
+            localStorage.setItem("token", userData.token);
+            localStorage.setItem("user", JSON.stringify(userData.user));
+            setUserState(userData.user);
         } else {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            setUserState(null);
         }
-        setUserState(userData.user);
-    };  
+        setLoading(false);
+    };
 
-  return (
-    <UserContext.Provider value={{ user, setUser, loading }}>
-      {children}
-    </UserContext.Provider>
-  );
+    return (
+        <UserContext.Provider value={{ user, setUser, loading }}>
+            {children}
+        </UserContext.Provider>
+    );
 };
 
 export const useUser = () => useContext(UserContext);

@@ -13,11 +13,14 @@ import PublicRoute from "./components/Routes/PublicRoute";
 import WelcomePage from "./components/Welcome/WelcomePage";
 import StatsPage from "./components/statistics/StatsPage";
 import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
+import { useUser } from "./components/UserContext";
 
 function App() {
+    const { user } = useUser();
+
     return (
         <Router>
-            <Routes>
+            <Routes key={user ? "logged-in" : "logged-out"}>
                 <Route
                     path="/login"
                     element={

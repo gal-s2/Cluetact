@@ -113,6 +113,8 @@ const handleKeeperWordSubmission = async (
     }
 };
 
+const WaitingLobbyManager = require("../managers/WaitingLobbyManager");
+
 /**
  * Handles the logic for socket disconnections.
  * Unregisters the socket from the socket manager when a user disconnects.
@@ -124,7 +126,18 @@ const handleKeeperWordSubmission = async (
  */
 const disconnect = (socket, args, { gameManager, socketManager }) => {
     console.log(`${socket?.user?.username} disconnected: ${args}`);
+
+    const lobbies = WaitingLobbyManager.removeUserFromItsLobbies(socket.id);
+    lobbies.forEach((lobbyId) => {
+        socket.leave(lobbyId);
+        socket
+            .to(lobbyId)
+            .emit("lobby_update", WaitingLobbyManager.getLobbyUsers(lobbyId));
+    });
+
     socketManager.unregister(socket);
+
+    console.log(`[Socket ${socket.id}] disconnected.`);
 };
 
 module.exports = {
