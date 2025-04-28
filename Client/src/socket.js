@@ -32,10 +32,10 @@ socket.on("disconnect", () => {
 });
 
 socket.on("redirect_to_login", () => {
-    console.log("[Client] Redirecting to the lobby...");
+    console.log("[Client] Redirecting to the login...");
     // Handle the redirection logic
     // For example, redirecting the user to the lobby page:
-    window.location.href = "/login"; // Or use React Router's history.push("/lobby") if you're using React Router
+    //window.location.href = "/login"; // Or use React Router's history.push("/lobby") if you're using React Router
 });
 
 export default socket;
