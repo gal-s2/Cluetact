@@ -17,10 +17,6 @@ socket.onAny((event, ...args) => {
     console.log(`[Client] Received event: ${event} | Data:`, args);
 });
 
-socket.onAny((event, ...args) => {
-    console.log(`[Client] Received event: ${event} | Data:`, args);
-});
-
 socket.on("connect_error", (err) => {
     console.error("Socket connect error:", err.message);
 });

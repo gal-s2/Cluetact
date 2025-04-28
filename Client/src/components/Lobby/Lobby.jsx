@@ -4,16 +4,12 @@ import { useUser } from "../UserContext";
 import { useNavigate } from "react-router-dom";
 import socket from "../../socket";
 import styles from "./Lobby.module.css";
-import AvatarPicker from "../Profile/AvatarPicker";
-
-function generateRoomCode(length = 5) {
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    let code = "";
-    for (let i = 0; i < length; i++) {
-        code += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return code;
-}
+import LobbyHeader from "./LobbyHeader";
+import JoinRoomModal from "./JoinRoomModal";
+import CreateRoomModal from "./CreateRoomModal";
+import ProfileCard from "./PorfileCard";
+import PlayCard from "./PlayCard";
+import generateRoomCode from "../../utils/generateRoomCode";
 
 function Lobby() {
     const { user, setUser, loading } = useUser();
@@ -106,113 +102,18 @@ function Lobby() {
 
     return (
         <div className={styles.container}>
-            <header className={styles.header}>
-                <img
-                    src="src/assets/Cluetact.jpeg"
-                    alt="Cluetact Logo"
-                    className={styles.logo}
-                />
-                <h1>Welcome, {user.username}!</h1>
-            </header>
+            <LobbyHeader username={user.username} />
 
             <main className={styles.main}>
                 <div className={styles.sectionGroup}>
-                    {/* Play Section */}
-                    <div className={styles.card}>
-                        <button
-                            className={styles.buttonPrimary}
-                            onClick={() => setPlayMenuOpen((prev) => !prev)}
-                        >
-                            Play
-                        </button>
-
-                        {playMenuOpen && (
-                            <div className={styles.dropdown}>
-                                <button onClick={findGame}>Find Game</button>
-                                <button onClick={() => setShowJoinModal(true)}>
-                                    Join Room
-                                </button>
-                                <button onClick={handleCreateRoom}>
-                                    Create Room
-                                </button>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Profile Section */}
-                    <div className={styles.card}>
-                        <button
-                            className={styles.buttonSecondary}
-                            onClick={() => setProfileMenuOpen((prev) => !prev)}
-                        >
-                            My Profile
-                        </button>
-
-                        {profileMenuOpen && (
-                            <div className={styles.dropdown}>
-                                <button onClick={() => navigate("/stats")}>
-                                    My Stats
-                                </button>
-                                <button onClick={() => navigate("/profile")}>
-                                    View & Edit Details
-                                </button>
-                                <button
-                                    className={styles.buttonDanger}
-                                    onClick={disconnect}
-                                >
-                                    Disconnect
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                    <PlayCard playMenuOpen={playMenuOpen} setPlayMenuOpen={setPlayMenuOpen} findGame={findGame} setShowJoinModal={setShowJoinModal} handleCreateRoom={handleCreateRoom} />
+                    <ProfileCard profileMenuOpen={profileMenuOpen} setProfileMenuOpen={setProfileMenuOpen} navigate={navigate} disconnect={disconnect} />
                 </div>
             </main>
 
-            {/* Modals */}
-            {showJoinModal && (
-                <div className={styles.modalOverlay}>
-                    <div className={styles.modal}>
-                        <h2>Enter Room Code</h2>
-                        <input
-                            type="text"
-                            value={roomCodeInput}
-                            onChange={(e) => setRoomCodeInput(e.target.value)}
-                            placeholder="e.g. ABCD1234"
-                        />
-                        <div className={styles.modalActions}>
-                            <button
-                                className={styles.buttonPrimary}
-                                onClick={handleJoinRoom}
-                            >
-                                Join
-                            </button>
-                            <button
-                                className={styles.buttonSecondary}
-                                onClick={() => setShowJoinModal(false)}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
 
-            {showCreateModal && (
-                <div className={styles.modalOverlay}>
-                    <div className={styles.modal}>
-                        <h2>Room Created!</h2>
-                        <p>
-                            Pass-key: <strong>{createdRoomCode}</strong>
-                        </p>
-                        <button
-                            className={styles.buttonPrimary}
-                            onClick={() => setShowCreateModal(false)}
-                        >
-                            OK
-                        </button>
-                    </div>
-                </div>
-            )}
+            {showCreateModal && <CreateRoomModal createdRoomCode={createdRoomCode} closeModal={() => setShowCreateModal(false)} />}
         </div>
     );
 }
