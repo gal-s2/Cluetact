@@ -1,5 +1,3 @@
-// /socket/waitingLobbyHandlers.js
-
 const WaitingLobbyManager = require("../managers/WaitingLobbyManager");
 const GameManager = require("../managers/GameManager");
 

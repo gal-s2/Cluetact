@@ -4,7 +4,12 @@ const socketManager = require("../managers/globalSocketManager");
 const { socketLogger } = require("../../utils/logger");
 const { verifyToken } = require("../../utils/jwt");
 const waitingLobbyHandlers = require("./waitingLobbyHandlers");
-const { handleJoinQueue, handleJoinRoom, handleKeeperWordSubmission, disconnect } = require("../controllers/gameSocketController");
+const {
+    handleJoinQueue,
+    handleJoinRoom,
+    handleKeeperWordSubmission,
+    disconnect,
+} = require("../controllers/gameSocketController");
 
 module.exports = function (io) {
     const gameManager = new GameManager();
@@ -20,7 +25,6 @@ module.exports = function (io) {
                 socket.user = decoded;
                 next();
             }
-            throw new Error("Unauthorized");
         } catch (err) {
             console.log("Auth error");
             socket.emit("redirect_to_login");
@@ -35,7 +39,11 @@ module.exports = function (io) {
 
         // Log every incoming message
         socket.onAny((event, ...args) => {
-            socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);
+            socketLogger.info(
+                `[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(
+                    args
+                )}`
+            );
         });
 
         socket.on("find_game", (args) =>
