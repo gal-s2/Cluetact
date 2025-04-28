@@ -7,7 +7,7 @@ import styles from "./Lobby.module.css";
 import LobbyHeader from "./LobbyHeader";
 import JoinRoomModal from "./JoinRoomModal";
 import CreateRoomModal from "./CreateRoomModal";
-import ProfileCard from "./PorfileCard";
+import ProfileCard from "./ProfileCard";
 import PlayCard from "./PlayCard";
 import generateRoomCode from "../../utils/generateRoomCode";
 

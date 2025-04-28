@@ -43,6 +43,8 @@ function WaitingRoom() {
                     lobbyId: roomId,
                     username: user.username,
                 });
+
+                console.log(socket);
             }
         };
 
@@ -130,10 +132,7 @@ function WaitingRoom() {
                 </p>
 
                 <div className={styles.qrContainer}>
-                    <QRCode
-                        value={`${window.location.origin}/waiting/${roomId}`}
-                        size={128}
-                    />
+                    <QRCode value={`${window.location.origin}/waiting/${roomId}`} size={128} />
                     <p className={styles.qrLabel}>Scan to Join</p>
                 </div>
 
@@ -147,10 +146,7 @@ function WaitingRoom() {
                 </ul>
 
                 {user && user.username === users[0] && users.length >= 3 && (
-                    <button
-                        className={styles.startButton}
-                        onClick={handleStart}
-                    >
+                    <button className={styles.startButton} onClick={handleStart}>
                         Start Game
                     </button>
                 )}

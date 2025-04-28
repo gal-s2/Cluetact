@@ -7,11 +7,7 @@
  * @param {GameManager} params.gameManager - The game manager instance to interact with game data.
  * @param {SocketManager} params.socketManager - The socket manager instance to interact with socket connections.
  */
-const handleJoinQueue = async (
-    socket,
-    args,
-    { gameManager, socketManager }
-) => {
+const handleJoinQueue = async (socket, args, { gameManager, socketManager }) => {
     const { username } = args;
 
     const room = await gameManager.addUserToQueue(username);
@@ -19,15 +15,10 @@ const handleJoinQueue = async (
     if (room) {
         // Send welcome messages to all players
         Object.values(room.players).forEach((player) => {
-            const playerSocket = socketManager.getSocketByUsername(
-                player.username
-            );
+            const playerSocket = socketManager.getSocketByUsername(player.username);
             if (playerSocket) {
                 const role = player.role;
-                const message =
-                    role === "keeper"
-                        ? `You are the keeper in Room ${room.roomId}`
-                        : `You are a seeker in Room ${room.roomId}`;
+                const message = role === "keeper" ? `You are the keeper in Room ${room.roomId}` : `You are a seeker in Room ${room.roomId}`;
 
                 playerSocket.emit("new_room", {
                     roomId: room.roomId,
@@ -78,11 +69,7 @@ const handleJoinRoom = async (socket, args, { gameManager, socketManager }) => {
  * @param {GameManager} params.gameManager - The game manager instance to interact with game data.
  * @param {SocketManager} params.socketManager - The socket manager instance to interact with socket connections.
  */
-const handleKeeperWordSubmission = async (
-    socket,
-    args,
-    { gameManager, socketManager }
-) => {
+const handleKeeperWordSubmission = async (socket, args, { gameManager, socketManager }) => {
     const { word } = args;
     const room = gameManager.getRoomBySocket(socket);
     if (!room) return;
@@ -130,9 +117,7 @@ const disconnect = (socket, args, { gameManager, socketManager }) => {
     const lobbies = WaitingLobbyManager.removeUserFromItsLobbies(socket.id);
     lobbies.forEach((lobbyId) => {
         socket.leave(lobbyId);
-        socket
-            .to(lobbyId)
-            .emit("lobby_update", WaitingLobbyManager.getLobbyUsers(lobbyId));
+        socket.to(lobbyId).emit("lobby_update", WaitingLobbyManager.getLobbyUsers(lobbyId));
     });
 
     socketManager.unregister(socket);

@@ -4,26 +4,26 @@ const socketManager = require("../managers/globalSocketManager");
 const { socketLogger } = require("../../utils/logger");
 const { verifyToken } = require("../../utils/jwt");
 const waitingLobbyHandlers = require("./waitingLobbyHandlers");
-const {
-    handleJoinQueue,
-    handleJoinRoom,
-    handleKeeperWordSubmission,
-    disconnect,
-} = require("../controllers/gameSocketController");
+const { handleJoinQueue, handleJoinRoom, handleKeeperWordSubmission, disconnect } = require("../controllers/gameSocketController");
 
 module.exports = function (io) {
     const gameManager = new GameManager();
 
     // middleware for socket message
     io.use((socket, next) => {
-        const token = socket.handshake.auth.token;
         try {
-            const decoded = verifyToken(token); // verify jwt
-            socket.user = decoded;
-            next();
+            const token = socket?.handshake?.auth?.token;
+            if (token) {
+                console.log("Token in middelware", token);
+                console.log("is valid", verifyToken(token));
+                const decoded = verifyToken(token); // verify jwt
+                socket.user = decoded;
+                next();
+            }
+            throw new Error("Unauthorized");
         } catch (err) {
             console.log("Auth error");
-            next(new Error("Authentication error"));
+            socket.emit("redirect_to_login");
         }
     });
 
@@ -35,11 +35,7 @@ module.exports = function (io) {
 
         // Log every incoming message
         socket.onAny((event, ...args) => {
-            socketLogger.info(
-                `[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(
-                    args
-                )}`
-            );
+            socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);
         });
 
         socket.on("find_game", (args) =>
