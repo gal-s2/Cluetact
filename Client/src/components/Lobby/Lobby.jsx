@@ -60,7 +60,6 @@ function Lobby() {
             console.log("Error in disconnect", error);
         }
 
-        // 🔥 Properly wait for socket to disconnect
         await new Promise((resolve) => {
             if (socket.connected) {
                 socket.once("disconnect", resolve);
@@ -70,8 +69,8 @@ function Lobby() {
             }
         });
 
-        socket.auth = {}; // clear auth
-        setUser(null); // now cleanly set user to null
+        socket.auth = {};
+        setUser(null);
     };
 
     const handleCreateRoom = () => {
@@ -106,14 +105,37 @@ function Lobby() {
 
             <main className={styles.main}>
                 <div className={styles.sectionGroup}>
-                    <PlayCard playMenuOpen={playMenuOpen} setPlayMenuOpen={setPlayMenuOpen} findGame={findGame} setShowJoinModal={setShowJoinModal} handleCreateRoom={handleCreateRoom} />
-                    <ProfileCard profileMenuOpen={profileMenuOpen} setProfileMenuOpen={setProfileMenuOpen} navigate={navigate} disconnect={disconnect} />
+                    <PlayCard
+                        playMenuOpen={playMenuOpen}
+                        setPlayMenuOpen={setPlayMenuOpen}
+                        findGame={findGame}
+                        setShowJoinModal={setShowJoinModal}
+                        handleCreateRoom={handleCreateRoom}
+                    />
+                    <ProfileCard
+                        profileMenuOpen={profileMenuOpen}
+                        setProfileMenuOpen={setProfileMenuOpen}
+                        navigate={navigate}
+                        disconnect={disconnect}
+                    />
                 </div>
             </main>
 
-            {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
+            {showJoinModal && (
+                <JoinRoomModal
+                    roomCodeInput={roomCodeInput}
+                    setRoomCodeInput={setRoomCodeInput}
+                    handleJoinRoom={handleJoinRoom}
+                    closeModal={() => setShowJoinModal(false)}
+                />
+            )}
 
-            {showCreateModal && <CreateRoomModal createdRoomCode={createdRoomCode} closeModal={() => setShowCreateModal(false)} />}
+            {showCreateModal && (
+                <CreateRoomModal
+                    createdRoomCode={createdRoomCode}
+                    closeModal={() => setShowCreateModal(false)}
+                />
+            )}
         </div>
     );
 }

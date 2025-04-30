@@ -82,4 +82,4 @@ class GameManager {
     }
 }
 
-module.exports = GameManager;
+module.exports = new GameManager();

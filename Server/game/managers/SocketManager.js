@@ -62,4 +62,4 @@ class SocketManager {
     }
 }
 
-module.exports = SocketManager;
+module.exports = new SocketManager();

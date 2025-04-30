@@ -1,5 +1,5 @@
-const GameManager = require("../managers/GameManager");
-const socketManager = require("../managers/globalSocketManager");
+const gameManager = require("../managers/GameManager");
+const socketManager = require("../managers/SocketManager");
 
 const { socketLogger } = require("../../utils/logger");
 const { verifyToken } = require("../../utils/jwt");
@@ -12,8 +12,6 @@ const {
 } = require("../controllers/gameSocketController");
 
 module.exports = function (io) {
-    const gameManager = new GameManager();
-
     // middleware for socket message
     io.use((socket, next) => {
         try {
@@ -46,32 +44,16 @@ module.exports = function (io) {
             );
         });
 
-        socket.on("find_game", (args) =>
-            handleJoinQueue(socket, args, {
-                gameManager,
-                socketManager,
-            })
-        );
+        socket.on("find_game", (args) => handleJoinQueue(socket, args));
 
-        socket.on("join_room", (args) =>
-            handleJoinRoom(socket, args, {
-                gameManager,
-                socketManager,
-            })
-        );
+        socket.on("join_room", (args) => handleJoinRoom(socket, args));
 
         socket.on("keeper_word_submission", (args) => {
-            handleKeeperWordSubmission(socket, args, {
-                gameManager,
-                socketManager,
-            });
+            handleKeeperWordSubmission(socket, args);
         });
 
         socket.on("disconnect", (args) => {
-            disconnect(socket, args, {
-                gameManager,
-                socketManager,
-            });
+            disconnect(socket, args);
         });
     });
 };

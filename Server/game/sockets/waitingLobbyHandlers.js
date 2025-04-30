@@ -1,9 +1,9 @@
-const WaitingLobbyManager = require("../managers/WaitingLobbyManager");
+const waitingLobbyManager = require("../managers/WaitingLobbyManager");
 const GameManager = require("../managers/GameManager");
 
 module.exports = function waitingLobbyHandlers(io, socket) {
     socket.on("create_waiting_lobby", ({ lobbyId, username }) => {
-        const lobby = WaitingLobbyManager.createLobby(
+        const lobby = waitingLobbyManager.createLobby(
             lobbyId,
             username,
             socket.id
@@ -16,12 +16,12 @@ module.exports = function waitingLobbyHandlers(io, socket) {
         socket.join(lobbyId);
         io.to(lobbyId).emit(
             "lobby_update",
-            WaitingLobbyManager.getLobbyUsers(lobbyId)
+            waitingLobbyManager.getLobbyUsers(lobbyId)
         );
     });
 
     socket.on("join_waiting_lobby", ({ lobbyId, username }) => {
-        isLobbyExist = WaitingLobbyManager.isLobbyExist(lobbyId);
+        isLobbyExist = waitingLobbyManager.isLobbyExist(lobbyId);
         if (!isLobbyExist) {
             console.log("Lobby does not exist");
             socket.emit("error_message", "Lobby does not exist.");
@@ -29,40 +29,41 @@ module.exports = function waitingLobbyHandlers(io, socket) {
             return;
         }
         socket.join(lobbyId);
-        WaitingLobbyManager.joinLobby(lobbyId, username, socket.id);
-        console.log("Found users", WaitingLobbyManager.getLobbyUsers(lobbyId));
+        waitingLobbyManager.joinLobby(lobbyId, username, socket.id);
+        console.log("Found users", waitingLobbyManager.getLobbyUsers(lobbyId));
         io.to(lobbyId).emit(
             "lobby_update",
-            WaitingLobbyManager.getLobbyUsers(lobbyId)
+            waitingLobbyManager.getLobbyUsers(lobbyId)
         );
     });
 
     socket.on("get_lobby_users", ({ lobbyId }) => {
-        socket.emit("lobby_update", WaitingLobbyManager.getLobbyUsers(lobbyId));
+        socket.emit("lobby_update", waitingLobbyManager.getLobbyUsers(lobbyId));
     });
 
     socket.on("leave_waiting_lobby", ({ lobbyId, username }) => {
         console.log(`${username} left lobby ${lobbyId}`);
 
-        WaitingLobbyManager.leaveLobby(lobbyId, username);
+        waitingLobbyManager.leaveLobby(lobbyId, username);
         io.to(lobbyId).emit(
             "lobby_update",
-            WaitingLobbyManager.getLobbyUsers(lobbyId)
+            waitingLobbyManager.getLobbyUsers(lobbyId)
         );
     });
 
     socket.on("start_game_from_lobby", ({ lobbyId }) => {
-        const lobby = WaitingLobbyManager.startLobby(lobbyId);
+        const lobby = waitingLobbyManager.getLobby(lobbyId);
+        console.log("looking for lobby", lobbyId);
         if (!lobby || lobby.users.length < 3) {
             socket.emit("error_message", "Not enough users to start the game.");
             return;
         }
 
         const keeper = lobby.creator;
-        const seekers = lobby.users.filter((u) => u !== keeper);
+        const seekers = [...lobby.users].filter((u) => u !== keeper);
         const room = GameManager.createRoom("Started", keeper, seekers);
 
         io.to(lobbyId).emit("game_started", { roomId: room.roomId });
-        WaitingLobbyManager.deleteLobby(lobbyId);
+        waitingLobbyManager.deleteLobby(lobbyId);
     });
 };

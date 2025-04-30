@@ -1,3 +1,7 @@
+const gameManager = require("../managers/GameManager");
+const socketManager = require("../managers/SocketManager");
+const waitingLobbyManager = require("../managers/WaitingLobbyManager");
+
 /**
  * Handles the logic for joining the queue.
  * If a room is created, a "new_room" event is sent to players in the room.
@@ -7,7 +11,7 @@
  * @param {GameManager} params.gameManager - The game manager instance to interact with game data.
  * @param {SocketManager} params.socketManager - The socket manager instance to interact with socket connections.
  */
-const handleJoinQueue = async (socket, args, { gameManager, socketManager }) => {
+const handleJoinQueue = async (socket, args) => {
     const { username } = args;
 
     const room = await gameManager.addUserToQueue(username);
@@ -15,10 +19,15 @@ const handleJoinQueue = async (socket, args, { gameManager, socketManager }) => 
     if (room) {
         // Send welcome messages to all players
         Object.values(room.players).forEach((player) => {
-            const playerSocket = socketManager.getSocketByUsername(player.username);
+            const playerSocket = socketManager.getSocketByUsername(
+                player.username
+            );
             if (playerSocket) {
                 const role = player.role;
-                const message = role === "keeper" ? `You are the keeper in Room ${room.roomId}` : `You are a seeker in Room ${room.roomId}`;
+                const message =
+                    role === "keeper"
+                        ? `You are the keeper in Room ${room.roomId}`
+                        : `You are a seeker in Room ${room.roomId}`;
 
                 playerSocket.emit("new_room", {
                     roomId: room.roomId,
@@ -39,7 +48,7 @@ const handleJoinQueue = async (socket, args, { gameManager, socketManager }) => 
  * @param {GameManager} params.gameManager - The game manager instance to interact with game data.
  * @param {SocketManager} params.socketManager - The socket manager instance to interact with socket connections.
  */
-const handleJoinRoom = async (socket, args, { gameManager, socketManager }) => {
+const handleJoinRoom = async (socket, args) => {
     const room = gameManager.getRoomBySocket(socket);
 
     socket.emit("game_start", { room });
@@ -69,7 +78,7 @@ const handleJoinRoom = async (socket, args, { gameManager, socketManager }) => {
  * @param {GameManager} params.gameManager - The game manager instance to interact with game data.
  * @param {SocketManager} params.socketManager - The socket manager instance to interact with socket connections.
  */
-const handleKeeperWordSubmission = async (socket, args, { gameManager, socketManager }) => {
+const handleKeeperWordSubmission = async (socket, args) => {
     const { word } = args;
     const room = gameManager.getRoomBySocket(socket);
     if (!room) return;
@@ -100,8 +109,6 @@ const handleKeeperWordSubmission = async (socket, args, { gameManager, socketMan
     }
 };
 
-const WaitingLobbyManager = require("../managers/WaitingLobbyManager");
-
 /**
  * Handles the logic for socket disconnections.
  * Unregisters the socket from the socket manager when a user disconnects.
@@ -111,13 +118,15 @@ const WaitingLobbyManager = require("../managers/WaitingLobbyManager");
  * @param {GameManager} params.gameManager - The game manager instance to interact with game data.
  * @param {SocketManager} params.socketManager - The socket manager instance to interact with socket connections.
  */
-const disconnect = (socket, args, { gameManager, socketManager }) => {
+const disconnect = (socket, args) => {
     console.log(`${socket?.user?.username} disconnected: ${args}`);
 
-    const lobbies = WaitingLobbyManager.removeUserFromItsLobbies(socket.id);
+    const lobbies = waitingLobbyManager.removeUserFromItsLobbies(socket.id);
     lobbies.forEach((lobbyId) => {
         socket.leave(lobbyId);
-        socket.to(lobbyId).emit("lobby_update", WaitingLobbyManager.getLobbyUsers(lobbyId));
+        socket
+            .to(lobbyId)
+            .emit("lobby_update", waitingLobbyManager.getLobbyUsers(lobbyId));
     });
 
     socketManager.unregister(socket);
