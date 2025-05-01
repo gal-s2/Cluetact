@@ -7,6 +7,7 @@ import Spinner from "../Routes/Spinner";
 
 import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./KeeperWordPopup";
+import SubmitGuess from "./SubmitGuess";
 
 function GameRoom() {
     // -----
@@ -79,29 +80,14 @@ function GameRoom() {
     return (
         <div className={styles.room}>
             <div className={styles.wordDisplay}>
-                <WordDisplay
-                    isKeeper={true}
-                    revealedWord={word.revealedWord}
-                    word={word.word}
-                    length={word.wordLength}
-                />
+                <WordDisplay isKeeper={true} revealedWord={word.revealedWord} word={word.word} length={word.wordLength} />
             </div>
 
-            {isKeeper && (
-                <KeeperWordPopup
-                    keeperWord={keeperWord}
-                    setKeeperWord={setKeeperWord}
-                    logMessage={logMessage}
-                />
-            )}
+            {isKeeper && <KeeperWordPopup keeperWord={keeperWord} setKeeperWord={setKeeperWord} logMessage={logMessage} />}
 
             <div className={styles.table}>
                 {Object.values(players).map((player, index) => (
-                    <PlayerCard
-                        key={player.username}
-                        player={player}
-                        position={index}
-                    />
+                    <PlayerCard key={player.username} player={player} position={index} />
                 ))}
             </div>
         </div>

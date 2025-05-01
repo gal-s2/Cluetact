@@ -19,15 +19,10 @@ const handleJoinQueue = async (socket, args) => {
     if (room) {
         // Send welcome messages to all players
         Object.values(room.players).forEach((player) => {
-            const playerSocket = socketManager.getSocketByUsername(
-                player.username
-            );
+            const playerSocket = socketManager.getSocketByUsername(player.username);
             if (playerSocket) {
                 const role = player.role;
-                const message =
-                    role === "keeper"
-                        ? `You are the keeper in Room ${room.roomId}`
-                        : `You are a seeker in Room ${room.roomId}`;
+                const message = role === "keeper" ? `You are the keeper in Room ${room.roomId}` : `You are a seeker in Room ${room.roomId}`;
 
                 playerSocket.emit("new_room", {
                     roomId: room.roomId,
@@ -79,13 +74,15 @@ const handleJoinRoom = async (socket, args) => {
  * @param {SocketManager} params.socketManager - The socket manager instance to interact with socket connections.
  */
 const handleKeeperWordSubmission = async (socket, args) => {
-    const { word } = args;
+    let { word } = args;
     const room = gameManager.getRoomBySocket(socket);
     if (!room) return;
 
     const valid = await room.setKeeperWordWithValidation(word);
 
     if (valid) {
+        word = room.getKeeperWord();
+
         // send all players in room a word chosen
         for (const username in room.players) {
             let playerSocket = socketManager.getSocketByUsername(username);
@@ -124,9 +121,7 @@ const disconnect = (socket, args) => {
     const lobbies = waitingLobbyManager.removeUserFromItsLobbies(socket.id);
     lobbies.forEach((lobbyId) => {
         socket.leave(lobbyId);
-        socket
-            .to(lobbyId)
-            .emit("lobby_update", waitingLobbyManager.getLobbyUsers(lobbyId));
+        socket.to(lobbyId).emit("lobby_update", waitingLobbyManager.getLobbyUsers(lobbyId));
     });
 
     socketManager.unregister(socket);

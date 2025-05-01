@@ -12,8 +12,8 @@ class GameSession {
     }
 
     setKeeperWord(word) {
-        this.keeperWord = word;
-        this.revealedLetters = word[0]; // Reveal the first letter
+        this.keeperWord = word.toUpperCase();
+        this.revealedLetters = this.keeperWord[0]; // Reveal the first letter
         this.status = "waiting";
     }
 
