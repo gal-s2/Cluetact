@@ -1,0 +1,39 @@
+.keeperContainer {
+    padding: 1rem;
+    background-color: #fff5f0;
+    border-radius: 12px;
+    border: 1px solid #ffc6b0;
+}
+
+.clueList {
+    list-style: none;
+    padding-left: 0;
+}
+
+.clueItem {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #333;
+}
+
+.inputRow {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.guessInput {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.blockButton {
+    padding: 0.5rem 1rem;
+    background-color: #ff7043;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}

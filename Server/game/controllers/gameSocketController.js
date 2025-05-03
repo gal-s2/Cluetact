@@ -120,13 +120,25 @@ const handleSubmitClue = (socket, { definition, word }) => {
     const success = room.startNewClueRound(username, word, definition);
 
     if (success) {
-        // Send definition only to all seekers
+        const addedClue = room.currentRound.clues.at(-1);
         for (const player of Object.values(room.players)) {
             const playerSocket = socketManager.getSocketByUsername(
                 player.username
             );
+
             if (player.role === "seeker" && player.username !== username) {
-                playerSocket.emit("new_clue", { definition, from: username });
+                playerSocket.emit("clue_revealed", {
+                    id: addedClue.id,
+                    from: username,
+                    definition,
+                });
+            }
+
+            if (player.role === "keeper") {
+                playerSocket.emit("clue_submitted", {
+                    from: username,
+                    definition,
+                });
             }
         }
     } else {
@@ -136,20 +148,56 @@ const handleSubmitClue = (socket, { definition, word }) => {
     }
 };
 
-const handleSubmitGuess = async (socket, { guess, clueGiver }) => {
+const handleSubmitGuess = async (socket, { guess, clueId }) => {
     const room = gameManager.getRoomBySocket(socket);
     if (!room) return;
 
     const userId = socket.user.username;
+    const isKeeper = room.keeperUsername === userId;
 
-    const result = await room.submitGuess(userId, guess);
+    // 🔸 Keeper trying to block a clue
+    if (isKeeper) {
+        const result = room.currentRound.tryBlockClue(guess, userId);
+
+        if (result.success) {
+            for (const player of Object.values(room.players)) {
+                const playerSocket = socketManager.getSocketByUsername(
+                    player.username
+                );
+                if (playerSocket) {
+                    playerSocket.emit("clue_blocked", {
+                        word: result.blockedClue.word,
+                        from: result.blockedClue.from,
+                        definition: result.blockedClue.definition,
+                        blockedBy: userId,
+                    });
+                }
+            }
+        } else {
+            socket.emit("guess_failed", {
+                message: "No matching clue to block.",
+            });
+        }
+
+        return;
+    }
+
+    // 🔹 Regular seeker guess flow
+    const result = await room.submitGuess(userId, guess, clueId);
 
     if (result.correct) {
-        io.to(room.roomId).emit("cluetact_success", {
-            guesser: userId,
-            word: guess,
-            revealed: room.getRevealedLetters(), // this returns the updated part
-        });
+        for (const player of Object.values(room.players)) {
+            const playerSocket = socketManager.getSocketByUsername(
+                player.username
+            );
+            if (playerSocket) {
+                playerSocket.emit("cluetact_success", {
+                    guesser: userId,
+                    word: guess,
+                    revealed: room.getRevealedLetters(),
+                });
+            }
+        }
     } else {
         socket.emit("guess_failed", { message: "Incorrect guess" });
     }

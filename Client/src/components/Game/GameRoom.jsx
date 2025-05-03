@@ -4,11 +4,12 @@ import socket from "../../socket";
 import WordDisplay from "./WordDisplay";
 import PlayerCard from "./PlayerCard";
 import Spinner from "../Routes/Spinner";
-
 import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./KeeperWordPopup";
 import SubmitClue from "./SubmitClue";
 import ClueBubble from "./ClueBubble";
+import KeeperClueList from "./KeeperClueList";
+import CluetactPopup from "./CluetactPopup";
 
 function GameRoom() {
     // -----
@@ -28,6 +29,7 @@ function GameRoom() {
     const [logMessage, setLogMessage] = useState("");
     const [clues, setClues] = useState([]);
     const [cluetact, setCluetact] = useState(null);
+    const hasUnblockedClues = clues.some((clue) => !clue.blocked);
 
     const handleGuess = (clue) => {
         const guess = prompt(
@@ -35,7 +37,7 @@ function GameRoom() {
         );
 
         if (guess && guess.trim()) {
-            socket.emit("submit_guess", { guess, clueGiver: clue.from });
+            socket.emit("submit_guess", { guess, clueId: clue.id });
         }
     };
 
@@ -61,12 +63,40 @@ function GameRoom() {
     }, []);
 
     useEffect(() => {
-        socket.on("new_clue", ({ definition, from }) => {
-            setClues((prev) => [...prev, { from, definition }]);
+        socket.on("clue_revealed", ({ id, definition, from }) => {
+            setClues((prev) => [
+                ...prev,
+                { id, from, definition, blocked: false },
+            ]);
             console.log(`New clue from ${from}: ${definition}`);
         });
 
-        return () => socket.off("new_clue");
+        return () => socket.off("clue_revealed");
+    }, []);
+
+    useEffect(() => {
+        socket.on("clue_blocked", ({ word, from, definition, blockedBy }) => {
+            setClues((prev) =>
+                prev.map((clue) =>
+                    clue.definition === definition && clue.from === from
+                        ? { ...clue, blocked: true }
+                        : clue
+                )
+            );
+            console.log(`Clue blocked: "${word}" from ${from} by ${blockedBy}`);
+        });
+
+        return () => socket.off("clue_blocked");
+    }, []);
+
+    useEffect(() => {
+        socket.on("clue_submitted", ({ from, definition }) => {
+            setLogMessage(`A clue was submitted by ${from}. You may block it.`);
+            setClues((prev) => [...prev, { from, definition, blocked: false }]);
+            console.log(`Keeper alert: clue submitted by ${from}`);
+        });
+
+        return () => socket.off("clue_submitted");
     }, []);
 
     useEffect(() => {
@@ -154,14 +184,19 @@ function GameRoom() {
             </div>
 
             <div className={styles.cluesSection}>
-                {clues.map((clue, idx) => (
-                    <ClueBubble
-                        key={idx}
-                        from={clue.from}
-                        definition={clue.definition}
-                        onGuess={() => handleGuess(clue)}
-                    />
-                ))}
+                {!isKeeper &&
+                    clues.map((clue) => (
+                        <ClueBubble
+                            key={clue.id}
+                            id={clue.id}
+                            from={clue.from}
+                            definition={clue.definition}
+                            blocked={clue.blocked}
+                            onGuess={() => handleGuess(clue)}
+                        />
+                    ))}
+
+                {isKeeper && <KeeperClueList clues={clues} />}
             </div>
 
             {!isKeeper && isWordChosen && (

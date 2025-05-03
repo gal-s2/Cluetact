@@ -1,11 +1,11 @@
-class GameSession {
+const { v4: uuidv4 } = require("uuid");
+
+class GameRound {
     constructor() {
         this.roundNum = 1;
         this.keeperWord = null; // The full word chosen by the keeper (lets say dog)
         this.revealedLetters = ""; // Current revealed part (e.g., "d", "do", etc.)
-        this.clueGiverId = null; // ID of the seeker who gave the clue
-        this.clueDefinition = null;
-        this.clueTargetWord = null; // The word the clue is describing
+        this.clues = []; // each clue: { from, definition, word, blocked: false }
         this.raceStartTime = null; // When the keeper/seeker race started
         this.guesses = []; // List of { userId, word, time }
         this.status = "waiting"; // "waiting", "race", "ended"
@@ -21,12 +21,37 @@ class GameSession {
         this.guesses.push({ userId, word, time: new Date() });
     }
 
-    setClue(clueGiverId, clueTargetWord) {
-        this.clueGiverId = clueGiverId;
-        this.clueTargetWord = clueTargetWord;
+    addClue(clueGiverId, clueWord, clueDefinition) {
+        this.clues.push({
+            id: uuidv4(), // 🆕 unique clue ID
+            from: clueGiverId,
+            word: clueWord.toLowerCase(),
+            definition: clueDefinition,
+            blocked: false,
+        });
         this.raceStartTime = new Date();
         this.status = "race";
-        this.guesses = []; // clear guesses for this race
+        this.guesses = [];
+    }
+
+    tryBlockClue(wordGuess, keeperUsername) {
+        const lowerGuess = wordGuess.toLowerCase();
+
+        for (const clue of this.clues) {
+            if (!clue.blocked && clue.word === lowerGuess) {
+                clue.blocked = true;
+                return {
+                    success: true,
+                    blockedClue: {
+                        definition: clue.definition,
+                        from: clue.from,
+                        word: clue.word,
+                    },
+                };
+            }
+        }
+
+        return { success: false };
     }
 
     revealNextLetter() {
@@ -46,4 +71,4 @@ class GameSession {
     }
 }
 
-module.exports = GameSession;
+module.exports = GameRound;

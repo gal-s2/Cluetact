@@ -1,11 +1,12 @@
 import styles from "./ClueBubble.module.css";
 
-function ClueBubble({ from, definition, onGuess }) {
+function ClueBubble({ from, definition, blocked, onGuess }) {
     return (
-        <div className={styles.bubble} onClick={onGuess}>
-            <p className={styles.definition}>
-                <strong>{from}:</strong> {definition}
-            </p>
+        <div
+            className={`bubble ${blocked ? "blocked" : ""}`}
+            onClick={!blocked ? onGuess : undefined}
+        >
+            <strong>{from}:</strong> {definition}
         </div>
     );
 }
