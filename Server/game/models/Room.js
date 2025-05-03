@@ -29,7 +29,7 @@ class Room {
         // יצירת ה-Seekers
         seekersUsernames.forEach((username) => {
             const seeker = new Player(username);
-            seeker.setRole("keeper"); //hardcoded - need to change back to seeker
+            seeker.setRole("seeker");
             this.players[username] = seeker;
         });
 
@@ -74,7 +74,9 @@ class Room {
             Logger.logCurrentKeeper(this.roomId, this.keeperUsername);
 
             while (!this.currentSession.keeperWord) {
-                const word = await prompt(`🔑 ${this.keeperUsername}, enter your secret word: `);
+                const word = await prompt(
+                    `🔑 ${this.keeperUsername}, enter your secret word: `
+                );
                 await this.waitForKeeperWord(getWordFromSocket);
             }
 
@@ -86,38 +88,68 @@ class Room {
                 let clueAccepted = false;
                 let clueGiverId = null;
                 while (!clueAccepted) {
-                    const seekers = Object.keys(this.players).filter((id) => id !== this.keeperUsername);
-                    clueGiverId = await prompt(` Who gives the clue? (${seekers.join("/")}) : `);
-                    const lastLetter = this.currentSession.revealedLetters.slice(-1).toLowerCase();
-                    const clueWord = await prompt(` Clue word (starts with '${lastLetter}'): `);
-                    const clueDef = await prompt(` Definition for "${clueWord}": `);
-                    clueAccepted = await this.startNewClueRound(clueGiverId, clueWord, clueDef);
+                    const seekers = Object.keys(this.players).filter(
+                        (id) => id !== this.keeperUsername
+                    );
+                    clueGiverId = await prompt(
+                        ` Who gives the clue? (${seekers.join("/")}) : `
+                    );
+                    const lastLetter = this.currentSession.revealedLetters
+                        .slice(-1)
+                        .toLowerCase();
+                    const clueWord = await prompt(
+                        ` Clue word (starts with '${lastLetter}'): `
+                    );
+                    const clueDef = await prompt(
+                        ` Definition for "${clueWord}": `
+                    );
+                    clueAccepted = await this.startNewClueRound(
+                        clueGiverId,
+                        clueWord,
+                        clueDef
+                    );
                     if (!clueAccepted) clueGiverId = null;
                 }
 
                 let guessAccepted = false;
                 while (!guessAccepted) {
-                    const eligibleGuessers = Object.keys(this.players).filter((id) => id !== clueGiverId);
-                    const guesserId = await prompt(` Who guesses first? (${eligibleGuessers.join("/")}) : `);
-                    const lastLetter = this.currentSession.revealedLetters.slice(-1).toLowerCase();
-                    const guess = await prompt(` What does ${guesserId} guess? (starts with '${lastLetter}'): `);
+                    const eligibleGuessers = Object.keys(this.players).filter(
+                        (id) => id !== clueGiverId
+                    );
+                    const guesserId = await prompt(
+                        ` Who guesses first? (${eligibleGuessers.join("/")}) : `
+                    );
+                    const lastLetter = this.currentSession.revealedLetters
+                        .slice(-1)
+                        .toLowerCase();
+                    const guess = await prompt(
+                        ` What does ${guesserId} guess? (starts with '${lastLetter}'): `
+                    );
 
                     const result = await this.submitGuess(guesserId, guess);
                     guessAccepted = result.correct;
 
                     if (result.correct && !result.revealed) {
-                        Logger.logCorrectGuessNoReveal(this.roomId, usernames[guesserId]);
+                        Logger.logCorrectGuessNoReveal(
+                            this.roomId,
+                            usernames[guesserId]
+                        );
                     }
                 }
 
-                if (this.currentSession.keeperWord && this.currentSession.revealedLetters.length === this.currentSession.keeperWord.length) {
+                if (
+                    this.currentSession.keeperWord &&
+                    this.currentSession.revealedLetters.length ===
+                        this.currentSession.keeperWord.length
+                ) {
                     roundOver = true;
                     const nextKeeper = this.getNextKeeper();
                     this.keeperUsername = nextKeeper;
                     this.players[nextKeeper].setRole("keeper");
 
                     Object.keys(this.players).forEach((id) => {
-                        if (id !== nextKeeper) this.players[id].setRole("seeker");
+                        if (id !== nextKeeper)
+                            this.players[id].setRole("seeker");
                     });
 
                     this.pastKeepers.add(nextKeeper);
@@ -146,7 +178,9 @@ class Room {
             return false;
         }
 
-        const lastLetter = this.currentSession.revealedLetters.slice(-1).toLowerCase();
+        const lastLetter = this.currentSession.revealedLetters
+            .slice(-1)
+            .toLowerCase();
         if (!clueWord.toLowerCase().startsWith(lastLetter)) {
             Logger.logInvalidClue(this.roomId, clueWord, lastLetter);
             return false;
@@ -185,7 +219,11 @@ class Room {
             return { correct: false };
         }
 
-        if (session.guesses.find((g) => g.word.toLowerCase() === guessWord.toLowerCase())) {
+        if (
+            session.guesses.find(
+                (g) => g.word.toLowerCase() === guessWord.toLowerCase()
+            )
+        ) {
             Logger.logDuplicateGuess(this.roomId, guessWord);
             return { correct: false };
         }
@@ -271,7 +309,10 @@ class Room {
 
         if (this.currentSession.status === "ended") return;
 
-        if (this.currentSession.keeperWord.toLowerCase() === guessWord.toLowerCase()) {
+        if (
+            this.currentSession.keeperWord.toLowerCase() ===
+            guessWord.toLowerCase()
+        ) {
             this.players[userId].addScore(50);
             this.currentSession.endSession();
         } else {
@@ -335,15 +376,25 @@ class Room {
                     [`statistics.${isWinner ? "Wins" : "Losses"}`]: 1,
                 };
 
-                const user = await User.findOneAndUpdate({ username: player.username }, { $inc: increment }, { new: true });
+                const user = await User.findOneAndUpdate(
+                    { username: player.username },
+                    { $inc: increment },
+                    { new: true }
+                );
 
                 if (user) {
                     const { Wins, totalGames } = user.statistics;
                     const newWinRate = ((Wins / totalGames) * 100).toFixed(2);
-                    await User.updateOne({ username: player.username }, { $set: { "statistics.winRate": newWinRate } });
+                    await User.updateOne(
+                        { username: player.username },
+                        { $set: { "statistics.winRate": newWinRate } }
+                    );
                 }
             } catch (err) {
-                console.error(`Failed to update stats for ${player.username}:`, err);
+                console.error(
+                    `Failed to update stats for ${player.username}:`,
+                    err
+                );
             }
         }
     }

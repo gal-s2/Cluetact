@@ -8,6 +8,8 @@ const {
     handleJoinQueue,
     handleJoinRoom,
     handleKeeperWordSubmission,
+    handleSubmitClue,
+    handleSubmitGuess,
     disconnect,
 } = require("../controllers/gameSocketController");
 
@@ -51,6 +53,10 @@ module.exports = function (io) {
         socket.on("keeper_word_submission", (args) => {
             handleKeeperWordSubmission(socket, args);
         });
+
+        socket.on("submit_clue", (args) => handleSubmitClue(socket, args));
+
+        socket.on("submit_guess", (args) => handleSubmitGuess(socket, args));
 
         socket.on("disconnect", (args) => {
             disconnect(socket, args);

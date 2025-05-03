@@ -133,3 +133,11 @@
 .seekerButton:hover:enabled {
     background-color: #66bb6a;
 }
+
+.cluesSection {
+    margin-top: 1rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

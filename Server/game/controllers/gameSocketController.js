@@ -19,10 +19,15 @@ const handleJoinQueue = async (socket, args) => {
     if (room) {
         // Send welcome messages to all players
         Object.values(room.players).forEach((player) => {
-            const playerSocket = socketManager.getSocketByUsername(player.username);
+            const playerSocket = socketManager.getSocketByUsername(
+                player.username
+            );
             if (playerSocket) {
                 const role = player.role;
-                const message = role === "keeper" ? `You are the keeper in Room ${room.roomId}` : `You are a seeker in Room ${room.roomId}`;
+                const message =
+                    role === "keeper"
+                        ? `You are the keeper in Room ${room.roomId}`
+                        : `You are a seeker in Room ${room.roomId}`;
 
                 playerSocket.emit("new_room", {
                     roomId: room.roomId,
@@ -106,6 +111,50 @@ const handleKeeperWordSubmission = async (socket, args) => {
     }
 };
 
+const handleSubmitClue = (socket, { definition, word }) => {
+    const room = gameManager.getRoomBySocket(socket);
+    if (!room) return;
+
+    const username = socket.user.username;
+
+    const success = room.startNewClueRound(username, word, definition);
+
+    if (success) {
+        // Send definition only to all seekers
+        for (const player of Object.values(room.players)) {
+            const playerSocket = socketManager.getSocketByUsername(
+                player.username
+            );
+            if (player.role === "seeker" && player.username !== username) {
+                playerSocket.emit("new_clue", { definition, from: username });
+            }
+        }
+    } else {
+        socket.emit("clue_rejected", {
+            message: "Invalid clue or word already used.",
+        });
+    }
+};
+
+const handleSubmitGuess = async (socket, { guess, clueGiver }) => {
+    const room = gameManager.getRoomBySocket(socket);
+    if (!room) return;
+
+    const userId = socket.user.username;
+
+    const result = await room.submitGuess(userId, guess);
+
+    if (result.correct) {
+        io.to(room.roomId).emit("cluetact_success", {
+            guesser: userId,
+            word: guess,
+            revealed: room.getRevealedLetters(), // this returns the updated part
+        });
+    } else {
+        socket.emit("guess_failed", { message: "Incorrect guess" });
+    }
+};
+
 /**
  * Handles the logic for socket disconnections.
  * Unregisters the socket from the socket manager when a user disconnects.
@@ -121,7 +170,9 @@ const disconnect = (socket, args) => {
     const lobbies = waitingLobbyManager.removeUserFromItsLobbies(socket.id);
     lobbies.forEach((lobbyId) => {
         socket.leave(lobbyId);
-        socket.to(lobbyId).emit("lobby_update", waitingLobbyManager.getLobbyUsers(lobbyId));
+        socket
+            .to(lobbyId)
+            .emit("lobby_update", waitingLobbyManager.getLobbyUsers(lobbyId));
     });
 
     socketManager.unregister(socket);
@@ -133,5 +184,7 @@ module.exports = {
     handleJoinQueue,
     handleJoinRoom,
     handleKeeperWordSubmission,
+    handleSubmitClue,
+    handleSubmitGuess,
     disconnect,
 };
