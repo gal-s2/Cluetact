@@ -44,6 +44,7 @@ const handleJoinQueue = async (socket, args) => {
  */
 const handleJoinRoom = async (socket, args) => {
     const room = gameManager.getRoomBySocket(socket);
+    if (!room) return;
 
     socket.emit("game_start", { room });
 
