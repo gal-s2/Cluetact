@@ -3,4 +3,5 @@ if there are 4 seekers and 1 keeper, how do we inform just 1 seeker?
 how do we inform just 3 seekers?
 how do we inform all seekers and not the keeper?
 how do we inform just the keeper?
-
+create constants for keeper and seeker
+change players to array in Room class
