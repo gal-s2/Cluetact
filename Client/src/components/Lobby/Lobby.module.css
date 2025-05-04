@@ -170,3 +170,18 @@
 .dropdown button:hover {
     background: #f0f0f0; /* slight light gray on hover */
 }
+
+.queueLoading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}

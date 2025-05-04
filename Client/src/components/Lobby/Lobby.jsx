@@ -20,6 +20,7 @@ function Lobby() {
     const [createdRoomCode, setCreatedRoomCode] = useState("");
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
     const [playMenuOpen, setPlayMenuOpen] = useState(false);
+    const [inQueue, setInQueue] = useState(false);
 
     useEffect(() => {
         if (!user && !loading) {
@@ -33,13 +34,22 @@ function Lobby() {
 
     useEffect(() => {
         const handleNewRoom = (data) => {
-            if (data.roomId) navigate(`/game/${data.roomId}`);
+            if (data.roomId) {
+                setInQueue(false);
+                navigate(`/game/${data.roomId}`);
+            }
+        };
+
+        const handleInQueue = () => {
+            setInQueue(true);
         };
 
         socket.on("new_room", handleNewRoom);
+        socket.on("entered_queue", handleInQueue);
 
         return () => {
             socket.off("new_room", handleNewRoom);
+            socket.off("entered_queue");
         };
     }, [navigate]);
 
@@ -103,39 +113,20 @@ function Lobby() {
         <div className={styles.container}>
             <LobbyHeader username={user.username} />
 
-            <main className={styles.main}>
-                <div className={styles.sectionGroup}>
-                    <PlayCard
-                        playMenuOpen={playMenuOpen}
-                        setPlayMenuOpen={setPlayMenuOpen}
-                        findGame={findGame}
-                        setShowJoinModal={setShowJoinModal}
-                        handleCreateRoom={handleCreateRoom}
-                    />
-                    <ProfileCard
-                        profileMenuOpen={profileMenuOpen}
-                        setProfileMenuOpen={setProfileMenuOpen}
-                        navigate={navigate}
-                        disconnect={disconnect}
-                    />
-                </div>
-            </main>
-
-            {showJoinModal && (
-                <JoinRoomModal
-                    roomCodeInput={roomCodeInput}
-                    setRoomCodeInput={setRoomCodeInput}
-                    handleJoinRoom={handleJoinRoom}
-                    closeModal={() => setShowJoinModal(false)}
-                />
+            {inQueue ? (
+                <div className={styles.queueLoading}>Searching for a game...</div>
+            ) : (
+                <main className={styles.main}>
+                    <div className={styles.sectionGroup}>
+                        <PlayCard playMenuOpen={playMenuOpen} setPlayMenuOpen={setPlayMenuOpen} findGame={findGame} setShowJoinModal={setShowJoinModal} handleCreateRoom={handleCreateRoom} />
+                        <ProfileCard profileMenuOpen={profileMenuOpen} setProfileMenuOpen={setProfileMenuOpen} navigate={navigate} disconnect={disconnect} />
+                    </div>
+                </main>
             )}
 
-            {showCreateModal && (
-                <CreateRoomModal
-                    createdRoomCode={createdRoomCode}
-                    closeModal={() => setShowCreateModal(false)}
-                />
-            )}
+            {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
+
+            {showCreateModal && <CreateRoomModal createdRoomCode={createdRoomCode} closeModal={() => setShowCreateModal(false)} />}
         </div>
     );
 }

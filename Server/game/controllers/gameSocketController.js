@@ -16,25 +16,19 @@ const handleJoinQueue = async (socket, args) => {
 
     const room = await gameManager.addUserToQueue(username);
 
+    // Send welcome messages to all players if a room was created, otherwise notify that they are in queue
     if (room) {
-        // Send welcome messages to all players
         Object.values(room.players).forEach((player) => {
-            const playerSocket = socketManager.getSocketByUsername(
-                player.username
-            );
+            const playerSocket = socketManager.getSocketByUsername(player.username);
             if (playerSocket) {
-                const role = player.role;
-                const message =
-                    role === "keeper"
-                        ? `You are the keeper in Room ${room.roomId}`
-                        : `You are a seeker in Room ${room.roomId}`;
-
                 playerSocket.emit("new_room", {
                     roomId: room.roomId,
                     players: room.players,
                 });
             }
         });
+    } else {
+        socket.emit("entered_queue");
     }
 };
 
@@ -122,9 +116,7 @@ const handleSubmitClue = (socket, { definition, word }) => {
     if (success) {
         const addedClue = room.currentRound.clues.at(-1);
         for (const player of Object.values(room.players)) {
-            const playerSocket = socketManager.getSocketByUsername(
-                player.username
-            );
+            const playerSocket = socketManager.getSocketByUsername(player.username);
 
             if (player.role === "seeker" && player.username !== username) {
                 playerSocket.emit("clue_revealed", {
@@ -161,9 +153,7 @@ const handleSubmitGuess = async (socket, { guess, clueId }) => {
 
         if (result.success) {
             for (const player of Object.values(room.players)) {
-                const playerSocket = socketManager.getSocketByUsername(
-                    player.username
-                );
+                const playerSocket = socketManager.getSocketByUsername(player.username);
                 if (playerSocket) {
                     playerSocket.emit("clue_blocked", {
                         word: result.blockedClue.word,
@@ -187,9 +177,7 @@ const handleSubmitGuess = async (socket, { guess, clueId }) => {
 
     if (result.correct) {
         for (const player of Object.values(room.players)) {
-            const playerSocket = socketManager.getSocketByUsername(
-                player.username
-            );
+            const playerSocket = socketManager.getSocketByUsername(player.username);
             if (playerSocket) {
                 playerSocket.emit("cluetact_success", {
                     guesser: userId,
@@ -218,9 +206,7 @@ const disconnect = (socket, args) => {
     const lobbies = waitingLobbyManager.removeUserFromItsLobbies(socket.id);
     lobbies.forEach((lobbyId) => {
         socket.leave(lobbyId);
-        socket
-            .to(lobbyId)
-            .emit("lobby_update", waitingLobbyManager.getLobbyUsers(lobbyId));
+        socket.to(lobbyId).emit("lobby_update", waitingLobbyManager.getLobbyUsers(lobbyId));
     });
 
     socketManager.unregister(socket);

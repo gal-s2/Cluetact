@@ -13,13 +13,18 @@ class GameQueue {
     addUser(username) {
         let roomCreationPossible = false;
         let chosenUsers = [];
-    
+
+        // if user already in queue, he cannot enter again
+        if (this.awaitingUsers.find((name) => name === username)) {
+            return { roomCreationPossible };
+        }
+
         this.awaitingUsers.push(username);
         if (this.awaitingUsers.length >= GameQueue.minUsersInRoom) {
             roomCreationPossible = true;
             chosenUsers = this.awaitingUsers.splice(0, 3);
         }
-    
+
         return { roomCreationPossible, chosenUsers };
     }
 }
