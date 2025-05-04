@@ -1,17 +1,9 @@
-const gameManager = require("../managers/GameManager");
 const socketManager = require("../managers/SocketManager");
 
 const { socketLogger } = require("../../utils/logger");
 const { verifyToken } = require("../../utils/jwt");
 const waitingLobbyHandlers = require("./waitingLobbyHandlers");
-const {
-    handleJoinQueue,
-    handleJoinRoom,
-    handleKeeperWordSubmission,
-    handleSubmitClue,
-    handleSubmitGuess,
-    disconnect,
-} = require("../controllers/gameSocketController");
+const { handleJoinQueue, handleJoinRoom, handleKeeperWordSubmission, handleSubmitClue, handleSubmitGuess, disconnect } = require("../controllers/gameSocketController");
 
 module.exports = function (io) {
     // middleware for socket message
@@ -39,11 +31,7 @@ module.exports = function (io) {
 
         // Log every incoming message
         socket.onAny((event, ...args) => {
-            socketLogger.info(
-                `[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(
-                    args
-                )}`
-            );
+            socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);
         });
 
         socket.on("find_game", (args) => handleJoinQueue(socket, args));

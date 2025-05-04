@@ -1,5 +1,9 @@
 Server/node_modules
-Server/.env
-Server/logs
 Client/node_modules
+
+Server/.env
+Client/.env
+
+*/logs
+
 .DS_Store
