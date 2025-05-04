@@ -110,7 +110,6 @@ const handleSubmitClue = (socket, { definition, word }) => {
     if (!room) return;
 
     const username = socket.user.username;
-
     const success = room.startNewClueRound(username, word, definition);
 
     if (success) {

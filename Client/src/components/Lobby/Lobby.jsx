@@ -114,7 +114,14 @@ function Lobby() {
             <LobbyHeader username={user.username} />
 
             {inQueue ? (
-                <div className={styles.queueLoading}>Searching for a game...</div>
+                <div className={styles.queueLoading}>
+                    <span className={styles.typingDots}>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                    <p>Searching for a game</p>
+                </div>
             ) : (
                 <main className={styles.main}>
                     <div className={styles.sectionGroup}>

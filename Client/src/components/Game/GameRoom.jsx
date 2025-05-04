@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
+import { useUser } from "../UserContext";
 import socket from "../../socket";
 import WordDisplay from "./WordDisplay";
 import PlayerCard from "./PlayerCard";
@@ -18,7 +19,7 @@ function GameRoom() {
     // and therefore will send join room to server twice
     // -----
     const hasJoinedRef = useRef(false);
-
+    const { user } = useUser();
     const { roomId } = useParams();
 
     const [players, setPlayers] = useState();
@@ -32,9 +33,7 @@ function GameRoom() {
     const hasUnblockedClues = clues.some((clue) => !clue.blocked);
 
     const handleGuess = (clue) => {
-        const guess = prompt(
-            `What word do you think "${clue.definition}" is referring to?`
-        );
+        const guess = prompt(`What word do you think "${clue.definition}" is referring to?`);
 
         if (guess && guess.trim()) {
             socket.emit("submit_guess", { guess, clueId: clue.id });
@@ -64,10 +63,7 @@ function GameRoom() {
 
     useEffect(() => {
         socket.on("clue_revealed", ({ id, definition, from }) => {
-            setClues((prev) => [
-                ...prev,
-                { id, from, definition, blocked: false },
-            ]);
+            setClues((prev) => [...prev, { id, from, definition, blocked: false }]);
             console.log(`New clue from ${from}: ${definition}`);
         });
 
@@ -76,13 +72,7 @@ function GameRoom() {
 
     useEffect(() => {
         socket.on("clue_blocked", ({ word, from, definition, blockedBy }) => {
-            setClues((prev) =>
-                prev.map((clue) =>
-                    clue.definition === definition && clue.from === from
-                        ? { ...clue, blocked: true }
-                        : clue
-                )
-            );
+            setClues((prev) => prev.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true } : clue)));
             console.log(`Clue blocked: "${word}" from ${from} by ${blockedBy}`);
         });
 
@@ -149,59 +139,26 @@ function GameRoom() {
     return (
         <div className={styles.room}>
             <div className={styles.wordDisplay}>
-                <WordDisplay
-                    isKeeper={isKeeper}
-                    revealedWord={word.revealedWord}
-                    word={word.word}
-                    length={word.wordLength}
-                />
+                <WordDisplay isKeeper={isKeeper} revealedWord={word.revealedWord} word={word.word} length={word.wordLength} />
             </div>
 
-            {cluetact && (
-                <CluetactPopup
-                    guesser={cluetact.guesser}
-                    word={cluetact.word}
-                    onClose={() => setCluetact(null)}
-                />
-            )}
+            {cluetact && <CluetactPopup guesser={cluetact.guesser} word={cluetact.word} onClose={() => setCluetact(null)} />}
 
-            {isKeeper && !isWordChosen && (
-                <KeeperWordPopup
-                    keeperWord={keeperWord}
-                    setKeeperWord={setKeeperWord}
-                    logMessage={logMessage}
-                />
-            )}
+            {isKeeper && !isWordChosen && <KeeperWordPopup keeperWord={keeperWord} setKeeperWord={setKeeperWord} logMessage={logMessage} />}
 
             <div className={styles.table}>
-                {Object.values(players).map((player, index) => (
-                    <PlayerCard
-                        key={player.username}
-                        player={player}
-                        position={index}
-                    />
+                {Object.values(players).map((player) => (
+                    <PlayerCard key={player.username} player={player} me={player.username === user.username} />
                 ))}
             </div>
 
             <div className={styles.cluesSection}>
-                {!isKeeper &&
-                    clues.map((clue) => (
-                        <ClueBubble
-                            key={clue.id}
-                            id={clue.id}
-                            from={clue.from}
-                            definition={clue.definition}
-                            blocked={clue.blocked}
-                            onGuess={() => handleGuess(clue)}
-                        />
-                    ))}
+                {!isKeeper && clues.map((clue) => <ClueBubble key={clue.id} id={clue.id} from={clue.from} definition={clue.definition} blocked={clue.blocked} onGuess={() => handleGuess(clue)} />)}
 
                 {isKeeper && <KeeperClueList clues={clues} />}
             </div>
 
-            {!isKeeper && isWordChosen && (
-                <SubmitClue revealedPrefix={word.revealedWord} />
-            )}
+            {!isKeeper && isWordChosen && <SubmitClue revealedPrefix={word.revealedWord} />}
         </div>
     );
 }

@@ -20,24 +20,9 @@ function SubmitClue({ revealedPrefix }) {
 
     return (
         <form className={styles.container} onSubmit={handleSubmit}>
-            <textarea
-                className={styles.textarea}
-                value={definition}
-                onChange={(e) => setDefinition(e.target.value)}
-                placeholder="Enter your 3-word definition"
-                maxLength={100}
-            />
-            <input
-                className={styles.input}
-                value={word}
-                onChange={(e) => setWord(e.target.value)}
-                placeholder={`Word starting with "${revealedPrefix}"`}
-            />
-            <button
-                className={styles.button}
-                type="submit"
-                disabled={!definition || !word}
-            >
+            <textarea className={styles.textarea} value={definition} onChange={(e) => setDefinition(e.target.value)} placeholder="Enter your 3-word definition" maxLength={100} />
+            <input className={styles.input} value={word} onChange={(e) => setWord(e.target.value)} placeholder={`Word starting with "${revealedPrefix}"`} />
+            <button className={styles.button} type="submit" disabled={!definition.trim() || !word.trim()}>
                 Submit Clue
             </button>
         </form>

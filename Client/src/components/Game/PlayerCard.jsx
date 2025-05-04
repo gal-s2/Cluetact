@@ -1,8 +1,9 @@
+import classNames from "classnames";
 import styles from "./PlayerCard.module.css";
 
-const PlayerCard = ({ player, position }) => {
+const PlayerCard = ({ player, me }) => {
     return (
-        <div className={styles.card}>
+        <div className={classNames(styles.card, { [styles.me]: me })}>
             <div className={styles.inner}>
                 <h3>{player.username}</h3>
                 <p>{player.gameScore} pts</p>

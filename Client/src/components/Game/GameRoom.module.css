@@ -13,13 +13,12 @@
 }
 
 .table {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     gap: 2rem;
-    width: 100%;
-    max-width: 1600px; /* Increased max-width */
-    box-sizing: border-box;
     padding: 1rem;
+    box-sizing: border-box;
 }
 
 .keeperPopup {
