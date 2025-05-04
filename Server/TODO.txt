@@ -1,7 +1,7 @@
-arrange all the socket notification mechanism of how we inform different roles of the room, for example:
-if there are 4 seekers and 1 keeper, how do we inform just 1 seeker?
-how do we inform just 3 seekers?
-how do we inform all seekers and not the keeper?
-how do we inform just the keeper?
-create constants for keeper and seeker
-change players to array in Room class
+
+-arrange all the socket notification mechanism of how we inform different roles of the room, for example:
+-create constants for keeper and seeker
+-change players to array in Room class
+-try and work with copilot during coding session
+-clueGiverId is not a good name, we need to change it to clueGiverUsername
+-go through all the socket emitions that happen globally and call the emitter functions instead

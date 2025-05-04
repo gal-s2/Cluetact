@@ -18,26 +18,16 @@ function KeeperClueList({ clues }) {
         <div className={styles.keeperContainer}>
             <h4>Incoming Clues</h4>
             <ul className={styles.clueList}>
-                {unblockedClues.map((clue) => (
-                    <li key={clue.id} className={styles.clueItem}>
+                {unblockedClues.map((clue, index) => (
+                    <li key={index} className={styles.clueItem}>
                         <strong>{clue.from}:</strong> {clue.definition}
                     </li>
                 ))}
             </ul>
-
             {unblockedClues.length > 0 && (
                 <div className={styles.inputRow}>
-                    <input
-                        type="text"
-                        placeholder="Try to block a clue..."
-                        value={guess}
-                        onChange={(e) => setGuess(e.target.value)}
-                        className={styles.guessInput}
-                    />
-                    <button
-                        onClick={handleSubmit}
-                        className={styles.blockButton}
-                    >
+                    <input type="text" placeholder="Try to block a clue..." value={guess} onChange={(e) => setGuess(e.target.value)} className={styles.guessInput} />
+                    <button onClick={handleSubmit} className={styles.blockButton}>
                         Block
                     </button>
                 </div>

@@ -37,7 +37,7 @@ function GameRoom() {
             {isKeeper && !isWordChosen && <KeeperWordPopup keeperWord={keeperWord} setKeeperWord={setKeeperWord} logMessage={logMessage} />}
 
             <div className={styles.table}>
-                {Object.values(players).map((player) => (
+                {players.map((player) => (
                     <PlayerCard key={player.username} player={player} me={player.username === user.username} />
                 ))}
             </div>

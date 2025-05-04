@@ -12,20 +12,15 @@ class GameManager {
     }
 
     createRoom(status, keeperUsername, seekersUsernames) {
-        const room = new Room(
-            GameManager.roomId,
-            status,
-            keeperUsername,
-            seekersUsernames
-        );
+        const room = new Room(GameManager.roomId, status, keeperUsername, seekersUsernames);
 
         this.rooms[GameManager.roomId] = room;
         Logger.logRoomCreated(GameManager.roomId, room.players);
         GameManager.roomId++;
 
-        Object.keys(room.players).forEach((player) => {
-            console.log("player", player);
-            this.playerToRoom.set(player, room.roomId);
+        room.players.forEach((player) => {
+            console.log("player", player.username);
+            this.playerToRoom.set(player.username, room.roomId);
         });
 
         return room;
@@ -38,11 +33,7 @@ class GameManager {
             const keeperUsername = result.chosenUsers[0];
             const seekersUsernames = result.chosenUsers.slice(1);
 
-            const room = await this.createRoom(
-                "Created",
-                keeperUsername,
-                seekersUsernames
-            );
+            const room = await this.createRoom("Created", keeperUsername, seekersUsernames);
 
             //await room.runGame(require('prompt-sync')());
             return room;

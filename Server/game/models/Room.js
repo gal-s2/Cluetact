@@ -16,22 +16,20 @@ class Room {
         this.roomId = roomId;
         this.status = status;
         this.keeperUsername = keeperUsername;
-        this.players = {};
+        this.players = [];
         this.currentRound = new GameRound();
         this.roundsHistory = [];
         this.turnQueue = seekersUsernames.slice();
         this.usedWords = new Set();
 
-        // יצירת ה-Keeper
         const keeper = new Player(keeperUsername);
         keeper.setRole("keeper");
-        this.players[keeperUsername] = keeper;
+        this.players.push(keeper);
 
-        // יצירת ה-Seekers
         seekersUsernames.forEach((username) => {
             const seeker = new Player(username);
             seeker.setRole("seeker");
-            this.players[username] = seeker;
+            this.players.push(seeker);
         });
 
         this.pastKeepers = new Set();
@@ -56,7 +54,7 @@ class Room {
      * @returns {Player}
      */
     getPlayerByUsername(username) {
-        return this.players[username];
+        return this.players.find((player) => player.username === username);
     }
 
     updateStatus(status) {
@@ -75,9 +73,7 @@ class Room {
             Logger.logCurrentKeeper(this.roomId, this.keeperUsername);
 
             while (!this.currentRound.keeperWord) {
-                const word = await prompt(
-                    `🔑 ${this.keeperUsername}, enter your secret word: `
-                );
+                const word = await prompt(`🔑 ${this.keeperUsername}, enter your secret word: `);
                 await this.waitForKeeperWord(getWordFromSocket);
             }
 
@@ -89,71 +85,41 @@ class Room {
                 let clueAccepted = false;
                 let clueGiverId = null;
                 while (!clueAccepted) {
-                    const seekers = Object.keys(this.players).filter(
-                        (id) => id !== this.keeperUsername
-                    );
-                    clueGiverId = await prompt(
-                        ` Who gives the clue? (${seekers.join("/")}) : `
-                    );
-                    const lastLetter = this.currentRound.revealedLetters
-                        .slice(-1)
-                        .toLowerCase();
-                    const clueWord = await prompt(
-                        ` Clue word (starts with '${lastLetter}'): `
-                    );
-                    const clueDef = await prompt(
-                        ` Definition for "${clueWord}": `
-                    );
-                    clueAccepted = await this.startNewClueRound(
-                        clueGiverId,
-                        clueWord,
-                        clueDef
-                    );
+                    const seekers = this.players.filter((player) => player.role === "seeker");
+                    clueGiverId = await prompt(` Who gives the clue? (${seekers.join("/")}) : `);
+                    const lastLetter = this.currentRound.revealedLetters.slice(-1).toLowerCase();
+                    const clueWord = await prompt(` Clue word (starts with '${lastLetter}'): `);
+                    const clueDef = await prompt(` Definition for "${clueWord}": `);
+                    clueAccepted = await this.startNewClueRound(clueGiverId, clueWord, clueDef);
                     if (!clueAccepted) clueGiverId = null;
                 }
 
                 let guessAccepted = false;
                 while (!guessAccepted) {
-                    const eligibleGuessers = Object.keys(this.players).filter(
-                        (id) => id !== clueGiverId
-                    );
-                    const guesserId = await prompt(
-                        ` Who guesses first? (${eligibleGuessers.join("/")}) : `
-                    );
-                    const lastLetter = this.currentRound.revealedLetters
-                        .slice(-1)
-                        .toLowerCase();
-                    const guess = await prompt(
-                        ` What does ${guesserId} guess? (starts with '${lastLetter}'): `
-                    );
+                    const eligibleGuessers = this.players.filter((player) => player.username !== clueGiverId);
+                    const guesserId = await prompt(` Who guesses first? (${eligibleGuessers.join("/")}) : `);
+                    const lastLetter = this.currentRound.revealedLetters.slice(-1).toLowerCase();
+                    const guess = await prompt(` What does ${guesserId} guess? (starts with '${lastLetter}'): `);
 
                     const result = await this.submitGuess(guesserId, guess);
                     guessAccepted = result.correct;
 
                     if (result.correct && !result.revealed) {
-                        Logger.logCorrectGuessNoReveal(
-                            this.roomId,
-                            usernames[guesserId]
-                        );
+                        Logger.logCorrectGuessNoReveal(this.roomId, usernames[guesserId]);
                     }
                 }
 
-                if (
-                    this.currentRound.keeperWord &&
-                    this.currentRound.revealedLetters.length ===
-                        this.currentRound.keeperWord.length
-                ) {
+                if (this.currentRound.keeperWord && this.currentRound.revealedLetters.length === this.currentRound.keeperWord.length) {
                     roundOver = true;
-                    const nextKeeper = this.getNextKeeper();
-                    this.keeperUsername = nextKeeper;
-                    this.players[nextKeeper].setRole("keeper");
+                    const nextKeeperUsername = this.getNextKeeper();
+                    this.keeperUsername = nextKeeperUsername;
+                    this.players.find((player) => player.username === nextKeeperUsername).setRole("keeper");
 
-                    Object.keys(this.players).forEach((id) => {
-                        if (id !== nextKeeper)
-                            this.players[id].setRole("seeker");
+                    this.players.forEach((player) => {
+                        if (player.username !== nextKeeperUsername) player.setRole("seeker");
                     });
 
-                    this.pastKeepers.add(nextKeeper);
+                    this.pastKeepers.add(nextKeeperUsername);
                     this.currentRound = new GameRound();
                 }
             }
@@ -161,9 +127,9 @@ class Room {
 
         this.endGame();
 
-        for (const username in this.players) {
-            Logger.logFinalScore(username, this.players[username].gameScore);
-        }
+        this.players.forEach((player) => {
+            Logger.logFinalScore(player.username, player.gameScore);
+        });
 
         Logger.logManualTestComplete();
     }
@@ -228,9 +194,7 @@ class Room {
         this.usedWords.add(guessLower);
 
         // 🧠 Look up the clue by clueId
-        const matchedClue = session.clues.find(
-            (clue) => clue.id === clueId && !clue.blocked
-        );
+        const matchedClue = session.clues.find((clue) => clue.id === clueId && !clue.blocked);
 
         if (matchedClue && matchedClue.word === guessLower) {
             const timeElapsed = (new Date() - session.raceStartTime) / 1000;
@@ -270,8 +234,8 @@ class Room {
         let pointsEarned = Math.ceil(BASE_POINTS - timeElapsed * PENALTY_RATE);
         if (pointsEarned < 1) pointsEarned = 1;
 
-        this.players[guesserId].addScore(pointsEarned);
-        this.players[clueGiverId].addScore(pointsEarned);
+        this.players.find((player) => player.username === guesserId).addScore(pointsEarned);
+        this.players.find((player) => player.username === clueGiverId).addScore(pointsEarned);
 
         // 🧼 Mark the clue as blocked so no one else can use it
         matchedClue.blocked = true;
@@ -289,10 +253,10 @@ class Room {
 
             const nextKeeper = this.getNextKeeper();
             this.keeperUsername = nextKeeper;
-            this.players[nextKeeper].setRole("keeper");
+            this.players.find((player) => player.username === nextKeeper).setRole("keeper");
 
-            Object.keys(this.players).forEach((id) => {
-                if (id !== nextKeeper) this.players[id].setRole("seeker");
+            this.players.forEach((player) => {
+                if (player.username !== nextKeeper) player.setRole("seeker");
             });
 
             this.roundsHistory.push({
@@ -317,7 +281,7 @@ class Room {
     handleKeeperClueGuess(keeperUsername) {
         const session = this.currentRound;
         Logger.logKeeperGuessedClue(this.roomId, keeperUsername);
-        this.players[keeperUsername].addScore(2);
+        this.players.find((player) => player.username === keeperUsername).addScore(2);
 
         session.clueGiverId = null;
         session.clueTargetWord = null;
@@ -329,14 +293,11 @@ class Room {
 
         if (this.currentRound.status === "ended") return;
 
-        if (
-            this.currentRound.keeperWord.toLowerCase() ===
-            guessWord.toLowerCase()
-        ) {
-            this.players[userId].addScore(50);
+        if (this.currentRound.keeperWord.toLowerCase() === guessWord.toLowerCase()) {
+            this.players.find((player) => player.username === userId).addScore(50);
             this.currentRound.endSession();
         } else {
-            this.players[userId].addScore(-20);
+            this.players.find((player) => player.username === userId).addScore(-20);
         }
     }
 
@@ -349,8 +310,9 @@ class Room {
 
         for (const clue of session.clues) {
             if (!clue.blocked && !penalized.has(clue.from)) {
-                if (this.players[clue.from]) {
-                    this.players[clue.from].addScore(-CLUE_FAIL_PENALTY);
+                const player = this.players.find((player) => player.username === clue.from);
+                if (player) {
+                    player.addScore(-CLUE_FAIL_PENALTY);
                     penalized.add(clue.from);
                 }
             }
@@ -367,7 +329,7 @@ class Room {
     }
 
     isGameOver() {
-        return this.pastKeepers.size >= Object.keys(this.players).length;
+        return this.pastKeepers.size >= this.players.length;
     }
 
     async endGame() {
@@ -378,7 +340,7 @@ class Room {
         // can be multiple winners
         let winners = [];
 
-        for (const player of Object.values(this.players)) {
+        for (const player of this.players) {
             if (player.gameScore > maxScore) {
                 maxScore = player.gameScore;
                 winners = [player];
@@ -396,7 +358,7 @@ class Room {
         const winnerUsernames = new Set(winners.map((p) => p.username));
 
         // update the mongo
-        for (const player of Object.values(this.players)) {
+        for (const player of this.players) {
             try {
                 const isWinner = winnerUsernames.has(player.username);
                 const increment = {
@@ -404,25 +366,15 @@ class Room {
                     [`statistics.${isWinner ? "Wins" : "Losses"}`]: 1,
                 };
 
-                const user = await User.findOneAndUpdate(
-                    { username: player.username },
-                    { $inc: increment },
-                    { new: true }
-                );
+                const user = await User.findOneAndUpdate({ username: player.username }, { $inc: increment }, { new: true });
 
                 if (user) {
                     const { Wins, totalGames } = user.statistics;
                     const newWinRate = ((Wins / totalGames) * 100).toFixed(2);
-                    await User.updateOne(
-                        { username: player.username },
-                        { $set: { "statistics.winRate": newWinRate } }
-                    );
+                    await User.updateOne({ username: player.username }, { $set: { "statistics.winRate": newWinRate } });
                 }
             } catch (err) {
-                console.error(
-                    `Failed to update stats for ${player.username}:`,
-                    err
-                );
+                console.error(`Failed to update stats for ${player.username}:`, err);
             }
         }
     }

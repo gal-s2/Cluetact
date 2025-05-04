@@ -10,7 +10,7 @@ const gameSocketController = {
 
         // Send welcome messages to all players if a room was created, otherwise notify that they are in queue
         if (room) {
-            Object.values(room.players).forEach((player) => {
+            room.players.forEach((player) => {
                 const playerSocket = socketManager.getSocketByUsername(player.username);
                 if (playerSocket) {
                     playerSocket.emit("new_room", {
@@ -30,7 +30,7 @@ const gameSocketController = {
 
         socket.emit("game_start", { room });
 
-        for (const player of Object.values(room.players)) {
+        for (const player of room.players) {
             const playerSocket = socketManager.getSocketByUsername(player.username);
             if (player.role === "keeper") {
                 playerSocket.emit("request_keeper_word", {
@@ -57,11 +57,10 @@ const gameSocketController = {
             word = room.getKeeperWord();
 
             // send all players in room a word chosen
-            for (const username in room.players) {
-                let playerSocket = socketManager.getSocketByUsername(username);
-                let player = room.getPlayerByUsername(username);
+            for (const player of room.players) {
+                const playerSocket = socketManager.getSocketByUsername(player.username);
 
-                let message = {
+                const message = {
                     success: true,
                     message: "Your word was accepted!",
                     word: player.role === "keeper" ? word : undefined,
@@ -88,7 +87,7 @@ const gameSocketController = {
 
         if (success) {
             const addedClue = room.currentRound.clues.at(-1);
-            for (const player of Object.values(room.players)) {
+            for (const player of room.players) {
                 const playerSocket = socketManager.getSocketByUsername(player.username);
 
                 if (player.role === "seeker" && player.username !== username) {
@@ -125,7 +124,7 @@ const gameSocketController = {
             const result = room.currentRound.tryBlockClue(guess, userId);
 
             if (result.success) {
-                for (const player of Object.values(room.players)) {
+                for (const player of room.players) {
                     const playerSocket = socketManager.getSocketByUsername(player.username);
                     if (playerSocket) {
                         playerSocket.emit("clue_blocked", {
@@ -149,7 +148,7 @@ const gameSocketController = {
         const result = await room.submitGuess(userId, guess, clueId);
 
         if (result.correct) {
-            for (const player of Object.values(room.players)) {
+            for (const player of room.players) {
                 const playerSocket = socketManager.getSocketByUsername(player.username);
                 if (playerSocket) {
                     playerSocket.emit("cluetact_success", {
