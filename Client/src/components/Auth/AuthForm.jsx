@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import socket from "../../socket";
 import styles from "./AuthForm.module.css";
 import logo from "../../assets/Cluetact.jpeg";
 
@@ -57,20 +56,13 @@ function AuthForm({ type }) {
 
             if (response.status === 200) {
                 setUser(response.data);
-
-                // ✅ Bonus part: setup socket authentication and connect
-                socket.auth = { token: response.data.token }; // <-- set new token
-                socket.connect(); // <-- connect socket
-
                 navigate("/lobby");
             } else {
                 alert(`${type === "login" ? "Login" : "Registration"} failed`);
             }
         } catch (error) {
             const newErrors = {
-                server:
-                    error.response?.data?.error ||
-                    "Something went wrong. Please try again.",
+                server: error.response?.data?.error || "Something went wrong. Please try again.",
             };
             setErrors(newErrors);
         }
@@ -82,57 +74,22 @@ function AuthForm({ type }) {
                 <img src={logo} alt="Cluetact Logo" className={styles.logo} />
                 <h2>{type === "login" ? "Login" : "Register"}</h2>
                 <form onSubmit={handleSubmit} className={styles.authForm}>
-                    {type === "register" && (
-                        <input
-                            type="text"
-                            placeholder="Username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                        />
-                    )}
+                    {type === "register" && <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />}
 
-                    <input
-                        type="text"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className={errors.email ? styles.invalidInput : ""}
-                        required
-                    />
+                    <input type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className={errors.email ? styles.invalidInput : ""} required />
 
-                    {errors.email && (
-                        <p className={styles.error}>{errors.email}</p>
-                    )}
+                    {errors.email && <p className={styles.error}>{errors.email}</p>}
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className={errors.password ? styles.invalidInput : ""}
-                        required
-                    />
+                    <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className={errors.password ? styles.invalidInput : ""} required />
 
-                    {errors.password && (
-                        <p className={styles.error}>{errors.password}</p>
-                    )}
-                    {errors.server && (
-                        <p className={styles.error}>{errors.server}</p>
-                    )}
+                    {errors.password && <p className={styles.error}>{errors.password}</p>}
+                    {errors.server && <p className={styles.error}>{errors.server}</p>}
 
-                    <button type="submit">
-                        {type === "login" ? "Login" : "Sign Up"}
-                    </button>
+                    <button type="submit">{type === "login" ? "Login" : "Sign Up"}</button>
                 </form>
                 <p>
-                    {type === "login"
-                        ? "Don't have an account? "
-                        : "Already have an account? "}
-                    <Link
-                        to={type === "login" ? "/register" : "/login"}
-                        className="toggle"
-                    >
+                    {type === "login" ? "Don't have an account? " : "Already have an account? "}
+                    <Link to={type === "login" ? "/register" : "/login"} className="toggle">
                         {type === "login" ? "Sign up" : "Login"}
                     </Link>
                 </p>

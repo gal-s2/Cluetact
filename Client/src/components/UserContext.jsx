@@ -7,6 +7,14 @@ export const UserProvider = ({ children }) => {
     const [user, setUserState] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        if (!loading && user) {
+            console.log("[UserContext] User loaded, connecting socket...");
+            socket.auth = { token: localStorage.getItem("token") }; // just in case
+            socket.connect();
+        }
+    }, [loading, user]);
+
     // Load user from localStorage on first render
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -31,11 +39,7 @@ export const UserProvider = ({ children }) => {
         }
     };
 
-    return (
-        <UserContext.Provider value={{ user, setUser, loading }}>
-            {children}
-        </UserContext.Provider>
-    );
+    return <UserContext.Provider value={{ user, setUser, loading }}>{children}</UserContext.Provider>;
 };
 
 export const useUser = () => useContext(UserContext);

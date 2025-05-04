@@ -1,29 +1,25 @@
-const GameManager = require("../managers/GameManager");
-const socketManager = require("../managers/globalSocketManager");
+const socketManager = require("../managers/SocketManager");
 
 const { socketLogger } = require("../../utils/logger");
 const { verifyToken } = require("../../utils/jwt");
 const waitingLobbyHandlers = require("./waitingLobbyHandlers");
-const {
-    handleJoinQueue,
-    handleJoinRoom,
-    handleKeeperWordSubmission,
-    disconnect,
-} = require("../controllers/gameSocketController");
+const gameSocketController = require("../controllers/gameSocketController");
 
 module.exports = function (io) {
-    const gameManager = new GameManager();
-
     // middleware for socket message
     io.use((socket, next) => {
-        const token = socket.handshake.auth.token;
         try {
-            const decoded = verifyToken(token); // verify jwt
-            socket.user = decoded;
-            next();
+            const token = socket?.handshake?.auth?.token;
+            if (token) {
+                console.log("Token in middelware", token);
+                console.log("is valid", verifyToken(token));
+                const decoded = verifyToken(token); // verify jwt
+                socket.user = decoded;
+                next();
+            }
         } catch (err) {
             console.log("Auth error");
-            next(new Error("Authentication error"));
+            socket.emit("redirect_to_login");
         }
     });
 
@@ -35,39 +31,23 @@ module.exports = function (io) {
 
         // Log every incoming message
         socket.onAny((event, ...args) => {
-            socketLogger.info(
-                `[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(
-                    args
-                )}`
-            );
+            socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);
         });
 
-        socket.on("find_game", (args) =>
-            handleJoinQueue(socket, args, {
-                gameManager,
-                socketManager,
-            })
-        );
+        socket.on("find_game", (args) => gameSocketController.handleJoinQueue(socket, args));
 
-        socket.on("join_room", (args) =>
-            handleJoinRoom(socket, args, {
-                gameManager,
-                socketManager,
-            })
-        );
+        socket.on("join_room", (args) => gameSocketController.handleJoinRoom(socket, args));
 
         socket.on("keeper_word_submission", (args) => {
-            handleKeeperWordSubmission(socket, args, {
-                gameManager,
-                socketManager,
-            });
+            gameSocketController.handleKeeperWordSubmission(socket, args);
         });
 
+        socket.on("submit_clue", (args) => gameSocketController.handleSubmitClue(socket, args));
+
+        socket.on("submit_guess", (args) => gameSocketController.handleSubmitGuess(socket, args));
+
         socket.on("disconnect", (args) => {
-            disconnect(socket, args, {
-                gameManager,
-                socketManager,
-            });
+            gameSocketController.disconnect(socket, args);
         });
     });
 };
