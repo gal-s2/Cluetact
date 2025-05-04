@@ -1,20 +1,15 @@
-import {
-    BrowserRouter as Router,
-    Routes,
-    Route,
-    Navigate,
-} from "react-router-dom";
-import AuthForm from "./components/Auth/AuthForm";
-import NotFoundPage from "./components/Routes/NotFoundPage";
-import GameRoom from "./components/Game/GameRoom";
-import Lobby from "./components/Lobby/Lobby";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import PrivateRoute from "./components/Routes/PrivateRoute";
 import PublicRoute from "./components/Routes/PublicRoute";
+import NotFoundPage from "./components/Routes/NotFoundPage";
+import AuthForm from "./components/Auth/AuthForm";
+import GameRoom from "./components/Game/GameRoom";
+import Lobby from "./components/Lobby/Lobby";
 import WelcomePage from "./components/Welcome/WelcomePage";
-import StatsPage from "./components/statistics/StatsPage";
+import StatsPage from "./components/Statistics/StatsPage";
+import ProfileDetails from "./components/Profile/ProfileDetails";
 import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
 import { useUser } from "./components/UserContext";
-import ProfileDetails from "./components/Profile/ProfileDetails";
 
 function App() {
     const { user } = useUser();
