@@ -1,13 +1,14 @@
 import { useState } from "react";
 import socket from "../../socket";
-import styles from "./KeeperClueList.module.css"; // you can create this next
+import styles from "./KeeperClueList.module.css";
+import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 function KeeperClueList({ clues }) {
     const [guess, setGuess] = useState("");
 
     const handleSubmit = () => {
         if (guess.trim()) {
-            socket.emit("submit_guess", { guess: guess.trim() });
+            socket.emit(SOCKET_EVENTS.SUBMIT_GUESS, { guess: guess.trim() });
             setGuess("");
         }
     };

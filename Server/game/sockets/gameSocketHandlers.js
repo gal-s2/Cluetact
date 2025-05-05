@@ -5,6 +5,7 @@ const { verifyToken } = require("../../utils/jwt");
 const waitingLobbyHandlers = require("./waitingLobbyHandlers");
 const gameSocketController = require("../controllers/gameSocketController");
 const messageEmitter = require("./MessageEmitter");
+const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 
 module.exports = function (io) {
     // middleware for socket message
@@ -20,11 +21,11 @@ module.exports = function (io) {
             }
         } catch (err) {
             console.log("Auth error");
-            messageEmitter.emitToSocket("redirect_to_login", null, socket);
+            messageEmitter.emitToSocket(SOCKET_EVENTS.REDIRECT_TO_LOGIN, null, socket);
         }
     });
 
-    io.on("connection", (socket) => {
+    io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
         console.log("Client connected:", socket.id);
         waitingLobbyHandlers(io, socket);
 
@@ -35,19 +36,19 @@ module.exports = function (io) {
             socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);
         });
 
-        socket.on("find_game", (args) => gameSocketController.handleJoinQueue(socket, args));
+        socket.on(SOCKET_EVENTS.FIND_GAME, (args) => gameSocketController.handleJoinQueue(socket, args));
 
-        socket.on("join_room", (args) => gameSocketController.handleJoinRoom(socket, args));
+        socket.on(SOCKET_EVENTS.JOIN_ROOM, (args) => gameSocketController.handleJoinRoom(socket, args));
 
-        socket.on("keeper_word_submission", (args) => {
+        socket.on(SOCKET_EVENTS.KEEPER_WORD_SUBMISSION, (args) => {
             gameSocketController.handleKeeperWordSubmission(socket, args);
         });
 
-        socket.on("submit_clue", (args) => gameSocketController.handleSubmitClue(socket, args));
+        socket.on(SOCKET_EVENTS.SUBMIT_CLUE, (args) => gameSocketController.handleSubmitClue(socket, args));
 
-        socket.on("submit_guess", (args) => gameSocketController.handleSubmitGuess(socket, args));
+        socket.on(SOCKET_EVENTS.SUBMIT_GUESS, (args) => gameSocketController.handleSubmitGuess(socket, args));
 
-        socket.on("disconnect", (args) => {
+        socket.on(SOCKET_EVENTS.DISCONNECT, (args) => {
             gameSocketController.disconnect(socket, args);
         });
     });

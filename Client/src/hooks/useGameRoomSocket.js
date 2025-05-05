@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import socket from "../socket";
+import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 export default function useGameRoomSocket(roomId, hasJoinedRef) {
     const [players, setPlayers] = useState();
@@ -19,45 +20,45 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
     const handleGuess = (clue) => {
         const guess = prompt(`What word do you think "${clue.definition}" is referring to?`);
         if (guess && guess.trim()) {
-            socket.emit("submit_guess", { guess, clueId: clue.id });
+            socket.emit(SOCKET_EVENTS.SUBMIT_GUESS, { guess, clueId: clue.id });
         }
     };
 
     const hasUnblockedClues = clues.some((clue) => !clue.blocked);
 
     useEffect(() => {
-        socket.on("cluetact_success", ({ guesser, word, revealed }) => {
+        socket.on(SOCKET_EVENTS.CLUETACT_SUCCESS, ({ guesser, word, revealed }) => {
             setCluetact({ guesser, word });
             setWord((prev) => ({ ...prev, revealedWord: revealed }));
         });
 
-        return () => socket.off("cluetact_success");
+        return () => socket.off(SOCKET_EVENTS.CLUETACT_SUCCESS);
     }, []);
 
     useEffect(() => {
-        socket.on("clue_revealed", ({ id, definition, from }) => {
+        socket.on(SOCKET_EVENTS.CLUE_REVEALED, ({ id, definition, from }) => {
             setClues((prev) => [...prev, { id, from, definition, blocked: false }]);
         });
 
-        socket.on("clue_blocked", ({ word, from, definition, blockedBy }) => {
+        socket.on(SOCKET_EVENTS.CLUE_BLOCKED, ({ word, from, definition, blockedBy }) => {
             setClues((prev) => prev.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true } : clue)));
         });
 
-        socket.on("clue_submitted", ({ from, definition }) => {
+        socket.on(SOCKET_EVENTS.CLUE_SUBMITTED, ({ from, definition }) => {
             setLogMessage(`A clue was submitted by ${from}. You may block it.`);
             setClues((prev) => [...prev, { from, definition, blocked: false }]);
         });
 
         return () => {
-            socket.off("clue_revealed");
-            socket.off("clue_blocked");
-            socket.off("clue_submitted");
+            socket.off(SOCKET_EVENTS.CLUE_REVEALED);
+            socket.off(SOCKET_EVENTS.CLUE_BLOCKED);
+            socket.off(SOCKET_EVENTS.CLUE_SUBMITTED);
         };
     }, []);
 
     useEffect(() => {
         if (!hasJoinedRef.current) {
-            socket.emit("join_room", { roomId });
+            socket.emit(SOCKET_EVENTS.JOIN_ROOM, { roomId });
             hasJoinedRef.current = true;
         }
 

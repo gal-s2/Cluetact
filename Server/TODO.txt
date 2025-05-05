@@ -1,10 +1,8 @@
-
--arrange all the socket notification mechanism of how we inform different roles of the room, for example:
 -create constants for keeper and seeker
--change players to array in Room class
 -try and work with copilot during coding session
 -clueGiverId is not a good name, we need to change it to clueGiverUsername
 -go through all the socket emitions that happen globally and call the emitter functions instead
 -change naming convening of waiting rooms from lobbyId to waitingRoomId
 -add mechanism to send and show error messages to clients
 -handle the bug (or maybe not?) where after the db is down and up again and the browser still have tokens - you still are logged in
+-word length should be visible?
