@@ -4,6 +4,7 @@ const { socketLogger } = require("../../utils/logger");
 const { verifyToken } = require("../../utils/jwt");
 const waitingLobbyHandlers = require("./waitingLobbyHandlers");
 const gameSocketController = require("../controllers/gameSocketController");
+const messageEmitter = require("./MessageEmitter");
 
 module.exports = function (io) {
     // middleware for socket message
@@ -19,7 +20,7 @@ module.exports = function (io) {
             }
         } catch (err) {
             console.log("Auth error");
-            socket.emit("redirect_to_login");
+            messageEmitter.emitToSocket("redirect_to_login", null, socket);
         }
     });
 

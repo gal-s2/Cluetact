@@ -1,6 +1,7 @@
 const gameManager = require("../managers/GameManager");
 const socketManager = require("../managers/SocketManager");
 const waitingLobbyManager = require("../managers/WaitingLobbyManager");
+const messageEmitter = require("../sockets/MessageEmitter");
 
 const gameSocketController = {
     handleJoinQueue: async (socket, args) => {
@@ -10,17 +11,16 @@ const gameSocketController = {
 
         // Send welcome messages to all players if a room was created, otherwise notify that they are in queue
         if (room) {
-            room.players.forEach((player) => {
-                const playerSocket = socketManager.getSocketByUsername(player.username);
-                if (playerSocket) {
-                    playerSocket.emit("new_room", {
-                        roomId: room.roomId,
-                        players: room.players,
-                    });
-                }
-            });
+            messageEmitter.broadcastToRoom(
+                "new_room",
+                {
+                    roomId: room.roomId,
+                    players: room.players,
+                },
+                room.roomId
+            );
         } else {
-            socket.emit("entered_queue");
+            messageEmitter.emitToSocket("entered_queue", null, socket);
         }
     },
 
@@ -28,22 +28,25 @@ const gameSocketController = {
         const room = gameManager.getRoomBySocket(socket);
         if (!room) return;
 
-        socket.emit("game_start", { room });
+        messageEmitter.emitToSocket("game_start", { room }, socket);
 
-        for (const player of room.players) {
-            const playerSocket = socketManager.getSocketByUsername(player.username);
-            if (player.role === "keeper") {
-                playerSocket.emit("request_keeper_word", {
-                    message: `${player.username}, please enter your secret English word:`,
-                    isKeeper: true,
-                });
-            } else {
-                playerSocket.emit("request_keeper_word", {
-                    message: `keeper is choosing a word`,
-                    isKeeper: false,
-                });
-            }
-        }
+        messageEmitter.emitToKeeper(
+            "request_keeper_word",
+            {
+                message: `Please enter your secret English word:`,
+                isKeeper: true,
+            },
+            room.roomId
+        );
+
+        messageEmitter.emitToSeekers(
+            "request_keeper_word",
+            {
+                message: `keeper is choosing a word`,
+                isKeeper: false,
+            },
+            room.roomId
+        );
     },
 
     handleKeeperWordSubmission: async (socket, args) => {
@@ -58,8 +61,6 @@ const gameSocketController = {
 
             // send all players in room a word chosen
             for (const player of room.players) {
-                const playerSocket = socketManager.getSocketByUsername(player.username);
-
                 const message = {
                     success: true,
                     message: "Your word was accepted!",
@@ -68,13 +69,17 @@ const gameSocketController = {
                     length: word.length,
                 };
 
-                playerSocket.emit("keeper_word_chosen", message);
+                messageEmitter.emitToPlayer("keeper_word_chosen", message, player.username);
             }
         } else {
-            socket.emit("keeper_word_chosen", {
-                success: false,
-                message: "Invalid word. Please enter a valid English word.",
-            });
+            messageEmitter.emitToSocket(
+                "keeper_word_chosen",
+                {
+                    success: false,
+                    message: "Invalid word. Please enter a valid English word.",
+                },
+                socket
+            );
         }
     },
 
@@ -87,28 +92,36 @@ const gameSocketController = {
 
         if (success) {
             const addedClue = room.currentRound.clues.at(-1);
+            messageEmitter.emitToKeeper(
+                "clue_submitted",
+                {
+                    from: username,
+                    definition,
+                },
+                room.roomId
+            );
+
             for (const player of room.players) {
-                const playerSocket = socketManager.getSocketByUsername(player.username);
-
                 if (player.role === "seeker" && player.username !== username) {
-                    playerSocket.emit("clue_revealed", {
-                        id: addedClue.id,
-                        from: username,
-                        definition,
-                    });
-                }
-
-                if (player.role === "keeper") {
-                    playerSocket.emit("clue_submitted", {
-                        from: username,
-                        definition,
-                    });
+                    messageEmitter.emitToPlayer(
+                        "clue_revealed",
+                        {
+                            id: addedClue.id,
+                            from: username,
+                            definition,
+                        },
+                        player.username
+                    );
                 }
             }
         } else {
-            socket.emit("clue_rejected", {
-                message: "Invalid clue or word already used.",
-            });
+            messageEmitter.emitToSocket(
+                "ckue_rejected",
+                {
+                    message: "Invalid clue or word already used.",
+                },
+                socket
+            );
         }
     },
 
@@ -124,21 +137,24 @@ const gameSocketController = {
             const result = room.currentRound.tryBlockClue(guess, userId);
 
             if (result.success) {
-                for (const player of room.players) {
-                    const playerSocket = socketManager.getSocketByUsername(player.username);
-                    if (playerSocket) {
-                        playerSocket.emit("clue_blocked", {
-                            word: result.blockedClue.word,
-                            from: result.blockedClue.from,
-                            definition: result.blockedClue.definition,
-                            blockedBy: userId,
-                        });
-                    }
-                }
+                messageEmitter.broadcastToRoom(
+                    "clue_blocked",
+                    {
+                        word: result.blockedClue.word,
+                        from: result.blockedClue.from,
+                        definition: result.blockedClue.definition,
+                        blockedBy: userId,
+                    },
+                    room.roomId
+                );
             } else {
-                socket.emit("guess_failed", {
-                    message: "No matching clue to block.",
-                });
+                messageEmitter.emitToSocket(
+                    "guess_failed",
+                    {
+                        message: "No matching clue to block.",
+                    },
+                    socket
+                );
             }
 
             return;
@@ -148,18 +164,23 @@ const gameSocketController = {
         const result = await room.submitGuess(userId, guess, clueId);
 
         if (result.correct) {
-            for (const player of room.players) {
-                const playerSocket = socketManager.getSocketByUsername(player.username);
-                if (playerSocket) {
-                    playerSocket.emit("cluetact_success", {
-                        guesser: userId,
-                        word: guess,
-                        revealed: room.getRevealedLetters(),
-                    });
-                }
-            }
+            messageEmitter.broadcastToRoom(
+                "cluetact_success",
+                {
+                    guesser: userId,
+                    word: guess,
+                    revealed: room.getRevealedLetters(),
+                },
+                room.roomId
+            );
         } else {
-            socket.emit("guess_failed", { message: "Incorrect guess" });
+            messageEmitter.emitToSocket(
+                "guess_failed",
+                {
+                    message: "Incorrect guess",
+                },
+                socket
+            );
         }
     },
 
@@ -169,7 +190,7 @@ const gameSocketController = {
         const lobbies = waitingLobbyManager.removeUserFromItsLobbies(socket.id);
         lobbies.forEach((lobbyId) => {
             socket.leave(lobbyId);
-            socket.to(lobbyId).emit("lobby_update", waitingLobbyManager.getLobbyUsers(lobbyId));
+            messageEmitter.broadcastToWaitingRoom("lobby_update", waitingLobbyManager.getLobbyUsers(lobbyId), lobbyId);
         });
 
         socketManager.unregister(socket);
