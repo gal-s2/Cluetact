@@ -29,18 +29,11 @@ class WaitingLobbyManager {
     }
 
     joinLobby(lobbyId, username, socketId) {
-        console.log(
-            "trying to join the lobby ",
-            lobbyId,
-            "with user ",
-            username
-        );
+        console.log("trying to join the lobby ", lobbyId, "with user ", username);
         this.printWaitingLobbies();
         const lobby = this.waitingLobbies[lobbyId];
         if (lobby) {
-            const alreadyActive =
-                lobby.users.has(username) &&
-                socketManager.isConnected(username);
+            const alreadyActive = lobby.users.has(username) && socketManager.isConnected(username);
 
             if (!alreadyActive) {
                 lobby.users.add(username);
@@ -108,8 +101,6 @@ class WaitingLobbyManager {
             console.log(`No username found for socket ${socketId}`);
             return;
         }
-
-        console.log(`Removing user ${username} from all lobbies...`);
 
         for (const lobbyId in this.waitingLobbies) {
             const lobby = this.waitingLobbies[lobbyId];

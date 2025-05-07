@@ -7,10 +7,18 @@ const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 const gameSocketController = {
     handleJoinQueue: async (socket, args) => {
         const { username } = args;
+        let room;
 
-        const room = await gameManager.addUserToQueue(username);
+        // first check if player is already in a room. if he is, insert him to this room.
+        room = gameManager.getRoomBySocket(socket);
+        if (room) {
+            // TODO: send current room data to player. can happen in middle of the game
+            return;
+        } else {
+            room = await gameManager.addUserToQueue(username);
+        }
 
-        // Send welcome messages to all players if a room was created, otherwise notify that they are in queue
+        // Send welcome messages to all players if a room was created, otherwise notify them that they are in the queue
         if (room) {
             messageEmitter.broadcastToRoom(
                 SOCKET_EVENTS.NEW_ROOM,
@@ -27,7 +35,10 @@ const gameSocketController = {
 
     handleJoinRoom: async (socket, args) => {
         const room = gameManager.getRoomBySocket(socket);
-        if (!room) return;
+        if (!room) {
+            messageEmitter.emitToSocket(SOCKET_EVENTS.REDIRECT_TO_LOBBY, { room }, socket);
+            return;
+        }
 
         messageEmitter.emitToSocket(SOCKET_EVENTS.GAME_START, { room }, socket);
 
@@ -186,8 +197,6 @@ const gameSocketController = {
     },
 
     disconnect: (socket, args) => {
-        console.log(`${socket?.user?.username} disconnected: ${args}`);
-
         const lobbies = waitingLobbyManager.removeUserFromItsLobbies(socket.id);
         lobbies.forEach((lobbyId) => {
             socket.leave(lobbyId);

@@ -49,8 +49,6 @@ function Lobby() {
         socket.on(SOCKET_EVENTS.NEW_ROOM, handleNewRoom);
         socket.on(SOCKET_EVENTS.ENTERED_QUEUE, handleInQueue);
 
-        console.log(SOCKET_EVENTS);
-
         return () => {
             socket.off(SOCKET_EVENTS.NEW_ROOM, handleNewRoom);
             socket.off(SOCKET_EVENTS.ENTERED_QUEUE);

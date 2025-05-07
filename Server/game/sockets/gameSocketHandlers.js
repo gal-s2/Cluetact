@@ -13,8 +13,6 @@ module.exports = function (io) {
         try {
             const token = socket?.handshake?.auth?.token;
             if (token) {
-                console.log("Token in middelware", token);
-                console.log("is valid", verifyToken(token));
                 const decoded = verifyToken(token); // verify jwt
                 socket.user = decoded;
                 next();
@@ -26,7 +24,7 @@ module.exports = function (io) {
     });
 
     io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
-        console.log("Client connected:", socket.id);
+        console.log("[Client connected:", socket.id, "]");
         waitingLobbyHandlers(io, socket);
 
         socketManager.register(socket, socket.user.username);
@@ -40,16 +38,12 @@ module.exports = function (io) {
 
         socket.on(SOCKET_EVENTS.JOIN_ROOM, (args) => gameSocketController.handleJoinRoom(socket, args));
 
-        socket.on(SOCKET_EVENTS.KEEPER_WORD_SUBMISSION, (args) => {
-            gameSocketController.handleKeeperWordSubmission(socket, args);
-        });
+        socket.on(SOCKET_EVENTS.KEEPER_WORD_SUBMISSION, (args) => gameSocketController.handleKeeperWordSubmission(socket, args));
 
         socket.on(SOCKET_EVENTS.SUBMIT_CLUE, (args) => gameSocketController.handleSubmitClue(socket, args));
 
         socket.on(SOCKET_EVENTS.SUBMIT_GUESS, (args) => gameSocketController.handleSubmitGuess(socket, args));
 
-        socket.on(SOCKET_EVENTS.DISCONNECT, (args) => {
-            gameSocketController.disconnect(socket, args);
-        });
+        socket.on(SOCKET_EVENTS.DISCONNECT, (args) => gameSocketController.disconnect(socket, args));
     });
 };

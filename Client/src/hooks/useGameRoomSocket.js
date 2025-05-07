@@ -24,8 +24,6 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         }
     };
 
-    const hasUnblockedClues = clues.some((clue) => !clue.blocked);
-
     useEffect(() => {
         socket.on(SOCKET_EVENTS.CLUETACT_SUCCESS, ({ guesser, word, revealed }) => {
             setCluetact({ guesser, word });
@@ -106,7 +104,6 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         cluetact,
         setCluetact,
         word,
-        hasUnblockedClues,
         handleGuess,
     };
 }

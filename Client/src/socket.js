@@ -32,6 +32,11 @@ socket.on(SOCKET_EVENTS.DISCONNECT, () => {
     console.log("A socket has passed away");
 });
 
+socket.on(SOCKET_EVENTS.REDIRECT_TO_LOBBY, () => {
+    console.log("[Client] Redirecting to the lobby...");
+    window.location.href = "/lobby";
+});
+
 socket.on(SOCKET_EVENTS.REDIRECT_TO_LOGIN, () => {
     console.log("[Client] Redirecting to the login...");
     window.location.href = "/login";

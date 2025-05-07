@@ -1,4 +1,3 @@
-// /components/Game/WaitingRoom.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";

@@ -35,7 +35,7 @@ function GameRoom() {
         setSelectedPlayer(userData);
     };
 
-    const closeModal = () => {
+    const closeProfileModal = () => {
         setSelectedPlayer(null);
     };
 
@@ -62,7 +62,7 @@ function GameRoom() {
 
             {!isKeeper && isWordChosen && <SubmitClue revealedPrefix={word.revealedWord} />}
 
-            {selectedPlayer && <ProfileModal player={selectedPlayer} onClose={closeModal} />}
+            {selectedPlayer && <ProfileModal player={selectedPlayer} onClose={closeProfileModal} />}
         </div>
     );
 }
