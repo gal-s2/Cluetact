@@ -9,6 +9,7 @@
     min-width: 200px;
     box-sizing: border-box;
     transition: transform 0.2s ease;
+    cursor: pointer;
 }
 
 .me {

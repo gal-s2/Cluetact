@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useUser } from "../UserContext";
 import WordDisplay from "./WordDisplay";
@@ -10,6 +10,7 @@ import SubmitClue from "./SubmitClue";
 import ClueBubble from "./ClueBubble";
 import KeeperClueList from "./KeeperClueList";
 import CluetactPopup from "./CluetactPopup";
+import ProfileModal from "./ProfileModal";
 import useGameRoomSocket from "../../hooks/useGameRoomSocket";
 
 function GameRoom() {
@@ -24,7 +25,19 @@ function GameRoom() {
 
     const { players, loading, isKeeper, keeperWord, setKeeperWord, isWordChosen, logMessage, clues, cluetact, setCluetact, word, handleGuess } = useGameRoomSocket(roomId, hasJoinedRef);
 
+    const [selectedPlayer, setSelectedPlayer] = useState(null);
+
     if (loading) return <Spinner />;
+
+    const handlePlayerCardClick = (player) => {
+        // should open a small modal profile in future.
+        const userData = players.find((p) => p.username === player.username);
+        setSelectedPlayer(userData);
+    };
+
+    const closeModal = () => {
+        setSelectedPlayer(null);
+    };
 
     return (
         <div className={styles.room}>
@@ -38,7 +51,7 @@ function GameRoom() {
 
             <div className={styles.table}>
                 {players.map((player) => (
-                    <PlayerCard key={player.username} player={player} me={player.username === user.username} />
+                    <PlayerCard key={player.username} player={player} me={player.username === user.username} onClick={() => handlePlayerCardClick(player)} />
                 ))}
             </div>
 
@@ -48,6 +61,8 @@ function GameRoom() {
             </div>
 
             {!isKeeper && isWordChosen && <SubmitClue revealedPrefix={word.revealedWord} />}
+
+            {selectedPlayer && <ProfileModal player={selectedPlayer} onClose={closeModal} />}
         </div>
     );
 }
