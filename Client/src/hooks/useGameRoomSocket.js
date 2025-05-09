@@ -6,25 +6,32 @@ import SOCKET_EVENTS from "@shared/socketEvents.json";
 export default function useGameRoomSocket(roomId, hasJoinedRef) {
     const { user } = useUser();
 
-    const [players, setPlayers] = useState([]);
+    const [gameState, setGameState] = useState({
+        players: [],
+        revealedWord: "",
+        keeperWord: "",
+        wordLength: 0,
+    });
+
     const [loading, setLoading] = useState(true);
     const [isKeeper, setIsKeeper] = useState(false);
-    const [keeperWord, setKeeperWord] = useState("");
     const [isWordChosen, setIsWordChosen] = useState(false);
     const [logMessage, setLogMessage] = useState("");
     const [clues, setClues] = useState([]);
     const [cluetact, setCluetact] = useState(null);
-    const [word, setWord] = useState({
-        revealedWord: "",
-        wordLength: 0,
-        word: "",
-    });
 
     const handleGuess = (clue) => {
         const guess = prompt(`What word do you think "${clue.definition}" is referring to?`);
         if (guess && guess.trim()) {
             socket.emit(SOCKET_EVENTS.SUBMIT_GUESS, { guess, clueId: clue.id });
         }
+    };
+
+    const setKeeperWord = (word) => {
+        setGameState((prev) => ({
+            ...prev,
+            keeperWord: word,
+        }));
     };
 
     useEffect(() => {
@@ -34,10 +41,18 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
             if (isWordComplete) {
                 setIsWordChosen(false);
                 setIsKeeper(keeper === user.username);
-                setPlayers(players);
-                setWord((prev) => ({ ...prev, word: "", revealedWord: "" }));
+
+                setGameState((prev) => ({
+                    ...prev,
+                    players,
+                    revealedWord: "",
+                    keeperWord: "",
+                }));
             } else {
-                setWord((prev) => ({ ...prev, revealedWord: revealed }));
+                setGameState((prev) => ({
+                    ...prev,
+                    revealedWord: revealed,
+                }));
             }
         });
 
@@ -71,50 +86,54 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
             hasJoinedRef.current = true;
         }
 
-        socket.on("game_start", (data) => {
+        socket.on(SOCKET_EVENTS.GAME_START, (data) => {
             setLoading(false);
-            setPlayers(data.room.players);
+            setGameState((prev) => ({
+                ...prev,
+                players: data.players,
+            }));
+            console.log("players are: ", data.players);
+            const currentPlayer = data.players.find((p) => p.username === user.username);
+            setIsKeeper(currentPlayer?.role === "keeper");
         });
 
-        socket.on("request_keeper_word", (data) => {
-            setIsKeeper(data.isKeeper);
+        socket.on(SOCKET_EVENTS.REQUEST_KEEPER_WORD, (data) => {
             setIsWordChosen(false);
             setLogMessage(data.message || "");
         });
 
-        socket.on("keeper_word_chosen", (data) => {
+        socket.on(SOCKET_EVENTS.KEEPER_WORD_CHOSEN, (data) => {
             if (data.success) {
                 setIsWordChosen(true);
-                setKeeperWord("");
-                setWord((prev) => ({
+
+                setGameState((prev) => ({
                     ...prev,
                     wordLength: data.length,
                     revealedWord: data.revealedWord,
-                    word: data.word,
+                    keeperWord: data.word, // assuming this is the keeper's actual word
                 }));
+
                 setLogMessage("");
             }
         });
 
         return () => {
-            socket.off("game_start");
-            socket.off("request_keeper_word");
-            socket.off("keeper_word_chosen");
+            socket.off(SOCKET_EVENTS.GAME_START);
+            socket.off(SOCKET_EVENTS.REQUEST_KEEPER_WORD);
+            socket.off(SOCKET_EVENTS.KEEPER_WORD_CHOSEN);
         };
     }, [roomId]);
 
     return {
-        players,
+        gameState,
+        setKeeperWord,
         loading,
         isKeeper,
-        keeperWord,
-        setKeeperWord,
         isWordChosen,
         logMessage,
         clues,
         cluetact,
         setCluetact,
-        word,
         handleGuess,
     };
 }

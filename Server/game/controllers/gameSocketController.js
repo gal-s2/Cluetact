@@ -40,13 +40,12 @@ const gameSocketController = {
             return;
         }
 
-        messageEmitter.emitToSocket(SOCKET_EVENTS.GAME_START, { room }, socket);
+        messageEmitter.emitToSocket(SOCKET_EVENTS.GAME_START, { players: room.players }, socket);
 
         messageEmitter.emitToKeeper(
             SOCKET_EVENTS.REQUEST_KEEPER_WORD,
             {
                 message: `Please enter your secret English word:`,
-                isKeeper: true,
             },
             room.roomId
         );
@@ -55,7 +54,6 @@ const gameSocketController = {
             SOCKET_EVENTS.REQUEST_KEEPER_WORD,
             {
                 message: `keeper is choosing a word`,
-                isKeeper: false,
             },
             room.roomId
         );

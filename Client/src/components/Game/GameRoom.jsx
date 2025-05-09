@@ -23,7 +23,7 @@ function GameRoom() {
     const { user } = useUser();
     const { roomId } = useParams();
 
-    const { players, loading, isKeeper, keeperWord, setKeeperWord, isWordChosen, logMessage, clues, cluetact, setCluetact, word, handleGuess } = useGameRoomSocket(roomId, hasJoinedRef);
+    const { gameState, loading, isKeeper, setKeeperWord, isWordChosen, logMessage, clues, cluetact, setCluetact, word, handleGuess } = useGameRoomSocket(roomId, hasJoinedRef);
 
     const [selectedPlayer, setSelectedPlayer] = useState(null);
 
@@ -31,7 +31,7 @@ function GameRoom() {
 
     const handlePlayerCardClick = (player) => {
         // should open a small modal profile in future.
-        const userData = players.find((p) => p.username === player.username);
+        const userData = gameState.players.find((p) => p.username === player.username);
         setSelectedPlayer(userData);
     };
 
@@ -42,15 +42,15 @@ function GameRoom() {
     return (
         <div className={styles.room}>
             <div className={styles.wordDisplay}>
-                <WordDisplay isKeeper={isKeeper} revealedWord={word.revealedWord} word={word.word} length={word.wordLength} />
+                <WordDisplay isKeeper={isKeeper} revealedWord={gameState.revealedWord} word={gameState.keeperWord} length={gameState.wordLength} />
             </div>
 
             {cluetact && <CluetactPopup guesser={cluetact.guesser} word={cluetact.word} onClose={() => setCluetact(null)} />}
 
-            {isKeeper && !isWordChosen && <KeeperWordPopup keeperWord={keeperWord} setKeeperWord={setKeeperWord} logMessage={logMessage} />}
+            {isKeeper && !isWordChosen && <KeeperWordPopup keeperWord={gameState.keeperWord} setKeeperWord={setKeeperWord} logMessage={logMessage} />}
 
             <div className={styles.table}>
-                {players.map((player) => (
+                {gameState.players.map((player) => (
                     <PlayerCard key={player.username} player={player} me={player.username === user.username} onClick={() => handlePlayerCardClick(player)} />
                 ))}
             </div>
@@ -60,7 +60,7 @@ function GameRoom() {
                 {isKeeper && <KeeperClueList clues={clues} />}
             </div>
 
-            {!isKeeper && isWordChosen && <SubmitClue revealedPrefix={word.revealedWord} />}
+            {!isKeeper && isWordChosen && <SubmitClue revealedPrefix={gameState.revealedWord} />}
 
             {selectedPlayer && <ProfileModal player={selectedPlayer} onClose={closeProfileModal} />}
         </div>
