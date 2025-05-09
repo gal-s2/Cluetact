@@ -34,6 +34,8 @@ class Room {
 
         this.pastKeepers = new Set();
         this.pastKeepers.add(keeperUsername);
+
+        this.isWordFullyRevealed = false;
     }
 
     getKeeperWord() {
@@ -206,7 +208,7 @@ class Room {
             } else {
                 this.handleCorrectGuess(userId, timeElapsed, clueId);
                 clearTimeout(this.raceTimer);
-                return { correct: true, revealed: true };
+                return { correct: true, revealed: true, isWordComplete: this.isWordFullyRevealed };
             }
         }
 
@@ -240,14 +242,14 @@ class Room {
         // 🧼 Mark the clue as blocked so no one else can use it
         matchedClue.blocked = true;
 
-        const isWordFullyRevealed = session.revealNextLetter();
+        this.isWordFullyRevealed = session.revealNextLetter();
 
         Logger.logGuessCorrect(this.roomId, guesserId, pointsEarned);
         Logger.logRevealedLetters(this.roomId, session.revealedLetters);
 
         session.status = "waiting";
 
-        if (isWordFullyRevealed) {
+        if (this.isWordFullyRevealed) {
             const currentKeeper = this.keeperUsername;
             this.pastKeepers.add(currentKeeper);
 

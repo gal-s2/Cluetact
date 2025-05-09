@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import socket from "../socket";
+import { useUser } from "../components/UserContext";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 export default function useGameRoomSocket(roomId, hasJoinedRef) {
-    const [players, setPlayers] = useState();
+    const { user } = useUser();
+
+    const [players, setPlayers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isKeeper, setIsKeeper] = useState(false);
     const [keeperWord, setKeeperWord] = useState("");
@@ -25,9 +28,17 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
     };
 
     useEffect(() => {
-        socket.on(SOCKET_EVENTS.CLUETACT_SUCCESS, ({ guesser, word, revealed }) => {
+        socket.on(SOCKET_EVENTS.CLUETACT_SUCCESS, ({ guesser, word, revealed, isWordComplete, keeper, players }) => {
             setCluetact({ guesser, word });
-            setWord((prev) => ({ ...prev, revealedWord: revealed }));
+
+            if (isWordComplete) {
+                setIsWordChosen(false);
+                setIsKeeper(keeper === user.username);
+                setPlayers(players);
+                setWord((prev) => ({ ...prev, word: "", revealedWord: "" }));
+            } else {
+                setWord((prev) => ({ ...prev, revealedWord: revealed }));
+            }
         });
 
         return () => socket.off(SOCKET_EVENTS.CLUETACT_SUCCESS);

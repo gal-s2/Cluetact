@@ -4,7 +4,6 @@ import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 function KeeperWordPopup({ keeperWord, setKeeperWord, logMessage }) {
     const handleSubmit = () => {
-        console.log(SOCKET_EVENTS);
         socket.emit(SOCKET_EVENTS.KEEPER_WORD_SUBMISSION, { word: keeperWord });
     };
 

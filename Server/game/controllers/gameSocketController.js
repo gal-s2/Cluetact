@@ -182,6 +182,9 @@ const gameSocketController = {
                     guesser: userId,
                     word: guess,
                     revealed: room.getRevealedLetters(),
+                    isWordComplete: result.isWordComplete,
+                    keeper: room.keeperUsername,
+                    players: room.players,
                 },
                 room.roomId
             );
