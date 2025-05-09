@@ -243,6 +243,7 @@ class Room {
         matchedClue.blocked = true;
 
         this.isWordFullyRevealed = session.revealNextLetter();
+        session.resetCluesHistory();
 
         Logger.logGuessCorrect(this.roomId, guesserId, pointsEarned);
         Logger.logRevealedLetters(this.roomId, session.revealedLetters);

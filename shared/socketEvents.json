@@ -14,7 +14,7 @@
     "GAME_START": "game_start",
     "REQUEST_KEEPER_WORD": "request_keeper_word",
     "KEEPER_WORD_CHOSEN": "keeper_word_chosen",
-    "CLUE_SUBMITTED": "clue_submitted",
+    "NEW_CLUE_TO_BLOCK": "new_clue_to_block",
     "CLUE_REVEALED": "clue_revealed",
     "CLUE_REJECTED": "clue_rejected",
     "CLUE_BLOCKED": "clue_blocked",

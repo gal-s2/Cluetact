@@ -5,7 +5,7 @@ class GameRound {
         this.roundNum = 1;
         this.keeperWord = null; // The full word chosen by the keeper (lets say dog)
         this.revealedLetters = ""; // Current revealed part (e.g., "d", "do", etc.)
-        this.clues = []; // each clue: { from, definition, word, blocked: false }
+        this.clues = [];
         this.raceStartTime = null; // When the keeper/seeker race started
         this.guesses = []; // List of { userId, word, time }
         this.status = "waiting"; // "waiting", "race", "ended"
@@ -64,6 +64,14 @@ class GameRound {
         }
 
         return false; // Already fully revealed
+    }
+
+    resetCluesHistory() {
+        this.clues = [];
+    }
+
+    getClues() {
+        return this.clues;
     }
 
     endSession() {

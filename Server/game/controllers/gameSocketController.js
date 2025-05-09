@@ -103,7 +103,8 @@ const gameSocketController = {
         if (success) {
             const addedClue = room.currentRound.clues.at(-1);
             messageEmitter.emitToKeeper(
-                SOCKET_EVENTS.CLUE_SUBMITTED,
+                //!#CLUE_SUBMITTED
+                SOCKET_EVENTS.NEW_CLUE_TO_BLOCK,
                 {
                     from: username,
                     definition,
@@ -112,14 +113,11 @@ const gameSocketController = {
             );
 
             for (const player of room.players) {
-                if (player.role === "seeker" && player.username !== username) {
+                if (player.role === "seeker") {
                     messageEmitter.emitToPlayer(
+                        //!#CLUE_REVEALED
                         SOCKET_EVENTS.CLUE_REVEALED,
-                        {
-                            id: addedClue.id,
-                            from: username,
-                            definition,
-                        },
+                        room.currentRound.getClues(),
                         player.username
                     );
                 }
@@ -179,6 +177,7 @@ const gameSocketController = {
                 {
                     guesser: userId,
                     word: guess,
+                    clues: room.currentRound.getClues(),
                     revealed: room.getRevealedLetters(),
                     isWordComplete: result.isWordComplete,
                     keeper: room.keeperUsername,

@@ -35,18 +35,19 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
     };
 
     useEffect(() => {
-        socket.on(SOCKET_EVENTS.CLUETACT_SUCCESS, ({ guesser, word, revealed, isWordComplete, keeper, players }) => {
+        socket.on(SOCKET_EVENTS.CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players }) => {
             setCluetact({ guesser, word });
+            setClues(clues);
 
             if (isWordComplete) {
                 setIsWordChosen(false);
                 setIsKeeper(keeper === user.username);
-
                 setGameState((prev) => ({
                     ...prev,
                     players,
                     revealedWord: "",
                     keeperWord: "",
+                    wordLength: 0,
                 }));
             } else {
                 setGameState((prev) => ({
@@ -60,15 +61,15 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
     }, []);
 
     useEffect(() => {
-        socket.on(SOCKET_EVENTS.CLUE_REVEALED, ({ id, definition, from }) => {
-            setClues((prev) => [...prev, { id, from, definition, blocked: false }]);
+        socket.on(SOCKET_EVENTS.CLUE_REVEALED, (clues) => {
+            setClues(clues);
         });
 
         socket.on(SOCKET_EVENTS.CLUE_BLOCKED, ({ word, from, definition, blockedBy }) => {
             setClues((prev) => prev.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true } : clue)));
         });
 
-        socket.on(SOCKET_EVENTS.CLUE_SUBMITTED, ({ from, definition }) => {
+        socket.on(SOCKET_EVENTS.NEW_CLUE_TO_BLOCK, ({ from, definition }) => {
             setLogMessage(`A clue was submitted by ${from}. You may block it.`);
             setClues((prev) => [...prev, { from, definition, blocked: false }]);
         });
@@ -76,7 +77,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         return () => {
             socket.off(SOCKET_EVENTS.CLUE_REVEALED);
             socket.off(SOCKET_EVENTS.CLUE_BLOCKED);
-            socket.off(SOCKET_EVENTS.CLUE_SUBMITTED);
+            socket.off(SOCKET_EVENTS.NEW_CLUE_TO_BLOCK);
         };
     }, []);
 
