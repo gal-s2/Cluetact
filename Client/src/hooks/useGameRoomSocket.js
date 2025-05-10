@@ -69,7 +69,8 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         });
 
         socket.on(SOCKET_EVENTS.CLUE_BLOCKED, ({ word, from, definition, blockedBy }) => {
-            setClues((prev) => prev.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true } : clue)));
+            console.log("Clue being updated:", { definition, from, word });
+            setClues((prev) => prev.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true, word } : clue)));
         });
 
         socket.on(SOCKET_EVENTS.NEW_CLUE_TO_BLOCK, ({ from, definition }) => {
