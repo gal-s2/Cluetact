@@ -3,6 +3,7 @@ import ClueBubble from "./ClueBubble";
 import styles from "./SeekerClueSection.module.css";
 
 function SeekerClueSection({ clues, onGuess }) {
+    if (!clues || clues.length === 0) return null;
     return (
         <div className={styles.clueSection}>
             {clues.map((clue) => (
