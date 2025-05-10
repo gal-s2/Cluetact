@@ -27,5 +27,7 @@
     "GET_LOBBY_USERS": "get_lobby_users",
     "LEAVE_WAITING_LOBBY": "leave_waiting_lobby",
     "START_GAME_FROM_LOBBY": "start_game_from_lobby",
-    "GAME_STARTED": "game_started"
+    "GAME_STARTED": "game_started",
+    "TRY_CLUETACT": "try_cluetact",
+    "TRY_BLOCK_CLUE": "try_block_clue"
 }

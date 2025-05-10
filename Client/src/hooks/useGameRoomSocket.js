@@ -26,7 +26,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
     };
 
     const handleGuessSubmit = (guess, clue) => {
-        socket.emit(SOCKET_EVENTS.SUBMIT_GUESS, { guess, clueId: clue.id });
+        socket.emit(SOCKET_EVENTS.TRY_CLUETACT, { guess, clueId: clue.id });
         setActiveClue(null);
     };
 

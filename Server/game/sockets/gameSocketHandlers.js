@@ -42,7 +42,8 @@ module.exports = function (io) {
 
         socket.on(SOCKET_EVENTS.SUBMIT_CLUE, (args) => gameSocketController.handleSubmitClue(socket, args));
 
-        socket.on(SOCKET_EVENTS.SUBMIT_GUESS, (args) => gameSocketController.handleSubmitGuess(socket, args));
+        socket.on(SOCKET_EVENTS.TRY_CLUETACT, (args) => gameSocketController.handleTryCluetact(socket, args));
+        socket.on(SOCKET_EVENTS.TRY_BLOCK_CLUE, (args) => gameSocketController.handleTryBlockClue(socket, args));
 
         socket.on(SOCKET_EVENTS.DISCONNECT, (args) => gameSocketController.disconnect(socket, args));
     });

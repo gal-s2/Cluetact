@@ -99,7 +99,7 @@ const gameSocketController = {
 
         const username = socket.user.username;
         const success = room.startNewClueRound(username, word, definition);
-
+        console.log("success is ", success);
         if (success) {
             const addedClue = room.currentRound.clues.at(-1);
             messageEmitter.emitToKeeper(
@@ -127,43 +127,13 @@ const gameSocketController = {
         }
     },
 
-    handleSubmitGuess: async (socket, { guess, clueId }) => {
+    handleTryCluetact: async (socket, { guess, clueId }) => {
         const room = gameManager.getRoomBySocket(socket);
         if (!room) return;
 
         const userId = socket.user.username;
-        const isKeeper = room.keeperUsername === userId;
-
-        // 🔸 Keeper trying to block a clue
-        if (isKeeper) {
-            const result = room.currentRound.tryBlockClue(guess, userId);
-
-            if (result.success) {
-                messageEmitter.broadcastToRoom(
-                    SOCKET_EVENTS.CLUE_BLOCKED,
-                    {
-                        word: result.blockedClue.word,
-                        from: result.blockedClue.from,
-                        definition: result.blockedClue.definition,
-                        blockedBy: userId,
-                    },
-                    room.roomId
-                );
-            } else {
-                messageEmitter.emitToSocket(
-                    SOCKET_EVENTS.GUESS_FAILED,
-                    {
-                        message: "No matching clue to block.",
-                    },
-                    socket
-                );
-            }
-
-            return;
-        }
-
-        // 🔹 Regular seeker guess flow
         const result = await room.submitGuess(userId, guess, clueId);
+        console.log("Trying to make a cluetact with guess", guess, " and clueId ", clueId);
 
         if (result.correct) {
             messageEmitter.broadcastToRoom(
@@ -184,6 +154,39 @@ const gameSocketController = {
                 SOCKET_EVENTS.GUESS_FAILED,
                 {
                     message: "Incorrect guess",
+                },
+                socket
+            );
+        }
+    },
+
+    handleTryBlockClue: (socket, { guess }) => {
+        const room = gameManager.getRoomBySocket(socket);
+        if (!room) return;
+
+        const userId = socket.user.username;
+        const isKeeper = room.keeperUsername === userId;
+
+        if (!isKeeper) return; // optional: prevent non-keepers from blocking
+
+        const result = room.currentRound.tryBlockClue(guess, userId);
+
+        if (result.success) {
+            messageEmitter.broadcastToRoom(
+                SOCKET_EVENTS.CLUE_BLOCKED,
+                {
+                    word: result.blockedClue.word,
+                    from: result.blockedClue.from,
+                    definition: result.blockedClue.definition,
+                    blockedBy: userId,
+                },
+                room.roomId
+            );
+        } else {
+            messageEmitter.emitToSocket(
+                SOCKET_EVENTS.GUESS_FAILED,
+                {
+                    message: "No matching clue to block.",
                 },
                 socket
             );
