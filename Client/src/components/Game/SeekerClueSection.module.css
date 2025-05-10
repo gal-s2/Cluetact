@@ -11,3 +11,11 @@
     gap: 1rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+
+.emptyMessage {
+    color: #777;
+    font-style: italic;
+    text-align: center;
+    padding: 1rem;
+    opacity: 0.8;
+}

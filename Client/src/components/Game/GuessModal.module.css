@@ -57,3 +57,28 @@ button[type="button"] {
 button:hover {
     background-color: #45a049;
 }
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(2px);
+    background-color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.messageBox {
+    background-color: #ffffff;
+    border: 2px solid #ffd180;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #444;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
