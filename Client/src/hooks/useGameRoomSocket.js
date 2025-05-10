@@ -19,12 +19,15 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
     const [logMessage, setLogMessage] = useState("");
     const [clues, setClues] = useState([]);
     const [cluetact, setCluetact] = useState(null);
+    const [activeClue, setActiveClue] = useState(null);
 
-    const handleGuess = (clue) => {
-        const guess = prompt(`What word do you think "${clue.definition}" is referring to?`);
-        if (guess && guess.trim()) {
-            socket.emit(SOCKET_EVENTS.SUBMIT_GUESS, { guess, clueId: clue.id });
-        }
+    const handleClueClick = (clue) => {
+        setActiveClue(clue);
+    };
+
+    const handleGuessSubmit = (guess, clue) => {
+        socket.emit(SOCKET_EVENTS.SUBMIT_GUESS, { guess, clueId: clue.id });
+        setActiveClue(null);
     };
 
     const setKeeperWord = (word) => {
@@ -135,6 +138,9 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         clues,
         cluetact,
         setCluetact,
-        handleGuess,
+        handleClueClick,
+        handleGuessSubmit,
+        activeClue,
+        setActiveClue,
     };
 }

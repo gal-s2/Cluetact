@@ -7,11 +7,12 @@ import Spinner from "../Routes/Spinner";
 import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./KeeperWordPopup";
 import SubmitClue from "./SubmitClue";
-import ClueBubble from "./ClueBubble";
 import KeeperClueList from "./KeeperClueList";
 import CluetactPopup from "./CluetactPopup";
 import ProfileModal from "./ProfileModal";
 import useGameRoomSocket from "../../hooks/useGameRoomSocket";
+import SeekerClueSection from "./SeekerClueSection";
+import GuessModal from "./GuessModal";
 
 function GameRoom() {
     // -----
@@ -23,7 +24,10 @@ function GameRoom() {
     const { user } = useUser();
     const { roomId } = useParams();
 
-    const { gameState, loading, isKeeper, setKeeperWord, isWordChosen, logMessage, clues, cluetact, setCluetact, word, handleGuess } = useGameRoomSocket(roomId, hasJoinedRef);
+    const { gameState, loading, isKeeper, setKeeperWord, isWordChosen, logMessage, clues, cluetact, setCluetact, handleClueClick, handleGuessSubmit, activeClue, setActiveClue } = useGameRoomSocket(
+        roomId,
+        hasJoinedRef
+    );
 
     const [selectedPlayer, setSelectedPlayer] = useState(null);
 
@@ -56,7 +60,9 @@ function GameRoom() {
             </div>
 
             <div className={styles.cluesSection}>
-                {!isKeeper && clues.map((clue) => <ClueBubble key={clue.id} id={clue.id} from={clue.from} definition={clue.definition} blocked={clue.blocked} onGuess={() => handleGuess(clue)} />)}
+                {!isKeeper && <SeekerClueSection clues={clues} onGuess={handleClueClick} />}
+                {activeClue && <GuessModal clue={activeClue} onSubmit={handleGuessSubmit} onCancel={() => setActiveClue(null)} />}
+
                 {isKeeper && <KeeperClueList clues={clues} />}
             </div>
 
