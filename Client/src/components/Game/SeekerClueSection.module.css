@@ -19,3 +19,52 @@
     padding: 1rem;
     opacity: 0.8;
 }
+
+.heading {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #444;
+    text-align: center;
+}
+
+.heading {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.8rem;
+    text-align: center;
+}
+
+.blockedSection {
+    margin-top: 2rem;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.blockedHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 0.5rem;
+}
+
+.subHeading {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #999;
+    margin: 0;
+}
+
+.toggleIcon {
+    font-size: 0.9rem;
+    color: #666;
+    transition: transform 0.3s ease;
+}
+
+.rotate {
+    transform: rotate(180deg);
+}
