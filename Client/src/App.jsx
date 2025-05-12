@@ -10,81 +10,162 @@ import StatsPage from "./components/Statistics/StatsPage";
 import ProfileDetails from "./components/Profile/ProfileDetails";
 import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
 import { useUser } from "./components/UserContext";
-import SocketNavigator from "./components/SocketNavigator";
+import useSocketNavigation from "./hooks/useSocketNavigation";
+
+// function App() {
+//     const { user } = useUser();
+
+//     return (
+//         <Router>
+//             <AppRoutesWithSocketNavigation user={user} />
+//             <Routes key={user ? "logged-in" : "logged-out"}>
+//                 <Route
+//                     path="/login"
+//                     element={
+//                         <PublicRoute>
+//                             <AuthForm type="login" />
+//                         </PublicRoute>
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/register"
+//                     element={
+//                         <PublicRoute>
+//                             <AuthForm type="register" />
+//                         </PublicRoute>
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/"
+//                     element={
+//                         <PublicRoute>
+//                             <WelcomePage />
+//                         </PublicRoute>
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/lobby"
+//                     element={
+//                         <PrivateRoute>
+//                             <Lobby />
+//                         </PrivateRoute>
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/game/:roomId"
+//                     element={
+//                         <PrivateRoute>
+//                             <GameRoom />
+//                         </PrivateRoute>
+//                     }
+//                 />
+//                 <Route
+//                     path="/stats"
+//                     element={
+//                         <PrivateRoute>
+//                             <StatsPage />
+//                         </PrivateRoute>
+//                     }
+//                 />
+//                 <Route
+//                     path="/profile"
+//                     element={
+//                         <PrivateRoute>
+//                             <ProfileDetails />
+//                         </PrivateRoute>
+//                     }
+//                 />
+
+//                 <Route path="*" element={<NotFoundPage />} />
+//                 <Route path="/waiting/:roomId" element={<WaitingRoom />} />
+//             </Routes>
+//         </Router>
+//     );
+// }
 
 function App() {
     const { user } = useUser();
 
     return (
         <Router>
-            <SocketNavigator />
-
-            <Routes key={user ? "logged-in" : "logged-out"}>
-                <Route
-                    path="/login"
-                    element={
-                        <PublicRoute>
-                            <AuthForm type="login" />
-                        </PublicRoute>
-                    }
-                />
-
-                <Route
-                    path="/register"
-                    element={
-                        <PublicRoute>
-                            <AuthForm type="register" />
-                        </PublicRoute>
-                    }
-                />
-
-                <Route
-                    path="/"
-                    element={
-                        <PublicRoute>
-                            <WelcomePage />
-                        </PublicRoute>
-                    }
-                />
-
-                <Route
-                    path="/lobby"
-                    element={
-                        <PrivateRoute>
-                            <Lobby />
-                        </PrivateRoute>
-                    }
-                />
-
-                <Route
-                    path="/game/:roomId"
-                    element={
-                        <PrivateRoute>
-                            <GameRoom />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/stats"
-                    element={
-                        <PrivateRoute>
-                            <StatsPage />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/profile"
-                    element={
-                        <PrivateRoute>
-                            <ProfileDetails />
-                        </PrivateRoute>
-                    }
-                />
-
-                <Route path="*" element={<NotFoundPage />} />
-                <Route path="/waiting/:roomId" element={<WaitingRoom />} />
-            </Routes>
+            <AppRoutesWithSocketNavigation user={user} />
         </Router>
+    );
+}
+
+function AppRoutesWithSocketNavigation({ user }) {
+    useSocketNavigation();
+
+    return (
+        <Routes key={user ? "logged-in" : "logged-out"}>
+            <Route
+                path="/login"
+                element={
+                    <PublicRoute>
+                        <AuthForm type="login" />
+                    </PublicRoute>
+                }
+            />
+
+            <Route
+                path="/register"
+                element={
+                    <PublicRoute>
+                        <AuthForm type="register" />
+                    </PublicRoute>
+                }
+            />
+
+            <Route
+                path="/"
+                element={
+                    <PublicRoute>
+                        <WelcomePage />
+                    </PublicRoute>
+                }
+            />
+
+            <Route
+                path="/lobby"
+                element={
+                    <PrivateRoute>
+                        <Lobby />
+                    </PrivateRoute>
+                }
+            />
+
+            <Route
+                path="/game/:roomId"
+                element={
+                    <PrivateRoute>
+                        <GameRoom />
+                    </PrivateRoute>
+                }
+            />
+            <Route
+                path="/stats"
+                element={
+                    <PrivateRoute>
+                        <StatsPage />
+                    </PrivateRoute>
+                }
+            />
+            <Route
+                path="/profile"
+                element={
+                    <PrivateRoute>
+                        <ProfileDetails />
+                    </PrivateRoute>
+                }
+            />
+
+            <Route path="*" element={<NotFoundPage />} />
+            <Route path="/waiting/:roomId" element={<WaitingRoom />} />
+        </Routes>
     );
 }
 
