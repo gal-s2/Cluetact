@@ -8,6 +8,8 @@ export default function useSocketNavigation() {
     const location = useLocation();
 
     useEffect(() => {
+        socket.emit(SOCKET_EVENTS.CLIENT_NOTIFY_MY_SOCKET_IS_READY);
+
         const handleRedirectToLobby = () => {
             navigate("/lobby");
         };
@@ -16,9 +18,13 @@ export default function useSocketNavigation() {
             const targetPath = `/game/${roomId}`;
             console.log(currentPath);
             console.log(targetPath);
-
-            //if (currentPath != targetPath) navigate(targetPath);
-            if (currentPath !== targetPath) setTimeout(() => navigate(targetPath), 0);
+            const condition = currentPath != targetPath;
+            if (condition) {
+                console.log("condition is true");
+                navigate(targetPath);
+            } else {
+                console.log("condition is false");
+            }
         };
 
         const handleRedirectToLogin = () => {

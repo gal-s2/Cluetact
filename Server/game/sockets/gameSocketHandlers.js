@@ -17,10 +17,12 @@ module.exports = function (io) {
                 const decoded = verifyToken(token); // verify jwt
                 socket.user = decoded;
                 next();
+            } else {
+                next(new Error("Missing auth token"));
             }
         } catch (err) {
             console.log("Auth error");
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOGIN, null, socket);
+            next(new Error("Auth error"));
         }
     });
 
@@ -30,13 +32,20 @@ module.exports = function (io) {
 
         socketManager.register(socket, socket.user.username);
 
-        // Here need to check if player is already in room
-        reconnect(socket);
-        //
+        const reconnect = (socket) => {
+            let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);
+            console.log("room id in reconnect is", roomId);
+            if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId }, socket);
+        };
 
         // Log every incoming message
         socket.onAny((event, ...args) => {
             socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);
+        });
+
+        socket.on(SOCKET_EVENTS.CLIENT_NOTIFY_MY_SOCKET_IS_READY, () => {
+            console.log("I just got notified that the socket is ready...");
+            reconnect(socket);
         });
 
         socket.on(SOCKET_EVENTS.CLIENT_FIND_GAME, (args) => gameSocketController.handleJoinQueue(socket, args));
@@ -52,9 +61,4 @@ module.exports = function (io) {
 
         socket.on(SOCKET_EVENTS.CLIENT_DISCONNECT, (args) => gameSocketController.disconnect(socket, args));
     });
-
-    const reconnect = (socket) => {
-        let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);
-        if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId }, socket);
-    };
 };
