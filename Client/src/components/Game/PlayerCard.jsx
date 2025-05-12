@@ -7,7 +7,7 @@ const PlayerCard = ({ player, me, onClick }) => {
             <div className={styles.inner}>
                 <h3>{player.username}</h3>
                 <p>{player.gameScore} pts</p>
-                <span className={styles.roleTag}>{player.role}</span>
+                <span className={styles.roleTag}>{player.role.toUpperCase()}</span>
             </div>
         </div>
     );

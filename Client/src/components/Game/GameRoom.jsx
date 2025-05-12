@@ -24,10 +24,7 @@ function GameRoom() {
     const { user } = useUser();
     const { roomId } = useParams();
 
-    const { gameState, loading, isKeeper, setKeeperWord, isWordChosen, logMessage, clues, cluetact, setCluetact, handleClueClick, handleGuessSubmit, activeClue, setActiveClue } = useGameRoomSocket(
-        roomId,
-        hasJoinedRef
-    );
+    const { gameState, loading, isKeeper, setKeeperWord, isWordChosen, logMessage, clues, cluetact, setCluetact, handleClueClick, handleGuessSubmit, activeClue, setActiveClue } = useGameRoomSocket(roomId, hasJoinedRef);
 
     const [selectedPlayer, setSelectedPlayer] = useState(null);
 
@@ -46,9 +43,11 @@ function GameRoom() {
     return (
         <>
             <div className={styles.room}>
-                <div className={styles.wordDisplay}>
-                    <WordDisplay isKeeper={isKeeper} revealedWord={gameState.revealedWord} word={gameState.keeperWord} length={gameState.wordLength} />
-                </div>
+                {isWordChosen && (
+                    <div className={styles.wordDisplay}>
+                        <WordDisplay isKeeper={isKeeper} revealedWord={gameState.revealedWord} word={gameState.keeperWord} length={gameState.wordLength} />
+                    </div>
+                )}
 
                 {cluetact && <CluetactPopup guesser={cluetact.guesser} word={cluetact.word} onClose={() => setCluetact(null)} />}
 
