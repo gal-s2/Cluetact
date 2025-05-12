@@ -7,6 +7,7 @@
     "DISCONNECT": "disconnect",
     "REDIRECT_TO_LOGIN": "redirect_to_login",
     "REDIRECT_TO_LOBBY": "redirect_to_lobby",
+    "REDIRECT_TO_ROOM": "redirect_to_room",
     "CONNECTION": "connection",
     "CONNECT": "connect",
     "NEW_ROOM": "new_room",

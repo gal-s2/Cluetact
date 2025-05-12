@@ -86,18 +86,6 @@ function WaitingRoom() {
     }, []);
 
     useEffect(() => {
-        const handleRedirectToLobby = () => {
-            navigate("/lobby");
-        };
-
-        socket.on(SOCKET_EVENTS.REDIRECT_TO_LOBBY, handleRedirectToLobby);
-
-        return () => {
-            socket.off(SOCKET_EVENTS.REDIRECT_TO_LOBBY, handleRedirectToLobby);
-        };
-    }, []);
-
-    useEffect(() => {
         const handleGameStarted = ({ roomId }) => navigate(`/game/${roomId}`);
 
         socket.on(SOCKET_EVENTS.GAME_STARTED, handleGameStarted);

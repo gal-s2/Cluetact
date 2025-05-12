@@ -6,6 +6,7 @@ const waitingLobbyHandlers = require("./waitingLobbyHandlers");
 const gameSocketController = require("../controllers/gameSocketController");
 const messageEmitter = require("./MessageEmitter");
 const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
+const GameManager = require("../managers/GameManager");
 
 module.exports = function (io) {
     // middleware for socket message
@@ -29,6 +30,10 @@ module.exports = function (io) {
 
         socketManager.register(socket, socket.user.username);
 
+        // Here need to check if player is already in room
+        reconnect(socket);
+        //
+
         // Log every incoming message
         socket.onAny((event, ...args) => {
             socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);
@@ -47,4 +52,9 @@ module.exports = function (io) {
 
         socket.on(SOCKET_EVENTS.DISCONNECT, (args) => gameSocketController.disconnect(socket, args));
     });
+
+    const reconnect = (socket) => {
+        let roomId = GameManager.getRoomByUsername(socket?.user?.username);
+        messageEmitter.emitToSocket(SOCKET_EVENTS.REDIRECT_TO_ROOM, { roomId }, socket);
+    };
 };

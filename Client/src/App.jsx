@@ -10,12 +10,15 @@ import StatsPage from "./components/Statistics/StatsPage";
 import ProfileDetails from "./components/Profile/ProfileDetails";
 import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
 import { useUser } from "./components/UserContext";
+import SocketNavigator from "./components/SocketNavigator";
 
 function App() {
     const { user } = useUser();
 
     return (
         <Router>
+            <SocketNavigator />
+
             <Routes key={user ? "logged-in" : "logged-out"}>
                 <Route
                     path="/login"
