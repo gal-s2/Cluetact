@@ -12,7 +12,7 @@
     "CONNECT": "connect",
     "NEW_ROOM": "new_room",
     "ENTERED_QUEUE": "entered_queue",
-    "GAME_START": "game_start",
+    "ROUND_START": "round_start",
     "REQUEST_KEEPER_WORD": "request_keeper_word",
     "KEEPER_WORD_CHOSEN": "keeper_word_chosen",
     "NEW_CLUE_TO_BLOCK": "new_clue_to_block",
@@ -29,6 +29,7 @@
     "LEAVE_WAITING_LOBBY": "leave_waiting_lobby",
     "START_GAME_FROM_LOBBY": "start_game_from_lobby",
     "GAME_STARTED": "game_started",
+    "GAME_JOIN": "game_join",
     "TRY_CLUETACT": "try_cluetact",
     "TRY_BLOCK_CLUE": "try_block_clue"
 }

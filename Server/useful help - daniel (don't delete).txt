@@ -1,5 +1,9 @@
+
+
 instructions on how to run the server:
--run the container in docker desktop on port 27017 (container name can be "cluetact-backend")
+best practice to run the mongodb (data stays locally on folder in desktop):
+docker run -d -p 27017:27017 -v C:\Users\omesi\Desktop\mongo-data:/data/db --name mongo mongo
+(or run the container in docker desktop on port 27017 (container name can be "cluetact-backend"))
 
 how to reset all site date (cookies, other local stuff...) saved on ms edge:
 1. Open DevTools (F12 or right-click > Inspect).

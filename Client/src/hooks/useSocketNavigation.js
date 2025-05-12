@@ -5,7 +5,7 @@ import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 export default function useSocketNavigation() {
     const navigate = useNavigate();
-    const locatiobn = useLocation();
+    const location = useLocation();
 
     useEffect(() => {
         const handleRedirectToLobby = () => {
@@ -13,9 +13,12 @@ export default function useSocketNavigation() {
         };
         const handleRedirectToRoom = ({ roomId }) => {
             const currentPath = location.pathname;
-            const targetPath = `game/${roomId}`;
+            const targetPath = `/game/${roomId}`;
+            console.log(currentPath);
+            console.log(targetPath);
 
-            if (currentPath != targetPath) navigate(targetPath);
+            //if (currentPath != targetPath) navigate(targetPath);
+            if (currentPath !== targetPath) setTimeout(() => navigate(targetPath), 0);
         };
 
         const handleRedirectToLogin = () => {

@@ -87,11 +87,12 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
 
     useEffect(() => {
         if (!hasJoinedRef.current) {
+            console.log("trying to let the server know i am joining the room...");
             socket.emit(SOCKET_EVENTS.JOIN_ROOM, { roomId });
             hasJoinedRef.current = true;
         }
 
-        socket.on(SOCKET_EVENTS.GAME_START, (data) => {
+        socket.on(SOCKET_EVENTS.ROUND_START, (data) => {
             setLoading(false);
             setGameState((prev) => ({
                 ...prev,
@@ -100,11 +101,19 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
             console.log("players are: ", data.players);
             const currentPlayer = data.players.find((p) => p.username === user.username);
             setIsKeeper(currentPlayer?.role === "keeper");
+            setIsWordChosen(false);
         });
 
-        socket.on(SOCKET_EVENTS.REQUEST_KEEPER_WORD, (data) => {
-            setIsWordChosen(false);
-            setLogMessage(data.message || "");
+        socket.on(SOCKET_EVENTS.GAME_JOIN, (data) => {
+            setLoading(false);
+            setGameState((prev) => ({
+                ...prev,
+                players: data.players,
+            }));
+            console.log("players are: ", data.players);
+            const currentPlayer = data.players.find((p) => p.username === user.username);
+            setIsKeeper(currentPlayer?.role === "keeper");
+            setIsWordChosen(true);
         });
 
         socket.on(SOCKET_EVENTS.KEEPER_WORD_CHOSEN, (data) => {
@@ -123,7 +132,8 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         });
 
         return () => {
-            socket.off(SOCKET_EVENTS.GAME_START);
+            socket.off(SOCKET_EVENTS.ROUND_START);
+            socket.off(SOCKET_EVENTS.GAME_JOIN);
             socket.off(SOCKET_EVENTS.REQUEST_KEEPER_WORD);
             socket.off(SOCKET_EVENTS.KEEPER_WORD_CHOSEN);
         };

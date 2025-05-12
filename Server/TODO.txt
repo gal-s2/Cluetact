@@ -16,3 +16,4 @@ GAME:
 
 DATABASE:
 - think about which attributes to save on a User in db (wins etc.)
+-need to put the dtabase in the cloud in google cloud/aws/atlas database

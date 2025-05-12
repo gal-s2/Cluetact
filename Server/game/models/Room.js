@@ -12,9 +12,9 @@ const CLUE_BONUS = 5;
 
 // work with socket version:
 class Room {
-    constructor(roomId, status, keeperUsername, seekersUsernames) {
+    constructor(roomId, keeperUsername, seekersUsernames) {
         this.roomId = roomId;
-        this.status = status;
+        this.status = "PRE-ROUND"; //options: "PRE-ROUND","MID-ROUND","END";
         this.keeperUsername = keeperUsername;
         this.players = [];
         this.currentRound = new GameRound();
@@ -273,6 +273,7 @@ class Room {
 
             this.currentRound = new GameRound();
             this.currentRound.roundNum = this.roundsHistory.length + 1;
+            this.status = "PRE-ROUND";
             Logger.logNextKeeper(this.roomId, nextKeeper);
 
             if (this.isGameOver()) {

@@ -50,9 +50,9 @@ module.exports = function waitingLobbyHandlers(io, socket) {
 
         const keeper = lobby.creator;
         const seekers = [...lobby.users].filter((u) => u !== keeper);
-        const room = GameManager.createRoom("Started", keeper, seekers);
+        const room = GameManager.createRoom(keeper, seekers);
 
-        messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.GAME_STARTED, { roomId: room.roomId }, lobbyId);
+        messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.REDIRECT_TO_ROOM, { roomId: room.roomId }, lobbyId);
         waitingLobbyManager.deleteLobby(lobbyId);
     });
 };

@@ -85,17 +85,17 @@ function WaitingRoom() {
         };
     }, []);
 
-    useEffect(() => {
-        const handleGameStarted = ({ roomId }) => navigate(`/game/${roomId}`);
+    // useEffect(() => {
+    //     const handleGameStarted = ({ roomId }) => navigate(`/game/${roomId}`);
 
-        socket.on(SOCKET_EVENTS.GAME_STARTED, handleGameStarted);
+    //     socket.on(SOCKET_EVENTS.REDIRECT_TO_ROOM, handleGameStarted);
 
-        socket.emit(SOCKET_EVENTS.GAME_STARTED, { lobbyId: roomId });
+    //     socket.emit(SOCKET_EVENTS.GAME_STARTED, { lobbyId: roomId });
 
-        return () => {
-            socket.off("game_started", handleGameStarted);
-        };
-    }, []);
+    //     return () => {
+    //         socket.off(SOCKET_EVENTS.REDIRECT_TO_ROOM, handleGameStarted);
+    //     };
+    // }, []);
 
     const handleStart = () => {
         socket.emit(SOCKET_EVENTS.START_GAME_FROM_LOBBY, { lobbyId: roomId });

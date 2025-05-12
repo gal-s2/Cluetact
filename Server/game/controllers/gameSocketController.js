@@ -35,28 +35,19 @@ const gameSocketController = {
 
     handleJoinRoom: async (socket, args) => {
         const room = gameManager.getRoomBySocket(socket);
+        console.log("found room is ", room);
         if (!room) {
             messageEmitter.emitToSocket(SOCKET_EVENTS.REDIRECT_TO_LOBBY, { room }, socket);
             return;
         }
 
-        messageEmitter.emitToSocket(SOCKET_EVENTS.GAME_START, { players: room.players }, socket);
-
-        messageEmitter.emitToKeeper(
-            SOCKET_EVENTS.REQUEST_KEEPER_WORD,
-            {
-                message: `Please enter your secret English word:`,
-            },
-            room.roomId
-        );
-
-        messageEmitter.emitToSeekers(
-            SOCKET_EVENTS.REQUEST_KEEPER_WORD,
-            {
-                message: `keeper is choosing a word`,
-            },
-            room.roomId
-        );
+        const gameStatus = room.status;
+        console.log("room status is ", gameStatus);
+        if (gameStatus === "PRE-ROUND") {
+            messageEmitter.emitToSocket(SOCKET_EVENTS.ROUND_START, { players: room.players }, socket);
+        } else if (gameStatus === "MID-ROUND") {
+            messageEmitter.emitToSocket(SOCKET_EVENTS.GAME_JOIN, { players: room.players }, socket);
+        }
     },
 
     handleKeeperWordSubmission: async (socket, args) => {
@@ -81,6 +72,7 @@ const gameSocketController = {
 
                 messageEmitter.emitToPlayer(SOCKET_EVENTS.KEEPER_WORD_CHOSEN, message, player.username);
             }
+            room.status = "MID-ROUND";
         } else {
             messageEmitter.emitToSocket(
                 SOCKET_EVENTS.KEEPER_WORD_CHOSEN,

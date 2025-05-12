@@ -11,8 +11,8 @@ class GameManager {
         this.gameQueue = new GameQueue();
     }
 
-    createRoom(status, keeperUsername, seekersUsernames) {
-        const room = new Room(GameManager.roomId, status, keeperUsername, seekersUsernames);
+    createRoom(keeperUsername, seekersUsernames) {
+        const room = new Room(GameManager.roomId, keeperUsername, seekersUsernames);
 
         this.rooms[GameManager.roomId] = room;
         Logger.logRoomCreated(GameManager.roomId, room.players);
@@ -33,7 +33,7 @@ class GameManager {
             const keeperUsername = result.chosenUsers[0];
             const seekersUsernames = result.chosenUsers.slice(1);
 
-            const room = await this.createRoom("Created", keeperUsername, seekersUsernames);
+            const room = await this.createRoom(keeperUsername, seekersUsernames);
 
             //await room.runGame(require('prompt-sync')());
             return room;
