@@ -20,7 +20,7 @@ module.exports = function (io) {
             }
         } catch (err) {
             console.log("Auth error");
-            messageEmitter.emitToSocket(SOCKET_EVENTS.REDIRECT_TO_LOGIN, null, socket);
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOGIN, null, socket);
         }
     });
 
@@ -39,22 +39,22 @@ module.exports = function (io) {
             socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);
         });
 
-        socket.on(SOCKET_EVENTS.FIND_GAME, (args) => gameSocketController.handleJoinQueue(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_FIND_GAME, (args) => gameSocketController.handleJoinQueue(socket, args));
 
-        socket.on(SOCKET_EVENTS.JOIN_ROOM, (args) => gameSocketController.handleJoinRoom(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_JOIN_ROOM, (args) => gameSocketController.handleJoinRoom(socket, args));
 
-        socket.on(SOCKET_EVENTS.KEEPER_WORD_SUBMISSION, (args) => gameSocketController.handleKeeperWordSubmission(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_KEEPER_WORD_SUBMISSION, (args) => gameSocketController.handleKeeperWordSubmission(socket, args));
 
-        socket.on(SOCKET_EVENTS.SUBMIT_CLUE, (args) => gameSocketController.handleSubmitClue(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_SUBMIT_CLUE, (args) => gameSocketController.handleSubmitClue(socket, args));
 
-        socket.on(SOCKET_EVENTS.TRY_CLUETACT, (args) => gameSocketController.handleTryCluetact(socket, args));
-        socket.on(SOCKET_EVENTS.TRY_BLOCK_CLUE, (args) => gameSocketController.handleTryBlockClue(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_TRY_CLUETACT, (args) => gameSocketController.handleTryCluetact(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_TRY_BLOCK_CLUE, (args) => gameSocketController.handleTryBlockClue(socket, args));
 
-        socket.on(SOCKET_EVENTS.DISCONNECT, (args) => gameSocketController.disconnect(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_DISCONNECT, (args) => gameSocketController.disconnect(socket, args));
     });
 
     const reconnect = (socket) => {
         let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);
-        if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.REDIRECT_TO_ROOM, { roomId }, socket);
+        if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId }, socket);
     };
 };

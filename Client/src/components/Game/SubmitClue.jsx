@@ -17,7 +17,7 @@ function SubmitClue({ revealedPrefix }) {
             return;
         }
 
-        socket.emit(SOCKET_EVENTS.SUBMIT_CLUE, { definition, word });
+        socket.emit(SOCKET_EVENTS.CLIENT_SUBMIT_CLUE, { definition, word });
         setDefinition("");
         setWord("");
     };

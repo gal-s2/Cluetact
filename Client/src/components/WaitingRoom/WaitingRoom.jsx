@@ -27,7 +27,7 @@ function WaitingRoom() {
         return () => {
             if (savedUsername) {
                 console.log(`Leaving room ${roomId} as ${savedUsername}`);
-                socket.emit(SOCKET_EVENTS.LEAVE_WAITING_LOBBY, {
+                socket.emit(SOCKET_EVENTS.CLIENT_LEAVE_WAITING_LOBBY, {
                     lobbyId: roomId,
                     username: savedUsername,
                 });
@@ -39,7 +39,7 @@ function WaitingRoom() {
         const handleConnect = () => {
             console.log("Connected, now joining waiting lobby...");
             if (user && roomId) {
-                socket.emit(SOCKET_EVENTS.JOIN_WAITING_LOBBY, {
+                socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_LOBBY, {
                     lobbyId: roomId,
                     username: user.username,
                 });
@@ -58,7 +58,7 @@ function WaitingRoom() {
         });
 
         socket.on(SOCKET_EVENTS.CONNECT, handleConnect);
-        socket.on(SOCKET_EVENTS.LOBBY_UPDATE, handleLobbyUpdate);
+        socket.on(SOCKET_EVENTS.SERVER_LOBBY_UPDATE, handleLobbyUpdate);
 
         if (!socket.connected && socket.disconnected) {
             socket.connect();
@@ -78,27 +78,15 @@ function WaitingRoom() {
             alert(message);
         };
 
-        socket.on(SOCKET_EVENTS.ERROR_MESSAGE, handleError);
+        socket.on(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, handleError);
 
         return () => {
             socket.off(SOCKET_EVENTS.ERROR_MESSAGE, handleError);
         };
     }, []);
 
-    // useEffect(() => {
-    //     const handleGameStarted = ({ roomId }) => navigate(`/game/${roomId}`);
-
-    //     socket.on(SOCKET_EVENTS.REDIRECT_TO_ROOM, handleGameStarted);
-
-    //     socket.emit(SOCKET_EVENTS.GAME_STARTED, { lobbyId: roomId });
-
-    //     return () => {
-    //         socket.off(SOCKET_EVENTS.REDIRECT_TO_ROOM, handleGameStarted);
-    //     };
-    // }, []);
-
     const handleStart = () => {
-        socket.emit(SOCKET_EVENTS.START_GAME_FROM_LOBBY, { lobbyId: roomId });
+        socket.emit(SOCKET_EVENTS.CLIENT_START_GAME_FROM_LOBBY, { lobbyId: roomId });
     };
 
     const handleCopy = () => {

@@ -8,7 +8,7 @@ function KeeperClueList({ clues }) {
 
     const handleSubmit = () => {
         if (guess.trim()) {
-            socket.emit(SOCKET_EVENTS.TRY_BLOCK_CLUE, { guess: guess.trim() });
+            socket.emit(SOCKET_EVENTS.CLIENT_TRY_BLOCK_CLUE, { guess: guess.trim() });
             setGuess("");
         }
     };

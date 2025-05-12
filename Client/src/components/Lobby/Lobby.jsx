@@ -46,18 +46,18 @@ function Lobby() {
             setInQueue(true);
         };
 
-        socket.on(SOCKET_EVENTS.NEW_ROOM, handleNewRoom);
-        socket.on(SOCKET_EVENTS.ENTERED_QUEUE, handleInQueue);
+        socket.on(SOCKET_EVENTS.SERVER_NEW_ROOM, handleNewRoom);
+        socket.on(SOCKET_EVENTS.SERVER_ENTERED_QUEUE, handleInQueue);
 
         return () => {
-            socket.off(SOCKET_EVENTS.NEW_ROOM, handleNewRoom);
-            socket.off(SOCKET_EVENTS.ENTERED_QUEUE);
+            socket.off(SOCKET_EVENTS.SERVER_NEW_ROOM, handleNewRoom);
+            socket.off(SOCKET_EVENTS.SERVER_ENTERED_QUEUE);
         };
     }, [navigate]);
 
     const findGame = () => {
         if (!user) return;
-        socket.emit(SOCKET_EVENTS.FIND_GAME, { userId: user._id, username: user.username });
+        socket.emit(SOCKET_EVENTS.CLIENT_FIND_GAME, { userId: user._id, username: user.username });
     };
 
     const disconnect = async () => {
@@ -74,7 +74,7 @@ function Lobby() {
 
         await new Promise((resolve) => {
             if (socket.connected) {
-                socket.once(SOCKET_EVENTS.DISCONNECT, resolve);
+                socket.once(SOCKET_EVENTS.CLIENT_DISCONNECT, resolve);
                 socket.disconnect();
             } else {
                 resolve();
@@ -92,7 +92,7 @@ function Lobby() {
         setCreatedRoomCode(newCode);
         setShowCreateModal(true);
 
-        socket.emit(SOCKET_EVENTS.CREATE_WAITING_LOBBY, {
+        socket.emit(SOCKET_EVENTS.CLIENT_CREATE_WAITING_LOBBY, {
             lobbyId: newCode,
             username: user.username,
         });
@@ -103,7 +103,7 @@ function Lobby() {
     const handleJoinRoom = () => {
         if (!user) return;
 
-        socket.emit(SOCKET_EVENTS.JOIN_WAITING_LOBBY, {
+        socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_LOBBY, {
             lobbyId: roomCodeInput,
             username: user.username,
         });

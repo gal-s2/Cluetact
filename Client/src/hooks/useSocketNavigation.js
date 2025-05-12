@@ -25,14 +25,14 @@ export default function useSocketNavigation() {
             navigate("/login");
         };
 
-        socket.on(SOCKET_EVENTS.REDIRECT_TO_LOBBY, handleRedirectToLobby);
-        socket.on(SOCKET_EVENTS.REDIRECT_TO_LOGIN, handleRedirectToLogin);
-        socket.on(SOCKET_EVENTS.REDIRECT_TO_ROOM, handleRedirectToRoom);
+        socket.on(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, handleRedirectToLobby);
+        socket.on(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOGIN, handleRedirectToLogin);
+        socket.on(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, handleRedirectToRoom);
 
         return () => {
-            socket.off(SOCKET_EVENTS.REDIRECT_TO_LOBBY, handleRedirectToLobby);
-            socket.off(SOCKET_EVENTS.REDIRECT_TO_LOGIN, handleRedirectToLogin);
-            socket.off(SOCKET_EVENTS.REDIRECT_TO_ROOM, handleRedirectToRoom);
+            socket.off(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, handleRedirectToLobby);
+            socket.off(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOGIN, handleRedirectToLogin);
+            socket.off(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, handleRedirectToRoom);
         };
     }, [navigate, location]);
 }
