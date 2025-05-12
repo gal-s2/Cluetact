@@ -52,11 +52,11 @@ class GameManager {
     }
 
     /**
-     * Gets username. returns the player object of the user
+     * Gets username. returns the id of the room that the player is in
      * @param {string} username
      * @returns
      */
-    getRoomByUsername(username) {
+    getRoomIdByUsername(username) {
         return this.playerToRoomId.get(username);
     }
 
@@ -67,7 +67,7 @@ class GameManager {
      */
     getRoomBySocket(socket) {
         const username = socket.user.username;
-        const roomId = this.getRoomByUsername(username);
+        const roomId = this.getRoomIdByUsername(username);
         const room = this.getRoom(roomId);
         return room;
     }

@@ -54,7 +54,7 @@ module.exports = function (io) {
     });
 
     const reconnect = (socket) => {
-        let roomId = GameManager.getRoomByUsername(socket?.user?.username);
-        messageEmitter.emitToSocket(SOCKET_EVENTS.REDIRECT_TO_ROOM, { roomId }, socket);
+        let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);
+        if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.REDIRECT_TO_ROOM, { roomId }, socket);
     };
 };

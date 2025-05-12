@@ -24,7 +24,7 @@ function GameRoom() {
     const { user } = useUser();
     const { roomId } = useParams();
 
-    const { gameState, loading, isKeeper, setKeeperWord, isWordChosen, logMessage, clues, cluetact, setCluetact, handleClueClick, handleGuessSubmit, activeClue, setActiveClue } = useGameRoomSocket(roomId, hasJoinedRef);
+    const { gameState, loading, setKeeperWord, setCluetact, handleClueClick, handleGuessSubmit, activeClue, setActiveClue } = useGameRoomSocket(roomId, hasJoinedRef);
 
     const [selectedPlayer, setSelectedPlayer] = useState(null);
 
@@ -43,15 +43,15 @@ function GameRoom() {
     return (
         <>
             <div className={styles.room}>
-                {isWordChosen && (
+                {gameState.isWordChosen && (
                     <div className={styles.wordDisplay}>
-                        <WordDisplay isKeeper={isKeeper} revealedWord={gameState.revealedWord} word={gameState.keeperWord} length={gameState.wordLength} />
+                        <WordDisplay isKeeper={gameState.isKeeper} revealedWord={gameState.revealedWord} word={gameState.keeperWord} length={gameState.wordLength} />
                     </div>
                 )}
 
-                {cluetact && <CluetactPopup guesser={cluetact.guesser} word={cluetact.word} onClose={() => setCluetact(null)} />}
+                {gameState.cluetact && <CluetactPopup guesser={gameState.cluetact.guesser} word={gameState.cluetact.word} onClose={() => setCluetact(null)} />}
 
-                {isKeeper && !isWordChosen && <KeeperWordPopup keeperWord={gameState.keeperWord} setKeeperWord={setKeeperWord} logMessage={logMessage} />}
+                {gameState.isKeeper && !gameState.isWordChosen && <KeeperWordPopup keeperWord={gameState.keeperWord} setKeeperWord={setKeeperWord} logMessage={gameState.logMessage} />}
 
                 <div className={styles.table}>
                     {gameState.players.map((player) => (
@@ -60,17 +60,17 @@ function GameRoom() {
                 </div>
 
                 <div className={styles.cluesSection}>
-                    {!isKeeper && <SeekerClueSection clues={clues} onGuess={handleClueClick} />}
+                    {!gameState.isKeeper && <SeekerClueSection clues={gameState.clues} onGuess={handleClueClick} />}
                     {activeClue && <GuessModal clue={activeClue} onSubmit={handleGuessSubmit} onCancel={() => setActiveClue(null)} />}
 
-                    {isKeeper && <KeeperClueList clues={clues} />}
+                    {gameState.isKeeper && <KeeperClueList clues={gameState.clues} />}
                 </div>
 
-                {!isKeeper && isWordChosen && <SubmitClue revealedPrefix={gameState.revealedWord} />}
+                {!gameState.isKeeper && gameState.isWordChosen && <SubmitClue revealedPrefix={gameState.revealedWord} />}
 
                 {selectedPlayer && <ProfileModal player={selectedPlayer} onClose={closeProfileModal} />}
             </div>
-            {!isKeeper && !isWordChosen && (
+            {!gameState.isKeeper && !gameState.isWordChosen && (
                 <div className={styles.waitOverlay}>
                     <div className={styles.waitMessage}>Waiting for the keeper to choose a word...</div>
                 </div>
