@@ -7,25 +7,20 @@ class GameManager {
 
     constructor() {
         this.rooms = {};
-        this.playerToRoom = new Map();
+        this.playerToRoomId = new Map();
         this.gameQueue = new GameQueue();
     }
 
-    createRoom(status, keeperUsername, seekersUsernames) {
-        const room = new Room(
-            GameManager.roomId,
-            status,
-            keeperUsername,
-            seekersUsernames
-        );
+    createRoom(keeperUsername, seekersUsernames) {
+        const room = new Room(GameManager.roomId, keeperUsername, seekersUsernames);
 
         this.rooms[GameManager.roomId] = room;
         Logger.logRoomCreated(GameManager.roomId, room.players);
         GameManager.roomId++;
 
-        Object.keys(room.players).forEach((player) => {
-            console.log("player", player);
-            this.playerToRoom.set(player, room.roomId);
+        room.players.forEach((player) => {
+            console.log("player", player.username);
+            this.playerToRoomId.set(player.username, room.roomId);
         });
 
         return room;
@@ -38,11 +33,7 @@ class GameManager {
             const keeperUsername = result.chosenUsers[0];
             const seekersUsernames = result.chosenUsers.slice(1);
 
-            const room = await this.createRoom(
-                "Created",
-                keeperUsername,
-                seekersUsernames
-            );
+            const room = await this.createRoom(keeperUsername, seekersUsernames);
 
             //await room.runGame(require('prompt-sync')());
             return room;
@@ -61,12 +52,12 @@ class GameManager {
     }
 
     /**
-     * Gets username. returns the player object of the user
+     * Gets username. returns the id of the room that the player is in
      * @param {string} username
      * @returns
      */
-    getRoomByUsername(username) {
-        return this.playerToRoom.get(username);
+    getRoomIdByUsername(username) {
+        return this.playerToRoomId.get(username);
     }
 
     /**
@@ -76,7 +67,7 @@ class GameManager {
      */
     getRoomBySocket(socket) {
         const username = socket.user.username;
-        const roomId = this.getRoomByUsername(username);
+        const roomId = this.getRoomIdByUsername(username);
         const room = this.getRoom(roomId);
         return room;
     }

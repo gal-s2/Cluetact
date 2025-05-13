@@ -4,6 +4,9 @@ const { socketLogger } = require("../../utils/logger");
 const { verifyToken } = require("../../utils/jwt");
 const waitingLobbyHandlers = require("./waitingLobbyHandlers");
 const gameSocketController = require("../controllers/gameSocketController");
+const messageEmitter = require("./MessageEmitter");
+const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
+const GameManager = require("../managers/GameManager");
 
 module.exports = function (io) {
     // middleware for socket message
@@ -11,43 +14,51 @@ module.exports = function (io) {
         try {
             const token = socket?.handshake?.auth?.token;
             if (token) {
-                console.log("Token in middelware", token);
-                console.log("is valid", verifyToken(token));
                 const decoded = verifyToken(token); // verify jwt
                 socket.user = decoded;
                 next();
+            } else {
+                next(new Error("Missing auth token"));
             }
         } catch (err) {
             console.log("Auth error");
-            socket.emit("redirect_to_login");
+            next(new Error("Auth error"));
         }
     });
 
-    io.on("connection", (socket) => {
-        console.log("Client connected:", socket.id);
+    io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
+        console.log("[Client connected:", socket.id, "]");
         waitingLobbyHandlers(io, socket);
 
         socketManager.register(socket, socket.user.username);
+
+        const reconnect = (socket) => {
+            let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);
+            console.log("room id in reconnect is", roomId);
+            if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId }, socket);
+        };
 
         // Log every incoming message
         socket.onAny((event, ...args) => {
             socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);
         });
 
-        socket.on("find_game", (args) => gameSocketController.handleJoinQueue(socket, args));
-
-        socket.on("join_room", (args) => gameSocketController.handleJoinRoom(socket, args));
-
-        socket.on("keeper_word_submission", (args) => {
-            gameSocketController.handleKeeperWordSubmission(socket, args);
+        socket.on(SOCKET_EVENTS.CLIENT_NOTIFY_MY_SOCKET_IS_READY, () => {
+            console.log("I just got notified that the socket is ready...");
+            reconnect(socket);
         });
 
-        socket.on("submit_clue", (args) => gameSocketController.handleSubmitClue(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_FIND_GAME, (args) => gameSocketController.handleJoinQueue(socket, args));
 
-        socket.on("submit_guess", (args) => gameSocketController.handleSubmitGuess(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_JOIN_ROOM, (args) => gameSocketController.handleJoinRoom(socket, args));
 
-        socket.on("disconnect", (args) => {
-            gameSocketController.disconnect(socket, args);
-        });
+        socket.on(SOCKET_EVENTS.CLIENT_KEEPER_WORD_SUBMISSION, (args) => gameSocketController.handleKeeperWordSubmission(socket, args));
+
+        socket.on(SOCKET_EVENTS.CLIENT_SUBMIT_CLUE, (args) => gameSocketController.handleSubmitClue(socket, args));
+
+        socket.on(SOCKET_EVENTS.CLIENT_TRY_CLUETACT, (args) => gameSocketController.handleTryCluetact(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_TRY_BLOCK_CLUE, (args) => gameSocketController.handleTryBlockClue(socket, args));
+
+        socket.on(SOCKET_EVENTS.CLIENT_DISCONNECT, (args) => gameSocketController.disconnect(socket, args));
     });
 };

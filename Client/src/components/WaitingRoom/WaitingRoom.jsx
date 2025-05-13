@@ -1,4 +1,3 @@
-// /components/Game/WaitingRoom.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
@@ -6,6 +5,7 @@ import socket from "../../socket";
 import styles from "./WaitingRoom.module.css";
 import { useUser } from "../UserContext";
 import { useLocation } from "react-router-dom";
+import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 function WaitingRoom() {
     const { roomId } = useParams();
@@ -27,7 +27,7 @@ function WaitingRoom() {
         return () => {
             if (savedUsername) {
                 console.log(`Leaving room ${roomId} as ${savedUsername}`);
-                socket.emit("leave_waiting_lobby", {
+                socket.emit(SOCKET_EVENTS.CLIENT_LEAVE_WAITING_LOBBY, {
                     lobbyId: roomId,
                     username: savedUsername,
                 });
@@ -39,7 +39,7 @@ function WaitingRoom() {
         const handleConnect = () => {
             console.log("Connected, now joining waiting lobby...");
             if (user && roomId) {
-                socket.emit("join_waiting_lobby", {
+                socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_LOBBY, {
                     lobbyId: roomId,
                     username: user.username,
                 });
@@ -53,12 +53,12 @@ function WaitingRoom() {
             setUsers(users);
         };
 
-        socket.on("connect_error", (error) => {
+        socket.on(SOCKET_EVENTS.CONNECT_ERROR, (error) => {
             console.error("Socket connect error:", error.message);
         });
 
-        socket.on("connect", handleConnect);
-        socket.on("lobby_update", handleLobbyUpdate);
+        socket.on(SOCKET_EVENTS.CONNECT, handleConnect);
+        socket.on(SOCKET_EVENTS.SERVER_LOBBY_UPDATE, handleLobbyUpdate);
 
         if (!socket.connected && socket.disconnected) {
             socket.connect();
@@ -68,8 +68,8 @@ function WaitingRoom() {
         }
 
         return () => {
-            socket.off("connect", handleConnect);
-            socket.off("lobby_update", handleLobbyUpdate);
+            socket.off(SOCKET_EVENTS.CONNECT, handleConnect);
+            socket.off(SOCKET_EVENTS.LOBBY_UPDATE, handleLobbyUpdate);
         };
     }, [roomId, user]);
 
@@ -78,39 +78,15 @@ function WaitingRoom() {
             alert(message);
         };
 
-        socket.on("error_message", handleError);
+        socket.on(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, handleError);
 
         return () => {
-            socket.off("error_message", handleError);
-        };
-    }, []);
-
-    useEffect(() => {
-        const handleRedirectToLobby = () => {
-            navigate("/lobby");
-        };
-
-        socket.on("redirect_to_lobby", handleRedirectToLobby);
-
-        return () => {
-            socket.off("redirect_to_lobby", handleRedirectToLobby);
-        };
-    }, []);
-
-    useEffect(() => {
-        const handleGameStarted = ({ roomId }) => navigate(`/game/${roomId}`);
-
-        socket.on("game_started", handleGameStarted);
-
-        socket.emit("get_lobby_users", { lobbyId: roomId });
-
-        return () => {
-            socket.off("game_started", handleGameStarted);
+            socket.off(SOCKET_EVENTS.ERROR_MESSAGE, handleError);
         };
     }, []);
 
     const handleStart = () => {
-        socket.emit("start_game_from_lobby", { lobbyId: roomId });
+        socket.emit(SOCKET_EVENTS.CLIENT_START_GAME_FROM_LOBBY, { lobbyId: roomId });
     };
 
     const handleCopy = () => {

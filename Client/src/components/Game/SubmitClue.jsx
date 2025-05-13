@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styles from "./SubmitClue.module.css";
 import socket from "../../socket";
+import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 const WORD_MAX_LENGTH = 20;
 const DEFINITION_MAX_LENGTH = 100;
@@ -11,12 +12,12 @@ function SubmitClue({ revealedPrefix }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!word.startsWith(revealedPrefix)) {
+        if (!word.toLowerCase().startsWith(revealedPrefix.toLowerCase())) {
             alert(`Word must start with: ${revealedPrefix}`);
             return;
         }
 
-        socket.emit("submit_clue", { definition, word });
+        socket.emit(SOCKET_EVENTS.CLIENT_SUBMIT_CLUE, { definition, word });
         setDefinition("");
         setWord("");
     };

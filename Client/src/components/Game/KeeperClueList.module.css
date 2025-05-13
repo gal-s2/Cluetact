@@ -5,21 +5,43 @@
     border: 1px solid #ffc6b0;
 }
 
-.clueList {
+.heading,
+.subHeading {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+}
+
+.clueList,
+.blockedList {
     list-style: none;
     padding-left: 0;
+    margin-bottom: 1rem;
 }
 
 .clueItem {
     margin-bottom: 0.5rem;
     font-size: 1rem;
     color: #333;
+    background-color: #fff;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.emptyItem {
+    text-align: center;
+    color: #aaa;
+    font-style: italic;
+    padding: 0.5rem;
 }
 
 .inputRow {
     display: flex;
     gap: 0.5rem;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 
 .guessInput {
@@ -36,4 +58,30 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
+}
+
+.blockedItem {
+    padding: 0.5rem;
+    background-color: #ffeaea;
+    border-left: 4px solid #e53935;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.blockedWord {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #b71c1c;
+}
+
+.blockedDefinition {
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.2rem;
 }

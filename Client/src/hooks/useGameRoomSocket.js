@@ -1,111 +1,166 @@
 import { useEffect, useState } from "react";
 import socket from "../socket";
+import { useUser } from "../components/UserContext";
+import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 export default function useGameRoomSocket(roomId, hasJoinedRef) {
-    const [players, setPlayers] = useState();
+    const { user } = useUser();
+
     const [loading, setLoading] = useState(true);
-    const [isKeeper, setIsKeeper] = useState(false);
-    const [keeperWord, setKeeperWord] = useState("");
-    const [isWordChosen, setIsWordChosen] = useState(false);
-    const [logMessage, setLogMessage] = useState("");
-    const [clues, setClues] = useState([]);
-    const [cluetact, setCluetact] = useState(null);
-    const [word, setWord] = useState({
+    const [activeClue, setActiveClue] = useState(null);
+
+    const [gameState, setGameState] = useState({
+        players: [],
         revealedWord: "",
+        keeperWord: "",
         wordLength: 0,
-        word: "",
+        isKeeper: false,
+        isWordChosen: false,
+        logMessage: "",
+        clues: [],
+        cluetact: null,
     });
 
-    const handleGuess = (clue) => {
-        const guess = prompt(`What word do you think "${clue.definition}" is referring to?`);
-        if (guess && guess.trim()) {
-            socket.emit("submit_guess", { guess, clueId: clue.id });
-        }
+    const setKeeperWord = (word) => {
+        setGameState((prev) => ({
+            ...prev,
+            keeperWord: word,
+        }));
     };
 
-    const hasUnblockedClues = clues.some((clue) => !clue.blocked);
+    const setCluetact = (data) => {
+        setGameState((prev) => ({
+            ...prev,
+            cluetact: data,
+        }));
+    };
+
+    const handleClueClick = (clue) => {
+        setActiveClue(clue);
+    };
+
+    const handleGuessSubmit = (guess, clue) => {
+        socket.emit(SOCKET_EVENTS.CLIENT_TRY_CLUETACT, { guess, clueId: clue.id });
+        setActiveClue(null);
+    };
 
     useEffect(() => {
-        socket.on("cluetact_success", ({ guesser, word, revealed }) => {
-            setCluetact({ guesser, word });
-            setWord((prev) => ({ ...prev, revealedWord: revealed }));
+        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players }) => {
+            if (isWordComplete) {
+                setGameState((prev) => ({
+                    ...prev,
+                    players,
+                    cluetact: { guesser, word },
+                    clues,
+                    revealedWord: "",
+                    keeperWord: "",
+                    wordLength: 0,
+                    isKeeper: keeper === user.username,
+                    isWordChosen: false,
+                }));
+            } else {
+                setGameState((prev) => ({
+                    ...prev,
+                    cluetact: { guesser, word },
+                    clues,
+                    revealedWord: revealed,
+                }));
+            }
         });
 
-        return () => socket.off("cluetact_success");
+        return () => socket.off(SOCKET_EVENTS.CLUETACT_SUCCESS);
     }, []);
 
     useEffect(() => {
-        socket.on("clue_revealed", ({ id, definition, from }) => {
-            setClues((prev) => [...prev, { id, from, definition, blocked: false }]);
+        socket.on(SOCKET_EVENTS.SERVER_CLUE_REVEALED, (clues) => {
+            setGameState((prev) => ({
+                ...prev,
+                clues,
+            }));
         });
 
-        socket.on("clue_blocked", ({ word, from, definition, blockedBy }) => {
-            setClues((prev) => prev.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true } : clue)));
+        socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ word, from, definition }) => {
+            setGameState((prev) => ({
+                ...prev,
+                clues: prev.clues.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true, word } : clue)),
+            }));
         });
 
-        socket.on("clue_submitted", ({ from, definition }) => {
-            setLogMessage(`A clue was submitted by ${from}. You may block it.`);
-            setClues((prev) => [...prev, { from, definition, blocked: false }]);
+        socket.on(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, ({ from, definition }) => {
+            setGameState((prev) => ({
+                ...prev,
+                logMessage: `A clue was submitted by ${from}. You may block it.`,
+                clues: [...prev.clues, { from, definition, blocked: false }],
+            }));
         });
 
         return () => {
-            socket.off("clue_revealed");
-            socket.off("clue_blocked");
-            socket.off("clue_submitted");
+            socket.off(SOCKET_EVENTS.SERVER_CLUE_REVEALED);
+            socket.off(SOCKET_EVENTS.SERVER_CLUE_BLOCKED);
+            socket.off(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK);
         };
     }, []);
 
     useEffect(() => {
-        if (!hasJoinedRef.current) {
-            socket.emit("join_room", { roomId });
-            hasJoinedRef.current = true;
-        }
+        const tryJoinRoom = () => {
+            if (socket.connected && user?.username) {
+                console.log("✅ Socket ready, emitting JOIN_ROOM");
+                socket.emit(SOCKET_EVENTS.CLIENT_JOIN_ROOM, { roomId });
+            } else {
+                console.log("⏳ Waiting for socket/user to be ready...");
+                setTimeout(tryJoinRoom, 100);
+            }
+        };
 
-        socket.on("game_start", (data) => {
+        tryJoinRoom();
+
+        socket.on(SOCKET_EVENTS.SERVER_GAME_JOIN, (data) => {
+            setGameState((prev) => ({
+                ...prev,
+                players: data.players,
+                keeperWord: data.keeperWord,
+                revealedWord: data.revealedWord,
+                wordLength: data.wordLength,
+                clues: data.clues,
+                isKeeper: data.isKeeper,
+                isWordChosen: data.isWordChosen,
+            }));
             setLoading(false);
-            setPlayers(data.room.players);
         });
 
-        socket.on("request_keeper_word", (data) => {
-            setIsKeeper(data.isKeeper);
-            setIsWordChosen(false);
-            setLogMessage(data.message || "");
-        });
-
-        socket.on("keeper_word_chosen", (data) => {
+        socket.on(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN, (data) => {
             if (data.success) {
-                setIsWordChosen(true);
-                setKeeperWord("");
-                setWord((prev) => ({
+                setGameState((prev) => ({
                     ...prev,
                     wordLength: data.length,
                     revealedWord: data.revealedWord,
-                    word: data.word,
+                    keeperWord: data.word,
+                    isWordChosen: true,
+                    logMessage: "",
                 }));
-                setLogMessage("");
             }
         });
 
         return () => {
-            socket.off("game_start");
-            socket.off("request_keeper_word");
-            socket.off("keeper_word_chosen");
+            socket.off(SOCKET_EVENTS.SERVER_ROUND_START);
+            socket.off(SOCKET_EVENTS.SERVER_GAME_JOIN);
+            socket.off(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN);
         };
-    }, [roomId]);
+    }, [roomId, user?.username]);
 
     return {
-        players,
-        loading,
-        isKeeper,
-        keeperWord,
+        gameState,
         setKeeperWord,
-        isWordChosen,
-        logMessage,
-        clues,
-        cluetact,
+        loading,
+        isKeeper: gameState.isKeeper,
+        isWordChosen: gameState.isWordChosen,
+        logMessage: gameState.logMessage,
+        clues: gameState.clues,
+        cluetact: gameState.cluetact,
         setCluetact,
-        word,
-        hasUnblockedClues,
-        handleGuess,
+        handleClueClick,
+        handleGuessSubmit,
+        activeClue,
+        setActiveClue,
     };
 }

@@ -10,6 +10,7 @@ import CreateRoomModal from "./CreateRoomModal";
 import ProfileCard from "./ProfileCard";
 import PlayCard from "./PlayCard";
 import generateRoomCode from "../../utils/generateRoomCode";
+import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 function Lobby() {
     const { user, setUser, loading } = useUser();
@@ -41,21 +42,22 @@ function Lobby() {
         };
 
         const handleInQueue = () => {
+            console.log("here");
             setInQueue(true);
         };
 
-        socket.on("new_room", handleNewRoom);
-        socket.on("entered_queue", handleInQueue);
+        socket.on(SOCKET_EVENTS.SERVER_NEW_ROOM, handleNewRoom);
+        socket.on(SOCKET_EVENTS.SERVER_ENTERED_QUEUE, handleInQueue);
 
         return () => {
-            socket.off("new_room", handleNewRoom);
-            socket.off("entered_queue");
+            socket.off(SOCKET_EVENTS.SERVER_NEW_ROOM, handleNewRoom);
+            socket.off(SOCKET_EVENTS.SERVER_ENTERED_QUEUE);
         };
     }, [navigate]);
 
     const findGame = () => {
         if (!user) return;
-        socket.emit("find_game", { userId: user._id, username: user.username });
+        socket.emit(SOCKET_EVENTS.CLIENT_FIND_GAME, { userId: user._id, username: user.username });
     };
 
     const disconnect = async () => {
@@ -72,7 +74,7 @@ function Lobby() {
 
         await new Promise((resolve) => {
             if (socket.connected) {
-                socket.once("disconnect", resolve);
+                socket.once(SOCKET_EVENTS.CLIENT_DISCONNECT, resolve);
                 socket.disconnect();
             } else {
                 resolve();
@@ -90,7 +92,7 @@ function Lobby() {
         setCreatedRoomCode(newCode);
         setShowCreateModal(true);
 
-        socket.emit("create_waiting_lobby", {
+        socket.emit(SOCKET_EVENTS.CLIENT_CREATE_WAITING_LOBBY, {
             lobbyId: newCode,
             username: user.username,
         });
@@ -101,7 +103,7 @@ function Lobby() {
     const handleJoinRoom = () => {
         if (!user) return;
 
-        socket.emit("join_waiting_lobby", {
+        socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_LOBBY, {
             lobbyId: roomCodeInput,
             username: user.username,
         });

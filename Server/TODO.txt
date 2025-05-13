@@ -1,7 +1,19 @@
-arrange all the socket notification mechanism of how we inform different roles of the room, for example:
-if there are 4 seekers and 1 keeper, how do we inform just 1 seeker?
-how do we inform just 3 seekers?
-how do we inform all seekers and not the keeper?
-how do we inform just the keeper?
-create constants for keeper and seeker
-change players to array in Room class
+-create constants for keeper and seeker
+-try and work with copilot during coding session
+-clueGiverId is not a good name, we need to change it to clueGiverUsername
+-go through all the socket emitions that happen globally and call the emitter functions instead
+-change naming convening of waiting rooms from lobbyId to waitingRoomId
+-add mechanism to send and show error messages to clients
+-handle the bug (or maybe not?) where after the db is down and up again and the browser still have tokens - you still are logged in
+-word length should be visible?
+
+GAME:
+- on round end, move to next round with different keeper
+- think about how defnitions are shown
+- show points during game
+- constant for points additions and reductions
+- handle the bug where a use can guess its own definition
+
+DATABASE:
+- think about which attributes to save on a User in db (wins etc.)
+-need to put the dtabase in the cloud in google cloud/aws/atlas database

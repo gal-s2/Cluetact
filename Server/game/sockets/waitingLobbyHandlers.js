@@ -1,69 +1,58 @@
 const waitingLobbyManager = require("../managers/WaitingLobbyManager");
 const GameManager = require("../managers/GameManager");
+const messageEmitter = require("./MessageEmitter");
+const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 
 module.exports = function waitingLobbyHandlers(io, socket) {
-    socket.on("create_waiting_lobby", ({ lobbyId, username }) => {
-        const lobby = waitingLobbyManager.createLobby(
-            lobbyId,
-            username,
-            socket.id
-        );
+    socket.on(SOCKET_EVENTS.CLIENT_CREATE_WAITING_LOBBY, ({ lobbyId, username }) => {
+        const lobby = waitingLobbyManager.createLobby(lobbyId, username, socket.id);
         if (!lobby) {
-            socket.emit("error_message", "Lobby already exists.");
+            messageEmitter.emitToSocket(SOCKET_EVENTS.ERROR_MESSAGE, "Lobby already exists.", socket);
             return;
         }
 
-        socket.join(lobbyId);
-        io.to(lobbyId).emit(
-            "lobby_update",
-            waitingLobbyManager.getLobbyUsers(lobbyId)
-        );
+        messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_LOBBY_UPDATE, waitingLobbyManager.getLobbyUsers(lobbyId), lobbyId);
     });
 
-    socket.on("join_waiting_lobby", ({ lobbyId, username }) => {
+    socket.on(SOCKET_EVENTS.CLIENT_JOIN_WAITING_LOBBY, ({ lobbyId, username }) => {
         isLobbyExist = waitingLobbyManager.isLobbyExist(lobbyId);
         if (!isLobbyExist) {
             console.log("Lobby does not exist");
-            socket.emit("error_message", "Lobby does not exist.");
-            socket.emit("redirect_to_lobby");
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Lobby does not exist.", socket);
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
             return;
         }
-        socket.join(lobbyId);
+
         waitingLobbyManager.joinLobby(lobbyId, username, socket.id);
         console.log("Found users", waitingLobbyManager.getLobbyUsers(lobbyId));
-        io.to(lobbyId).emit(
-            "lobby_update",
-            waitingLobbyManager.getLobbyUsers(lobbyId)
-        );
+
+        messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_LOBBY_UPDATE, waitingLobbyManager.getLobbyUsers(lobbyId), lobbyId);
     });
 
-    socket.on("get_lobby_users", ({ lobbyId }) => {
-        socket.emit("lobby_update", waitingLobbyManager.getLobbyUsers(lobbyId));
+    socket.on(SOCKET_EVENTS.CLIENT_GET_LOBBY_USERS, ({ lobbyId }) => {
+        messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_LOBBY_UPDATE, waitingLobbyManager.getLobbyUsers(lobbyId), lobbyId);
     });
 
-    socket.on("leave_waiting_lobby", ({ lobbyId, username }) => {
+    socket.on(SOCKET_EVENTS.CLIENT_LEAVE_WAITING_LOBBY, ({ lobbyId, username }) => {
         console.log(`${username} left lobby ${lobbyId}`);
 
         waitingLobbyManager.leaveLobby(lobbyId, username);
-        io.to(lobbyId).emit(
-            "lobby_update",
-            waitingLobbyManager.getLobbyUsers(lobbyId)
-        );
+        messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_LOBBY_UPDATE, waitingLobbyManager.getLobbyUsers(lobbyId), lobbyId);
     });
 
-    socket.on("start_game_from_lobby", ({ lobbyId }) => {
+    socket.on(SOCKET_EVENTS.CLIENT_START_GAME_FROM_LOBBY, ({ lobbyId }) => {
         const lobby = waitingLobbyManager.getLobby(lobbyId);
         console.log("looking for lobby", lobbyId);
         if (!lobby || lobby.users.length < 3) {
-            socket.emit("error_message", "Not enough users to start the game.");
+            messageEmitter.emitToSocket(SOCKET_EVENTS.ERROR_MESSAGE, "Not enough users to start the game.", socket);
             return;
         }
 
         const keeper = lobby.creator;
         const seekers = [...lobby.users].filter((u) => u !== keeper);
-        const room = GameManager.createRoom("Started", keeper, seekers);
+        const room = GameManager.createRoom(keeper, seekers);
 
-        io.to(lobbyId).emit("game_started", { roomId: room.roomId });
+        messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId: room.roomId }, lobbyId);
         waitingLobbyManager.deleteLobby(lobbyId);
     });
 };
