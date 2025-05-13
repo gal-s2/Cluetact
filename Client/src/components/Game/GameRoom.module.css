@@ -84,3 +84,7 @@
     text-align: center;
     pointer-events: all;
 }
+
+.popupWrapper {
+    pointer-events: all;
+}

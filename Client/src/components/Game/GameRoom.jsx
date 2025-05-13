@@ -48,6 +48,13 @@ function GameRoom() {
                     <div className={styles.waitMessage}>Waiting for the keeper to choose a word...</div>
                 </div>
             )}
+            {gameState.isKeeper && !gameState.isWordChosen && (
+                <div className={styles.waitOverlay}>
+                    <div className={styles.popupWrapper}>
+                        <KeeperWordPopup keeperWord={gameState.keeperWord} setKeeperWord={setKeeperWord} logMessage={gameState.logMessage} />
+                    </div>
+                </div>
+            )}
 
             {/* Modals */}
             {selectedPlayer && <ProfileModal player={selectedPlayer} onClose={closeProfileModal} />}
@@ -56,8 +63,6 @@ function GameRoom() {
 
             {/* Main content wrapper */}
             <div className={styles.content}>
-                {gameState.isKeeper && !gameState.isWordChosen && <KeeperWordPopup keeperWord={gameState.keeperWord} setKeeperWord={setKeeperWord} logMessage={gameState.logMessage} />}
-
                 {gameState.isWordChosen && (
                     <div className={styles.wordDisplay}>
                         <WordDisplay isKeeper={gameState.isKeeper} revealedWord={gameState.revealedWord} word={gameState.keeperWord} length={gameState.wordLength} />
