@@ -3,6 +3,7 @@ const socketManager = require("../managers/SocketManager");
 const waitingLobbyManager = require("../managers/WaitingLobbyManager");
 const messageEmitter = require("../sockets/MessageEmitter");
 const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
+const { ROLES } = require("../constants");
 
 const gameSocketController = {
     handleJoinQueue: async (socket, args) => {
@@ -75,7 +76,7 @@ const gameSocketController = {
                 const message = {
                     success: true,
                     message: "Your word was accepted!",
-                    word: player.role === "keeper" ? word : undefined,
+                    word: player.role === ROLES.KEEPER ? word : undefined,
                     revealedWord: room.getRevealedLetters(),
                     length: word.length,
                 };
@@ -114,7 +115,7 @@ const gameSocketController = {
             );
 
             for (const player of room.players) {
-                if (player.role === "seeker") {
+                if (player.role === ROLES.SEEKER) {
                     messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_CLUE_REVEALED, room.currentRound.getClues(), player.username);
                 }
             }

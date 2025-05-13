@@ -34,7 +34,7 @@ function SubmitClue({ revealedPrefix }) {
 
     return (
         <form className={styles.container} onSubmit={handleSubmit}>
-            <textarea className={styles.textarea} value={definition} onChange={(e) => onChangeDefinition(e.target.value)} placeholder="Enter your 3-word definition" maxLength={100} />
+            <textarea className={styles.textarea} value={definition} onChange={(e) => onChangeDefinition(e.target.value)} placeholder="Enter your definition" maxLength={100} />
             <div className={styles.charCount}>
                 {definition.length} / {DEFINITION_MAX_LENGTH} characters
             </div>

@@ -1,6 +1,6 @@
 const Player = require("./Player");
 const GameRound = require("./GameRound");
-
+const { ROLES } = require("../constants");
 const isValidEnglishWord = require("../../utils/validateWord");
 const Logger = require("../Logger");
 
@@ -23,12 +23,12 @@ class Room {
         this.usedWords = new Set();
 
         const keeper = new Player(keeperUsername);
-        keeper.setRole("keeper");
+        keeper.setRole(ROLES.KEEPER);
         this.players.push(keeper);
 
         seekersUsernames.forEach((username) => {
             const seeker = new Player(username);
-            seeker.setRole("seeker");
+            seeker.setRole(ROLES.SEEKER);
             this.players.push(seeker);
         });
 
@@ -87,7 +87,7 @@ class Room {
                 let clueAccepted = false;
                 let clueGiverId = null;
                 while (!clueAccepted) {
-                    const seekers = this.players.filter((player) => player.role === "seeker");
+                    const seekers = this.players.filter((player) => player.role === ROLES.SEEKER);
                     clueGiverId = await prompt(` Who gives the clue? (${seekers.join("/")}) : `);
                     const lastLetter = this.currentRound.revealedLetters.slice(-1).toLowerCase();
                     const clueWord = await prompt(` Clue word (starts with '${lastLetter}'): `);
@@ -115,10 +115,10 @@ class Room {
                     roundOver = true;
                     const nextKeeperUsername = this.getNextKeeper();
                     this.keeperUsername = nextKeeperUsername;
-                    this.players.find((player) => player.username === nextKeeperUsername).setRole("keeper");
+                    this.players.find((player) => player.username === nextKeeperUsername).setRole(ROLES.KEEPER);
 
                     this.players.forEach((player) => {
-                        if (player.username !== nextKeeperUsername) player.setRole("seeker");
+                        if (player.username !== nextKeeperUsername) player.setRole(ROLES.SEEKER);
                     });
 
                     this.pastKeepers.add(nextKeeperUsername);
@@ -256,10 +256,10 @@ class Room {
 
             const nextKeeper = this.getNextKeeper();
             this.keeperUsername = nextKeeper;
-            this.players.find((player) => player.username === nextKeeper).setRole("keeper");
+            this.players.find((player) => player.username === nextKeeper).setRole(ROLES.KEEPER);
 
             this.players.forEach((player) => {
-                if (player.username !== nextKeeper) player.setRole("seeker");
+                if (player.username !== nextKeeper) player.setRole(ROLES.SEEKER);
             });
 
             this.roundsHistory.push({

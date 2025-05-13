@@ -41,17 +41,28 @@ function GameRoom() {
     };
 
     return (
-        <>
-            <div className={styles.room}>
+        <div className={styles.room}>
+            {/* Blocking overlay */}
+            {!gameState.isKeeper && !gameState.isWordChosen && (
+                <div className={styles.waitOverlay}>
+                    <div className={styles.waitMessage}>Waiting for the keeper to choose a word...</div>
+                </div>
+            )}
+
+            {/* Modals */}
+            {selectedPlayer && <ProfileModal player={selectedPlayer} onClose={closeProfileModal} />}
+            {gameState.cluetact && <CluetactPopup guesser={gameState.cluetact.guesser} word={gameState.cluetact.word} onClose={() => setCluetact(null)} />}
+            {activeClue && <GuessModal clue={activeClue} onSubmit={handleGuessSubmit} onCancel={() => setActiveClue(null)} />}
+
+            {/* Main content wrapper */}
+            <div className={styles.content}>
+                {gameState.isKeeper && !gameState.isWordChosen && <KeeperWordPopup keeperWord={gameState.keeperWord} setKeeperWord={setKeeperWord} logMessage={gameState.logMessage} />}
+
                 {gameState.isWordChosen && (
                     <div className={styles.wordDisplay}>
                         <WordDisplay isKeeper={gameState.isKeeper} revealedWord={gameState.revealedWord} word={gameState.keeperWord} length={gameState.wordLength} />
                     </div>
                 )}
-
-                {gameState.cluetact && <CluetactPopup guesser={gameState.cluetact.guesser} word={gameState.cluetact.word} onClose={() => setCluetact(null)} />}
-
-                {gameState.isKeeper && !gameState.isWordChosen && <KeeperWordPopup keeperWord={gameState.keeperWord} setKeeperWord={setKeeperWord} logMessage={gameState.logMessage} />}
 
                 <div className={styles.table}>
                     {gameState.players.map((player) => (
@@ -61,21 +72,16 @@ function GameRoom() {
 
                 <div className={styles.cluesSection}>
                     {!gameState.isKeeper && <SeekerClueSection clues={gameState.clues} onGuess={handleClueClick} />}
-                    {activeClue && <GuessModal clue={activeClue} onSubmit={handleGuessSubmit} onCancel={() => setActiveClue(null)} />}
-
                     {gameState.isKeeper && <KeeperClueList clues={gameState.clues} />}
                 </div>
 
-                {!gameState.isKeeper && gameState.isWordChosen && <SubmitClue revealedPrefix={gameState.revealedWord} />}
-
-                {selectedPlayer && <ProfileModal player={selectedPlayer} onClose={closeProfileModal} />}
+                {!gameState.isKeeper && gameState.isWordChosen && (
+                    <div className={styles.clueSubmitWrapper}>
+                        <SubmitClue revealedPrefix={gameState.revealedWord} />
+                    </div>
+                )}
             </div>
-            {!gameState.isKeeper && !gameState.isWordChosen && (
-                <div className={styles.waitOverlay}>
-                    <div className={styles.waitMessage}>Waiting for the keeper to choose a word...</div>
-                </div>
-            )}
-        </>
+        </div>
     );
 }
 

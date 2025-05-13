@@ -1,6 +1,7 @@
 const socketManager = require("../managers/SocketManager");
 const gameManager = require("../managers/GameManager");
 const waitingLobbyManager = require("../managers/WaitingLobbyManager");
+const { ROLES } = require("../constants");
 
 class MessageEmitter {
     /**
@@ -12,7 +13,7 @@ class MessageEmitter {
     emitToKeeper(event, data, roomId) {
         const room = gameManager.getRoom(roomId);
         if (room) {
-            const keeper = room.players.find((player) => player.role === "keeper");
+            const keeper = room.players.find((player) => player.role === ROLES.KEEPER);
             if (keeper) this.emitToPlayer(event, data, keeper.username);
         }
     }
@@ -26,7 +27,7 @@ class MessageEmitter {
     emitToSeekers(event, data, roomId) {
         const room = gameManager.getRoom(roomId);
         if (room) {
-            const seekers = room.players.filter((player) => player.role === "seeker");
+            const seekers = room.players.filter((player) => player.role === ROLES.SEEKER);
             if (seekers.length > 0) {
                 seekers.forEach((seeker) => {
                     this.emitToPlayer(event, data, seeker.username);
