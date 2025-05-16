@@ -8,9 +8,12 @@ how to reset all site date (cookies, other local stuff...) saved on ms edge:
 
 how to open 3 different chrome windows for 3 different user sessions:
 use this runme.bat content:
-start chrome --user-data-dir="C:\Temp\Profile1"
-start chrome --user-data-dir="C:\Temp\Profile2"
-start chrome --user-data-dir="C:\Temp\Profile3"
+@echo off
+set SITE=http://localhost:5173/
+start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --user-data-dir="%TEMP%\chrome-profile-1" "%SITE%"
+start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --user-data-dir="%TEMP%\chrome-profile-2" "%SITE%"
+start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --user-data-dir="%TEMP%\chrome-profile-3" "%SITE%"
+
 
     
 

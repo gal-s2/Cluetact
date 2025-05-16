@@ -62,6 +62,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
                 setGameState((prev) => ({
                     ...prev,
                     cluetact: { guesser, word },
+                    players,
                     clues,
                     revealedWord: revealed,
                 }));

@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require("uuid");
+const Clue = require("./Clue");
 
 class GameRound {
     constructor() {
@@ -22,13 +22,8 @@ class GameRound {
     }
 
     addClue(clueGiverId, clueWord, clueDefinition) {
-        this.clues.push({
-            id: uuidv4(), // 🆕 unique clue ID
-            from: clueGiverId,
-            word: clueWord.toLowerCase(),
-            definition: clueDefinition,
-            blocked: false,
-        });
+        const clue = new Clue(clueGiverId, clueWord, clueDefinition);
+        this.clues.push(clue);
         this.raceStartTime = new Date();
         this.status = "race";
         this.guesses = [];
@@ -72,6 +67,10 @@ class GameRound {
 
     getClues() {
         return this.clues;
+    }
+
+    getClueGiverUsernameByClueId(clueId) {
+        return this.clues.find((clue) => clue.id === clueId)?.from;
     }
 
     endSession() {

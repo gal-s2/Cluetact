@@ -70,72 +70,6 @@ class Room {
         }
     }
 
-    async runGame(prompt) {
-        while (!this.isGameOver()) {
-            Logger.logCurrentKeeper(this.roomId, this.keeperUsername);
-
-            while (!this.currentRound.keeperWord) {
-                const word = await prompt(`🔑 ${this.keeperUsername}, enter your secret word: `);
-                await this.waitForKeeperWord(getWordFromSocket);
-            }
-
-            let roundOver = false;
-
-            while (!roundOver) {
-                if (!this.currentRound.keeperWord) break;
-
-                let clueAccepted = false;
-                let clueGiverId = null;
-                while (!clueAccepted) {
-                    const seekers = this.players.filter((player) => player.role === ROLES.SEEKER);
-                    clueGiverId = await prompt(` Who gives the clue? (${seekers.join("/")}) : `);
-                    const lastLetter = this.currentRound.revealedLetters.slice(-1).toLowerCase();
-                    const clueWord = await prompt(` Clue word (starts with '${lastLetter}'): `);
-                    const clueDef = await prompt(` Definition for "${clueWord}": `);
-                    clueAccepted = await this.startNewClueRound(clueGiverId, clueWord, clueDef);
-                    if (!clueAccepted) clueGiverId = null;
-                }
-
-                let guessAccepted = false;
-                while (!guessAccepted) {
-                    const eligibleGuessers = this.players.filter((player) => player.username !== clueGiverId);
-                    const guesserId = await prompt(` Who guesses first? (${eligibleGuessers.join("/")}) : `);
-                    const lastLetter = this.currentRound.revealedLetters.slice(-1).toLowerCase();
-                    const guess = await prompt(` What does ${guesserId} guess? (starts with '${lastLetter}'): `);
-
-                    const result = await this.submitGuess(guesserId, guess);
-                    guessAccepted = result.correct;
-
-                    if (result.correct && !result.revealed) {
-                        Logger.logCorrectGuessNoReveal(this.roomId, usernames[guesserId]);
-                    }
-                }
-
-                if (this.currentRound.keeperWord && this.currentRound.revealedLetters.length === this.currentRound.keeperWord.length) {
-                    roundOver = true;
-                    const nextKeeperUsername = this.getNextKeeper();
-                    this.keeperUsername = nextKeeperUsername;
-                    this.players.find((player) => player.username === nextKeeperUsername).setRole(ROLES.KEEPER);
-
-                    this.players.forEach((player) => {
-                        if (player.username !== nextKeeperUsername) player.setRole(ROLES.SEEKER);
-                    });
-
-                    this.pastKeepers.add(nextKeeperUsername);
-                    this.currentRound = new GameRound();
-                }
-            }
-        }
-
-        this.endGame();
-
-        this.players.forEach((player) => {
-            Logger.logFinalScore(player.username, player.gameScore);
-        });
-
-        Logger.logManualTestComplete();
-    }
-
     startNewClueRound(clueGiverId, clueWord, clueDefinition) {
         if (!this.currentRound.keeperWord) {
             Logger.logCannotClueWithoutKeeperWord(this.roomId);
@@ -202,11 +136,11 @@ class Room {
             const timeElapsed = (new Date() - session.raceStartTime) / 1000;
 
             if (userId === this.keeperUsername) {
-                this.handleKeeperClueGuess(userId); // optional for keeper guess matching
+                this.handleCorrectBlockByKeeper(userId); // optional for keeper guess matching
                 clearTimeout(this.raceTimer);
                 return { correct: true, revealed: false };
             } else {
-                this.handleCorrectGuess(userId, timeElapsed, clueId);
+                this.handleCorrectGuessBySeeker(userId, timeElapsed, clueId);
                 clearTimeout(this.raceTimer);
                 return { correct: true, revealed: true, isWordComplete: this.isWordFullyRevealed };
             }
@@ -214,14 +148,14 @@ class Room {
 
         // Optional: still allow full keeper word guess
         if (guessLower === session.keeperWord?.toLowerCase()) {
-            this.handleKeeperWordGuess(userId, guessWord);
+            this.handleKeeperWordGuessDuringCluetact(userId, guessWord);
             return { correct: true, revealed: false };
         }
 
         return { correct: false };
     }
 
-    handleCorrectGuess(guesserId, timeElapsed, clueId) {
+    handleCorrectGuessBySeeker(guesserId, timeElapsed, clueId) {
         const session = this.currentRound;
 
         // 🧠 Find the correct clue
@@ -236,9 +170,11 @@ class Room {
         let pointsEarned = Math.ceil(BASE_POINTS - timeElapsed * PENALTY_RATE);
         if (pointsEarned < 1) pointsEarned = 1;
 
+        console.log("Cluetact achieved between ", clueGiverId, " and ", guesserId);
+        console.log("players list: ", this.players);
         this.players.find((player) => player.username === guesserId).addScore(pointsEarned);
         this.players.find((player) => player.username === clueGiverId).addScore(pointsEarned);
-
+        console.log("updated players:", this.players);
         // 🧼 Mark the clue as blocked so no one else can use it
         matchedClue.blocked = true;
 
@@ -282,7 +218,7 @@ class Room {
         }
     }
 
-    handleKeeperClueGuess(keeperUsername) {
+    handleCorrectBlockByKeeper(keeperUsername) {
         const session = this.currentRound;
         Logger.logKeeperGuessedClue(this.roomId, keeperUsername);
         this.players.find((player) => player.username === keeperUsername).addScore(2);
@@ -292,7 +228,7 @@ class Room {
         session.status = "waiting";
     }
 
-    handleKeeperWordGuess(userId, guessWord) {
+    handleKeeperWordGuessDuringCluetact(userId, guessWord) {
         Logger.logKeeperWordGuessAttempt(this.roomId, userId);
 
         if (this.currentRound.status === "ended") return;

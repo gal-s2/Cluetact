@@ -35,7 +35,6 @@ class GameManager {
 
             const room = await this.createRoom(keeperUsername, seekersUsernames);
 
-            //await room.runGame(require('prompt-sync')());
             return room;
         }
 

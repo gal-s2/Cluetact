@@ -134,15 +134,17 @@ const gameSocketController = {
         const room = gameManager.getRoomBySocket(socket);
         if (!room) return;
 
-        const userId = socket.user.username;
-        const result = await room.submitGuess(userId, guess, clueId);
+        const guesserUsername = socket.user.username;
+        const clueGiverId = room.currentRound.getClueGiverUsernameByClueId(clueId);
+        const result = await room.submitGuess(guesserUsername, guess, clueId);
         console.log("Trying to make a cluetact with guess", guess, " and clueId ", clueId);
 
         if (result.correct) {
+            console.log("about to emit a broadcast to let all players know of a sucssefull cluetact. players data:", room.players);
             messageEmitter.broadcastToRoom(
                 SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS,
                 {
-                    guesser: userId,
+                    guesser: guesserUsername,
                     word: guess,
                     clues: room.currentRound.getClues(),
                     revealed: room.getRevealedLetters(),
