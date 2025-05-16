@@ -1,6 +1,7 @@
 import { useUser } from "../UserContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { baseUrl } from "../../baseUrl";
 
 function StatsPage() {
     const { user } = useUser();
@@ -9,9 +10,7 @@ function StatsPage() {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const response = await axios.get(
-                    `http://localhost:8000/api/stats/${user._id}`
-                );
+                const response = await axios.get(`${baseUrl}/api/stats/${user._id}`);
                 setStats(response.data.statistics);
             } catch (err) {
                 console.error("Failed to fetch stats:", err);

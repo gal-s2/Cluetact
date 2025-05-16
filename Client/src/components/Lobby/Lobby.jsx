@@ -1,4 +1,5 @@
 import axios from "axios";
+import { baseUrl } from "../../baseUrl";
 import { useEffect, useState } from "react";
 import { useUser } from "../UserContext";
 import { useNavigate } from "react-router-dom";
@@ -64,7 +65,7 @@ function Lobby() {
         if (!user) return;
 
         try {
-            await axios.post("http://localhost:8000/auth/logout", {
+            await axios.post(`${baseUrl}/auth/logout`, {
                 id: user._id,
             });
             console.log("Logout successful");

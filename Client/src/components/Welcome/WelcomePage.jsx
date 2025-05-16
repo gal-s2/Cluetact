@@ -1,8 +1,8 @@
 import axios from "axios";
 import logo from "../../assets/Cluetact.jpeg";
 import { useNavigate } from "react-router-dom";
-import { useUser } from '../UserContext';
-
+import { useUser } from "../UserContext";
+import { baseUrl } from "../../baseUrl";
 import styles from "./WelcomePage.module.css";
 
 export default function WelcomePage() {
@@ -11,37 +11,31 @@ export default function WelcomePage() {
 
     const playAsGuestClick = async () => {
         try {
-            const response = await axios.post("http://localhost:8000/auth/guest");
+            const response = await axios.post(`${baseUrl}/auth/guest`);
             if (response.status === 200) {
-                setUser(response.data); 
-                navigate('/lobby');
+                setUser(response.data);
+                navigate("/lobby");
             } else {
                 alert(`guest login failed`);
-            }        
+            }
         } catch (error) {
-            alert("Something went wrong. Please try again.");
+            alert("Something went wrong. Please try again." + error.message);
         }
-    }
+    };
 
     return (
         <div className={styles.container}>
-        <img src={logo} alt="Cluetact Logo" className={styles.logo} />
+            <img src={logo} alt="Cluetact Logo" className={styles.logo} />
 
-        <div className={styles.buttons}>
-            <button
-            className={styles.primaryButton}
-            onClick={() => navigate("/login")}
-            >
-            Login / Register
-            </button>
+            <div className={styles.buttons}>
+                <button className={styles.primaryButton} onClick={() => navigate("/login")}>
+                    Login / Register
+                </button>
 
-            <button
-            className={styles.secondaryButton}
-            onClick={playAsGuestClick}
-            >
-            Play as Guest
-            </button>
-        </div>
+                <button className={styles.secondaryButton} onClick={playAsGuestClick}>
+                    Play as Guest
+                </button>
+            </div>
         </div>
     );
 }

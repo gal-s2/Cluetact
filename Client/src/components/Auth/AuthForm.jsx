@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./AuthForm.module.css";
 import logo from "../../assets/Cluetact.jpeg";
+import { baseUrl } from "../../baseUrl";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -41,9 +42,9 @@ function AuthForm({ type }) {
 
         let url;
         if (type === "login") {
-            url = "http://localhost:8000/auth/login";
+            url = `${baseUrl}/auth/login`;
         } else {
-            url = "http://localhost:8000/auth/register";
+            url = `${baseUrl}/auth/register`;
         }
 
         try {
@@ -61,6 +62,7 @@ function AuthForm({ type }) {
                 alert(`${type === "login" ? "Login" : "Registration"} failed`);
             }
         } catch (error) {
+            console.log("error:", error);
             const newErrors = {
                 server: error.response?.data?.error || "Something went wrong. Please try again.",
             };
