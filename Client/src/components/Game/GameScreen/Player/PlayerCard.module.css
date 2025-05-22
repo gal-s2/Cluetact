@@ -22,9 +22,37 @@
 
 .inner {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* updated from column */
     align-items: center;
-    gap: 0.6rem;
+    gap: 1rem; /* more spacing between avatar and data */
+}
+
+.playerImageContainer {
+    flex-shrink: 0;
+}
+
+.playerImage {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #81c784;
+}
+
+.playerDataContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+}
+
+.roleTag {
+    background-color: #e8f5e9;
+    color: #388e3c;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: bold;
 }
 
 h3 {
