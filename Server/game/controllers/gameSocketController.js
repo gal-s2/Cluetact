@@ -7,8 +7,9 @@ const { ROLES } = require("../constants");
 
 const gameSocketController = {
     handleJoinQueue: async (socket, args) => {
-        const { username } = args;
+        // const { username } = args;
         let room;
+        const user = await socketManager.getUserBySocketId(socket.id);
 
         // first check if player is already in a room. if he is, insert him to this room.
         room = gameManager.getRoomBySocket(socket);
@@ -16,7 +17,7 @@ const gameSocketController = {
             // TODO: send current room data to player. can happen in middle of the game
             return;
         } else {
-            room = await gameManager.addUserToQueue(username);
+            room = await gameManager.addUserToQueue(user);
         }
 
         // Send welcome messages to all players if a room was created, otherwise notify them that they are in the queue

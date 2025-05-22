@@ -1,9 +1,9 @@
 class Player {
-    constructor(username) {
+    constructor(username, avatar = "0") {
         this.username = username;
         this.gameScore = 0;
         this.role = null;
-        this.avatar = "0";
+        this.avatar = avatar;
     }
 
     setRole(role) {

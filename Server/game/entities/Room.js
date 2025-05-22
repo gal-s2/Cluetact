@@ -13,31 +13,33 @@ const CLUE_BONUS = 5;
 
 // work with socket version:
 class Room {
-    constructor(roomId, keeperUsername, seekersUsernames) {
+    constructor(roomId, keeper, seekers) {
         this.roomId = roomId;
         this.status = "PRE-ROUND"; //options: "PRE-ROUND","MID-ROUND","END";
-        this.keeperUsername = keeperUsername;
+        this.keeperUsername = keeper.username;
         this.players = [];
         this.currentRound = new GameRound();
         this.roundsHistory = [];
-        this.turnQueue = seekersUsernames.slice();
+        this.turnQueue = seekers.map((user) => user.username).slice();
         this.usedWords = new Set();
         this.winners = [];
 
-        const keeper = new Player(keeperUsername);
-        keeper.setRole(ROLES.KEEPER);
-        this.players.push(keeper);
+        const keeperPlayer = new Player(keeper.username, keeper.avatar);
+        keeperPlayer.setRole(ROLES.KEEPER);
+        this.players.push(keeperPlayer);
 
-        seekersUsernames.forEach((username) => {
-            const seeker = new Player(username);
-            seeker.setRole(ROLES.SEEKER);
-            this.players.push(seeker);
+        seekers.forEach((seeker) => {
+            const seekerPlayer = new Player(seeker.username, seeker.avatar);
+            seekerPlayer.setRole(ROLES.SEEKER);
+            this.players.push(seekerPlayer);
         });
 
         this.pastKeepers = new Set();
-        this.pastKeepers.add(keeperUsername);
+        this.pastKeepers.add(this.keeperUsername);
 
         this.isWordFullyRevealed = false;
+
+        console.log("players in room: ", this.players);
     }
 
     removePlayer(username) {

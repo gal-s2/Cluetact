@@ -45,7 +45,7 @@ module.exports = function waitingLobbyHandlers(io, socket) {
 
         const keeper = lobby.creator;
         const seekers = [...lobby.users].filter((u) => u !== keeper);
-        const room = GameManager.createRoom(keeper, seekers);
+        const room = GameManager.createRoom(keeper, seekers); // !!!!! TODO: KEEPER AND SEEKERS NEED TO BE USER OBJECTS
 
         messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId: room.roomId }, lobbyId);
         waitingLobbyManager.deleteLobby(lobbyId);
