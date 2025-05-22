@@ -13,6 +13,7 @@ import ProfileModal from "./ProfileModal";
 import useGameRoomSocket from "../../hooks/useGameRoomSocket";
 import SeekerClueSection from "./SeekerClueSection";
 import GuessModal from "./GuessModal";
+import GameOverPopup from "../Game/GameOverPopup";
 
 function GameRoom() {
     // -----
@@ -24,7 +25,7 @@ function GameRoom() {
     const { user } = useUser();
     const { roomId } = useParams();
 
-    const { gameState, loading, setKeeperWord, setCluetact, handleClueClick, handleGuessSubmit, activeClue, setActiveClue } = useGameRoomSocket(roomId, hasJoinedRef);
+    const { gameState, loading, setKeeperWord, setCluetact, handleClueClick, handleGuessSubmit, handleNextRound, handleExitGame, activeClue, setActiveClue } = useGameRoomSocket(roomId, hasJoinedRef);
 
     const [selectedPlayer, setSelectedPlayer] = useState(null);
 
@@ -60,6 +61,7 @@ function GameRoom() {
             {selectedPlayer && <ProfileModal player={selectedPlayer} onClose={closeProfileModal} />}
             {gameState.cluetact && <CluetactPopup guesser={gameState.cluetact.guesser} word={gameState.cluetact.word} onClose={() => setCluetact(null)} />}
             {activeClue && <GuessModal clue={activeClue} onSubmit={handleGuessSubmit} onCancel={() => setActiveClue(null)} />}
+            {gameState.winners?.length > 0 && <GameOverPopup winners={gameState.winners} onNextRound={handleNextRound} onExit={handleExitGame} />}
 
             {/* Main content wrapper */}
             <div className={styles.content}>

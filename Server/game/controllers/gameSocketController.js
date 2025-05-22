@@ -135,25 +135,25 @@ const gameSocketController = {
         if (!room) return;
 
         const guesserUsername = socket.user.username;
-        const clueGiverId = room.currentRound.getClueGiverUsernameByClueId(clueId);
         const result = await room.submitGuess(guesserUsername, guess, clueId);
         console.log("Trying to make a cluetact with guess", guess, " and clueId ", clueId);
 
         if (result.correct) {
             console.log("about to emit a broadcast to let all players know of a sucssefull cluetact. players data:", room.players);
-            messageEmitter.broadcastToRoom(
-                SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS,
-                {
-                    guesser: guesserUsername,
-                    word: guess,
-                    clues: room.currentRound.getClues(),
-                    revealed: room.getRevealedLetters(),
-                    isWordComplete: result.isWordComplete,
-                    keeper: room.keeperUsername,
-                    players: room.players,
-                },
-                room.roomId
-            );
+            const data = {
+                guesser: guesserUsername,
+                word: guess,
+                clues: room.currentRound.getClues(),
+                revealed: room.getRevealedLetters(),
+                isWordComplete: result.isWordComplete,
+                keeper: room.keeperUsername,
+                players: room.players,
+            };
+            if (result.isGameEnded) {
+                console.log("game ended, winners are ", room.getWinners());
+                data.winners = room.getWinners();
+            }
+            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, data, room.roomId);
         } else {
             messageEmitter.emitToSocket(
                 SOCKET_EVENTS.SERVER_GUESS_FAILED,

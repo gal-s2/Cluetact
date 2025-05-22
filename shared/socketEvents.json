@@ -30,5 +30,6 @@
     "SERVER_LOBBY_UPDATE": "server_lobby_update",
     "SERVER_CONNECT_ERROR": "server_connect_error",
     "SERVER_GAME_JOIN": "server_game_join",
-    "SERVER_ERROR_MESSAGE": "server_error_message"
+    "SERVER_ERROR_MESSAGE": "server_error_message",
+    "SERVER_GAME_ENDED": "server_game_ended"
 }

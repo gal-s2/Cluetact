@@ -3,6 +3,7 @@ const GameRound = require("./GameRound");
 const { ROLES } = require("../constants");
 const isValidEnglishWord = require("../../utils/validateWord");
 const Logger = require("../Logger");
+const User = require("../../models/User");
 
 const MAX_RACE_TIME = 10000;
 const BASE_POINTS = 15;
@@ -21,6 +22,7 @@ class Room {
         this.roundsHistory = [];
         this.turnQueue = seekersUsernames.slice();
         this.usedWords = new Set();
+        this.winners = [];
 
         const keeper = new Player(keeperUsername);
         keeper.setRole(ROLES.KEEPER);
@@ -36,6 +38,10 @@ class Room {
         this.pastKeepers.add(keeperUsername);
 
         this.isWordFullyRevealed = false;
+    }
+
+    getWinners() {
+        return this.winners;
     }
 
     getKeeperWord() {
@@ -109,21 +115,22 @@ class Room {
         const revealed = session.revealedLetters;
         const revealedPrefix = revealed.toLowerCase();
         const guessLower = guessWord.toLowerCase();
+        const result = { correct: false, isGameEnded: false };
 
         const valid = await isValidEnglishWord(guessWord);
         if (!valid) {
             Logger.logInvalidSeekerWord(this.roomId, guessWord);
-            return { correct: false };
+            return result;
         }
 
         if (!guessLower.startsWith(revealedPrefix)) {
             Logger.logInvalidGuess(this.roomId, guessWord, revealedPrefix);
-            return { correct: false };
+            return result;
         }
 
         if (session.guesses.find((g) => g.word.toLowerCase() === guessLower)) {
             Logger.logDuplicateGuess(this.roomId, guessWord);
-            return { correct: false };
+            return result;
         }
 
         session.addGuess(userId, guessWord);
@@ -134,25 +141,29 @@ class Room {
 
         if (matchedClue && matchedClue.word === guessLower) {
             const timeElapsed = (new Date() - session.raceStartTime) / 1000;
-
+            result.correct = true;
             if (userId === this.keeperUsername) {
                 this.handleCorrectBlockByKeeper(userId); // optional for keeper guess matching
                 clearTimeout(this.raceTimer);
-                return { correct: true, revealed: false };
+                result.revealed = false;
             } else {
                 this.handleCorrectGuessBySeeker(userId, timeElapsed, clueId);
                 clearTimeout(this.raceTimer);
-                return { correct: true, revealed: true, isWordComplete: this.isWordFullyRevealed };
+                result.revealed = true;
+                result.isWordComplete = this.isWordFullyRevealed;
             }
+            result.isGameEnded = this.isGameOver();
+            return result;
         }
 
         // Optional: still allow full keeper word guess
         if (guessLower === session.keeperWord?.toLowerCase()) {
             this.handleKeeperWordGuessDuringCluetact(userId, guessWord);
-            return { correct: true, revealed: false };
+            result.correct = true;
+            result.revealed = false;
         }
 
-        return { correct: false };
+        return result;
     }
 
     handleCorrectGuessBySeeker(guesserId, timeElapsed, clueId) {
@@ -277,30 +288,21 @@ class Room {
 
         let maxScore = -Infinity;
 
-        // can be multiple winners
-        let winners = [];
-
         for (const player of this.players) {
             if (player.gameScore > maxScore) {
                 maxScore = player.gameScore;
-                winners = [player];
+                this.winners = [player.username];
             } else if (player.gameScore === maxScore) {
-                winners.push(player);
+                this.winners.push(player.username);
             }
         }
 
-        Logger.logGameOver(
-            this.roomId,
-            winners.map((p) => p.username)
-        );
-
-        // map on usernames of the winners
-        const winnerUsernames = new Set(winners.map((p) => p.username));
+        Logger.logGameOver(this.roomId, this.winners);
 
         // update the mongo
         for (const player of this.players) {
             try {
-                const isWinner = winnerUsernames.has(player.username);
+                const isWinner = this.winners.includes(player.username);
                 const increment = {
                     "statistics.totalGames": 1,
                     [`statistics.${isWinner ? "Wins" : "Losses"}`]: 1,

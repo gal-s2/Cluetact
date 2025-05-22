@@ -19,6 +19,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         logMessage: "",
         clues: [],
         cluetact: null,
+        winners: [],
     });
 
     const setKeeperWord = (word) => {
@@ -44,11 +45,20 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         setActiveClue(null);
     };
 
+    const handleNextRound = () => {
+        // TODO: emit socket event to start next round
+    };
+
+    const handleExitGame = () => {
+        // TODO: navigate user out of the game room
+    };
+
     useEffect(() => {
-        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players }) => {
+        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players, winners }) => {
             if (isWordComplete) {
                 setGameState((prev) => ({
                     ...prev,
+                    winners,
                     players,
                     cluetact: { guesser, word },
                     clues,
@@ -161,6 +171,8 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         setCluetact,
         handleClueClick,
         handleGuessSubmit,
+        handleNextRound,
+        handleExitGame,
         activeClue,
         setActiveClue,
     };

@@ -15,6 +15,7 @@ start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --user-data-dir
 start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --user-data-dir="%TEMP%\chrome-profile-3" "%SITE%"
 
 
+--in case of error of cache in browser, refregh with ctrl+shift+r to solve
     
 
 

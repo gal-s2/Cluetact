@@ -1,5 +1,5 @@
-const Room = require("../models/Room");
-const GameQueue = require("../models/GameQueue");
+const Room = require("../entities/Room");
+const GameQueue = require("../entities/GameQueue");
 const Logger = require("../Logger");
 
 class GameManager {
