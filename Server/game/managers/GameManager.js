@@ -78,7 +78,7 @@ class GameManager {
             room.removePlayer(username);
             if (room.players.length < 3) {
                 for (const player of room.players) {
-                    this.playerToRoomId.delete(username);
+                    this.playerToRoomId.delete(player.username);
                 }
                 delete this.rooms[roomId];
                 console.log("Room deleted");

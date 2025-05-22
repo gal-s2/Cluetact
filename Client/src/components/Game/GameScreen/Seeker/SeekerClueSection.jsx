@@ -10,11 +10,7 @@ function SeekerClueSection({ clues, onGuess }) {
     return (
         <div className={styles.clueSection}>
             <h3 className={styles.heading}>Clues in Play</h3>
-            {activeClues.length === 0 ? (
-                <p className={styles.emptyMessage}>No active clues yet.</p>
-            ) : (
-                activeClues.map((clue) => <ClueBubble key={clue.id} id={clue.id} from={clue.from} definition={clue.definition} blocked={clue.blocked} onGuess={() => onGuess(clue)} />)
-            )}
+            {activeClues.length === 0 ? <p className={styles.emptyMessage}>No active clues yet.</p> : activeClues.map((clue) => <ClueBubble key={clue.id} id={clue.id} from={clue.from} definition={clue.definition} blocked={clue.blocked} onGuess={() => onGuess(clue)} />)}
 
             {blockedClues.length > 0 && (
                 <div className={styles.blockedSection}>

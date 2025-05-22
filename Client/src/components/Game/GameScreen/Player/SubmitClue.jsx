@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "./SubmitClue.module.css";
-import socket from "../../socket";
+import socket from "../../../../socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 const WORD_MAX_LENGTH = 20;
@@ -34,14 +34,14 @@ function SubmitClue({ revealedPrefix }) {
 
     return (
         <form className={styles.container} onSubmit={handleSubmit}>
-            <textarea className={styles.textarea} value={definition} onChange={(e) => onChangeDefinition(e.target.value)} placeholder="Enter your definition" maxLength={100} />
-            <div className={styles.charCount}>
-                {definition.length} / {DEFINITION_MAX_LENGTH} characters
-            </div>
-
             <input className={styles.input} value={word} onChange={(e) => onChangeWord(e.target.value)} placeholder={`Word starting with "${revealedPrefix}"`} />
             <div className={styles.charCount}>
                 {word.length} / {WORD_MAX_LENGTH} characters
+            </div>
+
+            <textarea className={styles.textarea} value={definition} onChange={(e) => onChangeDefinition(e.target.value)} placeholder="Enter your definition" maxLength={100} />
+            <div className={styles.charCount}>
+                {definition.length} / {DEFINITION_MAX_LENGTH} characters
             </div>
 
             <button className={styles.button} type="submit" disabled={!definition.trim() || !word.trim()}>

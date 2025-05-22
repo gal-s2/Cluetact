@@ -1,4 +1,4 @@
-import { useUser } from "../UserContext";
+import { useUser } from "../../UserContext";
 import styles from "./GameOverPopup.module.css";
 
 function GameOverPopup({ winners, onNextRound, onExit }) {

@@ -36,14 +36,11 @@ const gameSocketController = {
 
     handleJoinRoom: async (socket, args) => {
         const room = gameManager.getRoomBySocket(socket);
-        console.log("found room is ", room);
         if (!room) {
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, { room }, socket);
             return;
         }
 
-        const gameStatus = room.status;
-        console.log("room status is ", gameStatus);
         const username = socket.user.username;
         const keeperWordOrNull = username === room.keeperUsername ? room.getKeeperWord() : null;
         messageEmitter.emitToSocket(
@@ -102,7 +99,6 @@ const gameSocketController = {
 
         const username = socket.user.username;
         const success = room.startNewClueRound(username, word, definition);
-        console.log("success is ", success);
         if (success) {
             const addedClue = room.currentRound.clues.at(-1);
             messageEmitter.emitToKeeper(
@@ -136,10 +132,8 @@ const gameSocketController = {
 
         const guesserUsername = socket.user.username;
         const result = await room.submitGuess(guesserUsername, guess, clueId);
-        console.log("Trying to make a cluetact with guess", guess, " and clueId ", clueId);
 
         if (result.correct) {
-            console.log("about to emit a broadcast to let all players know of a sucssefull cluetact. players data:", room.players);
             const data = {
                 guesser: guesserUsername,
                 word: guess,
@@ -150,7 +144,6 @@ const gameSocketController = {
                 players: room.players,
             };
             if (result.isGameEnded) {
-                console.log("game ended, winners are ", room.getWinners());
                 data.winners = room.getWinners();
             }
             messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, data, room.roomId);

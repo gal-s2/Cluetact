@@ -1,5 +1,5 @@
 import { useState } from "react";
-import socket from "../../socket";
+import socket from "../../../../socket";
 import styles from "./KeeperClueList.module.css";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 

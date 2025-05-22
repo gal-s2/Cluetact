@@ -1,19 +1,19 @@
 import { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useUser } from "../UserContext";
-import WordDisplay from "./WordDisplay";
-import PlayerCard from "./PlayerCard";
+import WordDisplay from "./GameScreen/Word/WordDisplay";
+import PlayerCard from "./GameScreen/Player/PlayerCard";
 import Spinner from "../Routes/Spinner";
 import styles from "./GameRoom.module.css";
-import KeeperWordPopup from "./KeeperWordPopup";
-import SubmitClue from "./SubmitClue";
-import KeeperClueList from "./KeeperClueList";
-import CluetactPopup from "./CluetactPopup";
-import ProfileModal from "./ProfileModal";
+import KeeperWordPopup from "./GameScreen/Keeper/KeeperWordPopup";
+import SubmitClue from "./GameScreen/Player/SubmitClue";
+import KeeperClueList from "./GameScreen/Keeper/KeeperClueList";
+import CluetactPopup from "./Modals/CluetactPopup";
+import ProfileModal from "./Modals/ProfileModal";
 import useGameRoomSocket from "../../hooks/useGameRoomSocket";
-import SeekerClueSection from "./SeekerClueSection";
-import GuessModal from "./GuessModal";
-import GameOverPopup from "../Game/GameOverPopup";
+import SeekerClueSection from "./GameScreen/Seeker/SeekerClueSection";
+import GuessModal from "./Modals/GuessModal";
+import GameOverPopup from "./Modals/GameOverPopup";
 
 function GameRoom() {
     // -----
