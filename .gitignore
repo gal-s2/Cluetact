@@ -7,3 +7,4 @@ Client/.env
 */logs
 
 .DS_Store
+runme.bat
