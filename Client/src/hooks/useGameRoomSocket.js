@@ -50,6 +50,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
     };
 
     const handleExitGame = () => {
+        socket.emit(SOCKET_EVENTS.CLIENT_EXIT_ROOM, { roomId });
         // TODO: navigate user out of the game room
     };
 

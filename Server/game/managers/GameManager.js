@@ -70,6 +70,21 @@ class GameManager {
         const room = this.getRoom(roomId);
         return room;
     }
+
+    removePlayerFromRoom(roomId, username) {
+        this.playerToRoomId.delete(username);
+        const room = this.getRoom(roomId);
+        if (room) {
+            room.removePlayer(username);
+            if (room.players.length < 3) {
+                for (const player of room.players) {
+                    this.playerToRoomId.delete(username);
+                }
+                delete this.rooms[roomId];
+                console.log("Room deleted");
+            }
+        }
+    }
 }
 
 module.exports = new GameManager();

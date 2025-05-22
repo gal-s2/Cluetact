@@ -59,6 +59,8 @@ module.exports = function (io) {
         socket.on(SOCKET_EVENTS.CLIENT_TRY_CLUETACT, (args) => gameSocketController.handleTryCluetact(socket, args));
         socket.on(SOCKET_EVENTS.CLIENT_TRY_BLOCK_CLUE, (args) => gameSocketController.handleTryBlockClue(socket, args));
 
+        socket.on(SOCKET_EVENTS.CLIENT_EXIT_ROOM, () => gameSocketController.handleExitRoom(socket));
+
         socket.on(SOCKET_EVENTS.CLIENT_DISCONNECT, (args) => gameSocketController.disconnect(socket, args));
     });
 };

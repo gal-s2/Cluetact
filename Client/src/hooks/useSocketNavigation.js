@@ -13,6 +13,7 @@ export default function useSocketNavigation() {
         const handleRedirectToLobby = () => {
             navigate("/lobby");
         };
+
         const handleRedirectToRoom = ({ roomId }) => {
             const currentPath = location.pathname;
             const targetPath = `/game/${roomId}`;

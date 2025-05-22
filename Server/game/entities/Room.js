@@ -40,6 +40,10 @@ class Room {
         this.isWordFullyRevealed = false;
     }
 
+    removePlayer(username) {
+        this.players = this.players.filter((player) => player.username !== username);
+    }
+
     getWinners() {
         return this.winners;
     }

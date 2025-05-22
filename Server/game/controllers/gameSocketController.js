@@ -198,6 +198,24 @@ const gameSocketController = {
         }
     },
 
+    handleExitRoom: (socket) => {
+        if (!socket.user) return;
+        const roomId = gameManager.getRoomIdByUsername(socket.user.username);
+        const room = gameManager.getRoom(roomId);
+        const otherUsernames = room.players.filter((player) => player.username !== socket.user.username).map((player) => player.username);
+        console.log("other usernames are ", otherUsernames);
+
+        gameManager.removePlayerFromRoom(roomId, socket.user.username);
+
+        messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
+        if (!gameManager.getRoom(roomId)) {
+            // if room is empty, send to the other players
+            for (const player of otherUsernames) {
+                messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, player);
+            }
+        }
+    },
+
     disconnect: (socket, args) => {
         const lobbies = waitingLobbyManager.removeUserFromItsLobbies(socket.id);
         lobbies.forEach((lobbyId) => {
