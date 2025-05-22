@@ -14,6 +14,7 @@ import useGameRoomSocket from "../../hooks/useGameRoomSocket";
 import SeekerClueSection from "./GameScreen/Seeker/SeekerClueSection";
 import GuessModal from "./Modals/GuessModal";
 import GameOverPopup from "./Modals/GameOverPopup";
+import FloatingLetters from "../FloatingLetters";
 
 function GameRoom() {
     // -----
@@ -87,6 +88,8 @@ function GameRoom() {
                         <SubmitClue revealedPrefix={gameState.revealedWord} />
                     </div>
                 )}
+
+                <FloatingLetters />
             </div>
         </div>
     );
