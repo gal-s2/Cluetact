@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./AuthForm.module.css";
-import logo from "../../assets/Cluetact.jpeg";
-import { baseUrl } from "../../baseUrl";
+import logo from "../../../assets/Cluetact.jpeg";
+import { baseUrl } from "../../../config/baseUrl";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-import { useUser } from "../UserContext";
+import { useUser } from "../../../contexts/UserContext";
 
 function AuthForm({ type }) {
     const navigate = useNavigate();

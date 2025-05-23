@@ -1,18 +1,16 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import PrivateRoute from "./components/Routes/PrivateRoute";
-import PublicRoute from "./components/Routes/PublicRoute";
-import NotFoundPage from "./components/Routes/NotFoundPage";
-import AuthForm from "./components/Auth/AuthForm";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import PrivateRoute from "./components/Routes/PrivateRoute/PrivateRoute";
+import PublicRoute from "./components/Routes/PublicRoute/PublicRoute";
+import NotFoundPage from "./components/Routes/NotFoundPage/NotFoundPage";
+import AuthForm from "./components/Auth/AuthForm/AuthForm";
 import GameRoom from "./components/Game/GameRoom";
 import Lobby from "./components/Lobby/Lobby";
 import WelcomePage from "./components/Welcome/WelcomePage";
 import StatsPage from "./components/Statistics/StatsPage";
-import ProfileDetails from "./components/Profile/ProfileDetails";
+import ProfileDetails from "./components/Profile/ProfileDetails/ProfileDetails";
 import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
-import { useUser } from "./components/UserContext";
+import { useUser } from "./contexts/UserContext";
 import useSocketNavigation from "./hooks/useSocketNavigation";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 function App() {
     const { user } = useUser();

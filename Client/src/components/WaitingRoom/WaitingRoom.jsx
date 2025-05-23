@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import QRCode from "react-qr-code";
-import socket from "../../socket";
+import socket from "../../services/socket";
 import styles from "./WaitingRoom.module.css";
-import { useUser } from "../UserContext";
+import { useUser } from "../../contexts/UserContext";
 import { useLocation } from "react-router-dom";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 

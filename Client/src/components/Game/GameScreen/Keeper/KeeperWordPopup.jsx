@@ -1,5 +1,5 @@
 import styles from "./KeeperWordPopup.module.css";
-import socket from "../../../../socket";
+import socket from "../../../../services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import { useState } from "react";
 

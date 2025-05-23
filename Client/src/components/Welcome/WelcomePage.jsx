@@ -1,8 +1,8 @@
 import axios from "axios";
 import logo from "../../assets/Cluetact.jpeg";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../UserContext";
-import { baseUrl } from "../../baseUrl";
+import { useUser } from "../../contexts/UserContext";
+import { baseUrl } from "../../config/baseUrl";
 import styles from "./WelcomePage.module.css";
 
 export default function WelcomePage() {

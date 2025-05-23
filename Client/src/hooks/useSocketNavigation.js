@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import socket from "../socket";
+import socket from "../services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 export default function useSocketNavigation() {

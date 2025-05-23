@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "./SubmitClue.module.css";
-import socket from "../../../../socket";
+import socket from "../../../../services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 const WORD_MAX_LENGTH = 20;

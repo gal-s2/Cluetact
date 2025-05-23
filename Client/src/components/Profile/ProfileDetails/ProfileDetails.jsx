@@ -1,7 +1,7 @@
-import { useUser } from "../UserContext";
+import { useUser } from "../../../contexts/UserContext";
 import { useState } from "react";
 import styles from "./ProfileDetails.module.css";
-import AvatarPicker from "./AvatarPicker";
+import AvatarPicker from "../AvatarPicker/AvatarPicker";
 
 function ProfileDetails() {
     const { user } = useUser();

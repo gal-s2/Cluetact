@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useUser } from "../UserContext";
+import { useUser } from "../../contexts/UserContext";
 import WordDisplay from "./GameScreen/Word/WordDisplay";
 import PlayerCard from "./GameScreen/Player/PlayerCard";
-import Spinner from "../Routes/Spinner";
+import Spinner from "../Routes/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./GameScreen/Keeper/KeeperWordPopup";
 import SubmitClue from "./GameScreen/Player/SubmitClue";
@@ -14,7 +14,7 @@ import useGameRoomSocket from "../../hooks/useGameRoomSocket";
 import SeekerClueSection from "./GameScreen/Seeker/SeekerClueSection";
 import GuessModal from "./Modals/GuessModal";
 import GameOverPopup from "./Modals/GameOverPopup";
-import FloatingLetters from "../FloatingLetters";
+import FloatingLetters from "../Animations/FloatingLetters/FloatingLetters";
 
 function GameRoom() {
     // -----

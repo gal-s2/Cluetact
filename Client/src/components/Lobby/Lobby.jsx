@@ -1,9 +1,9 @@
 import axios from "axios";
-import { baseUrl } from "../../baseUrl";
+import { baseUrl } from "../../config/baseUrl";
 import { useEffect, useState } from "react";
-import { useUser } from "../UserContext";
+import { useUser } from "../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
-import socket from "../../socket";
+import socket from "../../services/socket";
 import styles from "./Lobby.module.css";
 import LobbyHeader from "./LobbyHeader";
 import JoinRoomModal from "./JoinRoomModal";

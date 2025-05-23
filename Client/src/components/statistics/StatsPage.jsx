@@ -1,7 +1,7 @@
-import { useUser } from "../UserContext";
+import { useUser } from "../../contexts/UserContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { baseUrl } from "../../baseUrl";
+import { baseUrl } from "../../config/baseUrl";
 
 function StatsPage() {
     const { user } = useUser();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import socket from "../socket";
-import { useUser } from "../components/UserContext";
+import socket from "../services/socket";
+import { useUser } from "../contexts/UserContext";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 export default function useGameRoomSocket(roomId, hasJoinedRef) {
