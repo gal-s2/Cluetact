@@ -17,7 +17,7 @@ start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --user-data-dir
 
 --in case of error of cache in browser, refregh with ctrl+shift+r to solve
     
-
+icons: https://fontawesome.com/icons
 
 
 
