@@ -1,87 +1,412 @@
-.keeperContainer {
-    padding: 1rem;
-    background-color: #fff5f0;
-    border-radius: 12px;
-    border: 1px solid #ffc6b0;
+/* KeeperClueList.module.css */
+
+/* --- CSS Variables for easy theming --- */
+:root {
+    --primary-blue: #1976d2;
+    --primary-orange: #ff9800;
+    --primary-orange-light: #ffb74d;
+    --primary-orange-dark: #f57c00;
+    --primary-yellow: #ffc107;
+    --primary-yellow-light: #ffeaa7;
+    --primary-red: #d32f2f;
+    --primary-red-light: #ffcdd2;
+    --primary-red-dark: #c62828;
+    --background-light: #f8f9fa;
+    --background-block: #fff3cd;
+    --background-blocked: #ffebee;
+    --background-gradient: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    --background-gradient-blocked: linear-gradient(135deg, #ffcdd2, #f8bbd9);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.heading,
-.subHeading {
-    margin-bottom: 0.5rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #333;
-    text-align: center;
-}
-
-.clueList,
-.blockedList {
-    list-style: none;
-    padding-left: 0;
-    margin-bottom: 1rem;
-}
-
-.clueItem {
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    color: #333;
-    background-color: #fff;
-    padding: 0.5rem;
-    border-radius: 8px;
-    border: 1px solid #eee;
-}
-
-.emptyItem {
-    text-align: center;
-    color: #aaa;
-    font-style: italic;
-    padding: 0.5rem;
-}
-
-.inputRow {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-}
-
-.guessInput {
-    flex: 1;
-    padding: 0.5rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-.blockButton {
-    padding: 0.5rem 1rem;
-    background-color: #ff7043;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.blockedItem {
-    padding: 0.5rem;
-    background-color: #ffeaea;
-    border-left: 4px solid #e53935;
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+/* --- Layout Containers --- */
+.container {
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+/* --- Clues Section --- */
+.cluesSection,
+.blockSection,
+.blockedSection {
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: var(--shadow);
+}
+
+.cluesSection {
+    background: white;
+    border: 2px solid #e3f2fd;
+}
+
+.blockSection {
+    background: var(--background-block);
+    border: 2px solid var(--primary-yellow-light);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.blockedSection {
+    background: var(--background-blocked);
+    border: 2px solid var(--primary-red-light);
+}
+
+/* --- Section Titles --- */
+.sectionTitle,
+.blockedTitle {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
     align-items: center;
-    text-align: center;
+    gap: 0.5rem;
+}
+
+.sectionTitle {
+    color: var(--primary-blue);
+}
+.sectionTitle::before {
+    content: "📥";
+    font-size: 1.2rem;
+}
+
+.blockedTitle {
+    color: var(--primary-red);
+}
+.blockedTitle::before {
+    content: "🚫";
+    font-size: 1.2rem;
+}
+
+/* --- Clue Lists --- */
+.cluesList,
+.blockedCluesList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* --- Clue Items --- */
+.clueItem {
+    background: #fffbe7;
+    border: 1px solid var(--primary-yellow-light);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.1);
+    margin-bottom: 0.75rem;
+    padding: 1.1rem 1.5rem 1.1rem 1.1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    position: relative;
+    transition: box-shadow 0.18s, transform 0.18s;
+}
+
+.clueItem::before {
+    content: "";
+    display: block;
+    width: 6px;
+    height: 80%;
+    background: var(--primary-yellow);
+    border-radius: 6px;
+    position: absolute;
+    left: 0.5rem;
+    top: 10%;
+}
+
+.clueItem:hover {
+    box-shadow: 0 6px 24px rgba(255, 193, 7, 0.18);
+    transform: translateY(-2px) scale(1.02);
+}
+
+.clueItem strong {
+    color: #b28704;
+    font-weight: 700;
+    margin-right: 0.5rem;
+    font-size: 1.08em;
+}
+/* Blocked Clue Item - Card style with red accent */
+.blockedClueItem {
+    background: var(--background-gradient-blocked);
+    border: 1px solid #e57373;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(230, 74, 25, 0.1);
+    margin-bottom: 0.75rem;
+    padding: 1.1rem 1.5rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    position: relative;
+    transition: box-shadow 0.18s, transform 0.18s;
+}
+
+.blockedClueItem::before {
+    content: "";
+    display: block;
+    width: 6px;
+    height: 80%;
+    background: var(--primary-red);
+    border-radius: 6px;
+    position: absolute;
+    left: 0.5rem;
+    top: 10%;
+}
+
+.blockedClueItem:hover {
+    box-shadow: 0 6px 24px rgba(230, 74, 25, 0.18);
+    transform: translateY(-2px) scale(1.02);
 }
 
 .blockedWord {
     font-weight: 700;
+    color: var(--primary-red-dark);
     font-size: 1.05rem;
-    color: #b71c1c;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.1rem;
 }
 
 .blockedDefinition {
+    color: #424242;
+    font-size: 0.97rem;
+    line-height: 1.4;
+    word-break: break-word;
+    margin-left: 0.2rem;
+    padding-left: 0.5rem;
+    border-left: 2px solid #ffcdd2;
+}
+
+/* --- Empty State --- */
+.noClues {
+    color: #6c757d;
     font-style: italic;
-    font-size: 0.85rem;
-    color: #555;
-    margin-top: 0.2rem;
+    text-align: center;
+    padding: 1rem;
+    background: var(--background-light);
+    border-radius: 8px;
+    border: 1px dashed #dee2e6;
+}
+
+/* --- Inputs and Buttons --- */
+.guessInput {
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--primary-yellow);
+    border-radius: 10px;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+    flex: 1;
+    min-width: 0;
+}
+.guessInput:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+}
+.guessInput::placeholder {
+    color: #999;
+    font-style: italic;
+}
+.inputRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem; /* space between input and button */
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.blockButton {
+    background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-light));
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+    min-height: 48px;
+    flex-shrink: 0;
+}
+.blockButton:hover {
+    background: linear-gradient(135deg, var(--primary-orange-dark), var(--primary-orange));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 152, 0, 0.4);
+}
+.blockButton:active {
+    transform: translateY(0);
+}
+.blockButton:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* --- Responsive Styles --- */
+@media (min-width: 480px) {
+    .container {
+        gap: 2rem;
+    }
+    .cluesSection,
+    .blockSection,
+    .blockedSection {
+        padding: 1.5rem;
+    }
+    .sectionTitle,
+    .blockedTitle {
+        font-size: 1.2rem;
+    }
+    .clueItem {
+        background: #fffbe7; /* match incomingSection */
+        border: 1px solid var(--primary-yellow-light);
+        box-shadow: 0 2px 8px rgba(255, 193, 7, 0.08);
+        margin-bottom: 0.5rem;
+    }
+    .blockedClueItem {
+        background: var(--background-gradient-blocked);
+        border: 1px solid #e57373;
+        box-shadow: 0 2px 8px rgba(230, 74, 25, 0.06);
+        margin-bottom: 0.5rem;
+    }
+    .blockSection {
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 1rem;
+    }
+    .guessInput {
+        flex: 1;
+    }
+    .blockButton {
+        flex-shrink: 0;
+        min-height: auto;
+    }
+}
+
+@media (min-width: 768px) {
+    .cluesSection,
+    .blockSection,
+    .blockedSection {
+        padding: 2rem;
+    }
+    .sectionTitle,
+    .blockedTitle {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+    }
+    .clueItem,
+    .blockedClueItem {
+        padding: 1.25rem 1.5rem;
+        font-size: 1.05rem;
+    }
+    .guessInput {
+        padding: 1rem 1.25rem;
+        font-size: 1.1rem;
+    }
+    .blockButton {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+    .blockedWord {
+        font-weight: 700;
+        color: var(--primary-red-dark);
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.2rem; /* Add space below the word */
+        word-break: break-word;
+    }
+
+    .blockedDefinition {
+        color: #424242;
+        font-size: 0.98rem;
+        line-height: 1.4;
+        word-break: break-word;
+        margin-left: 0.5rem; /* Indent definition for clarity */
+        padding-left: 0.5rem;
+        border-left: 2px solid #ffcdd2;
+    }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+    .container {
+        gap: 1rem;
+    }
+    .cluesSection,
+    .blockSection,
+    .blockedSection {
+        padding: 0.75rem;
+    }
+    .sectionTitle,
+    .blockedTitle {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    .clueItem,
+    .blockedClueItem {
+        padding: 0.5rem 0.75rem;
+    }
+    .blockButton {
+        padding: 0.6rem 1rem;
+        min-height: 40px;
+    }
+}
+
+/* --- Accessibility: Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+    .blockButton:hover {
+        transform: none;
+    }
+}
+
+.centerSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.incomingSection {
+    background: #fffbe7;
+    border: 2px solid var(--primary-yellow-light);
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(255, 193, 7, 0.08);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    transition: box-shadow 0.2s;
+}
+
+.incomingSection:focus-within {
+    box-shadow: 0 6px 24px rgba(255, 193, 7, 0.18);
+}
+
+.blockedSection {
+    background: #f9eaea;
+    border: 2px solid var(--primary-red-light);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.08);
+    padding: 1.5rem 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.blockedSection h4 {
+    color: var(--primary-red-dark);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }

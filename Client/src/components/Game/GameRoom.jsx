@@ -30,9 +30,13 @@ function GameRoom() {
     const { roomId } = useParams();
 
     const [selectedPlayer, setSelectedPlayer] = useState(null);
-    const [notification, setNotification] = useState("hello");
+    const [notification, setNotification] = useState("");
 
-    const { gameState, loading, setKeeperWord, setCluetact, handleClueClick, handleGuessSubmit, handleNextRound, handleExitGame, activeClue, setActiveClue } = useGameRoomSocket(roomId, hasJoinedRef, setNotification);
+    const { gameState, loading, setKeeperWord, setCluetact, handleClueClick, handleGuessSubmit, handleNextRound, handleExitGame, activeClue, setActiveClue } = useGameRoomSocket(
+        roomId,
+        hasJoinedRef,
+        setNotification
+    );
 
     if (loading) return <Spinner />;
 
