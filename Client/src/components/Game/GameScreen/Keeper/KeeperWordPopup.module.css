@@ -1,0 +1,127 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(240, 240, 255, 0.85);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* 🧼 spacing between items */
+    position: relative;
+}
+
+.popup input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.popup input:focus {
+    border-color: #81c784;
+    outline: none;
+}
+
+.popup > button:not(.closeButton) {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 12px;
+    background-color: #4285f4;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.popup button:disabled {
+    background-color: #cfd8dc;
+    cursor: not-allowed;
+}
+
+.popup button:hover:enabled {
+    background-color: #3367d6;
+}
+
+.closeButton {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 1.4rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.closeButton:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+    color: #222;
+}
+
+.confirmBox {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    max-width: 350px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.confirmButtons {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.confirmButtons button {
+    flex: 1;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: #e57373;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.confirmButtons button:last-child {
+    background-color: #ccc;
+    color: #333;
+}
+
+.confirmButtons button:hover {
+    filter: brightness(1.1);
+}

@@ -1,3 +1,5 @@
+const User = require("../../models/User");
+
 /**
  * A class to manage socket-user mappings.
  * It stores connections and provides methods to retrieve and remove them.
@@ -50,6 +52,12 @@ class SocketManager {
      */
     getUsernameBySocketId(socketId) {
         return this.socketIdToUsername.get(socketId);
+    }
+
+    async getUserBySocketId(socketId) {
+        const username = this.socketIdToUsername.get(socketId);
+        const user = await User.findOne({ username });
+        return user;
     }
 
     /**

@@ -3,11 +3,13 @@ const socketManager = require("../managers/SocketManager");
 const waitingLobbyManager = require("../managers/WaitingLobbyManager");
 const messageEmitter = require("../sockets/MessageEmitter");
 const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
+const { ROLES } = require("../constants");
 
 const gameSocketController = {
     handleJoinQueue: async (socket, args) => {
-        const { username } = args;
+        // const { username } = args;
         let room;
+        const user = await socketManager.getUserBySocketId(socket.id);
 
         // first check if player is already in a room. if he is, insert him to this room.
         room = gameManager.getRoomBySocket(socket);
@@ -15,7 +17,7 @@ const gameSocketController = {
             // TODO: send current room data to player. can happen in middle of the game
             return;
         } else {
-            room = await gameManager.addUserToQueue(username);
+            room = await gameManager.addUserToQueue(user);
         }
 
         // Send welcome messages to all players if a room was created, otherwise notify them that they are in the queue
@@ -35,14 +37,11 @@ const gameSocketController = {
 
     handleJoinRoom: async (socket, args) => {
         const room = gameManager.getRoomBySocket(socket);
-        console.log("found room is ", room);
         if (!room) {
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, { room }, socket);
             return;
         }
 
-        const gameStatus = room.status;
-        console.log("room status is ", gameStatus);
         const username = socket.user.username;
         const keeperWordOrNull = username === room.keeperUsername ? room.getKeeperWord() : null;
         messageEmitter.emitToSocket(
@@ -75,7 +74,7 @@ const gameSocketController = {
                 const message = {
                     success: true,
                     message: "Your word was accepted!",
-                    word: player.role === "keeper" ? word : undefined,
+                    word: player.role === ROLES.KEEPER ? word : undefined,
                     revealedWord: room.getRevealedLetters(),
                     length: word.length,
                 };
@@ -101,7 +100,6 @@ const gameSocketController = {
 
         const username = socket.user.username;
         const success = room.startNewClueRound(username, word, definition);
-        console.log("success is ", success);
         if (success) {
             const addedClue = room.currentRound.clues.at(-1);
             messageEmitter.emitToKeeper(
@@ -114,7 +112,7 @@ const gameSocketController = {
             );
 
             for (const player of room.players) {
-                if (player.role === "seeker") {
+                if (player.role === ROLES.SEEKER) {
                     messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_CLUE_REVEALED, room.currentRound.getClues(), player.username);
                 }
             }
@@ -133,24 +131,23 @@ const gameSocketController = {
         const room = gameManager.getRoomBySocket(socket);
         if (!room) return;
 
-        const userId = socket.user.username;
-        const result = await room.submitGuess(userId, guess, clueId);
-        console.log("Trying to make a cluetact with guess", guess, " and clueId ", clueId);
+        const guesserUsername = socket.user.username;
+        const result = await room.submitGuess(guesserUsername, guess, clueId);
 
         if (result.correct) {
-            messageEmitter.broadcastToRoom(
-                SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS,
-                {
-                    guesser: userId,
-                    word: guess,
-                    clues: room.currentRound.getClues(),
-                    revealed: room.getRevealedLetters(),
-                    isWordComplete: result.isWordComplete,
-                    keeper: room.keeperUsername,
-                    players: room.players,
-                },
-                room.roomId
-            );
+            const data = {
+                guesser: guesserUsername,
+                word: guess,
+                clues: room.currentRound.getClues(),
+                revealed: room.getRevealedLetters(),
+                isWordComplete: result.isWordComplete,
+                keeper: room.keeperUsername,
+                players: room.players,
+            };
+            if (result.isGameEnded) {
+                data.winners = room.getWinners();
+            }
+            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, data, room.roomId);
         } else {
             messageEmitter.emitToSocket(
                 SOCKET_EVENTS.SERVER_GUESS_FAILED,
@@ -192,6 +189,24 @@ const gameSocketController = {
                 },
                 socket
             );
+        }
+    },
+
+    handleExitRoom: (socket) => {
+        if (!socket.user) return;
+        const roomId = gameManager.getRoomIdByUsername(socket.user.username);
+        const room = gameManager.getRoom(roomId);
+        const otherUsernames = room.players.filter((player) => player.username !== socket.user.username).map((player) => player.username);
+        console.log("other usernames are ", otherUsernames);
+
+        gameManager.removePlayerFromRoom(roomId, socket.user.username);
+
+        messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
+        if (!gameManager.getRoom(roomId)) {
+            // if room is empty, send to the other players
+            for (const player of otherUsernames) {
+                messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, player);
+            }
         }
     },
 

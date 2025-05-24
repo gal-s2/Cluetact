@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import socket from "../socket";
-import { useUser } from "../components/UserContext";
+import socket from "../services/socket";
+import { useUser } from "../contexts/UserContext";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
-export default function useGameRoomSocket(roomId, hasJoinedRef) {
+export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification) {
     const { user } = useUser();
 
     const [loading, setLoading] = useState(true);
@@ -19,6 +19,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         logMessage: "",
         clues: [],
         cluetact: null,
+        winners: [],
     });
 
     const setKeeperWord = (word) => {
@@ -44,11 +45,20 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         setActiveClue(null);
     };
 
+    const handleNextRound = () => {
+        // TODO: emit socket event to start next round
+    };
+
+    const handleExitGame = () => {
+        socket.emit(SOCKET_EVENTS.CLIENT_EXIT_ROOM, { roomId });
+    };
+
     useEffect(() => {
-        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players }) => {
+        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players, winners }) => {
             if (isWordComplete) {
                 setGameState((prev) => ({
                     ...prev,
+                    winners,
                     players,
                     cluetact: { guesser, word },
                     clues,
@@ -62,6 +72,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
                 setGameState((prev) => ({
                     ...prev,
                     cluetact: { guesser, word },
+                    players,
                     clues,
                     revealedWord: revealed,
                 }));
@@ -77,6 +88,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
                 ...prev,
                 clues,
             }));
+            setNotification(`new clue definition by ${clues[clues.length - 1].from}: "${clues[clues.length - 1].definition}"`);
         });
 
         socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ word, from, definition }) => {
@@ -160,6 +172,8 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         setCluetact,
         handleClueClick,
         handleGuessSubmit,
+        handleNextRound,
+        handleExitGame,
         activeClue,
         setActiveClue,
     };

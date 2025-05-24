@@ -1,5 +1,5 @@
-const Room = require("../models/Room");
-const GameQueue = require("../models/GameQueue");
+const Room = require("../entities/Room");
+const GameQueue = require("../entities/GameQueue");
 const Logger = require("../Logger");
 
 class GameManager {
@@ -11,31 +11,29 @@ class GameManager {
         this.gameQueue = new GameQueue();
     }
 
-    createRoom(keeperUsername, seekersUsernames) {
-        const room = new Room(GameManager.roomId, keeperUsername, seekersUsernames);
+    createRoom(keeper, seekers) {
+        const room = new Room(GameManager.roomId, keeper, seekers);
 
         this.rooms[GameManager.roomId] = room;
         Logger.logRoomCreated(GameManager.roomId, room.players);
         GameManager.roomId++;
 
         room.players.forEach((player) => {
-            console.log("player", player.username);
             this.playerToRoomId.set(player.username, room.roomId);
         });
 
         return room;
     }
 
-    async addUserToQueue(username) {
-        const result = this.gameQueue.addUser(username);
+    async addUserToQueue(user) {
+        const result = this.gameQueue.addUser(user);
 
         if (result.roomCreationPossible) {
-            const keeperUsername = result.chosenUsers[0];
-            const seekersUsernames = result.chosenUsers.slice(1);
+            const keeper = result.chosenUsers[0];
+            const seekers = result.chosenUsers.slice(1);
 
-            const room = await this.createRoom(keeperUsername, seekersUsernames);
+            const room = await this.createRoom(keeper, seekers);
 
-            //await room.runGame(require('prompt-sync')());
             return room;
         }
 
@@ -70,6 +68,21 @@ class GameManager {
         const roomId = this.getRoomIdByUsername(username);
         const room = this.getRoom(roomId);
         return room;
+    }
+
+    removePlayerFromRoom(roomId, username) {
+        this.playerToRoomId.delete(username);
+        const room = this.getRoom(roomId);
+        if (room) {
+            room.removePlayer(username);
+            if (room.players.length < 3) {
+                for (const player of room.players) {
+                    this.playerToRoomId.delete(player.username);
+                }
+                delete this.rooms[roomId];
+                console.log("Room deleted");
+            }
+        }
     }
 }
 

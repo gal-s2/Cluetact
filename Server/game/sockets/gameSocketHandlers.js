@@ -34,7 +34,6 @@ module.exports = function (io) {
 
         const reconnect = (socket) => {
             let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);
-            console.log("room id in reconnect is", roomId);
             if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId }, socket);
         };
 
@@ -44,7 +43,6 @@ module.exports = function (io) {
         });
 
         socket.on(SOCKET_EVENTS.CLIENT_NOTIFY_MY_SOCKET_IS_READY, () => {
-            console.log("I just got notified that the socket is ready...");
             reconnect(socket);
         });
 
@@ -58,6 +56,8 @@ module.exports = function (io) {
 
         socket.on(SOCKET_EVENTS.CLIENT_TRY_CLUETACT, (args) => gameSocketController.handleTryCluetact(socket, args));
         socket.on(SOCKET_EVENTS.CLIENT_TRY_BLOCK_CLUE, (args) => gameSocketController.handleTryBlockClue(socket, args));
+
+        socket.on(SOCKET_EVENTS.CLIENT_EXIT_ROOM, () => gameSocketController.handleExitRoom(socket));
 
         socket.on(SOCKET_EVENTS.CLIENT_DISCONNECT, (args) => gameSocketController.disconnect(socket, args));
     });

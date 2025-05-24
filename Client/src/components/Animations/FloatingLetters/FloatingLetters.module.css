@@ -1,0 +1,70 @@
+.floatingContainer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: 50;
+}
+
+.letter {
+    position: absolute;
+    bottom: 0;
+    animation-timing-function: ease-out;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+@keyframes float-1 {
+    0% {
+        transform: translateX(0) translateY(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-30px) translateY(-100vh);
+        opacity: 0;
+    }
+}
+
+@keyframes float-2 {
+    0% {
+        transform: translateX(0) translateY(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(30px) translateY(-100vh);
+        opacity: 0;
+    }
+}
+
+@keyframes float-3 {
+    0% {
+        transform: translateX(0) translateY(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(0px) translateY(-100vh);
+        opacity: 0;
+    }
+}
+
+.float-1 {
+    animation-name: float-1;
+}
+
+.float-2 {
+    animation-name: float-2;
+}
+
+.float-3 {
+    animation-name: float-3;
+}
