@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import WordDisplay from "./GameScreen/Word/WordDisplay";
 import PlayerCard from "./GameScreen/Player/PlayerCard";
 import Spinner from "../Routes/Spinner/Spinner";
@@ -15,6 +17,7 @@ import SeekerClueSection from "./GameScreen/Seeker/SeekerClueSection";
 import GuessModal from "./Modals/GuessModal";
 import GameOverPopup from "./Modals/GameOverPopup";
 import FloatingLetters from "../Animations/FloatingLetters/FloatingLetters";
+import NotificationBox from "./NotificationBox/NotificationBox";
 
 function GameRoom() {
     // -----
@@ -26,9 +29,10 @@ function GameRoom() {
     const { user } = useUser();
     const { roomId } = useParams();
 
-    const { gameState, loading, setKeeperWord, setCluetact, handleClueClick, handleGuessSubmit, handleNextRound, handleExitGame, activeClue, setActiveClue } = useGameRoomSocket(roomId, hasJoinedRef);
-
     const [selectedPlayer, setSelectedPlayer] = useState(null);
+    const [notification, setNotification] = useState("hello");
+
+    const { gameState, loading, setKeeperWord, setCluetact, handleClueClick, handleGuessSubmit, handleNextRound, handleExitGame, activeClue, setActiveClue } = useGameRoomSocket(roomId, hasJoinedRef, setNotification);
 
     if (loading) return <Spinner />;
 
@@ -44,12 +48,12 @@ function GameRoom() {
 
     return (
         <div className={styles.room}>
-            {/* Blocking overlay */}
             {!gameState.isKeeper && !gameState.isWordChosen && (
                 <div className={styles.waitOverlay}>
                     <div className={styles.waitMessage}>Waiting for the keeper to choose a word...</div>
                 </div>
             )}
+
             {gameState.isKeeper && !gameState.isWordChosen && (
                 <div className={styles.waitOverlay}>
                     <div className={styles.popupWrapper}>
@@ -58,25 +62,25 @@ function GameRoom() {
                 </div>
             )}
 
-            {/* Modals */}
             {selectedPlayer && <ProfileModal player={selectedPlayer} onClose={closeProfileModal} />}
             {gameState.cluetact && <CluetactPopup guesser={gameState.cluetact.guesser} word={gameState.cluetact.word} onClose={() => setCluetact(null)} />}
             {activeClue && <GuessModal clue={activeClue} onSubmit={handleGuessSubmit} onCancel={() => setActiveClue(null)} />}
             {gameState.winners?.length > 0 && <GameOverPopup winners={gameState.winners} onNextRound={handleNextRound} onExit={handleExitGame} />}
 
-            {/* Main content wrapper */}
             <div className={styles.content}>
-                {gameState.isWordChosen && (
-                    <div className={styles.wordDisplay}>
-                        <WordDisplay isKeeper={gameState.isKeeper} revealedWord={gameState.revealedWord} word={gameState.keeperWord} length={gameState.wordLength} />
-                    </div>
-                )}
-
                 <div className={styles.table}>
                     {gameState.players.map((player) => (
                         <PlayerCard key={player.username} player={player} me={player.username === user.username} onClick={() => handlePlayerCardClick(player)} />
                     ))}
                 </div>
+
+                <NotificationBox message={notification} onDone={() => setNotification("")} />
+
+                {gameState.isWordChosen && (
+                    <div className={styles.wordDisplay}>
+                        <WordDisplay isKeeper={gameState.isKeeper} revealedWord={gameState.revealedWord} word={gameState.keeperWord} length={gameState.wordLength} />
+                    </div>
+                )}
 
                 <div className={styles.cluesSection}>
                     {!gameState.isKeeper && <SeekerClueSection clues={gameState.clues} onGuess={handleClueClick} />}
@@ -91,6 +95,10 @@ function GameRoom() {
 
                 <FloatingLetters />
             </div>
+
+            <button className={styles.exitButton} onClick={handleExitGame} title="Exit Game">
+                <FontAwesomeIcon icon={faArrowRightFromBracket} />
+            </button>
         </div>
     );
 }

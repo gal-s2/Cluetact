@@ -3,7 +3,7 @@ import socket from "../services/socket";
 import { useUser } from "../contexts/UserContext";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
-export default function useGameRoomSocket(roomId, hasJoinedRef) {
+export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification) {
     const { user } = useUser();
 
     const [loading, setLoading] = useState(true);
@@ -51,7 +51,6 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
 
     const handleExitGame = () => {
         socket.emit(SOCKET_EVENTS.CLIENT_EXIT_ROOM, { roomId });
-        // TODO: navigate user out of the game room
     };
 
     useEffect(() => {
@@ -89,6 +88,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
                 ...prev,
                 clues,
             }));
+            setNotification(`new clue definition by ${clues[clues.length - 1].from}: "${clues[clues.length - 1].definition}"`);
         });
 
         socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ word, from, definition }) => {
