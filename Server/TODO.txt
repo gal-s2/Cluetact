@@ -12,6 +12,7 @@ GAME:
 - add suggestions for word with external api
 - in the end, avoid using the word inside the definition
 - block definitons and word if not using letters (special chars not allowed, trim spaces, check if included)
+-change the way that the seeker guesses, convert it an action line with an option to choose the defintion
 
 DATABASE:
 - think about which attributes to save on a User in db (wins etc.)
