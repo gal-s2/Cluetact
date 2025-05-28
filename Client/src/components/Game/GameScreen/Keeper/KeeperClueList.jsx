@@ -33,8 +33,21 @@ function KeeperClueList({ clues }) {
                 </ul>
                 {unblockedClues.length > 0 && (
                     <div className={styles.inputRow}>
-                        <input type="text" placeholder="Try to block a clue..." value={guess} onChange={(e) => setGuess(e.target.value)} className={styles.guessInput} />
-                        <button onClick={handleSubmit} className={styles.blockButton}>
+                        <input
+                            type="text"
+                            placeholder="Try to block a clue..."
+                            value={guess}
+                            onChange={(e) => setGuess(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    if (!guess.trim()) return;
+                                    handleSubmit();
+                                }
+                            }}
+                            className={styles.guessInput}
+                        />
+                        <button onClick={handleSubmit} className={styles.blockButton} disabled={!guess.trim()}>
                             Block
                         </button>
                     </div>

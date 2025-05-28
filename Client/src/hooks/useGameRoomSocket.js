@@ -88,7 +88,9 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
                 ...prev,
                 clues,
             }));
-            setNotification(`new clue definition by ${clues[clues.length - 1].from}: "${clues[clues.length - 1].definition}"`);
+            const definition = clues[clues.length - 1].definition;
+            const from = clues[clues.length - 1].from;
+            if (from !== user.username) setNotification(`new clue definition by ${clues[clues.length - 1].from}: "${clues[clues.length - 1].definition}"`);
         });
 
         socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ word, from, definition }) => {
@@ -104,6 +106,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
                 logMessage: `A clue was submitted by ${from}. You may block it.`,
                 clues: [...prev.clues, { from, definition, blocked: false }],
             }));
+            setNotification(`new clue definition by ${from}: "${definition}"`);
         });
 
         return () => {
