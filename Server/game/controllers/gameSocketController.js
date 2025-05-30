@@ -73,7 +73,6 @@ const gameSocketController = {
             for (const player of room.players) {
                 const message = {
                     success: true,
-                    message: "Your word was accepted!",
                     word: player.role === ROLES.KEEPER ? word : undefined,
                     revealedWord: room.getRevealedLetters(),
                     length: word.length,
@@ -87,7 +86,6 @@ const gameSocketController = {
                 SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN,
                 {
                     success: false,
-                    message: "Invalid word. Please enter a valid English word.",
                 },
                 socket
             );

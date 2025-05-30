@@ -153,7 +153,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
                     isWordChosen: true,
                     logMessage: "",
                 }));
-            }
+            } else setNotification("The word you entered is invalid. Please enter a valid English word.");
         });
 
         return () => {

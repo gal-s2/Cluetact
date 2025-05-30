@@ -87,7 +87,7 @@ function GameRoom() {
                 )}
 
                 <div className={styles.cluesSection}>
-                    {!gameState.isKeeper && <SeekerClueSection clues={gameState.clues} onGuess={handleClueClick} />}
+                    {!gameState.isKeeper && <SeekerClueSection clues={gameState.clues} onGuess={handleClueClick} maxVisibleItems={5} />}
                     {gameState.isKeeper && <KeeperClueList clues={gameState.clues} />}
                 </div>
 

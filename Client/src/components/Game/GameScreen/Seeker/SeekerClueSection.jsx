@@ -1,16 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import ClueBubble from "./ClueBubble";
 import styles from "./SeekerClueSection.module.css";
 
-function SeekerClueSection({ clues, onGuess }) {
+function SeekerClueSection({ clues, onGuess, maxVisibleItems = 4 }) {
     const activeClues = clues.filter((clue) => !clue.blocked);
     const blockedClues = clues.filter((clue) => clue.blocked);
     const [showBlocked, setShowBlocked] = useState(true);
+    const activeListRef = useRef(null);
+    const blockedListRef = useRef(null);
+
+    // Set CSS custom properties for dynamic height calculation
+    useEffect(() => {
+        if (activeListRef.current) {
+            activeListRef.current.style.setProperty("--max-visible-items", maxVisibleItems);
+        }
+        if (blockedListRef.current) {
+            blockedListRef.current.style.setProperty("--max-visible-items", maxVisibleItems);
+        }
+    }, [maxVisibleItems]);
+
+    useEffect(() => {
+        if (activeListRef.current) {
+            activeListRef.current.scrollTop = activeListRef.current.scrollHeight;
+        }
+    }, [activeClues]);
 
     return (
         <div className={styles.clueSection}>
             <h3 className={styles.heading}>Clues in Play</h3>
-            {activeClues.length === 0 ? <p className={styles.emptyMessage}>No active clues yet.</p> : activeClues.map((clue) => <ClueBubble key={clue.id} id={clue.id} from={clue.from} definition={clue.definition} blocked={clue.blocked} onGuess={() => onGuess(clue)} />)}
+            {activeClues.length === 0 ? (
+                <p className={styles.emptyMessage}>No active clues yet.</p>
+            ) : (
+                <div ref={activeListRef} className={styles.scrollableClueList} data-clue-count={activeClues.length}>
+                    {activeClues.map((clue) => (
+                        <ClueBubble key={clue.id} from={clue.from} definition={clue.definition} blocked={clue.blocked} onGuess={() => onGuess(clue)} />
+                    ))}
+                </div>
+            )}
 
             {blockedClues.length > 0 && (
                 <div className={styles.blockedSection}>
@@ -26,17 +52,11 @@ function SeekerClueSection({ clues, onGuess }) {
                             overflow: "hidden",
                         }}
                     >
-                        {blockedClues.map((clue) => (
-                            <ClueBubble
-                                key={clue.id}
-                                id={clue.id}
-                                from={clue.from}
-                                definition={clue.definition}
-                                word={clue.word} // 👈 add this
-                                blocked={clue.blocked}
-                                onGuess={() => {}}
-                            />
-                        ))}
+                        <div ref={blockedListRef} className={styles.scrollableClueList} data-clue-count={blockedClues.length}>
+                            {blockedClues.map((clue) => (
+                                <ClueBubble key={clue.id} from={clue.from} definition={clue.definition} word={clue.word} blocked={clue.blocked} onGuess={() => {}} />
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
