@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import socket from "../../../../services/socket";
 import styles from "./KeeperClueList.module.css";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
-function KeeperClueList({ clues }) {
+function KeeperClueList({ clues, maxVisibleItems = 4 }) {
     const [guess, setGuess] = useState("");
+    const [showBlocked, setShowBlocked] = useState(true);
+    const unblockedListRef = useRef(null);
+    const blockedListRef = useRef(null);
 
     const handleSubmit = () => {
         if (guess.trim()) {
@@ -16,21 +19,38 @@ function KeeperClueList({ clues }) {
     const unblockedClues = clues.filter((clue) => !clue.blocked);
     const blockedClues = clues.filter((clue) => clue.blocked);
 
+    // Set CSS custom properties for dynamic height calculation
+    useEffect(() => {
+        if (unblockedListRef.current) {
+            unblockedListRef.current.style.setProperty("--max-visible-items", maxVisibleItems);
+        }
+        if (blockedListRef.current) {
+            blockedListRef.current.style.setProperty("--max-visible-items", maxVisibleItems);
+        }
+    }, [maxVisibleItems]);
+
+    // Auto-scroll to bottom when new clues arrive
+    useEffect(() => {
+        if (unblockedListRef.current) {
+            unblockedListRef.current.scrollTop = unblockedListRef.current.scrollHeight;
+        }
+    }, [unblockedClues]);
+
     return (
         <div className={styles.keeperContainer}>
             <div className={styles.incomingSection}>
                 <h4 className={styles.heading}>Incoming Clues</h4>
-                <ul className={styles.clueList}>
-                    {unblockedClues.length === 0 ? (
-                        <li className={styles.emptyItem}>No new clues yet.</li>
-                    ) : (
-                        unblockedClues.map((clue, index) => (
-                            <li key={index} className={styles.clueItem}>
+                {unblockedClues.length === 0 ? (
+                    <p className={styles.emptyMessage}>No new clues yet.</p>
+                ) : (
+                    <div ref={unblockedListRef} className={styles.scrollableClueList} data-clue-count={unblockedClues.length}>
+                        {unblockedClues.map((clue, index) => (
+                            <div key={index} className={styles.clueItem}>
                                 <strong>{clue.from}:</strong> {clue.definition}
-                            </li>
-                        ))
-                    )}
-                </ul>
+                            </div>
+                        ))}
+                    </div>
+                )}
                 {unblockedClues.length > 0 && (
                     <div className={styles.inputRow}>
                         <input
@@ -56,15 +76,27 @@ function KeeperClueList({ clues }) {
 
             {blockedClues.length > 0 && (
                 <div className={styles.blockedSection}>
-                    <h4 className={styles.subHeading}>Blocked Clues</h4>
-                    <ul className={styles.blockedList}>
-                        {blockedClues.map((clue, index) => (
-                            <li key={index} className={styles.blockedClueItem}>
-                                <span className={styles.blockedWord}>{clue.word?.toUpperCase() || "?"}</span>
-                                <span className={styles.blockedDefinition}>{clue.definition}</span>
-                            </li>
-                        ))}
-                    </ul>
+                    <div className={styles.blockedHeader} onClick={() => setShowBlocked((prev) => !prev)}>
+                        <h4 className={styles.subHeading}>Blocked Clues</h4>
+                        <span className={`${styles.toggleIcon} ${showBlocked ? styles.rotate : ""}`}>▼</span>
+                    </div>
+                    <div
+                        style={{
+                            maxHeight: showBlocked ? "1000px" : "0px",
+                            opacity: showBlocked ? 1 : 0,
+                            transition: "max-height 0.3s ease, opacity 0.3s ease",
+                            overflow: "hidden",
+                        }}
+                    >
+                        <div ref={blockedListRef} className={styles.scrollableClueList} data-clue-count={blockedClues.length}>
+                            {blockedClues.map((clue, index) => (
+                                <div key={index} className={styles.blockedClueItem}>
+                                    <span className={styles.blockedWord}>{clue.word?.toUpperCase() || "?"}</span>
+                                    <span className={styles.blockedDefinition}>{clue.definition}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
