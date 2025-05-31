@@ -21,7 +21,7 @@ class Room {
         this.currentRound = new GameRound();
         this.roundsHistory = [];
         this.turnQueue = seekers.map((user) => user.username).slice();
-        this.usedWords = new Set();
+        this.wordsGuessedSuccesfully = new Set();
         this.winners = [];
 
         const keeperPlayer = new Player(keeper.username, keeper.avatar);
@@ -82,7 +82,12 @@ class Room {
         }
     }
 
-    startNewClueRound(clueGiverId, clueWord, clueDefinition) {
+    async startNewClueRound(clueGiverId, clueWord, clueDefinition) {
+        const valid = await isValidEnglishWord(clueWord);
+        if (!valid) {
+            Logger.logInvalidSeekerWord(this.roomId, clueWord);
+            return false;
+        }
         if (!this.currentRound.keeperWord) {
             Logger.logCannotClueWithoutKeeperWord(this.roomId);
             return false;
@@ -99,12 +104,9 @@ class Room {
             return false;
         }
 
-        if (this.usedWords.has(clueWord.toLowerCase())) {
+        if (this.wordsGuessedSuccesfully.has(clueWord.toLowerCase())) {
             Logger.logClueWordAlreadyUsed(this.roomId, clueWord);
-            return false;
         }
-
-        this.usedWords.add(clueWord.toLowerCase());
 
         this.currentRound.addClue(clueGiverId, clueWord, clueDefinition);
         Logger.logClueSet(this.roomId, clueGiverId, clueDefinition);
@@ -140,7 +142,6 @@ class Room {
         }
 
         session.addGuess(userId, guessWord);
-        this.usedWords.add(guessLower);
 
         // 🧠 Look up the clue by clueId
         const matchedClue = session.clues.find((clue) => clue.id === clueId && !clue.blocked);
@@ -153,6 +154,7 @@ class Room {
                 clearTimeout(this.raceTimer);
                 result.revealed = false;
             } else {
+                this.wordsGuessedSuccesfully.add(guessLower);
                 this.handleCorrectGuessBySeeker(userId, timeElapsed, clueId);
                 clearTimeout(this.raceTimer);
                 result.revealed = true;

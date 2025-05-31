@@ -8,13 +8,14 @@ import PlayerCard from "./GameScreen/Player/PlayerCard";
 import Spinner from "../Routes/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./GameScreen/Keeper/KeeperWordPopup";
-import SubmitClue from "./GameScreen/Player/SubmitClue";
+import SubmitClue from "./GameScreen/Seeker/SubmitClue";
 import KeeperClueList from "./GameScreen/Keeper/KeeperClueList";
 import CluetactPopup from "./Modals/CluetactPopup";
 import ProfileModal from "./Modals/ProfileModal";
 import useGameRoomSocket from "../../hooks/useGameRoomSocket";
 import SeekerClueSection from "./GameScreen/Seeker/SeekerClueSection";
-import GuessModal from "./Modals/GuessModal";
+import BlockedCluesSection from "./GameScreen/BlockedClues/BlockedCluesSection";
+import GuessActionLine from "./GameScreen/Seeker/GuessActionLine";
 import GameOverPopup from "./Modals/GameOverPopup";
 import FloatingLetters from "../Animations/FloatingLetters/FloatingLetters";
 import NotificationBox from "./NotificationBox/NotificationBox";
@@ -30,9 +31,10 @@ function GameRoom() {
     const { roomId } = useParams();
 
     const [selectedPlayer, setSelectedPlayer] = useState(null);
-    const [notification, setNotification] = useState("hello");
+    const [selectedClue, setSelectedClue] = useState(null);
+    const [notification, setNotification] = useState("");
 
-    const { gameState, loading, setKeeperWord, setCluetact, handleClueClick, handleGuessSubmit, handleNextRound, handleExitGame, activeClue, setActiveClue } = useGameRoomSocket(roomId, hasJoinedRef, setNotification);
+    const { gameState, loading, setKeeperWord, setCluetact, handleGuessSubmit, handleNextRound, handleExitGame } = useGameRoomSocket(roomId, hasJoinedRef, setNotification);
 
     if (loading) return <Spinner />;
 
@@ -44,6 +46,19 @@ function GameRoom() {
 
     const closeProfileModal = () => {
         setSelectedPlayer(null);
+    };
+
+    const handleClueSelect = (clue) => {
+        setSelectedClue(clue);
+    };
+
+    const handleGuessSubmitFromActionLine = (guess, clue) => {
+        handleGuessSubmit(guess, clue);
+        setSelectedClue(null); // Clear selection after submitting
+    };
+
+    const handleClearSelection = () => {
+        setSelectedClue(null);
     };
 
     return (
@@ -64,7 +79,6 @@ function GameRoom() {
 
             {selectedPlayer && <ProfileModal player={selectedPlayer} onClose={closeProfileModal} />}
             {gameState.cluetact && <CluetactPopup guesser={gameState.cluetact.guesser} word={gameState.cluetact.word} onClose={() => setCluetact(null)} />}
-            {activeClue && <GuessModal clue={activeClue} onSubmit={handleGuessSubmit} onCancel={() => setActiveClue(null)} />}
             {gameState.winners?.length > 0 && <GameOverPopup winners={gameState.winners} onNextRound={handleNextRound} onExit={handleExitGame} />}
 
             <div className={styles.content}>
@@ -82,16 +96,23 @@ function GameRoom() {
                     </div>
                 )}
 
+                {!gameState.isKeeper && gameState.isWordChosen && (
+                    <div className={styles.clueSubmitWrapper}>
+                        <SubmitClue revealedPrefix={gameState.revealedWord} setNotification={setNotification} />
+                    </div>
+                )}
+
                 <div className={styles.cluesSection}>
-                    {!gameState.isKeeper && <SeekerClueSection clues={gameState.clues} onGuess={handleClueClick} />}
+                    {!gameState.isKeeper && (
+                        <>
+                            <SeekerClueSection clues={gameState.clues} onClueSelect={handleClueSelect} selectedClue={selectedClue} maxVisibleItems={5} />
+                            <GuessActionLine selectedClue={selectedClue} onSubmit={handleGuessSubmitFromActionLine} onClearSelection={handleClearSelection} />
+                        </>
+                    )}
                     {gameState.isKeeper && <KeeperClueList clues={gameState.clues} />}
                 </div>
 
-                {!gameState.isKeeper && gameState.isWordChosen && (
-                    <div className={styles.clueSubmitWrapper}>
-                        <SubmitClue revealedPrefix={gameState.revealedWord} />
-                    </div>
-                )}
+                <BlockedCluesSection clues={gameState.clues} maxVisibleItems={5} />
 
                 <FloatingLetters />
             </div>

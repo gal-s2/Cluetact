@@ -16,11 +16,7 @@ function WordDisplay({ isKeeper, revealedWord, word, length }) {
         currentDisplay = <b>{revealedWord + "_".repeat(length - revealedWord.length).trim()}</b>;
     }
 
-    return (
-        <div className={styles.wrapper}>
-            <div className={styles.word}>{currentDisplay}</div>
-        </div>
-    );
+    return <div className={styles.word}>{currentDisplay}</div>;
 }
 
 export default WordDisplay;

@@ -8,11 +8,18 @@
 - emojis 
 
 GAME:
-- handle the bug where a use can guess its own definition
+- handle the bug where a user can guess its own definition
 - add suggestions for word with external api
 - in the end, avoid using the word inside the definition
 - block definitons and word if not using letters (special chars not allowed, trim spaces, check if included)
+-change the way that the seeker guesses, convert it an action line with an option to choose the defintion
 
 DATABASE:
 - think about which attributes to save on a User in db (wins etc.)
 - need to put the dtabase in the cloud in google cloud/aws/atlas database
+
+Simple tasks to-do:
+1. convert the set notification to a smarter notification, instead of 1 paramater it will get 2:
+color and message (red = error, green = success, black = normal notification)
+2. remove the cluetact crazy pop-up 3-seconds message on cluetact and make it on the normal notification bar
+3. try and make notifications being able to not switch one other, but rather be one under one (if too many - 'fold')

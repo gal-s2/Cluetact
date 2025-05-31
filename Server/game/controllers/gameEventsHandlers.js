@@ -5,7 +5,7 @@ const messageEmitter = require("../sockets/MessageEmitter");
 const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 const { ROLES } = require("../constants");
 
-const gameSocketController = {
+const gameEventsHandlers = {
     handleJoinQueue: async (socket, args) => {
         // const { username } = args;
         let room;
@@ -73,7 +73,6 @@ const gameSocketController = {
             for (const player of room.players) {
                 const message = {
                     success: true,
-                    message: "Your word was accepted!",
                     word: player.role === ROLES.KEEPER ? word : undefined,
                     revealedWord: room.getRevealedLetters(),
                     length: word.length,
@@ -87,19 +86,18 @@ const gameSocketController = {
                 SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN,
                 {
                     success: false,
-                    message: "Invalid word. Please enter a valid English word.",
                 },
                 socket
             );
         }
     },
 
-    handleSubmitClue: (socket, { definition, word }) => {
+    handleSubmitClue: async (socket, { definition, word }) => {
         const room = gameManager.getRoomBySocket(socket);
         if (!room) return;
 
         const username = socket.user.username;
-        const success = room.startNewClueRound(username, word, definition);
+        const success = await room.startNewClueRound(username, word, definition);
         if (success) {
             const addedClue = room.currentRound.clues.at(-1);
             messageEmitter.emitToKeeper(
@@ -117,13 +115,7 @@ const gameSocketController = {
                 }
             }
         } else {
-            messageEmitter.emitToSocket(
-                SOCKET_EVENTS.SERVER_CLUE_REJECTED,
-                {
-                    message: "Invalid clue or word already used.",
-                },
-                socket
-            );
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_CLUE_REJECTED, null, socket);
         }
     },
 
@@ -132,6 +124,11 @@ const gameSocketController = {
         if (!room) return;
 
         const guesserUsername = socket.user.username;
+        const clueGiverUserName = room.currentRound.clues.find((clue) => clue.id === clueId).from;
+        if (guesserUsername === clueGiverUserName) {
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "You cannot guess your own clue", socket);
+            return;
+        }
         const result = await room.submitGuess(guesserUsername, guess, clueId);
 
         if (result.correct) {
@@ -223,4 +220,4 @@ const gameSocketController = {
     },
 };
 
-module.exports = gameSocketController;
+module.exports = gameEventsHandlers;

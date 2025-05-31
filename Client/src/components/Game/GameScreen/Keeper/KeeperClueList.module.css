@@ -1,87 +1,743 @@
+/* KeeperClueList.module.css */
+
+/* --- CSS Variables for easy theming --- */
+:root {
+    --primary-blue: #1976d2;
+    --primary-orange: #ff9800;
+    --primary-orange-light: #ffb74d;
+    --primary-orange-dark: #f57c00;
+    --primary-yellow: #ffc107;
+    --primary-yellow-light: #ffeaa7;
+    --primary-red: #d32f2f;
+    --primary-red-light: #ffcdd2;
+    --primary-red-dark: #c62828;
+    --background-light: #f8f9fa;
+    --background-block: #fff3cd;
+    --background-blocked: #ffebee;
+    --background-gradient: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    --background-gradient-blocked: linear-gradient(135deg, #ffcdd2, #f8bbd9);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Layout Containers --- */
 .keeperContainer {
-    padding: 1rem;
-    background-color: #fff5f0;
-    border-radius: 12px;
-    border: 1px solid #ffc6b0;
-}
-
-.heading,
-.subHeading {
-    margin-bottom: 0.5rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #333;
-    text-align: center;
-}
-
-.clueList,
-.blockedList {
-    list-style: none;
-    padding-left: 0;
-    margin-bottom: 1rem;
-}
-
-.clueItem {
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    color: #333;
-    background-color: #fff;
-    padding: 0.5rem;
-    border-radius: 8px;
-    border: 1px solid #eee;
-}
-
-.emptyItem {
-    text-align: center;
-    color: #aaa;
-    font-style: italic;
-    padding: 0.5rem;
-}
-
-.inputRow {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-}
-
-.guessInput {
-    flex: 1;
-    padding: 0.5rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-.blockButton {
-    padding: 0.5rem 1rem;
-    background-color: #ff7043;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.blockedItem {
-    padding: 0.5rem;
-    background-color: #ffeaea;
-    border-left: 4px solid #e53935;
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+/* --- Sections --- */
+.incomingSection {
+    background: #fffbe7;
+    border: 2px solid var(--primary-yellow-light);
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(255, 193, 7, 0.08);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    transition: box-shadow 0.2s;
+}
+
+.incomingSection:focus-within {
+    box-shadow: 0 6px 24px rgba(255, 193, 7, 0.18);
+}
+
+.blockedSection {
+    background: #f9eaea;
+    border: 2px solid var(--primary-red-light);
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.08);
+    padding: 1.5rem 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* --- Section Titles --- */
+.heading {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    display: flex;
     align-items: center;
+    gap: 0.5rem;
+}
+
+.heading::before {
+    content: "📥";
+    font-size: 1.2rem;
+}
+
+.subHeading {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #e65100;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.subHeading::before {
+    content: "🚫";
+    font-size: 1rem;
+}
+
+/* --- Empty state message --- */
+.emptyMessage {
     text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #f9f9f9, #f0f8f0);
+    border: 2px dashed #ccc;
+    border-radius: 16px;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* --- Scrollable clue list container --- */
+.scrollableClueList {
+    max-height: calc(var(--max-visible-items, 4) * 82px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-right: 8px;
+    margin-right: -8px;
+    margin-bottom: 1rem;
+
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
+
+    /* Custom scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: #4caf50 #f0f8f0;
+}
+
+.scrollableClueList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrollableClueList::-webkit-scrollbar-track {
+    background: #f0f8f0;
+    border-radius: 3px;
+}
+
+.scrollableClueList::-webkit-scrollbar-thumb {
+    background: #4caf50;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+}
+
+.scrollableClueList::-webkit-scrollbar-thumb:hover {
+    background: #45a049;
+}
+
+/* Remove the margin-bottom from the last child to prevent extra spacing */
+.scrollableClueList > :last-child {
+    margin-bottom: 0;
+}
+
+/* --- Clue Items --- */
+.clueItem {
+    background: #fffbe7;
+    border: 1px solid var(--primary-yellow-light);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.1);
+    margin-bottom: 0.75rem;
+    padding: 1.1rem 1.5rem 1.1rem 1.1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    position: relative;
+    transition: box-shadow 0.18s, transform 0.18s;
+}
+
+.clueItem::before {
+    content: "";
+    display: block;
+    width: 6px;
+    height: 80%;
+    background: var(--primary-yellow);
+    border-radius: 6px;
+    position: absolute;
+    left: 0.5rem;
+    top: 10%;
+}
+
+.clueItem:hover {
+    box-shadow: 0 6px 24px rgba(255, 193, 7, 0.18);
+    transform: translateY(-2px) scale(1.02);
+}
+
+.clueItem strong {
+    color: #b28704;
+    font-weight: 700;
+    margin-right: 0.5rem;
+    font-size: 1.08em;
+}
+
+/* Blocked Clue Item - Card style with red accent */
+.blockedClueItem {
+    background: var(--background-gradient-blocked);
+    border: 1px solid #e57373;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(230, 74, 25, 0.1);
+    margin-bottom: 0.75rem;
+    padding: 1.1rem 1.5rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    position: relative;
+    transition: box-shadow 0.18s, transform 0.18s;
+}
+
+.blockedClueItem::before {
+    content: "";
+    display: block;
+    width: 6px;
+    height: 80%;
+    background: var(--primary-red);
+    border-radius: 6px;
+    position: absolute;
+    left: 0.5rem;
+    top: 10%;
+}
+
+.blockedClueItem:hover {
+    box-shadow: 0 6px 24px rgba(230, 74, 25, 0.18);
+    transform: translateY(-2px) scale(1.02);
 }
 
 .blockedWord {
     font-weight: 700;
+    color: var(--primary-red-dark);
     font-size: 1.05rem;
-    color: #b71c1c;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.1rem;
 }
 
 .blockedDefinition {
+    color: #424242;
+    font-size: 0.97rem;
+    line-height: 1.4;
+    word-break: break-word;
+    margin-left: 0.2rem;
+    padding-left: 0.5rem;
+    border-left: 2px solid #ffcdd2;
+}
+
+/* --- Blocked section header (clickable) --- */
+.blockedHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    border: 2px solid #ffb74d;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    margin-bottom: 1rem;
+    user-select: none;
+}
+
+.blockedHeader:hover {
+    background: linear-gradient(135deg, #ffe0b2, #ffcc02);
+    border-color: #ff9800;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
+}
+
+.blockedHeader:active {
+    transform: translateY(0);
+}
+
+/* Toggle icon */
+.toggleIcon {
+    font-size: 0.9rem;
+    color: #e65100;
+    transition: transform 0.3s ease;
+    font-weight: bold;
+}
+
+.rotate {
+    transform: rotate(180deg);
+}
+
+/* --- Inputs and Buttons --- */
+.guessInput {
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--primary-yellow);
+    border-radius: 10px;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+    flex: 1;
+    min-width: 0;
+}
+
+.guessInput:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+}
+
+.guessInput::placeholder {
+    color: #999;
     font-style: italic;
-    font-size: 0.85rem;
-    color: #555;
-    margin-top: 0.2rem;
+}
+
+.inputRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.blockButton {
+    background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-light));
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+    min-height: 48px;
+    flex-shrink: 0;
+}
+
+.blockButton:hover {
+    background: linear-gradient(135deg, var(--primary-orange-dark), var(--primary-orange));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 152, 0, 0.4);
+}
+
+.blockButton:active {
+    transform: translateY(0);
+}
+
+.blockButton:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* --- Responsive Styles --- */
+@media (max-width: 480px) {
+    .keeperContainer {
+        gap: 0.75rem;
+    }
+
+    .incomingSection {
+        padding: 1.5rem 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .blockedSection {
+        padding: 1rem;
+    }
+
+    .heading {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .subHeading {
+        font-size: 1rem;
+    }
+
+    .emptyMessage {
+        padding: 1.5rem 0.75rem;
+        font-size: 0.95rem;
+        border-radius: 14px;
+    }
+
+    .scrollableClueList {
+        max-height: calc(var(--max-visible-items, 3) * 50px);
+        padding-right: 4px;
+        margin-right: -4px;
+    }
+
+    .scrollableClueList::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .clueItem,
+    .blockedClueItem {
+        padding: 0.8rem 1rem 0.8rem 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .blockedHeader {
+        padding: 0.6rem 0.75rem;
+        border-radius: 10px;
+        margin-bottom: 0.75rem;
+    }
+
+    .toggleIcon {
+        font-size: 0.8rem;
+    }
+
+    .inputRow {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .blockButton {
+        padding: 0.6rem 1rem;
+        min-height: 40px;
+        width: 100%;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .keeperContainer {
+        gap: 1.25rem;
+    }
+
+    .incomingSection {
+        padding: 1.75rem 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .blockedSection {
+        padding: 1.25rem;
+    }
+
+    .heading {
+        font-size: 1.15rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .subHeading {
+        font-size: 1.05rem;
+    }
+
+    .emptyMessage {
+        padding: 2.25rem 1.25rem;
+        font-size: 1.05rem;
+    }
+
+    .scrollableClueList {
+        max-height: calc(var(--max-visible-items, 4) * 62px);
+        padding-right: 6px;
+        margin-right: -6px;
+    }
+
+    .clueItem,
+    .blockedClueItem {
+        padding: 1rem 1.25rem 1rem 1rem;
+        font-size: 1rem;
+    }
+
+    .blockedHeader {
+        padding: 0.875rem 1.25rem;
+        border-radius: 14px;
+    }
+
+    .toggleIcon {
+        font-size: 1rem;
+    }
+
+    .inputRow {
+        gap: 1rem;
+    }
+
+    .guessInput {
+        padding: 0.875rem 1.125rem;
+        font-size: 1.05rem;
+    }
+
+    .blockButton {
+        padding: 0.875rem 1.75rem;
+        font-size: 1.05rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .keeperContainer {
+        gap: 2rem;
+    }
+
+    .incomingSection {
+        padding: 2rem 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .blockedSection {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .heading {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .subHeading {
+        font-size: 1.2rem;
+    }
+
+    .emptyMessage {
+        padding: 2.5rem 1.5rem;
+        font-size: 1.1rem;
+        border-radius: 18px;
+    }
+
+    .scrollableClueList {
+        max-height: calc(var(--max-visible-items, 4) * 82px);
+        padding-right: 8px;
+        margin-right: -8px;
+    }
+
+    .clueItem,
+    .blockedClueItem {
+        padding: 1.25rem 1.5rem 1.25rem 1.25rem;
+        font-size: 1.05rem;
+    }
+
+    .blockedHeader {
+        padding: 1rem 1.5rem;
+        border-radius: 16px;
+        margin-bottom: 1.25rem;
+    }
+
+    .toggleIcon {
+        font-size: 1.1rem;
+    }
+
+    .guessInput {
+        padding: 1rem 1.25rem;
+        font-size: 1.1rem;
+    }
+
+    .blockButton {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+
+    .blockedWord {
+        font-weight: 700;
+        color: var(--primary-red-dark);
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.2rem;
+        word-break: break-word;
+    }
+
+    .blockedDefinition {
+        color: #424242;
+        font-size: 0.98rem;
+        line-height: 1.4;
+        word-break: break-word;
+        margin-left: 0.5rem;
+        padding-left: 0.5rem;
+        border-left: 2px solid #ffcdd2;
+    }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+    .keeperContainer {
+        gap: 1rem;
+    }
+
+    .incomingSection {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .blockedSection {
+        padding: 0.75rem;
+    }
+
+    .heading {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .subHeading {
+        font-size: 1rem;
+    }
+
+    .emptyMessage {
+        padding: 1rem 0.75rem;
+    }
+
+    .scrollableClueList {
+        max-height: calc(var(--max-visible-items, 3) * 35px);
+    }
+
+    .clueItem,
+    .blockedClueItem {
+        padding: 0.5rem 0.75rem 0.5rem 0.5rem;
+    }
+
+    .blockedHeader {
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .blockButton {
+        padding: 0.6rem 1rem;
+        min-height: 40px;
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .heading {
+        color: #66bb6a;
+    }
+
+    .heading::before {
+        filter: brightness(1.2);
+    }
+
+    .subHeading {
+        color: #ffb74d;
+    }
+
+    .emptyMessage {
+        background: linear-gradient(135deg, #1e1e1e, #1a2e1a);
+        border-color: #555;
+        color: #b0b0b0;
+    }
+
+    .scrollableClueList {
+        scrollbar-color: #66bb6a #2a2a2a;
+    }
+
+    .scrollableClueList::-webkit-scrollbar-track {
+        background: #2a2a2a;
+    }
+
+    .scrollableClueList::-webkit-scrollbar-thumb {
+        background: #66bb6a;
+    }
+
+    .scrollableClueList::-webkit-scrollbar-thumb:hover {
+        background: #4a9f4d;
+    }
+
+    .incomingSection {
+        background: linear-gradient(135deg, #2a2a1a, #1a1a1a);
+        border-color: #4a4a4a;
+    }
+
+    .blockedSection {
+        background: linear-gradient(135deg, #2a1a1a, #1a1a1a);
+        border-color: #4a2a2a;
+    }
+
+    .blockedHeader {
+        background: linear-gradient(135deg, #2a2a2a, #3a2a1a);
+        border-color: #ff9800;
+    }
+
+    .blockedHeader:hover {
+        background: linear-gradient(135deg, #3a2a1a, #4a3a2a);
+        border-color: #ffb74d;
+    }
+
+    .toggleIcon {
+        color: #ffb74d;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .heading {
+        color: #000;
+    }
+
+    .subHeading {
+        color: #000;
+    }
+
+    .emptyMessage {
+        background: #fff;
+        border-color: #000;
+        color: #000;
+    }
+
+    .scrollableClueList::-webkit-scrollbar-thumb {
+        background: #000;
+    }
+
+    .scrollableClueList::-webkit-scrollbar-track {
+        background: #fff;
+        border: 1px solid #000;
+    }
+
+    .blockedHeader {
+        background: #fff;
+        border-color: #000;
+    }
+
+    .toggleIcon {
+        color: #000;
+    }
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .clueItem:hover,
+    .blockedClueItem:hover {
+        transform: none;
+    }
+
+    .blockButton:hover {
+        transform: none;
+    }
+
+    .blockedHeader:hover {
+        transform: none;
+    }
+
+    .blockedHeader:active {
+        transform: none;
+    }
+
+    .toggleIcon {
+        transition: none;
+    }
+
+    .rotate {
+        transform: none;
+    }
+
+    .scrollableClueList {
+        scroll-behavior: auto;
+    }
+}
+
+/* Focus indicators for keyboard navigation */
+.blockedHeader:focus-visible {
+    outline: 3px solid #4caf50;
+    outline-offset: 2px;
+}
+
+.guessInput:focus-visible {
+    outline: 3px solid #4caf50;
+    outline-offset: 2px;
+}
+
+.blockButton:focus-visible {
+    outline: 3px solid #4caf50;
+    outline-offset: 2px;
 }

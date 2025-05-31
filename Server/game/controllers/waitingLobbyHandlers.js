@@ -1,6 +1,6 @@
 const waitingLobbyManager = require("../managers/WaitingLobbyManager");
 const GameManager = require("../managers/GameManager");
-const messageEmitter = require("./MessageEmitter");
+const messageEmitter = require("../sockets/MessageEmitter");
 const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 
 module.exports = function waitingLobbyHandlers(io, socket) {

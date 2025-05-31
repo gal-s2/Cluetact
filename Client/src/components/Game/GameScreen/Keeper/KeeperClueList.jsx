@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import socket from "../../../../services/socket";
 import styles from "./KeeperClueList.module.css";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
-function KeeperClueList({ clues }) {
+function KeeperClueList({ clues, maxVisibleItems = 4 }) {
     const [guess, setGuess] = useState("");
+    const [showBlocked, setShowBlocked] = useState(true);
+    const unblockedListRef = useRef(null);
+    const blockedListRef = useRef(null);
 
     const handleSubmit = () => {
         if (guess.trim()) {
@@ -16,43 +19,60 @@ function KeeperClueList({ clues }) {
     const unblockedClues = clues.filter((clue) => !clue.blocked);
     const blockedClues = clues.filter((clue) => clue.blocked);
 
+    // Set CSS custom properties for dynamic height calculation
+    useEffect(() => {
+        if (unblockedListRef.current) {
+            unblockedListRef.current.style.setProperty("--max-visible-items", maxVisibleItems);
+        }
+        if (blockedListRef.current) {
+            blockedListRef.current.style.setProperty("--max-visible-items", maxVisibleItems);
+        }
+    }, [maxVisibleItems]);
+
+    // Auto-scroll to bottom when new clues arrive
+    useEffect(() => {
+        if (unblockedListRef.current) {
+            unblockedListRef.current.scrollTop = unblockedListRef.current.scrollHeight;
+        }
+    }, [unblockedClues]);
+
     return (
         <div className={styles.keeperContainer}>
-            <h4 className={styles.heading}>Incoming Clues</h4>
-            <ul className={styles.clueList}>
+            <div className={styles.incomingSection}>
+                <h4 className={styles.heading}>Incoming Clues</h4>
                 {unblockedClues.length === 0 ? (
-                    <li className={styles.emptyItem}>No new clues yet.</li>
+                    <p className={styles.emptyMessage}>No new clues yet.</p>
                 ) : (
-                    unblockedClues.map((clue, index) => (
-                        <li key={index} className={styles.clueItem}>
-                            <strong>{clue.from}:</strong> {clue.definition}
-                        </li>
-                    ))
-                )}
-            </ul>
-
-            {unblockedClues.length > 0 && (
-                <div className={styles.inputRow}>
-                    <input type="text" placeholder="Try to block a clue..." value={guess} onChange={(e) => setGuess(e.target.value)} className={styles.guessInput} />
-                    <button onClick={handleSubmit} className={styles.blockButton}>
-                        Block
-                    </button>
-                </div>
-            )}
-
-            {blockedClues.length > 0 && (
-                <>
-                    <h4 className={styles.subHeading}>Blocked Clues</h4>
-                    <ul className={styles.blockedList}>
-                        {blockedClues.map((clue, index) => (
-                            <li key={index} className={styles.blockedItem}>
-                                <span className={styles.blockedWord}>{clue.word?.toUpperCase() || "?"}</span>
-                                <span className={styles.blockedDefinition}>{clue.definition}</span>
-                            </li>
+                    <div ref={unblockedListRef} className={styles.scrollableClueList} data-clue-count={unblockedClues.length}>
+                        {unblockedClues.map((clue, index) => (
+                            <div key={index} className={styles.clueItem}>
+                                <strong>{clue.from}:</strong> {clue.definition}
+                            </div>
                         ))}
-                    </ul>
-                </>
-            )}
+                    </div>
+                )}
+                {unblockedClues.length > 0 && (
+                    <div className={styles.inputRow}>
+                        <input
+                            type="text"
+                            placeholder="Try to block a clue..."
+                            value={guess}
+                            onChange={(e) => setGuess(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    if (!guess.trim()) return;
+                                    handleSubmit();
+                                }
+                            }}
+                            className={styles.guessInput}
+                        />
+                        <button onClick={handleSubmit} className={styles.blockButton} disabled={!guess.trim()}>
+                            Block
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

@@ -6,17 +6,16 @@ import SOCKET_EVENTS from "@shared/socketEvents.json";
 const WORD_MAX_LENGTH = 20;
 const DEFINITION_MAX_LENGTH = 100;
 
-function SubmitClue({ revealedPrefix }) {
+function SubmitClue({ revealedPrefix, setNotification }) {
     const [definition, setDefinition] = useState("");
     const [word, setWord] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!word.toLowerCase().startsWith(revealedPrefix.toLowerCase())) {
-            alert(`Word must start with: ${revealedPrefix}`);
+            setNotification(`Word must start with "${revealedPrefix}"`);
             return;
         }
-
         socket.emit(SOCKET_EVENTS.CLIENT_SUBMIT_CLUE, { definition, word });
         setDefinition("");
         setWord("");
@@ -39,7 +38,7 @@ function SubmitClue({ revealedPrefix }) {
                 {word.length} / {WORD_MAX_LENGTH} characters
             </div>
 
-            <textarea className={styles.textarea} value={definition} onChange={(e) => onChangeDefinition(e.target.value)} placeholder="Enter your definition" maxLength={100} />
+            <textarea className={styles.textarea} value={definition} onChange={(e) => onChangeDefinition(e.target.value)} placeholder="Enter your definition" maxLength={DEFINITION_MAX_LENGTH} />
             <div className={styles.charCount}>
                 {definition.length} / {DEFINITION_MAX_LENGTH} characters
             </div>

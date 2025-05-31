@@ -2,8 +2,8 @@ const socketManager = require("../managers/SocketManager");
 
 const { socketLogger } = require("../../utils/logger");
 const { verifyToken } = require("../../utils/jwt");
-const waitingLobbyHandlers = require("./waitingLobbyHandlers");
-const gameSocketController = require("../controllers/gameSocketController");
+const waitingLobbyHandlers = require("../controllers/waitingLobbyHandlers");
+const gameEventsHandlers = require("../controllers/gameEventsHandlers");
 const messageEmitter = require("./MessageEmitter");
 const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 const GameManager = require("../managers/GameManager");
@@ -46,19 +46,19 @@ module.exports = function (io) {
             reconnect(socket);
         });
 
-        socket.on(SOCKET_EVENTS.CLIENT_FIND_GAME, (args) => gameSocketController.handleJoinQueue(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_FIND_GAME, (args) => gameEventsHandlers.handleJoinQueue(socket, args));
 
-        socket.on(SOCKET_EVENTS.CLIENT_JOIN_ROOM, (args) => gameSocketController.handleJoinRoom(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_JOIN_ROOM, (args) => gameEventsHandlers.handleJoinRoom(socket, args));
 
-        socket.on(SOCKET_EVENTS.CLIENT_KEEPER_WORD_SUBMISSION, (args) => gameSocketController.handleKeeperWordSubmission(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_KEEPER_WORD_SUBMISSION, (args) => gameEventsHandlers.handleKeeperWordSubmission(socket, args));
 
-        socket.on(SOCKET_EVENTS.CLIENT_SUBMIT_CLUE, (args) => gameSocketController.handleSubmitClue(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_SUBMIT_CLUE, (args) => gameEventsHandlers.handleSubmitClue(socket, args));
 
-        socket.on(SOCKET_EVENTS.CLIENT_TRY_CLUETACT, (args) => gameSocketController.handleTryCluetact(socket, args));
-        socket.on(SOCKET_EVENTS.CLIENT_TRY_BLOCK_CLUE, (args) => gameSocketController.handleTryBlockClue(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_TRY_CLUETACT, (args) => gameEventsHandlers.handleTryCluetact(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_TRY_BLOCK_CLUE, (args) => gameEventsHandlers.handleTryBlockClue(socket, args));
 
-        socket.on(SOCKET_EVENTS.CLIENT_EXIT_ROOM, () => gameSocketController.handleExitRoom(socket));
+        socket.on(SOCKET_EVENTS.CLIENT_EXIT_ROOM, () => gameEventsHandlers.handleExitRoom(socket));
 
-        socket.on(SOCKET_EVENTS.CLIENT_DISCONNECT, (args) => gameSocketController.disconnect(socket, args));
+        socket.on(SOCKET_EVENTS.CLIENT_DISCONNECT, (args) => gameEventsHandlers.disconnect(socket, args));
     });
 };

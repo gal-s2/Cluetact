@@ -1,57 +1,373 @@
+/* ClueBubble - Individual clue display */
 .bubble {
-    background-color: #fff;
-    border: 2px solid #e0e0e0;
+    background: white;
+    border: 2px solid #e8f5e8;
     border-radius: 16px;
-    padding: 0.9rem 1.2rem;
-    max-width: 80%;
-    align-self: flex-start;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
     cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.2s ease;
-    word-wrap: break-word;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    position: relative;
+    line-height: 1.5;
+    font-size: 0.95rem;
 }
 
 .bubble:hover {
-    background-color: #f0f8ff;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.15);
+    border-color: #81c784;
+    background: linear-gradient(135deg, #ffffff, #f8fff9);
 }
 
-.bubble.blocked {
-    background-color: #ffe6e6;
-    border-color: #e53935;
-    color: #b71c1c;
-    cursor: not-allowed;
-    opacity: 1;
+.bubble:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.2);
 }
 
 .bubble strong {
-    color: #444;
+    color: #2e7d32;
+    font-weight: 700;
     margin-right: 0.5rem;
 }
 
+/* Selected bubble styling */
+.selected {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border-color: #2196f3;
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.2);
+    transform: translateY(-2px);
+}
+
+.selected:hover {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border-color: #1976d2;
+    box-shadow: 0 8px 24px rgba(33, 150, 243, 0.3);
+}
+
+.selected strong {
+    color: #1976d2;
+}
+
+/* Selected icon */
+.selectedIcon {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #2196f3;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+    z-index: 1;
+}
+
+/* Blocked bubble styling */
+.blocked {
+    background: linear-gradient(135deg, #ffebee, #fce4ec);
+    border-color: #ef5350;
+    cursor: default;
+    opacity: 0.8;
+}
+
+.blocked:hover {
+    transform: none;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    border-color: #ef5350;
+    background: linear-gradient(135deg, #ffebee, #fce4ec);
+}
+
+.blocked strong {
+    color: #c62828;
+}
+
+/* Block icon */
 .blockIcon {
-    margin-right: 0.5rem;
-    font-size: 1rem;
-    vertical-align: middle;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #f44336;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+    z-index: 1;
 }
 
+/* Blocked content layout */
 .blockedContent {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-top: 0.3rem;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
 }
 
 .blockedWord {
+    font-family: "Courier New", "Monaco", monospace;
     font-weight: 700;
-    color: #b71c1c;
-    font-size: 1.1rem;
+    color: #c62828;
+    background: rgba(198, 40, 40, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    align-self: flex-start;
+    border: 1px solid rgba(198, 40, 40, 0.2);
 }
 
 .definition {
-    font-size: 0.9rem;
-    color: #555;
-    margin-top: 0.2rem;
-    padding-left: 0.1rem;
+    color: #666;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+.blocked .definition {
+    color: #8e24aa;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .bubble {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 14px;
+        margin-bottom: 0.6rem;
+    }
+
+    .bubble strong {
+        display: block;
+        margin-bottom: 0.25rem;
+        margin-right: 0;
+    }
+
+    .blockIcon,
+    .selectedIcon {
+        width: 20px;
+        height: 20px;
+        font-size: 0.6rem;
+        top: -6px;
+        right: -6px;
+    }
+
+    .selectedIcon {
+        font-size: 0.7rem;
+    }
+
+    .blockedWord {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.4rem;
+    }
+}
+
+/* Small mobile screens */
+@media (max-width: 360px) {
+    .bubble {
+        padding: 0.75rem 0.875rem;
+        font-size: 0.85rem;
+    }
+
+    .blockedContent {
+        gap: 0.4rem;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 481px) and (max-width: 768px) {
+    .bubble {
+        padding: 1.125rem 1.375rem;
+        font-size: 1rem;
+        border-radius: 18px;
+    }
+
+    .blockIcon,
+    .selectedIcon {
+        width: 26px;
+        height: 26px;
+        font-size: 0.75rem;
+        top: -10px;
+        right: -10px;
+    }
+
+    .selectedIcon {
+        font-size: 0.85rem;
+    }
+}
+
+/* Desktop adjustments */
+@media (min-width: 769px) {
+    .bubble {
+        padding: 1.25rem 1.5rem;
+        font-size: 1.05rem;
+        margin-bottom: 1rem;
+    }
+
+    .blockedContent {
+        gap: 0.75rem;
+    }
+
+    .blockedWord {
+        font-size: 0.9rem;
+        padding: 0.3rem 0.6rem;
+    }
+}
+
+/* Mobile landscape optimization */
+@media (max-height: 600px) and (orientation: landscape) {
+    .bubble {
+        padding: 0.6rem 1rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .blockedContent {
+        gap: 0.3rem;
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .bubble {
+        background: #2a2a2a;
+        border-color: #404040;
+        color: #f0f0f0;
+    }
+
+    .bubble:hover {
+        background: linear-gradient(135deg, #2a2a2a, #1a2e1a);
+        border-color: #4a9f4d;
+    }
+
+    .bubble strong {
+        color: #66bb6a;
+    }
+
+    .selected {
+        background: linear-gradient(135deg, #1a2a3a, #2a1a3a);
+        border-color: #64b5f6;
+    }
+
+    .selected:hover {
+        background: linear-gradient(135deg, #1a2a3a, #2a1a3a);
+        border-color: #42a5f5;
+    }
+
+    .selected strong {
+        color: #64b5f6;
+    }
+
+    .selectedIcon {
+        background: #2196f3;
+    }
+
+    .blocked {
+        background: linear-gradient(135deg, #2a1f1f, #2e1a1a);
+        border-color: #ef5350;
+    }
+
+    .blocked:hover {
+        background: linear-gradient(135deg, #2a1f1f, #2e1a1a);
+        border-color: #ef5350;
+    }
+
+    .blocked strong {
+        color: #ef5350;
+    }
+
+    .blockIcon {
+        background: #f44336;
+    }
+
+    .blockedWord {
+        background: rgba(239, 83, 80, 0.2);
+        border-color: rgba(239, 83, 80, 0.3);
+        color: #ef5350;
+    }
+
+    .definition {
+        color: #b0b0b0;
+    }
+
+    .blocked .definition {
+        color: #ce93d8;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .bubble {
+        transition: none;
+    }
+
+    .bubble:hover {
+        transform: none;
+    }
+
+    .bubble:active {
+        transform: none;
+    }
+
+    .selected {
+        transform: none;
+    }
+
+    .selected:hover {
+        transform: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .bubble {
+        border-width: 3px;
+        border-color: #000;
+    }
+
+    .bubble:hover {
+        border-color: #4caf50;
+    }
+
+    .selected {
+        border-color: #0066cc;
+    }
+
+    .selected:hover {
+        border-color: #0052a3;
+    }
+
+    .blocked {
+        border-color: #f44336;
+    }
+
+    .bubble strong {
+        color: #000;
+    }
+
+    .selected strong {
+        color: #0066cc;
+    }
+
+    .blocked strong {
+        color: #f44336;
+    }
+}
+
+/* Focus indicators for keyboard navigation */
+.bubble:focus-visible {
+    outline: 3px solid #4caf50;
+    outline-offset: 2px;
+}
+
+.selected:focus-visible {
+    outline-color: #2196f3;
 }
