@@ -1,0 +1,496 @@
+/* GuessActionLine - Inline guess submission */
+.actionLine {
+    width: 100%;
+    max-width: 600px;
+    margin: 1.5rem auto 0;
+    padding: 1rem;
+    background: white;
+    border: 2px solid #e3f2fd;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.inputSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.input {
+    padding: 0.875rem 1.25rem;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: white;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 48px;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    background: #fafafa;
+}
+
+.input:disabled {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+.selectedClueInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #e8f5e9, #f3e5f5);
+    border: 2px solid #81c784;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+}
+
+.selectedLabel {
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.selectedClue {
+    font-style: italic;
+    color: #444;
+    flex: 1;
+    word-break: break-word;
+}
+
+.clearButton {
+    background: #ef5350;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.clearButton:hover {
+    background: #e53935;
+    transform: scale(1.1);
+}
+
+.clearButton:active {
+    transform: scale(0.95);
+}
+
+.actionSection {
+    display: flex;
+    justify-content: center;
+}
+
+.guessButton {
+    padding: 0.875rem 2rem;
+    background: linear-gradient(135deg, #4caf50, #66bb6a);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 48px;
+    min-width: 120px;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.guessButton:hover:not(:disabled) {
+    background: linear-gradient(135deg, #45a049, #4caf50);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+.guessButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.guessButton:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.instruction {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin: 0;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .actionLine {
+        margin: 1rem auto 0;
+        padding: 0.875rem;
+        border-radius: 14px;
+    }
+
+    .container {
+        gap: 0.875rem;
+    }
+
+    .form {
+        gap: 0.875rem;
+    }
+
+    .inputSection {
+        gap: 0.6rem;
+    }
+
+    .input {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        min-height: 44px;
+    }
+
+    .selectedClueInfo {
+        padding: 0.6rem 0.875rem;
+        font-size: 0.85rem;
+        gap: 0.4rem;
+    }
+
+    .clearButton {
+        width: 20px;
+        height: 20px;
+        font-size: 1rem;
+    }
+
+    .guessButton {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+        min-height: 44px;
+        min-width: 100px;
+    }
+
+    .instruction {
+        font-size: 0.85rem;
+        padding: 0.4rem;
+    }
+}
+
+/* Small mobile screens */
+@media (max-width: 360px) {
+    .actionLine {
+        padding: 0.75rem;
+    }
+
+    .selectedClueInfo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .selectedClue {
+        flex: none;
+        width: 100%;
+    }
+
+    .clearButton {
+        align-self: flex-end;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 481px) and (max-width: 768px) {
+    .actionLine {
+        margin: 1.75rem auto 0;
+        padding: 1.25rem;
+    }
+
+    .form {
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 1.25rem;
+    }
+
+    .inputSection {
+        flex: 1;
+    }
+
+    .actionSection {
+        flex-shrink: 0;
+    }
+
+    .input {
+        font-size: 1.05rem;
+    }
+
+    .selectedClueInfo {
+        font-size: 0.95rem;
+    }
+
+    .guessButton {
+        font-size: 1.05rem;
+        padding: 0.875rem 2.25rem;
+    }
+
+    .instruction {
+        font-size: 0.95rem;
+    }
+}
+
+/* Desktop adjustments */
+@media (min-width: 769px) {
+    .actionLine {
+        margin: 2rem auto 0;
+        padding: 1.5rem;
+        max-width: 700px;
+    }
+
+    .form {
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 1.5rem;
+    }
+
+    .inputSection {
+        flex: 1;
+    }
+
+    .actionSection {
+        flex-shrink: 0;
+    }
+
+    .input {
+        font-size: 1.1rem;
+        padding: 1rem 1.5rem;
+    }
+
+    .selectedClueInfo {
+        font-size: 1rem;
+        padding: 0.875rem 1.25rem;
+    }
+
+    .clearButton {
+        width: 26px;
+        height: 26px;
+        font-size: 1.3rem;
+    }
+
+    .guessButton {
+        font-size: 1.1rem;
+        padding: 1rem 2.5rem;
+        min-width: 140px;
+    }
+
+    .instruction {
+        font-size: 1rem;
+    }
+}
+
+/* Mobile landscape optimization */
+@media (max-height: 600px) and (orientation: landscape) {
+    .actionLine {
+        margin: 0.75rem auto 0;
+        padding: 0.75rem;
+    }
+
+    .container {
+        gap: 0.5rem;
+    }
+
+    .form {
+        gap: 0.75rem;
+    }
+
+    .inputSection {
+        gap: 0.5rem;
+    }
+
+    .input {
+        padding: 0.6rem 1rem;
+        min-height: 40px;
+    }
+
+    .selectedClueInfo {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .guessButton {
+        padding: 0.6rem 1.25rem;
+        min-height: 40px;
+        font-size: 0.9rem;
+    }
+
+    .instruction {
+        font-size: 0.8rem;
+        padding: 0.25rem;
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .actionLine {
+        background: #2a2a2a;
+        border-color: #404040;
+    }
+
+    .input {
+        background: #1a1a1a;
+        border-color: #555;
+        color: #f0f0f0;
+    }
+
+    .input:focus {
+        border-color: #64b5f6;
+        background: #2a2a2a;
+    }
+
+    .input:disabled {
+        background: #333;
+        color: #888;
+    }
+
+    .input::placeholder {
+        color: #888;
+    }
+
+    .selectedClueInfo {
+        background: linear-gradient(135deg, #1a2e1a, #2e1a2e);
+        border-color: #4a9f4d;
+    }
+
+    .selectedLabel {
+        color: #66bb6a;
+    }
+
+    .selectedClue {
+        color: #e0e0e0;
+    }
+
+    .clearButton {
+        background: #ef5350;
+    }
+
+    .clearButton:hover {
+        background: #e53935;
+    }
+
+    .guessButton {
+        background: linear-gradient(135deg, #4a9f4d, #66bb6a);
+    }
+
+    .guessButton:hover:not(:disabled) {
+        background: linear-gradient(135deg, #45a049, #4a9f4d);
+    }
+
+    .guessButton:disabled {
+        background: #555;
+    }
+
+    .instruction {
+        color: #b0b0b0;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .input,
+    .clearButton,
+    .guessButton {
+        transition: none;
+    }
+
+    .clearButton:hover {
+        transform: none;
+    }
+
+    .clearButton:active {
+        transform: none;
+    }
+
+    .guessButton:hover:not(:disabled) {
+        transform: none;
+    }
+
+    .guessButton:active:not(:disabled) {
+        transform: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .actionLine {
+        border-width: 3px;
+        border-color: #000;
+    }
+
+    .input {
+        border-width: 3px;
+        border-color: #000;
+    }
+
+    .input:focus {
+        border-color: #0066cc;
+    }
+
+    .selectedClueInfo {
+        border-width: 3px;
+        border-color: #4caf50;
+    }
+
+    .selectedLabel {
+        color: #000;
+    }
+
+    .selectedClue {
+        color: #000;
+    }
+
+    .guessButton {
+        background: #4caf50;
+        border: 3px solid #000;
+    }
+
+    .guessButton:disabled {
+        background: #ccc;
+        border-color: #666;
+    }
+}
+
+/* Focus indicators for keyboard navigation */
+.input:focus-visible,
+.clearButton:focus-visible,
+.guessButton:focus-visible {
+    outline: 3px solid #2196f3;
+    outline-offset: 2px;
+}

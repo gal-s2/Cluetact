@@ -6,14 +6,15 @@ import SOCKET_EVENTS from "@shared/socketEvents.json";
 const WORD_MAX_LENGTH = 20;
 const DEFINITION_MAX_LENGTH = 100;
 
-function SubmitClue({ revealedPrefix }) {
+function SubmitClue({ revealedPrefix, setNotification }) {
     const [definition, setDefinition] = useState("");
     const [word, setWord] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log("prefix is ", revealedPrefix, " word is ", word, " definition is ", definition);
         if (!word.toLowerCase().startsWith(revealedPrefix.toLowerCase())) {
-            alert(`Word must start with: ${revealedPrefix}`);
+            setNotification(`Word must start with "${revealedPrefix}"`);
             return;
         }
 

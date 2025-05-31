@@ -82,7 +82,12 @@ class Room {
         }
     }
 
-    startNewClueRound(clueGiverId, clueWord, clueDefinition) {
+    async startNewClueRound(clueGiverId, clueWord, clueDefinition) {
+        const valid = await isValidEnglishWord(clueWord);
+        if (!valid) {
+            Logger.logInvalidSeekerWord(this.roomId, clueWord);
+            return false;
+        }
         if (!this.currentRound.keeperWord) {
             Logger.logCannotClueWithoutKeeperWord(this.roomId);
             return false;

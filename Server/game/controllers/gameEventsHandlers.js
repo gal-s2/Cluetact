@@ -5,7 +5,7 @@ const messageEmitter = require("../sockets/MessageEmitter");
 const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 const { ROLES } = require("../constants");
 
-const gameSocketController = {
+const gameEventsHandlers = {
     handleJoinQueue: async (socket, args) => {
         // const { username } = args;
         let room;
@@ -92,12 +92,12 @@ const gameSocketController = {
         }
     },
 
-    handleSubmitClue: (socket, { definition, word }) => {
+    handleSubmitClue: async (socket, { definition, word }) => {
         const room = gameManager.getRoomBySocket(socket);
         if (!room) return;
 
         const username = socket.user.username;
-        const success = room.startNewClueRound(username, word, definition);
+        const success = await room.startNewClueRound(username, word, definition);
         if (success) {
             const addedClue = room.currentRound.clues.at(-1);
             messageEmitter.emitToKeeper(
@@ -115,13 +115,7 @@ const gameSocketController = {
                 }
             }
         } else {
-            messageEmitter.emitToSocket(
-                SOCKET_EVENTS.SERVER_CLUE_REJECTED,
-                {
-                    message: "Invalid clue or word already used.",
-                },
-                socket
-            );
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_CLUE_REJECTED, null, socket);
         }
     },
 
@@ -221,4 +215,4 @@ const gameSocketController = {
     },
 };
 
-module.exports = gameSocketController;
+module.exports = gameEventsHandlers;

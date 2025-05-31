@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import ClueBubble from "./ClueBubble";
 import styles from "./SeekerClueSection.module.css";
 
-function SeekerClueSection({ clues, onGuess, maxVisibleItems = 4 }) {
+function SeekerClueSection({ clues, onClueSelect, selectedClue, maxVisibleItems = 4 }) {
     const activeClues = clues.filter((clue) => !clue.blocked);
     const blockedClues = clues.filter((clue) => clue.blocked);
     const [showBlocked, setShowBlocked] = useState(true);
@@ -25,6 +25,15 @@ function SeekerClueSection({ clues, onGuess, maxVisibleItems = 4 }) {
         }
     }, [activeClues]);
 
+    const handleClueClick = (clue) => {
+        // Toggle selection: if already selected, deselect; otherwise select this one
+        if (selectedClue && selectedClue.id === clue.id) {
+            onClueSelect(null);
+        } else {
+            onClueSelect(clue);
+        }
+    };
+
     return (
         <div className={styles.clueSection}>
             <h3 className={styles.heading}>Clues in Play</h3>
@@ -33,7 +42,14 @@ function SeekerClueSection({ clues, onGuess, maxVisibleItems = 4 }) {
             ) : (
                 <div ref={activeListRef} className={styles.scrollableClueList} data-clue-count={activeClues.length}>
                     {activeClues.map((clue) => (
-                        <ClueBubble key={clue.id} from={clue.from} definition={clue.definition} blocked={clue.blocked} onGuess={() => onGuess(clue)} />
+                        <ClueBubble
+                            key={clue.id}
+                            from={clue.from}
+                            definition={clue.definition}
+                            blocked={clue.blocked}
+                            selected={selectedClue && selectedClue.id === clue.id}
+                            onGuess={() => handleClueClick(clue)}
+                        />
                     ))}
                 </div>
             )}
@@ -54,7 +70,7 @@ function SeekerClueSection({ clues, onGuess, maxVisibleItems = 4 }) {
                     >
                         <div ref={blockedListRef} className={styles.scrollableClueList} data-clue-count={blockedClues.length}>
                             {blockedClues.map((clue) => (
-                                <ClueBubble key={clue.id} from={clue.from} definition={clue.definition} word={clue.word} blocked={clue.blocked} onGuess={() => {}} />
+                                <ClueBubble key={clue.id} from={clue.from} definition={clue.definition} word={clue.word} blocked={clue.blocked} selected={false} onGuess={() => {}} />
                             ))}
                         </div>
                     </div>

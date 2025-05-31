@@ -31,6 +31,43 @@
     margin-right: 0.5rem;
 }
 
+/* Selected bubble styling */
+.selected {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border-color: #2196f3;
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.2);
+    transform: translateY(-2px);
+}
+
+.selected:hover {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border-color: #1976d2;
+    box-shadow: 0 8px 24px rgba(33, 150, 243, 0.3);
+}
+
+.selected strong {
+    color: #1976d2;
+}
+
+/* Selected icon */
+.selectedIcon {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #2196f3;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+    z-index: 1;
+}
+
 /* Blocked bubble styling */
 .blocked {
     background: linear-gradient(135deg, #ffebee, #fce4ec);
@@ -114,12 +151,17 @@
         margin-right: 0;
     }
 
-    .blockIcon {
+    .blockIcon,
+    .selectedIcon {
         width: 20px;
         height: 20px;
         font-size: 0.6rem;
         top: -6px;
         right: -6px;
+    }
+
+    .selectedIcon {
+        font-size: 0.7rem;
     }
 
     .blockedWord {
@@ -148,12 +190,17 @@
         border-radius: 18px;
     }
 
-    .blockIcon {
+    .blockIcon,
+    .selectedIcon {
         width: 26px;
         height: 26px;
         font-size: 0.75rem;
         top: -10px;
         right: -10px;
+    }
+
+    .selectedIcon {
+        font-size: 0.85rem;
     }
 }
 
@@ -205,6 +252,24 @@
         color: #66bb6a;
     }
 
+    .selected {
+        background: linear-gradient(135deg, #1a2a3a, #2a1a3a);
+        border-color: #64b5f6;
+    }
+
+    .selected:hover {
+        background: linear-gradient(135deg, #1a2a3a, #2a1a3a);
+        border-color: #42a5f5;
+    }
+
+    .selected strong {
+        color: #64b5f6;
+    }
+
+    .selectedIcon {
+        background: #2196f3;
+    }
+
     .blocked {
         background: linear-gradient(135deg, #2a1f1f, #2e1a1a);
         border-color: #ef5350;
@@ -251,6 +316,14 @@
     .bubble:active {
         transform: none;
     }
+
+    .selected {
+        transform: none;
+    }
+
+    .selected:hover {
+        transform: none;
+    }
 }
 
 /* High contrast mode */
@@ -264,12 +337,24 @@
         border-color: #4caf50;
     }
 
+    .selected {
+        border-color: #0066cc;
+    }
+
+    .selected:hover {
+        border-color: #0052a3;
+    }
+
     .blocked {
         border-color: #f44336;
     }
 
     .bubble strong {
         color: #000;
+    }
+
+    .selected strong {
+        color: #0066cc;
     }
 
     .blocked strong {
@@ -281,4 +366,8 @@
 .bubble:focus-visible {
     outline: 3px solid #4caf50;
     outline-offset: 2px;
+}
+
+.selected:focus-visible {
+    outline-color: #2196f3;
 }
