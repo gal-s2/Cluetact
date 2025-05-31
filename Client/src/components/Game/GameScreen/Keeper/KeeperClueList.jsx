@@ -73,32 +73,6 @@ function KeeperClueList({ clues, maxVisibleItems = 4 }) {
                     </div>
                 )}
             </div>
-
-            {blockedClues.length > 0 && (
-                <div className={styles.blockedSection}>
-                    <div className={styles.blockedHeader} onClick={() => setShowBlocked((prev) => !prev)}>
-                        <h4 className={styles.subHeading}>Blocked Clues</h4>
-                        <span className={`${styles.toggleIcon} ${showBlocked ? styles.rotate : ""}`}>▼</span>
-                    </div>
-                    <div
-                        style={{
-                            maxHeight: showBlocked ? "1000px" : "0px",
-                            opacity: showBlocked ? 1 : 0,
-                            transition: "max-height 0.3s ease, opacity 0.3s ease",
-                            overflow: "hidden",
-                        }}
-                    >
-                        <div ref={blockedListRef} className={styles.scrollableClueList} data-clue-count={blockedClues.length}>
-                            {blockedClues.map((clue, index) => (
-                                <div key={index} className={styles.blockedClueItem}>
-                                    <span className={styles.blockedWord}>{clue.word?.toUpperCase() || "?"}</span>
-                                    <span className={styles.blockedDefinition}>{clue.definition}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

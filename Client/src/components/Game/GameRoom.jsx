@@ -14,6 +14,7 @@ import CluetactPopup from "./Modals/CluetactPopup";
 import ProfileModal from "./Modals/ProfileModal";
 import useGameRoomSocket from "../../hooks/useGameRoomSocket";
 import SeekerClueSection from "./GameScreen/Seeker/SeekerClueSection";
+import BlockedCluesSection from "./GameScreen/BlockedClues/BlockedCluesSection";
 import GuessActionLine from "./GameScreen/Seeker/GuessActionLine";
 import GameOverPopup from "./Modals/GameOverPopup";
 import FloatingLetters from "../Animations/FloatingLetters/FloatingLetters";
@@ -110,6 +111,8 @@ function GameRoom() {
                     )}
                     {gameState.isKeeper && <KeeperClueList clues={gameState.clues} />}
                 </div>
+
+                <BlockedCluesSection clues={gameState.clues} maxVisibleItems={5} />
 
                 <FloatingLetters />
             </div>

@@ -53,29 +53,6 @@ function SeekerClueSection({ clues, onClueSelect, selectedClue, maxVisibleItems 
                     ))}
                 </div>
             )}
-
-            {blockedClues.length > 0 && (
-                <div className={styles.blockedSection}>
-                    <div className={styles.blockedHeader} onClick={() => setShowBlocked((prev) => !prev)}>
-                        <h4 className={styles.subHeading}>Blocked Clues</h4>
-                        <span className={`${styles.toggleIcon} ${showBlocked ? styles.rotate : ""}`}>▼</span>
-                    </div>
-                    <div
-                        style={{
-                            maxHeight: showBlocked ? "1000px" : "0px",
-                            opacity: showBlocked ? 1 : 0,
-                            transition: "max-height 0.3s ease, opacity 0.3s ease",
-                            overflow: "hidden",
-                        }}
-                    >
-                        <div ref={blockedListRef} className={styles.scrollableClueList} data-clue-count={blockedClues.length}>
-                            {blockedClues.map((clue) => (
-                                <ClueBubble key={clue.id} from={clue.from} definition={clue.definition} word={clue.word} blocked={clue.blocked} selected={false} onGuess={() => {}} />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

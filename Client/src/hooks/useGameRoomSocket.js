@@ -98,6 +98,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
                 ...prev,
                 clues: prev.clues.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true, word } : clue)),
             }));
+            if (!gameState.isKeeper) setNotification(`The keeper blocked "${from}" by guessing the word "${word}"`);
         });
 
         socket.on(SOCKET_EVENTS.SERVER_CLUE_REJECTED, () => {
