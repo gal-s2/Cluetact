@@ -12,12 +12,10 @@ function SubmitClue({ revealedPrefix, setNotification }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("prefix is ", revealedPrefix, " word is ", word, " definition is ", definition);
         if (!word.toLowerCase().startsWith(revealedPrefix.toLowerCase())) {
             setNotification(`Word must start with "${revealedPrefix}"`);
             return;
         }
-
         socket.emit(SOCKET_EVENTS.CLIENT_SUBMIT_CLUE, { definition, word });
         setDefinition("");
         setWord("");
@@ -40,7 +38,7 @@ function SubmitClue({ revealedPrefix, setNotification }) {
                 {word.length} / {WORD_MAX_LENGTH} characters
             </div>
 
-            <textarea className={styles.textarea} value={definition} onChange={(e) => onChangeDefinition(e.target.value)} placeholder="Enter your definition" maxLength={100} />
+            <textarea className={styles.textarea} value={definition} onChange={(e) => onChangeDefinition(e.target.value)} placeholder="Enter your definition" maxLength={DEFINITION_MAX_LENGTH} />
             <div className={styles.charCount}>
                 {definition.length} / {DEFINITION_MAX_LENGTH} characters
             </div>

@@ -8,7 +8,7 @@ import PlayerCard from "./GameScreen/Player/PlayerCard";
 import Spinner from "../Routes/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./GameScreen/Keeper/KeeperWordPopup";
-import SubmitClue from "./GameScreen/Player/SubmitClue";
+import SubmitClue from "./GameScreen/Seeker/SubmitClue";
 import KeeperClueList from "./GameScreen/Keeper/KeeperClueList";
 import CluetactPopup from "./Modals/CluetactPopup";
 import ProfileModal from "./Modals/ProfileModal";

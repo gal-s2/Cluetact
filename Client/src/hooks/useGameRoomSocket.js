@@ -105,6 +105,10 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
             setNotification(`The clue is invalid, or already used. Please try again.`);
         });
 
+        socket.on(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, (message) => {
+            setNotification(message);
+        });
+
         socket.on(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, ({ from, definition }) => {
             setGameState((prev) => ({
                 ...prev,
@@ -119,6 +123,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
             socket.off(SOCKET_EVENTS.SERVER_CLUE_BLOCKED);
             socket.off(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK);
             socket.off(SOCKET_EVENTS.SERVER_CLUE_REJECTED);
+            socket.off(SOCKET_EVENTS.SERVER_ERROR_MESSAGE);
         };
     }, []);
 

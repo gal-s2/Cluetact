@@ -124,6 +124,11 @@ const gameEventsHandlers = {
         if (!room) return;
 
         const guesserUsername = socket.user.username;
+        const clueGiverUserName = room.currentRound.clues.find((clue) => clue.id === clueId).from;
+        if (guesserUsername === clueGiverUserName) {
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "You cannot guess your own clue", socket);
+            return;
+        }
         const result = await room.submitGuess(guesserUsername, guess, clueId);
 
         if (result.correct) {
