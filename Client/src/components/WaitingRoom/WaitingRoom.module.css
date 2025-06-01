@@ -1,64 +1,509 @@
+/* Waiting Room - Full Screen Layout */
 .backdrop {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(to bottom right, #fefefe, #eafaf1);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
-  }
-  
-  .modal {
-    background: #ffffff;
-    padding: 30px;
+    z-index: 1000;
+    padding: 1rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Main Modal Container */
+.modal {
+    background: white;
+    padding: 2rem;
     border-radius: 16px;
-    color: #1e1e1e;
+    border: 2px solid #e8f5e8;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
     text-align: center;
-    width: 320px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  }
-  
-  .heading {
-    font-size: 24px;
-    margin-bottom: 15px;
-  }
-  
-  .userList {
+    width: 100%;
+    max-width: 400px;
+    color: #333;
+    animation: modalSlideIn 0.4s ease-out;
+    position: relative;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Heading */
+.heading {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #2e7d32;
+    margin: 0 0 1.5rem 0;
+    letter-spacing: -0.5px;
+}
+
+/* Pass-key Section */
+.passKey {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border: 2px solid #81c784;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    color: #555;
+    position: relative;
+}
+
+.passKey strong {
+    color: #2e7d32;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    font-family: "Courier New", monospace;
+    background: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin: 0 0.5rem;
+    display: inline-block;
+}
+
+/* Copy Button */
+.copyButton {
+    background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 0.8rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(79, 195, 247, 0.3);
+}
+
+.copyButton:hover {
+    background: linear-gradient(135deg, #29b6f6, #0288d1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79, 195, 247, 0.4);
+}
+
+.copyButton:active {
+    transform: translateY(0);
+}
+
+/* QR Code Section */
+.qrContainer {
+    background: white;
+    border: 2px solid #e8f5e8;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.qrContainer canvas {
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+}
+
+.qrLabel {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Players Section */
+.modal h4 {
+    color: #2e7d32;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    text-align: left;
+}
+
+/* User List */
+.userList {
     list-style: none;
     padding: 0;
-    margin: 20px 0;
-  }
-  
-  .userList li {
-    margin: 6px 0;
-    font-size: 16px;
-  }
-  
-  .greenDot {
+    margin: 0 0 2rem 0;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 12px;
+    border: 2px solid #e8f5e8;
+    overflow: hidden;
+}
+
+.userList li {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s ease;
+    text-align: left;
+}
+
+.userList li:last-child {
+    border-bottom: none;
+}
+
+.userList li:hover {
+    background: rgba(129, 199, 132, 0.1);
+}
+
+.userList li:first-child {
+    background: linear-gradient(135deg, rgba(129, 199, 132, 0.15), rgba(129, 199, 132, 0.05));
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.userList li:first-child::after {
+    content: "👑";
+    margin-left: auto;
+    font-size: 1.1rem;
+}
+
+/* Green Dot Indicator */
+.greenDot {
     display: inline-block;
     width: 10px;
     height: 10px;
-    background-color: #00d084;
+    background: linear-gradient(135deg, #4caf50, #81c784);
     border-radius: 50%;
-    margin-right: 8px;
-  }
-  
-  .startButton {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-weight: bold;
-    border: none;
-    border-radius: 8px;
-    background-color: #3b82f6;
+    margin-right: 12px;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* Start Button */
+.startButton {
+    background: linear-gradient(135deg, #4caf50, #66bb6a);
     color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .startButton:hover {
-    background-color: #2563eb;
-  }
-  
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    width: 100%;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    animation: startButtonGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes startButtonGlow {
+    from {
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    to {
+        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+    }
+}
+
+.startButton:hover {
+    background: linear-gradient(135deg, #388e3c, #4caf50);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+}
+
+.startButton:active {
+    transform: translateY(0);
+}
+
+/* Empty State */
+.userList:empty::after {
+    content: "Waiting for players to join...";
+    display: block;
+    padding: 2rem;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Tablet Styles */
+@media (min-width: 480px) {
+    .backdrop {
+        padding: 1.5rem;
+    }
+
+    .modal {
+        padding: 2.5rem;
+        max-width: 450px;
+    }
+
+    .heading {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .passKey {
+        padding: 1.5rem;
+        font-size: 1.2rem;
+    }
+
+    .passKey strong {
+        font-size: 1.4rem;
+        padding: 0.4rem 1rem;
+    }
+
+    .copyButton {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+
+    .qrContainer {
+        padding: 2rem;
+    }
+
+    .userList li {
+        padding: 1.2rem 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .startButton {
+        padding: 1.2rem 2.5rem;
+        font-size: 1.3rem;
+    }
+}
+
+/* Desktop Styles */
+@media (min-width: 768px) {
+    .backdrop {
+        padding: 2rem;
+    }
+
+    .modal {
+        padding: 3rem;
+        max-width: 500px;
+    }
+
+    .heading {
+        font-size: 2.2rem;
+    }
+
+    .qrContainer canvas {
+        width: 150px !important;
+        height: 150px !important;
+    }
+
+    .startButton {
+        max-width: 300px;
+        margin: 0 auto;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1024px) {
+    .modal {
+        max-width: 550px;
+        padding: 3.5rem;
+    }
+
+    .heading {
+        font-size: 2.5rem;
+    }
+}
+
+/* Landscape Mobile Optimization */
+@media (max-height: 600px) and (orientation: landscape) {
+    .backdrop {
+        padding: 0.5rem;
+        justify-content: flex-start;
+        padding-top: 2rem;
+    }
+
+    .modal {
+        padding: 1.5rem;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .heading {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .qrContainer {
+        padding: 1rem;
+    }
+
+    .qrContainer canvas {
+        width: 80px !important;
+        height: 80px !important;
+    }
+
+    .userList li {
+        padding: 0.8rem 1rem;
+    }
+
+    .startButton {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .backdrop {
+        background: linear-gradient(to bottom right, #1a1a1a, #0d4f1c);
+    }
+
+    .modal {
+        background: #2a2a2a;
+        border-color: #4a9f4d;
+        color: #f0f0f0;
+    }
+
+    .heading {
+        color: #81c784;
+    }
+
+    .passKey {
+        background: linear-gradient(135deg, #333, #444);
+        border-color: #4a9f4d;
+        color: #ccc;
+    }
+
+    .passKey strong {
+        background: #333;
+        color: #81c784;
+        border-color: #555;
+    }
+
+    .modal h4 {
+        color: #81c784;
+    }
+
+    .userList {
+        background: linear-gradient(135deg, #333, #444);
+        border-color: #4a9f4d;
+    }
+
+    .userList li {
+        color: #f0f0f0;
+        border-bottom-color: #555;
+    }
+
+    .userList li:hover {
+        background: rgba(129, 199, 132, 0.2);
+    }
+
+    .userList li:first-child {
+        background: linear-gradient(135deg, rgba(129, 199, 132, 0.25), rgba(129, 199, 132, 0.1));
+        color: #81c784;
+    }
+
+    .qrContainer {
+        background: #333;
+        border-color: #4a9f4d;
+    }
+
+    .qrLabel {
+        color: #ccc;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .modal {
+        animation: none;
+    }
+
+    .copyButton,
+    .startButton {
+        transition: none;
+    }
+
+    .copyButton:hover,
+    .startButton:hover {
+        transform: none;
+    }
+
+    .greenDot {
+        animation: none;
+    }
+
+    .startButton {
+        animation: none;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .modal {
+        border-width: 3px;
+    }
+
+    .passKey,
+    .qrContainer,
+    .userList {
+        border-width: 3px;
+    }
+
+    .copyButton,
+    .startButton {
+        border: 2px solid transparent;
+    }
+
+    .copyButton:focus,
+    .startButton:focus {
+        border-color: currentColor;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .backdrop {
+        background: white;
+        position: static;
+        height: auto;
+    }
+
+    .modal {
+        box-shadow: none;
+        border: 2px solid #333;
+        margin: 0;
+        max-width: none;
+        width: 100%;
+    }
+
+    .copyButton,
+    .startButton {
+        display: none;
+    }
+
+    .greenDot {
+        background: #333 !important;
+    }
+}
