@@ -16,7 +16,15 @@ const app = express();
 const cors = require("cors");
 const { requestLogger } = require("./utils/logger.js");
 
-app.use(cors());
+app.use(
+    cors({
+        origin: [
+            "https://e97b-95-35-191-50.ngrok-free.app", // Frontend Ngrok URL
+        ],
+        methods: ["GET", "POST"],
+        credentials: true,
+    })
+);
 app.use(express.json());
 app.use((req, res, next) => {
     requestLogger.info(`${req.method} ${req.url}`);

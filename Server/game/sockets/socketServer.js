@@ -24,7 +24,7 @@ module.exports = function (io) {
                 next(new Error("Missing auth token"));
             }
         } catch (err) {
-            console.error("[Auth Middleware] Token verification error:", err);
+            console.log("[Auth Middleware] Token verification error:", err);
             next(new Error("Auth error"));
         }
     });
@@ -34,6 +34,7 @@ module.exports = function (io) {
         waitingLobbyHandlers(io, socket);
 
         socketManager.register(socket, socket.user.username);
+        console.log("[SocketManager] Registered socket for user:", socket.user.username);
 
         const reconnect = (socket) => {
             let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);

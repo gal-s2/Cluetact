@@ -9,6 +9,8 @@ const socket = io(baseUrl, {
     auth: {
         token,
     },
+    secure: true,
+    transports: ["websocket"],
     reconnection: true,
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
@@ -27,7 +29,7 @@ socket.on(SOCKET_EVENTS.CONNECT, () => {
 });
 
 socket.on(SOCKET_EVENTS.CONNECT_ERROR, (err) => {
-    console.error("Socket connect error:", err.message);
+    console.log("Socket connect error:", err.message);
 });
 
 socket.on(SOCKET_EVENTS.CLIENT_DISCONNECT, () => {

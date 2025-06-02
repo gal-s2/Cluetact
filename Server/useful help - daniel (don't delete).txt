@@ -20,12 +20,23 @@ start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --user-data-dir
 icons: https://fontawesome.com/icons
 
 
-address to access from mobile:
-10.100.102.146:5173
-important: use chrome inspect with usb cable for debugging android browser
-ngrok short deployer:
-backend: https://3802-95-35-191-50.ngrok-free.app
-frontend: 
+how to deploy using ngrok:
+-install ngrok
+-create ngrok.yml config file in the right place:
+version: "3"
+agent:
+    authtoken: 2xwohZswC3BiB6LS8PXWpWYSn4j_3F7TNuMRxURr4sXt9Mnt5
+tunnels:
+    frontend:
+        proto: http
+        addr: 5173
+    backend:
+        proto: http
+        addr: 8000
+-run in cmd "ngrok start --all"
+-get the mapping of the server/client, replace in the app in "baseUrl.js" the path to the server's, and give people the client's mapping
+
+
 
 
 
