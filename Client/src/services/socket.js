@@ -1,9 +1,11 @@
 import { io } from "socket.io-client";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
+import { baseUrl } from "../config/baseUrl";
 
 const token = localStorage.getItem("token");
-
-const socket = io("http://localhost:8000", {
+console.log("Socket Base URL:", baseUrl); // 🔍 Debug print
+const socket = io(baseUrl, {
+    autoConnect: false,
     auth: {
         token,
     },

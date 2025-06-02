@@ -37,6 +37,6 @@ const io = new Server(server, {
 
 require("./game/sockets/socketServer.js")(io);
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
     console.log(`Server is listening on port ${PORT}`);
 });

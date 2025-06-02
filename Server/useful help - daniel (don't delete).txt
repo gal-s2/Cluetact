@@ -20,6 +20,13 @@ start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --user-data-dir
 icons: https://fontawesome.com/icons
 
 
+address to access from mobile:
+10.100.102.146:5173
+important: use chrome inspect with usb cable for debugging android browser
+ngrok short deployer:
+backend: https://3802-95-35-191-50.ngrok-free.app
+frontend: 
+
 
 
 

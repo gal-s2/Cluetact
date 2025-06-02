@@ -10,6 +10,8 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         if (!loading && user) {
             console.log("[UserContext] User loaded, connecting socket...");
+            console.log("Token in localStorage (connecting socket):", localStorage.getItem("token"));
+
             socket.auth = { token: localStorage.getItem("token") }; // just in case
             socket.connect();
         }

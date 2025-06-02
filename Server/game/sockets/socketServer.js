@@ -11,17 +11,20 @@ const GameManager = require("../managers/GameManager");
 module.exports = function (io) {
     // middleware for socket message
     io.use((socket, next) => {
+        console.log("[Auth Middleware] Handshake auth:", socket?.handshake?.auth); // 🐛 Debug
         try {
             const token = socket?.handshake?.auth?.token;
             if (token) {
                 const decoded = verifyToken(token); // verify jwt
+                console.log("[Auth Middleware] Decoded user:", decoded); // 🐛 Debug
                 socket.user = decoded;
                 next();
             } else {
+                console.log("[Auth Middleware] Missing token");
                 next(new Error("Missing auth token"));
             }
         } catch (err) {
-            console.log("Auth error");
+            console.error("[Auth Middleware] Token verification error:", err);
             next(new Error("Auth error"));
         }
     });

@@ -10,6 +10,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 import { useUser } from "../../../contexts/UserContext";
 
 function AuthForm({ type }) {
+    console.log("Base URL:", baseUrl);
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
