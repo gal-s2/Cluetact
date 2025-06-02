@@ -75,6 +75,14 @@ class Room {
         this.status = status;
     }
 
+    tryBlockClue(wordGuess, keeperUsername) {
+        const result = this.currentRound.tryBlockClue(wordGuess, keeperUsername);
+        if (result.success) {
+            this.wordsGuessedSuccesfully.add(wordGuess.toLowerCase());
+        }
+        return result;
+    }
+
     async waitForKeeperWord(getWordFromSocket) {
         while (!this.currentRound.keeperWord) {
             const word = await getWordFromSocket(this.keeperUsername);
@@ -106,6 +114,7 @@ class Room {
 
         if (this.wordsGuessedSuccesfully.has(clueWord.toLowerCase())) {
             Logger.logClueWordAlreadyUsed(this.roomId, clueWord);
+            return false;
         }
 
         this.currentRound.addClue(clueGiverId, clueWord, clueDefinition);

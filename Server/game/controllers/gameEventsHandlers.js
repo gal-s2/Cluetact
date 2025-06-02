@@ -115,7 +115,7 @@ const gameEventsHandlers = {
                 }
             }
         } else {
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_CLUE_REJECTED, null, socket);
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "The clue is invalid, already used or blocked. Please try again", socket);
         }
     },
 
@@ -146,13 +146,7 @@ const gameEventsHandlers = {
             }
             messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, data, room.roomId);
         } else {
-            messageEmitter.emitToSocket(
-                SOCKET_EVENTS.SERVER_GUESS_FAILED,
-                {
-                    message: "Incorrect guess",
-                },
-                socket
-            );
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Incorrect Guess", socket);
         }
     },
 
@@ -165,7 +159,7 @@ const gameEventsHandlers = {
 
         if (!isKeeper) return; // optional: prevent non-keepers from blocking
 
-        const result = room.currentRound.tryBlockClue(guess, userId);
+        const result = room.tryBlockClue(guess, userId);
 
         if (result.success) {
             messageEmitter.broadcastToRoom(
@@ -179,13 +173,7 @@ const gameEventsHandlers = {
                 room.roomId
             );
         } else {
-            messageEmitter.emitToSocket(
-                SOCKET_EVENTS.SERVER_GUESS_FAILED,
-                {
-                    message: "No matching clue to block.",
-                },
-                socket
-            );
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Block failed. Either the clue does not exist or it has already been blocked.", socket);
         }
     },
 

@@ -32,7 +32,7 @@ function GameRoom() {
 
     const [selectedPlayer, setSelectedPlayer] = useState(null);
     const [selectedClue, setSelectedClue] = useState(null);
-    const [notification, setNotification] = useState("");
+    const [notification, setNotification] = useState({ message: "", type: "notification" });
 
     const { gameState, loading, setKeeperWord, setCluetact, handleGuessSubmit, handleNextRound, handleExitGame } = useGameRoomSocket(roomId, hasJoinedRef, setNotification);
 
@@ -88,7 +88,7 @@ function GameRoom() {
                     ))}
                 </div>
 
-                <NotificationBox message={notification} onDone={() => setNotification("")} />
+                {notification.message && <NotificationBox message={notification.message} type={notification.type} onDone={() => setNotification({ message: "", type: "notification" })} />}
 
                 {gameState.isWordChosen && (
                     <div className={styles.wordDisplay}>

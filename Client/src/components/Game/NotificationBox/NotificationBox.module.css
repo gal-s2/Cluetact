@@ -13,20 +13,49 @@
 }
 
 .notificationBox span {
-    background: linear-gradient(135deg, #4caf50, #45a049);
-    color: white;
     padding: 1rem 1.5rem;
     border-radius: 12px;
     font-size: 1rem;
     font-weight: 600;
     text-align: center;
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+    color: white;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     border: 2px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     max-width: 100%;
     word-wrap: break-word;
     line-height: 1.4;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Default notification styling */
+.notification span {
+    background: linear-gradient(135deg, #607d8b, #546e7a);
+    box-shadow: 0 6px 20px rgba(96, 125, 139, 0.3);
+}
+
+/* Success notification styling */
+.success span {
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+}
+
+/* Error notification styling */
+.error span {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.3);
+}
+
+/* Warning notification styling */
+.warning span {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+}
+
+/* Info notification styling */
+.info span {
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3);
 }
 
 /* Visible state */
@@ -127,46 +156,29 @@
     }
 }
 
-/* Different notification types (if needed in future) */
-.notificationBox span.success {
-    background: linear-gradient(135deg, #4caf50, #45a049);
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
-}
-
-.notificationBox span.warning {
-    background: linear-gradient(135deg, #ff9800, #f57c00);
-    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
-}
-
-.notificationBox span.error {
-    background: linear-gradient(135deg, #f44336, #d32f2f);
-    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.3);
-}
-
-.notificationBox span.info {
-    background: linear-gradient(135deg, #2196f3, #1976d2);
-    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3);
-}
-
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
-    .notificationBox span {
+    .notification span {
+        background: linear-gradient(135deg, #455a64, #37474f);
+        box-shadow: 0 6px 20px rgba(69, 90, 100, 0.4);
+    }
+
+    .success span {
         background: linear-gradient(135deg, #4a9f4d, #3d8b40);
-        border-color: rgba(255, 255, 255, 0.1);
         box-shadow: 0 6px 20px rgba(74, 159, 77, 0.4);
     }
 
-    .notificationBox span.warning {
+    .warning span {
         background: linear-gradient(135deg, #ff9800, #f57c00);
         box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
     }
 
-    .notificationBox span.error {
+    .error span {
         background: linear-gradient(135deg, #f44336, #d32f2f);
         box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
     }
 
-    .notificationBox span.info {
+    .info span {
         background: linear-gradient(135deg, #2196f3, #1976d2);
         box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
     }
@@ -197,10 +209,10 @@
 /* High contrast mode */
 @media (prefers-contrast: high) {
     .notificationBox span {
-        background: #000;
-        color: #fff;
-        border: 3px solid #fff;
-        box-shadow: none;
+        background: #000 !important;
+        color: #fff !important;
+        border: 3px solid #fff !important;
+        box-shadow: none !important;
     }
 }
 

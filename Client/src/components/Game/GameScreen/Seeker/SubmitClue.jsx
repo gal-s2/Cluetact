@@ -13,7 +13,7 @@ function SubmitClue({ revealedPrefix, setNotification }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!word.toLowerCase().startsWith(revealedPrefix.toLowerCase())) {
-            setNotification(`Word must start with "${revealedPrefix}"`);
+            setNotification({ message: `Word must start with "${revealedPrefix}"`, type: "error" });
             return;
         }
         socket.emit(SOCKET_EVENTS.CLIENT_SUBMIT_CLUE, { definition, word });

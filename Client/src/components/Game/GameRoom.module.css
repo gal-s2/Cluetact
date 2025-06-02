@@ -80,6 +80,7 @@
     pointer-events: none;
     padding: 1rem;
     box-sizing: border-box;
+    pointer-events: all;
 }
 
 .waitMessage {
@@ -95,6 +96,7 @@
     pointer-events: all;
     max-width: 90vw;
     word-wrap: break-word;
+    pointer-events: all;
 }
 
 .popupWrapper {

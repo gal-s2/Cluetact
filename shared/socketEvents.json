@@ -24,7 +24,6 @@
     "SERVER_KEEPER_WORD_CHOSEN": "server_keeper_word_chosen",
     "SERVER_NEW_CLUE_TO_BLOCK": "server_new_clue_to_block",
     "SERVER_CLUE_REVEALED": "server_clue_revealed",
-    "SERVER_CLUE_REJECTED": "server_clue_rejected",
     "SERVER_CLUE_BLOCKED": "server_clue_blocked",
     "SERVER_GUESS_FAILED": "server_guess_failed",
     "SERVER_CLUETACT_SUCCESS": "server_cluetact_success",
