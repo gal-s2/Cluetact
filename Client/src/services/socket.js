@@ -32,8 +32,4 @@ socket.on(SOCKET_EVENTS.CONNECT_ERROR, (err) => {
     console.log("Socket connect error:", err.message);
 });
 
-socket.on(SOCKET_EVENTS.CLIENT_DISCONNECT, () => {
-    console.log("A socket has passed away");
-});
-
 export default socket;

@@ -11,6 +11,7 @@ import ProfileDetails from "./components/Profile/ProfileDetails/ProfileDetails";
 import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
 import { useUser } from "./contexts/UserContext";
 import useSocketNavigation from "./hooks/useSocketNavigation";
+import Overwatch from "./components/Overwatch/Overwatch";
 
 function App() {
     const { user } = useUser();
@@ -87,6 +88,7 @@ function AppRoutesWithSocketNavigation({ user }) {
                     </PrivateRoute>
                 }
             />
+            <Route path="/overwatch" element={<Overwatch />} />
 
             <Route path="*" element={<NotFoundPage />} />
             <Route path="/waiting/:roomId" element={<WaitingRoom />} />

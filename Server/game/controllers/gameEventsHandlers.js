@@ -196,13 +196,13 @@ const gameEventsHandlers = {
         }
     },
 
-    disconnect: (socket, args) => {
+    disconnect: (socket, reason) => {
         const lobbies = waitingLobbyManager.removeUserFromItsLobbies(socket.id);
         lobbies.forEach((lobbyId) => {
             socket.leave(lobbyId);
             messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_LOBBY_UPDATE, waitingLobbyManager.getLobbyUsers(lobbyId), lobbyId);
         });
-
+        console.log("about to delete socket from socketManager");
         socketManager.unregister(socket);
 
         console.log(`[Socket ${socket.id}] disconnected.`);

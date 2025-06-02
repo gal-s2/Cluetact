@@ -4,6 +4,7 @@ const { socketLogger } = require("../../utils/logger");
 const { verifyToken } = require("../../utils/jwt");
 const waitingLobbyHandlers = require("../controllers/waitingLobbyHandlers");
 const gameEventsHandlers = require("../controllers/gameEventsHandlers");
+const overWatchHandlers = require("../controllers/overWatchHandlers");
 const messageEmitter = require("./MessageEmitter");
 const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 const GameManager = require("../managers/GameManager");
@@ -11,20 +12,17 @@ const GameManager = require("../managers/GameManager");
 module.exports = function (io) {
     // middleware for socket message
     io.use((socket, next) => {
-        console.log("[Auth Middleware] Handshake auth:", socket?.handshake?.auth); // 🐛 Debug
         try {
             const token = socket?.handshake?.auth?.token;
             if (token) {
                 const decoded = verifyToken(token); // verify jwt
-                console.log("[Auth Middleware] Decoded user:", decoded); // 🐛 Debug
+
                 socket.user = decoded;
                 next();
             } else {
-                console.log("[Auth Middleware] Missing token");
                 next(new Error("Missing auth token"));
             }
         } catch (err) {
-            console.log("[Auth Middleware] Token verification error:", err);
             next(new Error("Auth error"));
         }
     });
@@ -34,7 +32,6 @@ module.exports = function (io) {
         waitingLobbyHandlers(io, socket);
 
         socketManager.register(socket, socket.user.username);
-        console.log("[SocketManager] Registered socket for user:", socket.user.username);
 
         const reconnect = (socket) => {
             let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);
@@ -63,6 +60,11 @@ module.exports = function (io) {
 
         socket.on(SOCKET_EVENTS.CLIENT_EXIT_ROOM, () => gameEventsHandlers.handleExitRoom(socket));
 
-        socket.on(SOCKET_EVENTS.CLIENT_DISCONNECT, (args) => gameEventsHandlers.disconnect(socket, args));
+        socket.on(SOCKET_EVENTS.DISCONNECT, (reason) => {
+            gameEventsHandlers.disconnect(socket, reason);
+        });
+
+        socket.on(SOCKET_EVENTS.CLIENT_GET_ONLINE_ROOMS, () => overWatchHandlers.handleGetOnlineRooms(socket));
+        socket.on(SOCKET_EVENTS.CLIENT_GET_ALL_USERS, () => overWatchHandlers.handleGetAllUsers(socket));
     });
 };
