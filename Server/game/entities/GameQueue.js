@@ -15,7 +15,7 @@ class GameQueue {
         let chosenUsers = [];
         console.log("user is trying to join queue:", user);
         // if user already in queue, he cannot enter again
-        if (this.awaitingUsers.find((awaitingUser) => user.username === awaitingUser.username)) {
+        if (this.awaitingUsers.find((awaitingUser) => user.username === awaitingUser)) {
             return { roomCreationPossible };
         }
 

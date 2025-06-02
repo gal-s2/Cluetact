@@ -6,10 +6,10 @@ const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 const { ROLES } = require("../constants");
 
 const gameEventsHandlers = {
-    handleJoinQueue: (socket, args) => {
+    handleJoinQueue: async (socket, args) => {
         // const { username } = args;
         let room;
-        const user = socketManager.getUsernameBySocketId(socket.id);
+        const user = await socketManager.getUserBySocketId(socket.id);
 
         // first check if player is already in a room. if he is, insert him to this room.
         room = gameManager.getRoomBySocket(socket);
@@ -22,6 +22,7 @@ const gameEventsHandlers = {
 
         // Send welcome messages to all players if a room was created, otherwise notify them that they are in the queue
         if (room) {
+            console.log("i'm about to let everyone know that a new room was created");
             messageEmitter.broadcastToRoom(
                 SOCKET_EVENTS.SERVER_NEW_ROOM,
                 {

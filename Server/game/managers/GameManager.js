@@ -27,7 +27,7 @@ class GameManager {
 
     addUserToQueue(user) {
         const result = this.gameQueue.addUser(user);
-
+        console.log("result:", result);
         if (result.roomCreationPossible) {
             const keeper = result.chosenUsers[0];
             const seekers = result.chosenUsers.slice(1);

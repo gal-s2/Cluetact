@@ -56,7 +56,33 @@ class SocketManager {
 
     async getUserBySocketId(socketId) {
         const username = this.socketIdToUsername.get(socketId);
-        const user = await User.findOne({ username });
+
+        if (!username) {
+            return null; // optional, depending on how you want to handle missing mappings
+        }
+
+        let user = await User.findOne({ username });
+
+        if (!user) {
+            // Return a fallback guest user object
+            user = {
+                username,
+                email: `${username}@guest.com`, // dummy email
+                password: "guest", // dummy password
+                gender: null,
+                country: null,
+                level: 1,
+                online: true,
+                statistics: {
+                    totalGames: 0,
+                    Losses: 0,
+                    Wins: 0,
+                    winRate: 0,
+                },
+                avatar: "0",
+            };
+        }
+
         return user;
     }
 

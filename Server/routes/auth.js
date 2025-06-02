@@ -41,41 +41,38 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.post("/logout", async (req, res) => {
+router.post("/logout", (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.body.id, {
-            online: false,
-        });
-        if (!user) return res.status(404).json({ error: "User not found" });
+        const { username } = req.body;
+
+        if (username && username.startsWith("GUEST_")) {
+            console.log(`Guest ${username} logged out`);
+        } else if (username) {
+            console.log(`User ${username} logged out`);
+        } else {
+            console.log(`Unknown user tried to logout`);
+        }
+
         res.json({ success: true });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: "Server error" });
     }
 });
 
 router.post("/disconnect", (req, res) => {
     try {
-        // Example logic: maybe no need to touch DB for guests
-        // For registered users, you could mark them offline
         const { username } = req.body;
 
-        if (!username) {
-            return res.status(400).json({ error: "Username is required." });
-        }
-
-        // Example: skip DB update for guests
-        if (username.startsWith("GUEST_")) {
+        if (username && username.startsWith("GUEST_")) {
             console.log(`Guest user ${username} disconnected`);
-            return res.json({ success: true });
+        } else if (username) {
+            console.log(`User ${username} disconnected`);
+        } else {
+            console.log(`Unknown user tried to disconnect`);
         }
 
-        // For registered users: mark them offline in DB
-        User.findOneAndUpdate({ username }, { online: false })
-            .then(() => res.json({ success: true }))
-            .catch((err) => {
-                console.error(err);
-                res.status(500).json({ error: "Server error" });
-            });
+        res.json({ success: true });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Server error" });
