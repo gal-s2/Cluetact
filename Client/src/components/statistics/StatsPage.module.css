@@ -1,0 +1,387 @@
+/* StatsPage - Main Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #fefefe, #eafaf1);
+    padding: 2rem 1rem;
+    font-family: "Poppins", "Inter", sans-serif;
+    position: relative;
+}
+
+/* Loading State */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    font-size: 1.2rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Stats Card Container */
+.statsCard {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(129, 199, 132, 0.2);
+    width: 100%;
+    max-width: 500px;
+    margin-top: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.statsCard::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4fc3f7, #81c784, #66bb6a);
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.header h2 {
+    color: #2e7d32;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    margin-bottom: 0.5rem;
+}
+
+.username {
+    color: #4fc3f7;
+    font-weight: 600;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* Stats List */
+.statsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Individual Stat Item */
+.statItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa, #ffffff);
+    border-radius: 12px;
+    border: 1px solid rgba(129, 199, 132, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.statItem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-color: rgba(129, 199, 132, 0.3);
+}
+
+/* Stat Label */
+.statLabel {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+/* Stat Icons */
+.statIcon {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+}
+
+.statIcon.wins {
+    background: linear-gradient(135deg, #81c784, #4caf50);
+}
+
+.statIcon.losses {
+    background: linear-gradient(135deg, #e57373, #f44336);
+}
+
+.statIcon.total {
+    background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+}
+
+.statIcon.rate {
+    background: linear-gradient(135deg, #ffb74d, #ff9800);
+}
+
+/* Stat Value */
+.statValue {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2e7d32;
+    background: linear-gradient(135deg, #2e7d32, #4caf50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Special styling for win rate */
+.statItem:last-child .statValue {
+    background: linear-gradient(135deg, #ff9800, #ffb74d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Win Rate Progress Bar */
+.winRateBar {
+    width: 100%;
+    height: 6px;
+    background: rgba(129, 199, 132, 0.2);
+    border-radius: 3px;
+    margin-top: 0.8rem;
+    overflow: hidden;
+}
+
+.winRateProgress {
+    height: 100%;
+    background: linear-gradient(90deg, #4fc3f7, #81c784);
+    border-radius: 3px;
+    transition: width 1s ease-out;
+}
+
+/* Back Button */
+.backButton {
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    background: white;
+    border: 2px solid rgba(129, 199, 132, 0.3);
+    border-radius: 12px;
+    padding: 0.8rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    color: #2e7d32;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.backButton:hover {
+    background: linear-gradient(135deg, #81c784, #66bb6a);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(129, 199, 132, 0.3);
+}
+
+/* Tablet Styles */
+@media (min-width: 480px) {
+    .container {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .statsCard {
+        padding: 3rem;
+        max-width: 550px;
+    }
+
+    .header h2 {
+        font-size: 2.2rem;
+    }
+
+    .statItem {
+        padding: 1.4rem 2rem;
+    }
+
+    .statLabel {
+        font-size: 1.2rem;
+    }
+
+    .statValue {
+        font-size: 1.4rem;
+    }
+}
+
+/* Desktop Styles */
+@media (min-width: 768px) {
+    .container {
+        padding: 3rem 2rem;
+    }
+
+    .statsCard {
+        padding: 3.5rem;
+        max-width: 600px;
+        margin-top: 3rem;
+    }
+
+    .header {
+        margin-bottom: 3rem;
+    }
+
+    .header h2 {
+        font-size: 2.5rem;
+    }
+
+    .subtitle {
+        font-size: 1.1rem;
+    }
+
+    .statsList {
+        gap: 2rem;
+    }
+
+    .statItem {
+        padding: 1.6rem 2.5rem;
+    }
+
+    .statLabel {
+        font-size: 1.3rem;
+    }
+
+    .statValue {
+        font-size: 1.5rem;
+    }
+
+    .backButton {
+        top: 2.5rem;
+        left: 2.5rem;
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1024px) {
+    .statsCard {
+        max-width: 650px;
+    }
+
+    .header h2 {
+        font-size: 2.8rem;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .container {
+        background: linear-gradient(to bottom right, #1a1a1a, #0d4f1c);
+    }
+
+    .statsCard {
+        background: #2a2a2a;
+        border-color: rgba(129, 199, 132, 0.3);
+    }
+
+    .header h2 {
+        color: #81c784;
+    }
+
+    .subtitle {
+        color: #ccc;
+    }
+
+    .statItem {
+        background: linear-gradient(135deg, #333, #2a2a2a);
+        border-color: rgba(129, 199, 132, 0.2);
+    }
+
+    .statLabel {
+        color: #f0f0f0;
+    }
+
+    .loading {
+        color: #ccc;
+    }
+
+    .backButton {
+        background: #2a2a2a;
+        color: #81c784;
+        border-color: rgba(129, 199, 132, 0.4);
+    }
+
+    .winRateBar {
+        background: rgba(129, 199, 132, 0.3);
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .statItem,
+    .backButton {
+        transition: none;
+    }
+
+    .statItem:hover,
+    .backButton:hover {
+        transform: none;
+    }
+
+    .winRateProgress {
+        transition: none;
+    }
+}
+
+/* Focus states */
+.backButton:focus {
+    outline: 3px solid rgba(129, 199, 132, 0.5);
+    outline-offset: 2px;
+}
+
+/* Mobile landscape optimization */
+@media (max-height: 600px) and (orientation: landscape) {
+    .container {
+        padding: 1rem;
+    }
+
+    .statsCard {
+        padding: 2rem;
+        margin-top: 1rem;
+    }
+
+    .header {
+        margin-bottom: 1.5rem;
+    }
+
+    .header h2 {
+        font-size: 1.8rem;
+    }
+
+    .statsList {
+        gap: 1rem;
+    }
+
+    .backButton {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+}
