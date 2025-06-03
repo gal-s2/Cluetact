@@ -20,6 +20,7 @@ app.use(
     cors({
         origin: [
             "https://e97b-95-35-191-50.ngrok-free.app", // Frontend Ngrok URL
+            "http://localhost:5173", // Localhost for development
         ],
         methods: ["GET", "POST"],
         credentials: true,
