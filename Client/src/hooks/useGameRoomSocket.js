@@ -19,6 +19,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
         isWordChosen: false,
         logMessage: "",
         clues: [],
+        guesses: [],
         cluetact: null,
         winners: [],
     });
@@ -99,7 +100,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
         socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ word, from, definition, clueGiverUsername }) => {
             setGameState((prev) => ({
                 ...prev,
-                clues: prev.clues.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true, word } : clue)),
+                clues: prev.clues.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true, active: false, word } : clue)),
                 isSubmittingClue: clueGiverUsername === user.username,
             }));
             if (gameState.isKeeper) console.log("i'm the keeper, clue blocked");
@@ -120,11 +121,19 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
             setNotification({ message: `new clue definition by ${from}: "${definition}"`, type: "notification" });
         });
 
+        socket.on(SOCKET_EVENTS.SERVER_GUESS_FAILED, (guesses) => {
+            setGameState((prev) => ({
+                ...prev,
+                guesses: guesses,
+            }));
+        });
+
         return () => {
             socket.off(SOCKET_EVENTS.SERVER_CLUE_REVEALED);
             socket.off(SOCKET_EVENTS.SERVER_CLUE_BLOCKED);
             socket.off(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK);
             socket.off(SOCKET_EVENTS.SERVER_ERROR_MESSAGE);
+            socket.off(SOCKET_EVENTS.SERVER_GUESS_FAILED);
         };
     }, []);
 
@@ -151,6 +160,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
                 clues: data.clues,
                 isKeeper: data.isKeeper,
                 isWordChosen: data.isWordChosen,
+                guesses: data.guesses,
             }));
             setLoading(false);
         });
@@ -186,6 +196,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
         clues: gameState.clues,
         cluetact: gameState.cluetact,
         isSubmittingClue: gameState.isSubmittingClue,
+        guesses: gameState.guesses,
         setCluetact,
         handleClueClick,
         handleGuessSubmit,

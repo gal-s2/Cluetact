@@ -13,7 +13,7 @@ function WordDisplay({ isKeeper, revealedWord, word, length }) {
             );
         });
     } else {
-        currentDisplay = <b>{revealedWord + "…"}</b>;
+        currentDisplay = <b>{revealedWord + "..."}</b>;
     }
 
     return <div className={styles.word}>{currentDisplay}</div>;

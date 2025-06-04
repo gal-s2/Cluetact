@@ -13,6 +13,30 @@
     margin: 0 auto;
 }
 
+.yourTurnHeading {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #388e3c;
+    margin: 0;
+    padding: 0.5rem 0;
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    border-radius: 10px;
+    border: 2px solid #66bb6a;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
+    animation: pulseGlow 2.5s infinite alternate;
+}
+
+/* Optional subtle animation to grab attention */
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+    }
+    100% {
+        box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+    }
+}
+
 /* Input field */
 .input {
     width: 100%;

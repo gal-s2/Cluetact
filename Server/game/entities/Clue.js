@@ -7,6 +7,7 @@ class Clue {
         this.word = clueWord.toLowerCase();
         this.definition = clueDefinition;
         this.blocked = false;
+        this.active = true;
     }
 }
 

@@ -1,6 +1,6 @@
 class Guess {
-    constructor(guesserUsername, word) {
-        this.guesserUsername = guesserUsername;
+    constructor(from, word) {
+        this.from = from;
         this.word = word.toLowerCase();
     }
 }

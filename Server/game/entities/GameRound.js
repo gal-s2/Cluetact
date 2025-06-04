@@ -40,6 +40,7 @@ class GameRound {
         console.log("Trying to block clue :", activeClue, "with guess:", lowerGuess);
         if (!activeClue.blocked && activeClue.word === lowerGuess) {
             activeClue.blocked = true;
+            activeClue.active = false;
             return {
                 success: true,
                 blockedClue: activeClue,

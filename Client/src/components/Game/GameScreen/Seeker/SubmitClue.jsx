@@ -40,24 +40,12 @@ function SubmitClue({ revealedPrefix, setNotification, clues = [] }) {
 
     // Show waiting message if user already submitted the last clue
     if (isWaitingForOthers) {
-        return (
-            <div className={styles.container}>
-                <div className={styles.waitingMessage}>
-                    <div className={styles.waitingIcon}>⏳</div>
-                    <h3 className={styles.waitingTitle}>Clue Submitted!</h3>
-                    <p className={styles.waitingText}>Waiting for other players to guess your word...</p>
-                    <div className={styles.loadingDots}>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
-            </div>
-        );
+        return <div className={styles.waitingBar}>⏳ Clue Submitted! Waiting for other players to guess your word...</div>;
     }
 
     return (
         <form className={styles.container} onSubmit={handleSubmit}>
+            <h3 className={styles.yourTurnHeading}>It’s your turn to submit a clue! ✍️</h3>
             <input className={styles.input} value={word} onChange={(e) => onChangeWord(e.target.value)} placeholder={`Word starting with "${revealedPrefix}"`} />
             <div className={styles.charCount}>
                 {word.length} / {WORD_MAX_LENGTH} characters

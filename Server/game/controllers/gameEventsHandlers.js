@@ -45,6 +45,7 @@ const gameEventsHandlers = {
 
         const username = socket.user.username;
         const keeperWordOrNull = username === room.keeperUsername ? room.getKeeperWord() : null;
+        const guesses = room.getGuesses();
         messageEmitter.emitToSocket(
             SOCKET_EVENTS.SERVER_GAME_JOIN,
             {
@@ -55,6 +56,7 @@ const gameEventsHandlers = {
                 clues: room.currentRound.getClues(),
                 isKeeper: room.keeperUsername === socket.user.username,
                 isWordChosen: !!room.getKeeperWord(),
+                guesses: guesses,
             },
             socket
         );
@@ -146,6 +148,8 @@ const gameEventsHandlers = {
             }
             messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, data, room.roomId);
         } else {
+            const guesses = room.getGuesses();
+            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_GUESS_FAILED, guesses, room.roomId);
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Incorrect Guess", socket);
         }
     },

@@ -1,0 +1,264 @@
+/* GuessStream.module.css */
+
+.guessStreamWrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.guessStreamHeading {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f57c00;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #ffe0b2;
+}
+
+.guessStreamContainer {
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    border-radius: 10px;
+    border: 1px solid #ffcc02;
+    scroll-behavior: smooth;
+    box-sizing: border-box;
+}
+
+.guessBubble {
+    background: white;
+    border: 1px solid #ffd54f;
+    border-radius: 18px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: #424242;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
+    transition: all 0.3s ease;
+    animation: slideInFromRight 0.4s ease-out;
+    position: relative;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.guessBubble:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.25);
+}
+
+.guessUser {
+    font-weight: 600;
+    color: #f57c00;
+    margin-right: 0.5rem;
+}
+
+/* Animation for new guesses */
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Custom scrollbar styling */
+.guessStreamContainer::-webkit-scrollbar {
+    width: 5px;
+}
+
+.guessStreamContainer::-webkit-scrollbar-track {
+    background: rgba(255, 204, 2, 0.1);
+    border-radius: 10px;
+}
+
+.guessStreamContainer::-webkit-scrollbar-thumb {
+    background: #ffcc02;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.guessStreamContainer::-webkit-scrollbar-thumb:hover {
+    background: #ffa000;
+}
+
+/* Empty state styling */
+.guessStreamContainer:empty::before {
+    content: "No guesses yet...";
+    color: #9e9e9e;
+    font-style: italic;
+    text-align: center;
+    padding: 1rem;
+    display: block;
+}
+
+/* Tablet styles */
+@media (min-width: 480px) {
+    .guessStreamWrapper {
+        gap: 1rem;
+    }
+
+    .guessStreamHeading {
+        font-size: 1.1rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .guessStreamContainer {
+        max-height: 250px;
+        padding: 1.25rem;
+        gap: 0.75rem;
+    }
+
+    .guessBubble {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.95rem;
+        border-radius: 20px;
+    }
+
+    .guessUser {
+        margin-right: 0.75rem;
+    }
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+    .guessStreamWrapper {
+        gap: 1.25rem;
+    }
+
+    .guessStreamHeading {
+        font-size: 1.2rem;
+        padding-bottom: 1rem;
+    }
+
+    .guessStreamContainer {
+        max-height: 300px;
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+
+    .guessBubble {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 22px;
+    }
+
+    .guessUser {
+        margin-right: 1rem;
+    }
+}
+
+/* Large desktop */
+@media (min-width: 1024px) {
+    .guessStreamContainer {
+        max-height: 350px;
+    }
+}
+
+/* Mobile landscape optimization */
+@media (max-height: 600px) and (orientation: landscape) {
+    .guessStreamWrapper {
+        gap: 0.5rem;
+    }
+
+    .guessStreamHeading {
+        font-size: 0.9rem;
+        padding-bottom: 0.25rem;
+    }
+
+    .guessStreamContainer {
+        max-height: 150px;
+        padding: 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .guessBubble {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+        border-radius: 16px;
+    }
+
+    .guessUser {
+        margin-right: 0.5rem;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .guessStreamHeading {
+        color: #ffb74d;
+        border-bottom-color: #ff8f00;
+    }
+
+    .guessStreamContainer {
+        background: linear-gradient(135deg, #2d1b00 0%, #3d2400 100%);
+        border-color: #ff8f00;
+    }
+
+    .guessBubble {
+        background: #2a2a2a;
+        border-color: #ff8f00;
+        color: #f0f0f0;
+        box-shadow: 0 2px 8px rgba(255, 143, 0, 0.15);
+    }
+
+    .guessBubble:hover {
+        box-shadow: 0 4px 12px rgba(255, 143, 0, 0.25);
+    }
+
+    .guessUser {
+        color: #ffb74d;
+    }
+
+    .guessStreamContainer:empty::before {
+        color: #757575;
+    }
+
+    .guessStreamContainer::-webkit-scrollbar-track {
+        background: rgba(255, 143, 0, 0.1);
+    }
+
+    .guessStreamContainer::-webkit-scrollbar-thumb {
+        background: #ff8f00;
+    }
+
+    .guessStreamContainer::-webkit-scrollbar-thumb:hover {
+        background: #ffab40;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    .guessStreamContainer {
+        scroll-behavior: auto;
+    }
+
+    .guessBubble {
+        animation: none;
+        transition: none;
+    }
+
+    .guessBubble:hover {
+        transform: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .guessBubble {
+        border-width: 2px;
+        box-shadow: none;
+    }
+
+    .guessUser {
+        text-decoration: underline;
+    }
+}

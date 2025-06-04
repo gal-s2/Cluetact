@@ -64,6 +64,10 @@ class Room {
         return this.seekersUsernames[this.indexOfSeekerOfCurrentTurn];
     }
 
+    getGuesses() {
+        return this.currentRound.guesses;
+    }
+
     /**
      * Get the part of the word that is currently revealed to all players in room
      * @returns {string}
@@ -163,7 +167,7 @@ class Room {
         const clue = session.getActiveClue();
         console.log("clue:", clue);
         if (clue && clue.word === guessLower) {
-            console.log("Cluetact achieved by", username, "with guess:", guessWord);
+            clue.active = false;
             result.correct = true;
             if (username === this.keeperUsername) {
                 this.handleCorrectBlockByKeeper(username); // optional for keeper guess matching

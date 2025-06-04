@@ -10,10 +10,10 @@ import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./GameScreen/Keeper/KeeperWordPopup";
 import SubmitClue from "./GameScreen/Seeker/SubmitClue";
 import KeeperClueList from "./GameScreen/Keeper/KeeperClueList";
+import ClueSection from "./GameScreen/ClueSection/ClueSection";
 import CluetactPopup from "./Modals/CluetactPopup";
 import ProfileModal from "./Modals/ProfileModal";
 import useGameRoomSocket from "../../hooks/useGameRoomSocket";
-import SeekerClueSection from "./GameScreen/Seeker/SeekerClueSection";
 import BlockedCluesSection from "./GameScreen/BlockedClues/BlockedCluesSection";
 import GuessActionLine from "./GameScreen/Seeker/GuessActionLine";
 import GameOverPopup from "./Modals/GameOverPopup";
@@ -31,7 +31,6 @@ function GameRoom() {
     const { roomId } = useParams();
 
     const [selectedPlayer, setSelectedPlayer] = useState(null);
-    const [selectedClue, setSelectedClue] = useState(null);
     const [notification, setNotification] = useState({ message: "", type: "notification" });
 
     const { gameState, loading, setKeeperWord, setCluetact, handleGuessSubmit, handleNextRound, handleExitGame } = useGameRoomSocket(roomId, hasJoinedRef, setNotification);
@@ -48,17 +47,8 @@ function GameRoom() {
         setSelectedPlayer(null);
     };
 
-    const handleClueSelect = (clue) => {
-        setSelectedClue(clue);
-    };
-
-    const handleGuessSubmitFromActionLine = (guess, clue) => {
-        handleGuessSubmit(guess, clue);
-        setSelectedClue(null); // Clear selection after submitting
-    };
-
-    const handleClearSelection = () => {
-        setSelectedClue(null);
+    const handleGuessSubmitFromActionLine = (guess) => {
+        handleGuessSubmit(guess, gameState.clues[gameState.clues.length - 1]);
     };
 
     return (
@@ -103,12 +93,13 @@ function GameRoom() {
                 )}
 
                 <div className={styles.cluesSection}>
-                    {!gameState.isKeeper && !gameState.isSubmittingClue && (
-                        <>
-                            <SeekerClueSection clues={gameState.clues} onClueSelect={handleClueSelect} selectedClue={selectedClue} maxVisibleItems={5} />
-                            <GuessActionLine selectedClue={selectedClue} onSubmit={handleGuessSubmitFromActionLine} onClearSelection={handleClearSelection} />
-                        </>
-                    )}
+                    {/* Seeker's Clue Section */}
+                    {!gameState.isKeeper && <ClueSection clues={gameState.clues} guesses={gameState.guesses} />}
+
+                    {/* Seeker's Guess Action Line */}
+                    {!gameState.isKeeper && !gameState.isSubmittingClue && <GuessActionLine onSubmit={handleGuessSubmitFromActionLine} />}
+
+                    {/* Keeper's Clue List */}
                     {gameState.isKeeper && <KeeperClueList clues={gameState.clues} />}
                 </div>
 
