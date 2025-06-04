@@ -110,6 +110,86 @@
     opacity: 0.6;
 }
 
+/* Waiting message styles */
+.waitingMessage {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.waitingIcon {
+    font-size: 3rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.waitingTitle {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #4caf50;
+}
+
+.waitingText {
+    margin: 0;
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.4;
+    max-width: 280px;
+}
+
+/* Loading dots animation */
+.loadingDots {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.loadingDots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4caf50;
+    animation: loadingDot 1.4s ease-in-out infinite both;
+}
+
+.loadingDots span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.loadingDots span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+}
+
+@keyframes loadingDot {
+    0%,
+    80%,
+    100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
 /* Tablet adjustments */
 @media (min-width: 480px) {
     .container {
@@ -137,6 +217,19 @@
     .charCount {
         font-size: 0.85rem;
     }
+
+    .waitingIcon {
+        font-size: 3.5rem;
+    }
+
+    .waitingTitle {
+        font-size: 1.4rem;
+    }
+
+    .waitingText {
+        font-size: 1.05rem;
+        max-width: 320px;
+    }
 }
 
 /* Desktop adjustments */
@@ -160,6 +253,19 @@
     .button {
         font-size: 1.1rem;
     }
+
+    .waitingIcon {
+        font-size: 4rem;
+    }
+
+    .waitingTitle {
+        font-size: 1.5rem;
+    }
+
+    .waitingText {
+        font-size: 1.1rem;
+        max-width: 360px;
+    }
 }
 
 /* Mobile landscape optimization */
@@ -176,6 +282,23 @@
 
     .button {
         padding: 0.75rem 1.5rem;
+    }
+
+    .waitingMessage {
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+    }
+
+    .waitingIcon {
+        font-size: 2.5rem;
+    }
+
+    .waitingTitle {
+        font-size: 1.1rem;
+    }
+
+    .waitingText {
+        font-size: 0.9rem;
     }
 }
 
@@ -222,6 +345,18 @@
     .button:disabled {
         background: #555;
     }
+
+    .waitingTitle {
+        color: #4a9f4d;
+    }
+
+    .waitingText {
+        color: #b0b0b0;
+    }
+
+    .loadingDots span {
+        background: #4a9f4d;
+    }
 }
 
 /* Accessibility */
@@ -238,6 +373,11 @@
 
     .button:active:not(:disabled) {
         transform: none;
+    }
+
+    .waitingIcon,
+    .loadingDots span {
+        animation: none;
     }
 }
 

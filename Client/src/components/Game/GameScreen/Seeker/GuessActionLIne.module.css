@@ -494,3 +494,78 @@
     outline: 3px solid #2196f3;
     outline-offset: 2px;
 }
+
+/* Add these new styles to your existing GuessActionLine.module.css */
+
+.clueFrom {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.selectedClueInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #e8f5e9, #f3e5f5);
+    border: 2px solid #81c784;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+}
+
+.selectedLabel {
+    font-weight: 600;
+    color: #2e7d32;
+    white-space: nowrap;
+}
+
+.selectedClue {
+    font-style: italic;
+    color: #444;
+    flex: 1;
+    word-break: break-word;
+    min-width: 0; /* Allows proper text wrapping */
+}
+
+/* Mobile adjustments for the new clueFrom element */
+@media (max-width: 480px) {
+    .selectedClueInfo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .clueFrom {
+        margin-left: 0;
+        align-self: flex-end;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .selectedClueInfo {
+        gap: 0.4rem;
+    }
+
+    .clueFrom {
+        font-size: 0.7rem;
+    }
+}
+
+/* Dark mode styles for new elements */
+@media (prefers-color-scheme: dark) {
+    .clueFrom {
+        color: #b0b0b0;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .clueFrom {
+        color: #000;
+    }
+}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "./GuessActionLine.module.css";
 
-function GuessActionLine({ selectedClue, onSubmit, onClearSelection }) {
+function GuessActionLine({ selectedClue, onSubmit }) {
     const [guess, setGuess] = useState("");
 
     const handleSubmit = (e) => {
@@ -12,36 +12,38 @@ function GuessActionLine({ selectedClue, onSubmit, onClearSelection }) {
         }
     };
 
-    const handleClear = () => {
-        onClearSelection();
-        setGuess("");
-    };
-
     return (
         <div className={styles.actionLine}>
             <div className={styles.container}>
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.inputSection}>
-                        <input type="text" placeholder="Type your guess here..." value={guess} onChange={(e) => setGuess(e.target.value)} className={styles.input} disabled={!selectedClue} />
+                        <input
+                            type="text"
+                            placeholder={selectedClue ? "Type your guess here..." : "Waiting for a clue..."}
+                            value={guess}
+                            onChange={(e) => setGuess(e.target.value)}
+                            className={styles.input}
+                            disabled={!selectedClue}
+                            autoFocus={selectedClue}
+                        />
+
                         {selectedClue && (
                             <div className={styles.selectedClueInfo}>
-                                <span className={styles.selectedLabel}>Selected:</span>
+                                <span className={styles.selectedLabel}>Current Clue:</span>
                                 <span className={styles.selectedClue}>"{selectedClue.definition}"</span>
-                                <button type="button" onClick={handleClear} className={styles.clearButton} title="Clear selection">
-                                    ×
-                                </button>
+                                <span className={styles.clueFrom}>from {selectedClue.from}</span>
                             </div>
                         )}
                     </div>
 
                     <div className={styles.actionSection}>
                         <button type="submit" className={styles.guessButton} disabled={!guess.trim() || !selectedClue}>
-                            Guess
+                            Submit Guess
                         </button>
                     </div>
                 </form>
 
-                {!selectedClue && <p className={styles.instruction}>Click on a clue above to select it, then type your guess</p>}
+                {!selectedClue && <p className={styles.instruction}>Waiting for a clue to be shared...</p>}
             </div>
         </div>
     );

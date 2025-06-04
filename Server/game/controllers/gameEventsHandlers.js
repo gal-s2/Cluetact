@@ -69,7 +69,7 @@ const gameEventsHandlers = {
 
         if (valid) {
             word = room.getKeeperWord();
-
+            const clueGiverUsername = room.seekersUsernames[room.indexOfSeekerOfCurrentTurn];
             // send all players in room a word chosen
             for (const player of room.players) {
                 const message = {
@@ -77,6 +77,7 @@ const gameEventsHandlers = {
                     word: player.role === ROLES.KEEPER ? word : undefined,
                     revealedWord: room.getRevealedLetters(),
                     length: word.length,
+                    isSubmittingClue: player.username === clueGiverUsername,
                 };
 
                 messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN, message, player.username);
@@ -125,13 +126,10 @@ const gameEventsHandlers = {
         if (!room) return;
 
         const guesserUsername = socket.user.username;
-        const clueGiverUserName = room.currentRound.clues.find((clue) => clue.id === clueId).from;
-        if (guesserUsername === clueGiverUserName) {
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "You cannot guess your own clue", socket);
-            return;
-        }
-        const result = await room.submitGuess(guesserUsername, guess, clueId);
 
+        const result = await room.submitGuess(guesserUsername, guess, clueId);
+        const clueGiverUsername = room.getCurrentClueGiverUsername();
+        console.log("clue giver username is ", clueGiverUsername);
         if (result.correct) {
             const data = {
                 guesser: guesserUsername,
@@ -141,6 +139,7 @@ const gameEventsHandlers = {
                 isWordComplete: result.isWordComplete,
                 keeper: room.keeperUsername,
                 players: room.players,
+                clueGiverUsername: clueGiverUsername,
             };
             if (result.isGameEnded) {
                 data.winners = room.getWinners();
@@ -163,6 +162,7 @@ const gameEventsHandlers = {
         const result = room.tryBlockClue(guess, userId);
 
         if (result.success) {
+            const clueGiverUsername = room.getCurrentClueGiverUsername();
             messageEmitter.broadcastToRoom(
                 SOCKET_EVENTS.SERVER_CLUE_BLOCKED,
                 {
@@ -170,6 +170,7 @@ const gameEventsHandlers = {
                     from: result.blockedClue.from,
                     definition: result.blockedClue.definition,
                     blockedBy: userId,
+                    clueGiverUsername: clueGiverUsername,
                 },
                 room.roomId
             );

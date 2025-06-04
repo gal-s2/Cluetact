@@ -4,7 +4,6 @@
     "CLIENT_KEEPER_WORD_SUBMISSION": "client_keeper_word_submission",
     "CLIENT_SUBMIT_CLUE": "client_submit_clue",
     "CLIENT_SUBMIT_GUESS": "client_submit_guess",
-
     "CLIENT_CREATE_WAITING_LOBBY": "client_create_waiting_lobby",
     "CLIENT_JOIN_WAITING_LOBBY": "client_join_waiting_lobby",
     "CLIENT_GET_LOBBY_USERS": "client_get_lobby_users",
@@ -26,6 +25,7 @@
     "SERVER_ENTERED_QUEUE": "server_entered_queue",
     "SERVER_KEEPER_WORD_CHOSEN": "server_keeper_word_chosen",
     "SERVER_NEW_CLUE_TO_BLOCK": "server_new_clue_to_block",
+    "SERVER_REQUEST_CLUE_FROM_SEEKER": "server_request_clue_from_seeker",
     "SERVER_CLUE_REVEALED": "server_clue_revealed",
     "SERVER_CLUE_BLOCKED": "server_clue_blocked",
     "SERVER_GUESS_FAILED": "server_guess_failed",

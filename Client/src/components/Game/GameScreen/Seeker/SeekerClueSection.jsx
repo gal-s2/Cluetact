@@ -19,20 +19,26 @@ function SeekerClueSection({ clues, onClueSelect, selectedClue, maxVisibleItems 
         }
     }, [maxVisibleItems]);
 
+    // Auto-scroll to bottom when new clues are added
     useEffect(() => {
         if (activeListRef.current) {
             activeListRef.current.scrollTop = activeListRef.current.scrollHeight;
         }
     }, [activeClues]);
 
-    const handleClueClick = (clue) => {
-        // Toggle selection: if already selected, deselect; otherwise select this one
-        if (selectedClue && selectedClue.id === clue.id) {
-            onClueSelect(null);
+    // Automatically select the last (most recent) clue
+    useEffect(() => {
+        if (activeClues.length > 0) {
+            const lastClue = activeClues[activeClues.length - 1];
+            // Only auto-select if no clue is currently selected or if the last clue changed
+            if (!selectedClue || selectedClue.id !== lastClue.id) {
+                onClueSelect(lastClue);
+            }
         } else {
-            onClueSelect(clue);
+            // Clear selection if no active clues
+            onClueSelect(null);
         }
-    };
+    }, [activeClues, selectedClue, onClueSelect]);
 
     return (
         <div className={styles.clueSection}>
@@ -41,16 +47,24 @@ function SeekerClueSection({ clues, onClueSelect, selectedClue, maxVisibleItems 
                 <p className={styles.emptyMessage}>No active clues yet.</p>
             ) : (
                 <div ref={activeListRef} className={styles.scrollableClueList} data-clue-count={activeClues.length}>
-                    {activeClues.map((clue) => (
-                        <ClueBubble
-                            key={clue.id}
-                            from={clue.from}
-                            definition={clue.definition}
-                            blocked={clue.blocked}
-                            selected={selectedClue && selectedClue.id === clue.id}
-                            onGuess={() => handleClueClick(clue)}
-                        />
-                    ))}
+                    {activeClues.map((clue, index) => {
+                        const isLatest = index === activeClues.length - 1;
+                        const isSelected = selectedClue && selectedClue.id === clue.id;
+
+                        return (
+                            <ClueBubble
+                                key={clue.id}
+                                from={clue.from}
+                                definition={clue.definition}
+                                blocked={clue.blocked}
+                                selected={isSelected}
+                                isLatest={isLatest}
+                                word={""}
+                                // Remove click handler since clues are no longer manually selectable
+                                onGuess={null}
+                            />
+                        );
+                    })}
                 </div>
             )}
         </div>

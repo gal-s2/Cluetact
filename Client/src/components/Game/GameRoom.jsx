@@ -96,14 +96,14 @@ function GameRoom() {
                     </div>
                 )}
 
-                {!gameState.isKeeper && gameState.isWordChosen && (
+                {!gameState.isKeeper && gameState.isWordChosen && gameState.isSubmittingClue && (
                     <div className={styles.clueSubmitWrapper}>
-                        <SubmitClue revealedPrefix={gameState.revealedWord} setNotification={setNotification} />
+                        <SubmitClue revealedPrefix={gameState.revealedWord} setNotification={setNotification} clues={gameState.clues} />
                     </div>
                 )}
 
                 <div className={styles.cluesSection}>
-                    {!gameState.isKeeper && (
+                    {!gameState.isKeeper && !gameState.isSubmittingClue && (
                         <>
                             <SeekerClueSection clues={gameState.clues} onClueSelect={handleClueSelect} selectedClue={selectedClue} maxVisibleItems={5} />
                             <GuessActionLine selectedClue={selectedClue} onSubmit={handleGuessSubmitFromActionLine} onClearSelection={handleClearSelection} />

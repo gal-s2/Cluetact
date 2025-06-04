@@ -1,49 +1,49 @@
 const Clue = require("./Clue");
+const Guess = require("./Guess");
+const { ROLES } = require("../constants");
 
 class GameRound {
-    constructor() {
+    constructor(players) {
         this.roundNum = 1;
-        this.keeperWord = null; // The full word chosen by the keeper (lets say dog)
-        this.revealedLetters = ""; // Current revealed part (e.g., "d", "do", etc.)
+        this.keeperWord = null;
+        this.revealedLetters = "";
         this.clues = [];
-        this.raceStartTime = null; // When the keeper/seeker race started
-        this.guesses = []; // List of { userId, word, time }
-        this.status = "waiting"; // "waiting", "race", "ended"
+        this.guesses = [];
+        this.status = "waiting";
     }
 
     setKeeperWord(word) {
         this.keeperWord = word.toUpperCase();
-        this.revealedLetters = this.keeperWord[0]; // Reveal the first letter
+        this.revealedLetters = this.keeperWord[0];
         this.status = "waiting";
     }
 
-    addGuess(userId, word) {
-        this.guesses.push({ userId, word, time: new Date() });
+    getActiveClue() {
+        const numOfClues = this.clues.length;
+        console.log(`Number of clues: ${numOfClues}`);
+        return numOfClues > 0 ? this.clues[numOfClues - 1] : null;
     }
 
-    addClue(clueGiverId, clueWord, clueDefinition) {
-        const clue = new Clue(clueGiverId, clueWord, clueDefinition);
+    addGuess(username, word) {
+        this.guesses.push(new Guess(username, word.toLowerCase()));
+    }
+
+    addClue(clueGiverUsername, clueWord, clueDefinition) {
+        const clue = new Clue(clueGiverUsername, clueWord, clueDefinition);
         this.clues.push(clue);
-        this.raceStartTime = new Date();
-        this.status = "race";
         this.guesses = [];
     }
 
     tryBlockClue(wordGuess, keeperUsername) {
         const lowerGuess = wordGuess.toLowerCase();
-
-        for (const clue of this.clues) {
-            if (!clue.blocked && clue.word === lowerGuess) {
-                clue.blocked = true;
-                return {
-                    success: true,
-                    blockedClue: {
-                        definition: clue.definition,
-                        from: clue.from,
-                        word: clue.word,
-                    },
-                };
-            }
+        const activeClue = this.getActiveClue();
+        console.log("Trying to block clue :", activeClue, "with guess:", lowerGuess);
+        if (!activeClue.blocked && activeClue.word === lowerGuess) {
+            activeClue.blocked = true;
+            return {
+                success: true,
+                blockedClue: activeClue,
+            };
         }
 
         return { success: false };
