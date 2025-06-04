@@ -25,7 +25,7 @@ how to deploy using ngrok:
 -create ngrok.yml config file in the right place:
 version: "3"
 agent:
-    authtoken: 2xwohZswC3BiB6LS8PXWpWYSn4j_3F7TNuMRxURr4sXt9Mnt5
+    authtoken: 
 tunnels:
     frontend:
         proto: http
