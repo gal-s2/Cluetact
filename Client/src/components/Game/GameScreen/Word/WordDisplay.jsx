@@ -13,10 +13,12 @@ function WordDisplay({ isKeeper, revealedWord, word, length }) {
             );
         });
     } else {
-        currentDisplay = <b>{revealedWord + "_".repeat(length - revealedWord.length).trim()}</b>;
+        currentDisplay = <b>{revealedWord + "…"}</b>;
     }
 
     return <div className={styles.word}>{currentDisplay}</div>;
 }
 
 export default WordDisplay;
+
+//the _ addition code: "_".repeat(length - revealedWord.length).trim()
