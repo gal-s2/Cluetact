@@ -25,14 +25,14 @@ class GameManager {
         return room;
     }
 
-    async addUserToQueue(user) {
+    addUserToQueue(user) {
         const result = this.gameQueue.addUser(user);
-
+        console.log("result:", result);
         if (result.roomCreationPossible) {
             const keeper = result.chosenUsers[0];
             const seekers = result.chosenUsers.slice(1);
 
-            const room = await this.createRoom(keeper, seekers);
+            const room = this.createRoom(keeper, seekers);
 
             return room;
         }

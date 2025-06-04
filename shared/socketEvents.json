@@ -4,7 +4,7 @@
     "CLIENT_KEEPER_WORD_SUBMISSION": "client_keeper_word_submission",
     "CLIENT_SUBMIT_CLUE": "client_submit_clue",
     "CLIENT_SUBMIT_GUESS": "client_submit_guess",
-    "CLIENT_DISCONNECT": "client_disconnect",
+
     "CLIENT_CREATE_WAITING_LOBBY": "client_create_waiting_lobby",
     "CLIENT_JOIN_WAITING_LOBBY": "client_join_waiting_lobby",
     "CLIENT_GET_LOBBY_USERS": "client_get_lobby_users",
@@ -14,8 +14,11 @@
     "CLIENT_TRY_BLOCK_CLUE": "client_try_block_clue",
     "CLIENT_NOTIFY_MY_SOCKET_IS_READY": "client_notify_my_socket_is_ready",
     "CLIENT_EXIT_ROOM": "client_exit_room",
+    "CLIENT_GET_ONLINE_ROOMS": "client_get_online_rooms",
+    "CLIENT_GET_ALL_USERS": "client_get_all_users",
     "CONNECTION": "connection",
     "CONNECT": "connect",
+    "DISCONNECT": "disconnect",
     "SERVER_REDIRECT_TO_LOGIN": "server_redirect_to_login",
     "SERVER_REDIRECT_TO_LOBBY": "server_redirect_to_lobby",
     "SERVER_REDIRECT_TO_ROOM": "server_redirect_to_room",
@@ -24,7 +27,6 @@
     "SERVER_KEEPER_WORD_CHOSEN": "server_keeper_word_chosen",
     "SERVER_NEW_CLUE_TO_BLOCK": "server_new_clue_to_block",
     "SERVER_CLUE_REVEALED": "server_clue_revealed",
-    "SERVER_CLUE_REJECTED": "server_clue_rejected",
     "SERVER_CLUE_BLOCKED": "server_clue_blocked",
     "SERVER_GUESS_FAILED": "server_guess_failed",
     "SERVER_CLUETACT_SUCCESS": "server_cluetact_success",
@@ -32,5 +34,7 @@
     "SERVER_CONNECT_ERROR": "server_connect_error",
     "SERVER_GAME_JOIN": "server_game_join",
     "SERVER_ERROR_MESSAGE": "server_error_message",
-    "SERVER_GAME_ENDED": "server_game_ended"
+    "SERVER_GAME_ENDED": "server_game_ended",
+    "SERVER_POST_ONLINE_ROOMS": "server_post_online_rooms",
+    "SERVER_POST_ALL_USERS": "server_post_all_users"
 }

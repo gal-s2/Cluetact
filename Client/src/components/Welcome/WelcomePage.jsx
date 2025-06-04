@@ -12,6 +12,7 @@ export default function WelcomePage() {
     const playAsGuestClick = async () => {
         try {
             const response = await axios.post(`${baseUrl}/auth/guest`);
+            console.log("Guest login response:", response.data);
             if (response.status === 200) {
                 setUser(response.data);
                 navigate("/lobby");
@@ -19,7 +20,7 @@ export default function WelcomePage() {
                 alert(`guest login failed`);
             }
         } catch (error) {
-            alert("Something went wrong. Please try again." + error.message);
+            alert("Something went wrong. Please try again." + error);
         }
     };
 

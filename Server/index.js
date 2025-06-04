@@ -16,7 +16,16 @@ const app = express();
 const cors = require("cors");
 const { requestLogger } = require("./utils/logger.js");
 
-app.use(cors());
+app.use(
+    cors({
+        origin: [
+            "https://e97b-95-35-191-50.ngrok-free.app", // Frontend Ngrok URL
+            "http://localhost:5173", // Localhost for development
+        ],
+        methods: ["GET", "POST"],
+        credentials: true,
+    })
+);
 app.use(express.json());
 app.use((req, res, next) => {
     requestLogger.info(`${req.method} ${req.url}`);
@@ -37,6 +46,6 @@ const io = new Server(server, {
 
 require("./game/sockets/socketServer.js")(io);
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
     console.log(`Server is listening on port ${PORT}`);
 });

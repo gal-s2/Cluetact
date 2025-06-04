@@ -10,6 +10,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 import { useUser } from "../../../contexts/UserContext";
 
 function AuthForm({ type }) {
+    console.log("Base URL:", baseUrl);
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -76,13 +77,20 @@ function AuthForm({ type }) {
                 <img src={logo} alt="Cluetact Logo" className={styles.logo} />
                 <h2>{type === "login" ? "Login" : "Register"}</h2>
                 <form onSubmit={handleSubmit} className={styles.authForm}>
-                    {type === "register" && <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />}
+                    {type === "register" && <input type="text" placeholder="Username" value={username || ""} onChange={(e) => setUsername(e.target.value)} required />}
 
-                    <input type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className={errors.email ? styles.invalidInput : ""} required />
+                    <input type="text" placeholder="Email" value={email || ""} onChange={(e) => setEmail(e.target.value)} className={errors.email ? styles.invalidInput : ""} required />
 
                     {errors.email && <p className={styles.error}>{errors.email}</p>}
 
-                    <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className={errors.password ? styles.invalidInput : ""} required />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password || ""}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className={errors.password ? styles.invalidInput : ""}
+                        required
+                    />
 
                     {errors.password && <p className={styles.error}>{errors.password}</p>}
                     {errors.server && <p className={styles.error}>{errors.server}</p>}
@@ -91,7 +99,7 @@ function AuthForm({ type }) {
                 </form>
                 <p>
                     {type === "login" ? "Don't have an account? " : "Already have an account? "}
-                    <Link to={type === "login" ? "/register" : "/login"} className="toggle">
+                    <Link to={type === "login" ? "/register" : "/login"} className={styles.toggle}>
                         {type === "login" ? "Sign up" : "Login"}
                     </Link>
                 </p>

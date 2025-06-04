@@ -41,14 +41,40 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.post("/logout", async (req, res) => {
+router.post("/logout", (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.body.id, {
-            online: false,
-        });
-        if (!user) return res.status(404).json({ error: "User not found" });
+        const { username } = req.body;
+
+        if (username && username.startsWith("GUEST_")) {
+            console.log(`Guest ${username} logged out`);
+        } else if (username) {
+            console.log(`User ${username} logged out`);
+        } else {
+            console.log(`Unknown user tried to logout`);
+        }
+
         res.json({ success: true });
     } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+router.post("/disconnect", (req, res) => {
+    try {
+        const { username } = req.body;
+
+        if (username && username.startsWith("GUEST_")) {
+            console.log(`Guest user ${username} disconnected`);
+        } else if (username) {
+            console.log(`User ${username} disconnected`);
+        } else {
+            console.log(`Unknown user tried to disconnect`);
+        }
+
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
         res.status(500).json({ error: "Server error" });
     }
 });

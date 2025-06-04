@@ -23,3 +23,10 @@ Simple tasks to-do:
 color and message (red = error, green = success, black = normal notification)
 2. remove the cluetact crazy pop-up 3-seconds message on cluetact and make it on the normal notification bar
 3. try and make notifications being able to not switch one other, but rather be one under one (if too many - 'fold')
+
+notes from friens who played the game:
+-when there is a white mode, it looks weird
+-the box of marking the guess is not looking good in desktop
+-remove the number of letters in the word to avoid confusion
+-change it to turns of the seekers
+-change the words api, it doesnt work good (it doesnt accept words like "monday","margaret")

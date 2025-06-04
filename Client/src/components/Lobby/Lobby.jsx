@@ -24,9 +24,14 @@ function Lobby() {
     const [playMenuOpen, setPlayMenuOpen] = useState(false);
     const [inQueue, setInQueue] = useState(false);
 
+    if (!user && !loading) {
+        console.log("No user found in Lobby.jsx, skipping render.");
+        return null;
+    }
+
     useEffect(() => {
         if (!user && !loading) {
-            navigate("/login");
+            navigate("/");
         }
     }, [user, loading, navigate]);
 
@@ -62,28 +67,43 @@ function Lobby() {
     };
 
     const disconnect = async () => {
-        if (!user) return;
-
-        try {
-            await axios.post(`${baseUrl}/auth/logout`, {
-                id: user._id,
-            });
-            console.log("Logout successful");
-        } catch (error) {
-            console.log("Error in disconnect", error);
+        console.log("Disconnect function called");
+        if (!user) {
+            console.log("No user found, skipping disconnect.");
+            return;
         }
 
-        await new Promise((resolve) => {
-            if (socket.connected) {
-                socket.once(SOCKET_EVENTS.CLIENT_DISCONNECT, resolve);
-                socket.disconnect();
-            } else {
-                resolve();
-            }
-        });
+        console.log("Starting logout call with user:", user);
 
-        socket.auth = {};
-        setUser(null);
+        try {
+            const response = await axios.post(`${baseUrl}/auth/logout`, {
+                id: user._id,
+                username: user.username,
+            });
+            console.log("Logout successful", response.data);
+        } catch (error) {
+            console.log("Error in disconnect (axios POST logout):", error);
+        }
+
+        console.log("Preparing to disconnect socket...");
+        if (socket.connected) {
+            console.log("Socket is connected. Calling socket.disconnect()...");
+            socket.disconnect();
+            console.log("Socket.disconnect() called");
+        } else {
+            console.log("Socket is not connected, skipping socket.disconnect().");
+        }
+
+        console.log("Navigating to home page BEFORE clearing user state...");
+        navigate("/", { replace: true }); // 🚀 Navigate to root before clearing user
+
+        // 💥 Now wait one tick so React Router can process the navigation
+        setTimeout(() => {
+            console.log("Clearing socket.auth and user state...");
+            socket.auth = {};
+            setUser(null);
+            console.log("User state cleared.");
+        }, 0);
     };
 
     const handleCreateRoom = () => {

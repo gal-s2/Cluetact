@@ -90,7 +90,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
             }));
             const definition = clues[clues.length - 1].definition;
             const from = clues[clues.length - 1].from;
-            if (from !== user.username) setNotification(`new clue definition by ${clues[clues.length - 1].from}: "${clues[clues.length - 1].definition}"`);
+            if (from !== user.username) setNotification({ message: `new clue definition by ${clues[clues.length - 1].from}: "${clues[clues.length - 1].definition}"`, type: "notification" });
         });
 
         socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ word, from, definition }) => {
@@ -98,15 +98,13 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
                 ...prev,
                 clues: prev.clues.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true, word } : clue)),
             }));
-            if (!gameState.isKeeper) setNotification(`The keeper blocked "${from}" by guessing the word "${word}"`);
-        });
-
-        socket.on(SOCKET_EVENTS.SERVER_CLUE_REJECTED, () => {
-            setNotification(`The clue is invalid, or already used. Please try again.`);
+            if (gameState.isKeeper) console.log("i'm the keeper, clue blocked");
+            else console.log("i'm not the keeper, clue blocked");
+            if (!gameState.isKeeper) setNotification({ message: `The keeper blocked "${from}" by guessing the word "${word}"`, type: "notification" });
         });
 
         socket.on(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, (message) => {
-            setNotification(message);
+            setNotification({ message, type: "error" });
         });
 
         socket.on(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, ({ from, definition }) => {
@@ -115,14 +113,13 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
                 logMessage: `A clue was submitted by ${from}. You may block it.`,
                 clues: [...prev.clues, { from, definition, blocked: false }],
             }));
-            setNotification(`new clue definition by ${from}: "${definition}"`);
+            setNotification({ message: `new clue definition by ${from}: "${definition}"`, type: "notification" });
         });
 
         return () => {
             socket.off(SOCKET_EVENTS.SERVER_CLUE_REVEALED);
             socket.off(SOCKET_EVENTS.SERVER_CLUE_BLOCKED);
             socket.off(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK);
-            socket.off(SOCKET_EVENTS.SERVER_CLUE_REJECTED);
             socket.off(SOCKET_EVENTS.SERVER_ERROR_MESSAGE);
         };
     }, []);
@@ -164,7 +161,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
                     isWordChosen: true,
                     logMessage: "",
                 }));
-            } else setNotification("The word you entered is invalid. Please enter a valid English word.");
+            } else setNotification({ message: "The word you entered is invalid. Please enter a valid English word.", type: "error" });
         });
 
         return () => {
