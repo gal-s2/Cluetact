@@ -4,9 +4,9 @@ import { useGameRoom } from "../../../contexts/GameRoomContext";
 
 function GameOverPopup() {
     const { user } = useUser();
-    const isWinner = winners.includes(user.username);
     const { gameState, handleNextRound, handleExitGame } = useGameRoom();
     const winners = gameState.winners || [];
+    const isWinner = winners.includes(user.username);
 
     return (
         <div className={styles.overlay}>

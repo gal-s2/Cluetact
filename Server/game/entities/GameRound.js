@@ -51,10 +51,12 @@ class GameRound {
     }
 
     revealNextLetter() {
+        console.log("in the function to reveal next letter");
         const currentLength = this.revealedLetters.length;
         if (this.keeperWord && currentLength < this.keeperWord.length) {
             this.revealedLetters += this.keeperWord[currentLength];
-
+            this.currentLength++;
+            console.log("revealed letters are now:", this.revealedLetters);
             // Return true if this was the last letter
             return this.revealedLetters.length === this.keeperWord.length;
         }

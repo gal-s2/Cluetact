@@ -41,7 +41,7 @@ function PlayerMainMessageHeader() {
                 if (isMyTurn) {
                     return "Your clue is live! Will the keeper block it? 🔥";
                 } else {
-                    return `${gameState.clueGiverUsername}'s clue is in play... 👀`;
+                    return `${gameState.clueGiverUsername}'s clue is in play... 👀 Time to guess!`;
                 }
             }
         }

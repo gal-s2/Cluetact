@@ -73,7 +73,10 @@ class Room {
      * @returns {string}
      */
     getRevealedLetters() {
-        return this.currentRound.revealedLetters;
+        const revaledLettersCurrentRound = this.currentRound.revealedLetters;
+        if (revaledLettersCurrentRound === "" && this.roundsHistory.length > 0) {
+            return this.roundsHistory[this.roundsHistory.length - 1]?.revealedLetters || "";
+        } else return revaledLettersCurrentRound;
     }
 
     /**
@@ -235,14 +238,7 @@ class Room {
                 if (player.username !== nextKeeper) player.setRole(ROLES.SEEKER);
             });
 
-            this.roundsHistory.push({
-                roundNumber: this.currentRound.roundNum,
-                keeperWord: this.currentRound.keeperWord,
-                revealedLetters: this.currentRound.revealedLetters,
-                clueWord: clue.word,
-                clueGiver: clue.from,
-                guessesCount: this.currentRound.guesses.length,
-            });
+            this.roundsHistory.push(this.currentRound);
 
             this.currentRound = new GameRound(this.players);
             this.currentRound.roundNum = this.roundsHistory.length + 1;

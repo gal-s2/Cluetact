@@ -127,6 +127,7 @@ const gameEventsHandlers = {
         const result = await room.submitGuess(guesserUsername, guess, clueId);
         const clueGiverUsername = room.getCurrentClueGiverUsername();
         console.log("clue giver username is ", clueGiverUsername);
+        console.log("revealed letters are ", room.getRevealedLetters());
         if (result.correct) {
             const data = {
                 guesser: guesserUsername,

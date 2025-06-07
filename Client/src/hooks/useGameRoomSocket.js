@@ -22,6 +22,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         cluetact: null,
         winners: [],
         activeClue: null,
+        isWordComplete: false,
     });
 
     const setKeeperWord = (word) => {
@@ -57,6 +58,14 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
 
     useEffect(() => {
         socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players, winners, clueGiverUsername }) => {
+            if (isWordComplete) {
+                setGameState((prev) => ({
+                    ...prev,
+                    winners,
+                    isKeeper: keeper === user.username,
+                    isWordChosen: false,
+                }));
+            }
             setGameState((prev) => ({
                 ...prev,
                 cluetact: { guesser, word },
@@ -65,23 +74,9 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
                 isSubmittingClue: clueGiverUsername === user.username,
                 clueGiverUsername,
                 activeClue: null,
+                revealedWord: revealed,
+                isWordComplete,
             }));
-            if (isWordComplete) {
-                setGameState((prev) => ({
-                    ...prev,
-                    winners,
-                    revealedWord: "",
-                    keeperWord: "",
-                    wordLength: 0,
-                    isKeeper: keeper === user.username,
-                    isWordChosen: false,
-                }));
-            } else {
-                setGameState((prev) => ({
-                    ...prev,
-                    revealedWord: revealed,
-                }));
-            }
         });
 
         return () => socket.off(SOCKET_EVENTS.CLUETACT_SUCCESS);
@@ -164,7 +159,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
                 revealedWord: data.revealedWord,
                 wordLength: data.wordLength,
                 clues: data.clues,
-                activeClue: data.clues[data.clues.length - 1].active || null,
+                activeClue: data.clues[data.clues.length - 1]?.active || null,
                 isKeeper: data.isKeeper,
                 isWordChosen: data.isWordChosen,
                 guesses: data.guesses,
@@ -186,6 +181,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
                     logMessage: "",
                     isSubmittingClue: data.clueGiverUsername === user?.username,
                     clueGiverUsername: data.clueGiverUsername,
+                    isWordComplete: false,
                 }));
             } else setNotification({ message: "The word you entered is invalid. Please enter a valid English word.", type: "error" });
         });
