@@ -7,9 +7,6 @@ function CluetactPopup() {
     const { gameState, setCluetact } = useGameRoom();
     const word = gameState.cluetact?.word || "";
     const guesser = gameState.cluetact?.guesser || "";
-    const onClose = () => {
-        setCluetact(null);
-    };
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -17,14 +14,14 @@ function CluetactPopup() {
         }, 1000);
 
         const timeout = setTimeout(() => {
-            onClose();
+            setCluetact(null);
         }, 3000);
 
         return () => {
             clearInterval(interval);
             clearTimeout(timeout);
         };
-    }, [onClose]);
+    }, []);
 
     return (
         <div className={styles.overlay}>
