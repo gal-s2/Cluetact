@@ -3,7 +3,7 @@ import PrivateRoute from "./components/Routes/PrivateRoute/PrivateRoute";
 import PublicRoute from "./components/Routes/PublicRoute/PublicRoute";
 import NotFoundPage from "./components/Routes/NotFoundPage/NotFoundPage";
 import AuthForm from "./components/Auth/AuthForm/AuthForm";
-import GameRoom from "./components/Game/GameRoom";
+import GameRoomWrapper from "./components/Game/GameRoomWrapper";
 import Lobby from "./components/Lobby/Lobby";
 import WelcomePage from "./components/Welcome/WelcomePage";
 import StatsPage from "./components/Statistics/StatsPage";
@@ -68,7 +68,7 @@ function AppRoutesWithSocketNavigation({ user }) {
                 path="/game/:roomId"
                 element={
                     <PrivateRoute>
-                        <GameRoom />
+                        <GameRoomWrapper />
                     </PrivateRoute>
                 }
             />

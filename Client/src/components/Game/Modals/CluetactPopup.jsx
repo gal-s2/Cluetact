@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import styles from "./CluetactPopup.module.css";
+import { useGameRoom } from "../../../contexts/GameRoomContext";
 
-function CluetactPopup({ word, guesser, onClose }) {
+function CluetactPopup() {
     const [secondsLeft, setSecondsLeft] = useState(3);
+    const { gameState, setCluetact } = useGameRoom();
+    const word = gameState.cluetact?.word || "";
+    const guesser = gameState.cluetact?.guesser || "";
+    const onClose = () => {
+        setCluetact(null);
+    };
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -24,8 +31,7 @@ function CluetactPopup({ word, guesser, onClose }) {
             <div className={styles.popup}>
                 <h2>🧠 Cluetact Achieved!</h2>
                 <p>
-                    <strong>{guesser}</strong> guessed the word{" "}
-                    <strong>{word}</strong>!
+                    <strong>{guesser}</strong> guessed the word <strong>{word}</strong>!
                 </p>
                 <p>Next letter is being revealed... ({secondsLeft})</p>
             </div>

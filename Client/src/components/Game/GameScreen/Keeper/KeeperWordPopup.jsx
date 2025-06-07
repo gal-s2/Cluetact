@@ -2,10 +2,13 @@ import styles from "./KeeperWordPopup.module.css";
 import socket from "../../../../services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import { useState } from "react";
+import { useGameRoom } from "../../../../contexts/GameRoomContext";
 
-function KeeperWordPopup({ keeperWord, setKeeperWord, logMessage }) {
+function KeeperWordPopup() {
     const [showConfirm, setShowConfirm] = useState(false);
-
+    const { gameState, setKeeperWord } = useGameRoom();
+    const keeperWord = gameState.keeperWord || "";
+    const logMessage = gameState.logMessage;
     const handleSubmit = () => {
         socket.emit(SOCKET_EVENTS.CLIENT_KEEPER_WORD_SUBMISSION, { word: keeperWord });
     };

@@ -3,12 +3,10 @@ import socket from "../services/socket";
 import { useUser } from "../contexts/UserContext";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
-export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification) {
+export default function useGameRoomSocket(roomId, hasJoinedRef) {
     const { user } = useUser();
-
     const [loading, setLoading] = useState(true);
-    const [activeClue, setActiveClue] = useState(null);
-
+    const [notification, setNotification] = useState({ message: "", type: "notification" });
     const [gameState, setGameState] = useState({
         players: [],
         revealedWord: "",
@@ -22,6 +20,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
         guesses: [],
         cluetact: null,
         winners: [],
+        activeClue: null,
     });
 
     const setKeeperWord = (word) => {
@@ -38,13 +37,13 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
         }));
     };
 
-    const handleClueClick = (clue) => {
-        setActiveClue(clue);
-    };
-
-    const handleGuessSubmit = (guess, clue) => {
+    const handleGuessSubmit = (guess) => {
+        const clue = gameState.activeClue;
         socket.emit(SOCKET_EVENTS.CLIENT_TRY_CLUETACT, { guess, clueId: clue.id });
-        setActiveClue(null);
+        setGameState((prev) => ({
+            ...prev,
+            activeClue: null,
+        }));
     };
 
     const handleNextRound = () => {
@@ -57,28 +56,28 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
 
     useEffect(() => {
         socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players, winners, clueGiverUsername }) => {
+            setGameState((prev) => ({
+                ...prev,
+                cluetact: { guesser, word },
+                players,
+                clues,
+                isSubmittingClue: clueGiverUsername === user.username,
+                activeClue: null,
+            }));
             if (isWordComplete) {
                 setGameState((prev) => ({
                     ...prev,
                     winners,
-                    players,
-                    cluetact: { guesser, word },
-                    clues,
                     revealedWord: "",
                     keeperWord: "",
                     wordLength: 0,
                     isKeeper: keeper === user.username,
                     isWordChosen: false,
-                    isSubmittingClue: clueGiverUsername === user.username,
                 }));
             } else {
                 setGameState((prev) => ({
                     ...prev,
-                    cluetact: { guesser, word },
-                    players,
-                    clues,
                     revealedWord: revealed,
-                    isSubmittingClue: clueGiverUsername === user.username,
                 }));
             }
         });
@@ -91,6 +90,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
             setGameState((prev) => ({
                 ...prev,
                 clues,
+                activeClue: clues[clues.length - 1] || null,
             }));
             const definition = clues[clues.length - 1].definition;
             const from = clues[clues.length - 1].from;
@@ -102,9 +102,8 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
                 ...prev,
                 clues: prev.clues.map((clue) => (clue.definition === definition && clue.from === from ? { ...clue, blocked: true, active: false, word } : clue)),
                 isSubmittingClue: clueGiverUsername === user.username,
+                activeClue: null,
             }));
-            if (gameState.isKeeper) console.log("i'm the keeper, clue blocked");
-            else console.log("i'm not the keeper, clue blocked");
             if (!gameState.isKeeper) setNotification({ message: `The keeper blocked "${from}" by guessing the word "${word}"`, type: "notification" });
         });
 
@@ -158,10 +157,13 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
                 revealedWord: data.revealedWord,
                 wordLength: data.wordLength,
                 clues: data.clues,
+                activeClue: data.clues[data.clues.length - 1] || null,
                 isKeeper: data.isKeeper,
                 isWordChosen: data.isWordChosen,
                 guesses: data.guesses,
+                isSubmittingClue: data.isSubmittingClue,
             }));
+
             setLoading(false);
         });
 
@@ -190,19 +192,11 @@ export default function useGameRoomSocket(roomId, hasJoinedRef, setNotification)
         gameState,
         setKeeperWord,
         loading,
-        isKeeper: gameState.isKeeper,
-        isWordChosen: gameState.isWordChosen,
-        logMessage: gameState.logMessage,
-        clues: gameState.clues,
-        cluetact: gameState.cluetact,
-        isSubmittingClue: gameState.isSubmittingClue,
-        guesses: gameState.guesses,
         setCluetact,
-        handleClueClick,
         handleGuessSubmit,
         handleNextRound,
         handleExitGame,
-        activeClue,
-        setActiveClue,
+        notification,
+        setNotification,
     };
 }

@@ -2,8 +2,12 @@ import React, { useEffect, useRef } from "react";
 import ClueBubble from "../Seeker/ClueBubble";
 import styles from "./ClueSection.module.css"; // adjust to your styling needs
 import GuessStream from "./GuessStream"; // adjust import if needed
+import { useGameRoom } from "../../../../contexts/GameRoomContext";
 
-function ClueSection({ clues, guesses }) {
+function ClueSection() {
+    const { gameState } = useGameRoom();
+    const { clues, guesses } = gameState;
+
     const activeClue = clues.length > 0 && clues[clues.length - 1].active ? clues[clues.length - 1] : null;
     const historyClues = clues.slice(0, clues.length - 1);
     const historyListRef = useRef(null);

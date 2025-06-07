@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import styles from "./NotificationBox.module.css";
+import { useGameRoom } from "../../../contexts/GameRoomContext";
 
-function NotificationBox({ message, onDone, type = "notification" }) {
+function NotificationBox() {
     const [showText, setShowText] = useState(false);
+    const { notification, setNotification } = useGameRoom();
+    const message = notification.message;
+    const type = notification.type || "notification";
+    const onDone = () => {
+        setNotification({ message: "", type: "notification" });
+    };
 
     useEffect(() => {
         if (message) {

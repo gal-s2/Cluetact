@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./BlockedCluesSection.module.css";
+import { useGameRoom } from "../../../../contexts/GameRoomContext";
 
-function BlockedCluesSection({ clues, maxVisibleItems = 4, containerClassName = "" }) {
+function BlockedCluesSection({ maxVisibleItems = 4, containerClassName = "" }) {
+    const { gameState } = useGameRoom();
+    const clues = gameState.clues || [];
+
     const blockedClues = clues.filter((clue) => clue.blocked);
     const [showBlocked, setShowBlocked] = useState(false); // Start collapsed
     const contentRef = useRef(null);

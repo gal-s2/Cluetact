@@ -1,13 +1,15 @@
 import { useState } from "react";
 import styles from "./GuessActionLine.module.css";
+import { useGameRoom } from "../../../../contexts/GameRoomContext";
 
-function GuessActionLine({ onSubmit }) {
+function GuessActionLine() {
     const [guess, setGuess] = useState("");
+    const { handleGuessSubmit, gameState } = useGameRoom();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (guess.trim()) {
-            onSubmit(guess.trim());
+            handleGuessSubmit(guess.trim());
             setGuess("");
         }
     };
@@ -21,7 +23,7 @@ function GuessActionLine({ onSubmit }) {
                     </div>
 
                     <div className={styles.actionSection}>
-                        <button type="submit" className={styles.guessButton} disabled={!guess.trim()}>
+                        <button type="submit" className={styles.guessButton} disabled={!guess.trim() | gameState.activeClue}>
                             Submit Guess
                         </button>
                     </div>

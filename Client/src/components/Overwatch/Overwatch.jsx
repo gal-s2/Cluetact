@@ -11,7 +11,7 @@ function Overwatch() {
 
     const [onlineRooms, setOnlineRooms] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
-    const [secondsLeft, setSecondsLeft] = useState(10);
+    const [secondsLeft, setSecondsLeft] = useState(30);
 
     useEffect(() => {
         if (!user && !loading) {
@@ -27,11 +27,8 @@ function Overwatch() {
         return null;
     }
 
-    const handleGetOnlineRooms = () => {
+    const handleGetOnlineUsersAndRooms = () => {
         socket.emit(SOCKET_EVENTS.CLIENT_GET_ONLINE_ROOMS, null);
-    };
-
-    const handleGetAllUsers = () => {
         socket.emit(SOCKET_EVENTS.CLIENT_GET_ALL_USERS, {});
     };
 
@@ -60,12 +57,14 @@ function Overwatch() {
     useEffect(() => {
         if (!user) return;
 
+        handleGetOnlineUsersAndRooms();
+
         // Poll data every 10 seconds
         const pollInterval = setInterval(() => {
             socket.emit(SOCKET_EVENTS.CLIENT_GET_ONLINE_ROOMS, null);
             socket.emit(SOCKET_EVENTS.CLIENT_GET_ALL_USERS, null);
-            setSecondsLeft(10); // reset countdown
-        }, 10000);
+            setSecondsLeft(30); // reset countdown
+        }, 30000);
 
         // Countdown timer every second
         const timerInterval = setInterval(() => {
@@ -83,8 +82,7 @@ function Overwatch() {
             <h2>Overwatch Dashboard</h2>
             <p>Next update in: {secondsLeft} seconds</p>
             <div className={styles.buttonGroup}>
-                <button onClick={handleGetOnlineRooms}>Get All Online Rooms</button>
-                <button onClick={handleGetAllUsers}>Get All Users</button>
+                <button onClick={handleGetOnlineUsersAndRooms}>Get All Online Users and Rooms</button>
             </div>
 
             <div className={styles.dataSection}>

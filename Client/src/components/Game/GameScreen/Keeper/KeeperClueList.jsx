@@ -2,8 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import socket from "../../../../services/socket";
 import styles from "./KeeperClueList.module.css";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
+import { useGameRoom } from "../../../../contexts/GameRoomContext";
 
-function KeeperClueList({ clues, maxVisibleItems = 4 }) {
+function KeeperClueList({ maxVisibleItems = 4 }) {
+    const { gameState } = useGameRoom();
+    const clues = gameState.clues || [];
+
     const [guess, setGuess] = useState("");
     const [showBlocked, setShowBlocked] = useState(true);
     const unblockedListRef = useRef(null);

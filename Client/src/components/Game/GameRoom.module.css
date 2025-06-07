@@ -33,15 +33,6 @@
     margin-bottom: 0.5rem;
 }
 
-/* Player layout - Responsive grid */
-.table {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    width: 100%;
-    padding: 0 0.5rem;
-}
-
 /* Clues section - Better mobile spacing */
 .cluesSection {
     width: 100%;
@@ -143,11 +134,6 @@
         gap: 2rem;
     }
 
-    .table {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.25rem;
-    }
-
     .waitMessage {
         padding: 2rem;
         font-size: 1.2rem;
@@ -176,12 +162,6 @@
         padding: 2rem;
         gap: 2.5rem;
         max-width: 1000px;
-    }
-
-    .table {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
-        padding: 0;
     }
 
     .cluesSection {
@@ -217,22 +197,8 @@
         max-width: 1200px;
     }
 
-    .table {
-        grid-template-columns: repeat(4, 1fr);
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
     .waitMessage {
         max-width: 600px;
-    }
-}
-
-/* Ultra-wide screens */
-@media (min-width: 1400px) {
-    .table {
-        grid-template-columns: repeat(5, 1fr);
-        max-width: 1000px;
     }
 }
 

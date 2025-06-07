@@ -46,6 +46,7 @@ const gameEventsHandlers = {
         const username = socket.user.username;
         const keeperWordOrNull = username === room.keeperUsername ? room.getKeeperWord() : null;
         const guesses = room.getGuesses();
+        const clueGiverUsername = room.getCurrentClueGiverUsername();
         messageEmitter.emitToSocket(
             SOCKET_EVENTS.SERVER_GAME_JOIN,
             {
@@ -57,6 +58,7 @@ const gameEventsHandlers = {
                 isKeeper: room.keeperUsername === socket.user.username,
                 isWordChosen: !!room.getKeeperWord(),
                 guesses: guesses,
+                isSubmittingClue: room.indexOfSeekerOfCurrentTurn !== -1 && clueGiverUsername === username,
             },
             socket
         );
