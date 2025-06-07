@@ -23,7 +23,7 @@ function GuessActionLine() {
                     </div>
 
                     <div className={styles.actionSection}>
-                        <button type="submit" className={styles.guessButton} disabled={!guess.trim() | gameState.activeClue}>
+                        <button type="submit" className={styles.guessButton} disabled={!guess.trim() | !gameState.activeClue}>
                             Submit Guess
                         </button>
                     </div>
