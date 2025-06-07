@@ -19,8 +19,8 @@ const { requestLogger } = require("./utils/logger.js");
 app.use(
     cors({
         origin: [
-            "https://e97b-95-35-191-50.ngrok-free.app", // Frontend Ngrok URL
-            "http://localhost:5173", // Localhost for development
+            "https://6891-95-35-191-50.ngrok-free.app", //#client-url
+            "http://localhost:5173",
         ],
         methods: ["GET", "POST"],
         credentials: true,

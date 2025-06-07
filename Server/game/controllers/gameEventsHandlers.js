@@ -58,7 +58,7 @@ const gameEventsHandlers = {
                 isKeeper: room.keeperUsername === socket.user.username,
                 isWordChosen: !!room.getKeeperWord(),
                 guesses: guesses,
-                isSubmittingClue: room.indexOfSeekerOfCurrentTurn !== -1 && clueGiverUsername === username,
+                clueGiverUsername: clueGiverUsername,
             },
             socket
         );
@@ -76,15 +76,15 @@ const gameEventsHandlers = {
             const clueGiverUsername = room.seekersUsernames[room.indexOfSeekerOfCurrentTurn];
             // send all players in room a word chosen
             for (const player of room.players) {
-                const message = {
+                const data = {
                     success: true,
                     word: player.role === ROLES.KEEPER ? word : undefined,
                     revealedWord: room.getRevealedLetters(),
                     length: word.length,
-                    isSubmittingClue: player.username === clueGiverUsername,
+                    clueGiverUsername,
                 };
 
-                messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN, message, player.username);
+                messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN, data, player.username);
             }
             room.status = "MID-ROUND";
         } else {
@@ -106,14 +106,7 @@ const gameEventsHandlers = {
         const success = await room.startNewClueRound(username, word, definition);
         if (success) {
             const addedClue = room.currentRound.clues.at(-1);
-            messageEmitter.emitToKeeper(
-                SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK,
-                {
-                    from: username,
-                    definition,
-                },
-                room.roomId
-            );
+            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, room.currentRound.getClues(), room.roomId);
 
             for (const player of room.players) {
                 if (player.role === ROLES.SEEKER) {
@@ -172,10 +165,7 @@ const gameEventsHandlers = {
             messageEmitter.broadcastToRoom(
                 SOCKET_EVENTS.SERVER_CLUE_BLOCKED,
                 {
-                    word: result.blockedClue.word,
-                    from: result.blockedClue.from,
-                    definition: result.blockedClue.definition,
-                    blockedBy: userId,
+                    clue: result.blockedClue,
                     clueGiverUsername: clueGiverUsername,
                 },
                 room.roomId

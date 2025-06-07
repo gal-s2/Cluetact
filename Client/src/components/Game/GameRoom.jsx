@@ -15,6 +15,7 @@ import GameOverPopup from "./Modals/GameOverPopup";
 import FloatingLetters from "../Animations/FloatingLetters/FloatingLetters";
 import NotificationBox from "./NotificationBox/NotificationBox";
 import PlayersTable from "./GameScreen/Player/PlayersTable";
+import PlayerMainMessageHeader from "./GameScreen/Player/PlayerMainMessageHeader";
 
 function GameRoom() {
     const { gameState, loading, handleExitGame, notification } = useGameRoom();
@@ -52,7 +53,11 @@ function GameRoom() {
                     </div>
                 )}
 
-                {!gameState.isKeeper && gameState.isWordChosen && gameState.isSubmittingClue && (
+                <>
+                    <PlayerMainMessageHeader></PlayerMainMessageHeader>
+                </>
+
+                {!gameState.isKeeper && gameState.isWordChosen && gameState.isSubmittingClue && !gameState.activeClue && (
                     <div className={styles.clueSubmitWrapper}>
                         <SubmitClue />
                     </div>

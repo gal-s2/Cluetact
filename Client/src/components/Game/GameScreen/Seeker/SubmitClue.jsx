@@ -19,7 +19,6 @@ function SubmitClue() {
 
     // Check if the last clue was submitted by the current user
     const lastClue = clues[clues.length - 1];
-    const isWaitingForOthers = lastClue && lastClue.from === user.username;
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -42,14 +41,8 @@ function SubmitClue() {
         setWord(value);
     }
 
-    // Show waiting message if user already submitted the last clue
-    if (isWaitingForOthers) {
-        return <div className={styles.waitingBar}>⏳ Clue Submitted! Waiting for other players to guess your word...</div>;
-    }
-
     return (
         <form className={styles.container} onSubmit={handleSubmit}>
-            <h3 className={styles.yourTurnHeading}>It’s your turn to submit a clue! ✍️</h3>
             <input className={styles.input} value={word} onChange={(e) => onChangeWord(e.target.value)} placeholder={`Word starting with "${revealedPrefix}"`} />
             <div className={styles.charCount}>
                 {word.length} / {WORD_MAX_LENGTH} characters
