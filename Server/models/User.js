@@ -56,6 +56,9 @@ UserSchema.statics.register = async function (userData) {
     if (exists) {
         throw Error("Email already in use");
     }
+    if (username.startsWith("GUEST_")) {
+        throw Error("Username cannot start with 'GUEST_'");
+    }
 
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);

@@ -19,7 +19,7 @@ const { requestLogger } = require("./utils/logger.js");
 app.use(
     cors({
         origin: [
-            "https://6891-95-35-191-50.ngrok-free.app", //#client-url
+            "https://c934-95-35-191-50.ngrok-free.app", //#client-url
             "http://localhost:5173",
         ],
         methods: ["GET", "POST"],

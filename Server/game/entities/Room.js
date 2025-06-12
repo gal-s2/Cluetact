@@ -230,8 +230,9 @@ class Room {
         if (this.isWordFullyRevealed) {
             const currentKeeper = this.keeperUsername;
             this.pastKeepers.add(currentKeeper);
-
+            this.seekersUsernames.push(currentKeeper);
             const nextKeeper = this.getNextKeeper();
+            this.seekersUsernames.filter((seekerUsername) => seekerUsername !== nextKeeper);
             this.keeperUsername = nextKeeper;
             this.players.find((player) => player.username === nextKeeper).setRole(ROLES.KEEPER);
 

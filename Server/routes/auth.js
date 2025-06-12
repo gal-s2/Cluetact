@@ -1,12 +1,13 @@
 const router = require("express").Router();
 const User = require("../models/User");
+const socketManager = require("../game/managers/SocketManager");
 const { generateToken } = require("../utils/jwt");
 
 router.post("/guest", (req, res) => {
     try {
+        const guestCount = socketManager.addAndFetchGuestCount();
         const user = {
-            username: `Guest_1`,
-            _id: 1,
+            username: `GUEST_${guestCount}`,
         };
         const token = generateToken(user);
         res.status(200).json({ user, token });
