@@ -64,7 +64,6 @@ function GameRoom() {
                 )}
 
                 <div className={styles.cluesSection}>
-                    {/* {!gameState.isKeeper && !gameState.isSubmittingClue && gameState.activeClue && <GuessActionLine />} */}
                     {!gameState.isKeeper && (!gameState.isSubmittingClue || gameState.activeClue) && <ClueSection />}
                     {gameState.isKeeper && <KeeperClueList />}
                 </div>

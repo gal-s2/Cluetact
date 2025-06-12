@@ -31,7 +31,6 @@ class GameRound {
     addClue(clueGiverUsername, clueWord, clueDefinition) {
         const clue = new Clue(clueGiverUsername, clueWord, clueDefinition);
         this.clues.push(clue);
-        this.guesses = [];
     }
 
     tryBlockClue(wordGuess, keeperUsername) {

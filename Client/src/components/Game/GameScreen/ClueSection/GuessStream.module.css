@@ -45,7 +45,7 @@
     color: #424242;
     box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
     transition: all 0.3s ease;
-    animation: slideInFromRight 0.4s ease-out;
+    animation: slideInFromTop 0.4s ease-out;
     position: relative;
     word-wrap: break-word;
     line-height: 1.4;
@@ -62,15 +62,15 @@
     margin-right: 0.5rem;
 }
 
-/* Animation for new guesses */
-@keyframes slideInFromRight {
+/* Animation for new guesses - now from top */
+@keyframes slideInFromTop {
     from {
         opacity: 0;
-        transform: translateX(30px);
+        transform: translateY(-20px);
     }
     to {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateY(0);
     }
 }
 

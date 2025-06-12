@@ -39,7 +39,7 @@ function ClueSection() {
             {/* People's Guesses - Only show when there's an active clue */}
             {activeClue && (
                 <>
-                    <h3 className={styles.heading}>People's Guesses</h3>
+                    <h3 className={styles.heading}>Live Guesses</h3>
                     <GuessStream guesses={guesses} />
                 </>
             )}
@@ -51,7 +51,7 @@ function ClueSection() {
             ) : (
                 <div ref={historyListRef} className={styles.scrollableHistoryList} data-clue-count={historyClues.length}>
                     {historyClues.map((clue) => (
-                        <ClueBubble key={clue.id} from={clue.from} definition={clue.definition} blocked={clue.blocked} invalid={clue.invalid} word={""} />
+                        <ClueBubble key={clue.id} from={clue.from} definition={clue.definition} blocked={clue.blocked} invalid={clue.invalid} word={clue.word} />
                     ))}
                 </div>
             )}

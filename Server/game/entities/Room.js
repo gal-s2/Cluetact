@@ -172,6 +172,7 @@ class Room {
         if (clue && clue.word === guessLower) {
             clue.active = false;
             result.correct = true;
+            this.currentRound.guesses = [];
             if (username === this.keeperUsername) {
                 this.handleCorrectBlockByKeeper(username); // optional for keeper guess matching
                 result.revealed = false;

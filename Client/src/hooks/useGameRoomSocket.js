@@ -72,6 +72,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
                 activeClue: null,
                 revealedWord: revealed,
                 isWordComplete,
+                guesses: null,
             }));
         });
 
@@ -95,7 +96,7 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
 
             setGameState((prev) => ({
                 ...prev,
-                clues: prev.clues.map((c) => (c.id === clue.id ? { ...c, blocked: true } : c)),
+                clues: prev.clues.map((c) => (c.id === clue.id ? { ...c, blocked: true, word: clue.word } : c)),
                 isSubmittingClue: clueGiverUsername === user.username,
                 clueGiverUsername,
                 activeClue: null,
