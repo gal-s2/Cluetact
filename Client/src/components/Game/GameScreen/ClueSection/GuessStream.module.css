@@ -1,5 +1,9 @@
 /* GuessStream.module.css */
 
+.guessStream {
+    padding: 1rem;
+}
+
 .guessStreamWrapper {
     width: 100%;
     display: flex;

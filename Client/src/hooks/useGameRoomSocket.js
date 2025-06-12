@@ -42,10 +42,6 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
     const handleGuessSubmit = (guess) => {
         const clue = gameState.activeClue;
         socket.emit(SOCKET_EVENTS.CLIENT_TRY_CLUETACT, { guess, clueId: clue.id });
-        setGameState((prev) => ({
-            ...prev,
-            activeClue: null,
-        }));
     };
 
     const handleNextRound = () => {
@@ -95,16 +91,29 @@ export default function useGameRoomSocket(roomId, hasJoinedRef) {
         });
 
         socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ clue, clueGiverUsername }) => {
+            console.log("I received a clue blocked event, clue is ", clue);
+
             setGameState((prev) => ({
                 ...prev,
-                clues: prev.clues.map((prevClues) => ({ ...prevClues, clue })),
+                clues: prev.clues.map((c) => (c.id === clue.id ? { ...c, blocked: true } : c)),
                 isSubmittingClue: clueGiverUsername === user.username,
                 clueGiverUsername,
                 activeClue: null,
             }));
+
             console.log("I received a clue blocked event, am I a keeper?", gameState.isKeeper);
-            if (!gameState.isKeeper) setNotification({ message: `The keeper blocked "${clue.from}" by guessing the word "${clue.word}"`, type: "notification" });
-            else setNotification({ message: `You blocked "${clue.from}" by guessing the word "${clue.word}"`, type: "success" });
+
+            if (!gameState.isKeeper) {
+                setNotification({
+                    message: `The keeper blocked "${clue.from}" by guessing the word "${clue.word}"`,
+                    type: "notification",
+                });
+            } else {
+                setNotification({
+                    message: `You blocked "${clue.from}" by guessing the word "${clue.word}"`,
+                    type: "success",
+                });
+            }
         });
 
         socket.on(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, (message) => {

@@ -35,7 +35,7 @@ function PlayerMainMessageHeader() {
                 if (isMyTurn) {
                     return "Your moment to shine! Drop a clever clue ✨";
                 } else {
-                    return `Waiting for ${gameState.clueGiverUsername} to submit their clue... 🤔`;
+                    return `Waiting for ${gameState.clueGiverUsername} to submit a clue... 🤔`;
                 }
             } else {
                 if (isMyTurn) {

@@ -38,7 +38,7 @@ function KeeperClueList({ maxVisibleItems = 4 }) {
         if (unblockedListRef.current) {
             unblockedListRef.current.scrollTop = unblockedListRef.current.scrollHeight;
         }
-    }, [unblockedClues]);
+    }, [unblockedClues, gameState]);
 
     return (
         <div className={styles.keeperContainer}>
