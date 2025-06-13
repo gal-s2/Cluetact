@@ -180,6 +180,10 @@ const gameEventsHandlers = {
         if (!socket.user) return;
         const roomId = gameManager.getRoomIdByUsername(socket.user.username);
         const room = gameManager.getRoom(roomId);
+        if (!room) {
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
+            return;
+        }
         const otherUsernames = room.players.filter((player) => player.username !== socket.user.username).map((player) => player.username);
         console.log("other usernames are ", otherUsernames);
 

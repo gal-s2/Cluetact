@@ -3,12 +3,9 @@ const User = require("../models/User");
 const socketManager = require("../game/managers/SocketManager");
 const { generateToken } = require("../utils/jwt");
 
-router.post("/guest", (req, res) => {
+router.post("/guest", async (req, res) => {
     try {
-        const guestCount = socketManager.addAndFetchGuestCount();
-        const user = {
-            username: `GUEST_${guestCount}`,
-        };
+        const user = await User.createGuest();
         const token = generateToken(user);
         res.status(200).json({ user, token });
     } catch (err) {

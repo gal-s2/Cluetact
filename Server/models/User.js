@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const { uniqueNamesGenerator } = require("unique-names-generator");
+const descriptors = ["black", "blue", "crimson", "dark", "golden", "icy", "red", "silver", "stealthy", "speedy", "swift", "tiny", "wild", "wise", "fierce", "quick", "sharp", "brave", "calm", "cool"];
+const animals = ["cat", "dog", "fox", "wolf", "hawk", "bear", "owl", "lynx", "panther", "cheetah", "lion", "tiger", "cobra", "raven", "eagle", "koala", "otter", "bat", "ferret", "puma"];
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -10,29 +13,18 @@ const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         unique: true,
-        required: true,
+        sparse: true,
+        required: requiredIfNotGuest,
     },
     password: {
         type: String,
-        required: true,
-    },
-    gender: {
-        type: String,
-        required: false,
+        required: requiredIfNotGuest,
     },
     country: {
         type: String,
         required: false,
     },
-    level: {
-        type: Number,
-        required: false,
-    },
-    online: {
-        type: Boolean,
-        default: false,
-        required: true,
-    },
+
     statistics: {
         totalGames: { type: Number, default: 0 },
         Losses: { type: Number, default: 0 },
@@ -43,7 +35,20 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: "0",
     },
+    guest: {
+        type: Boolean,
+        default: false,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        expires: 60 * 60 * 24,
+    },
 });
+
+function requiredIfNotGuest() {
+    return !this.guest;
+}
 
 // static register method
 UserSchema.statics.register = async function (userData) {
@@ -51,13 +56,14 @@ UserSchema.statics.register = async function (userData) {
 
     // validate user here
 
-    const exists = await this.findOne({ email });
-
+    const exists = await this.findOne({
+        $or: [{ email }, { username }],
+    });
     if (exists) {
-        throw Error("Email already in use");
+        throw Error("Username or email already in use");
     }
-    if (username.startsWith("GUEST_")) {
-        throw Error("Username cannot start with 'GUEST_'");
+    if (username.endsWith("[Guest]")) {
+        throw Error("Username cannot end with '[Guest]'");
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -69,14 +75,13 @@ UserSchema.statics.register = async function (userData) {
         password: hash,
         gender,
         country,
-        level: 1,
     });
 
     return user;
 };
 
-UserSchema.statics.login = async function (email, password) {
-    const user = await this.findOne({ email });
+UserSchema.statics.login = async function (username, password) {
+    const user = await this.findOne({ username });
 
     if (!user) {
         throw Error("Invalid credentials");
@@ -88,6 +93,36 @@ UserSchema.statics.login = async function (email, password) {
     }
 
     return user;
+};
+
+UserSchema.statics.createGuest = async function () {
+    let username;
+    let exists = true;
+
+    while (exists) {
+        const rawName = uniqueNamesGenerator({
+            dictionaries: [descriptors, animals],
+            separator: "",
+            style: "capital",
+        });
+
+        const number = Math.floor(Math.random() * 99) + 1;
+        username = `${rawName}${number}[Guest]`;
+        exists = await this.findOne({ username });
+    }
+
+    const guest = await this.create({
+        guest: true,
+        username,
+    });
+
+    console.log("Created guest:", username);
+    return guest;
+};
+
+UserSchema.statics.userExists = async function (username) {
+    const user = await this.findOne({ username });
+    return !!user;
 };
 
 module.exports = mongoose.model("User", UserSchema);
