@@ -22,9 +22,8 @@ function AuthForm({ type }) {
     const validateForm = () => {
         const newErrors = {};
 
-        if (!emailRegex.test(email)) {
-            // Email validation
-            newErrors.email = "Invalid email address";
+        if (!username.trim()) {
+            newErrors.username = "Username is required";
         }
 
         if (password.length < 6) {
@@ -77,11 +76,12 @@ function AuthForm({ type }) {
                 <img src={logo} alt="Cluetact Logo" className={styles.logo} />
                 <h2>{type === "login" ? "Login" : "Register"}</h2>
                 <form onSubmit={handleSubmit} className={styles.authForm}>
-                    {type === "register" && <input type="text" placeholder="Username" value={username || ""} onChange={(e) => setUsername(e.target.value)} required />}
-
-                    <input type="text" placeholder="Email" value={email || ""} onChange={(e) => setEmail(e.target.value)} className={errors.email ? styles.invalidInput : ""} required />
-
-                    {errors.email && <p className={styles.error}>{errors.email}</p>}
+                    {/* {type === "register" && <input type="text" placeholder="Username" value={username || ""} onChange={(e) => setUsername(e.target.value)} required />} */}
+                    {type === "register" && <input type="text" placeholder="Email" value={email || ""} onChange={(e) => setEmail(e.target.value)} required />}
+                    {/* <input type="text" placeholder="Email" value={email || ""} onChange={(e) => setEmail(e.target.value)} className={errors.email ? styles.invalidInput : ""} required />
+                    {errors.email && <p className={styles.error}>{errors.email}</p>} */}
+                    <input type="text" placeholder="Username" value={username || ""} onChange={(e) => setUsername(e.target.value)} className={errors.username ? styles.invalidInput : ""} required />
+                    {errors.username && <p className={styles.error}>{errors.username}</p>}
 
                     <input
                         type="password"

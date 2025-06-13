@@ -12,39 +12,53 @@ const User = require("../../models/User");
 
 module.exports = function (io) {
     // middleware for socket message
-    io.use((socket, next) => {
+    io.use(async (socket, next) => {
         try {
             const token = socket?.handshake?.auth?.token;
             if (token) {
-                const decoded = verifyToken(token); // verify jwt
+                const decoded = verifyToken(token);
 
                 socket.user = decoded;
                 next();
             } else {
-                next(new Error("Missing auth token"));
+                next(new Error("Authentication error: No token provided"));
             }
         } catch (err) {
-            next(new Error("Auth error"));
+            next(new Error(err.message || "Authentication error"));
         }
     });
 
-    io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
+    const validateUserExistence = async (socket) => {
+        const exists = await User.userExists(socket.user.username);
+
+        return exists;
+    };
+
+    // Register the connection event
+
+    io.on(SOCKET_EVENTS.CONNECTION, async (socket) => {
+        await validateUserExistence(socket).then((exists) => {
+            if (!exists) {
+                console.log("[Socket connection error: User does not exist]", socket.id);
+                socket.emit(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOGIN, null);
+                setTimeout(() => {
+                    socket.disconnect();
+                }, 100);
+                return;
+            }
+        });
+
         console.log("[Client connected:", socket.id, "]");
         waitingLobbyHandlers(io, socket);
 
         socketManager.register(socket, socket.user.username);
 
         const reconnect = async (socket) => {
-            if (socket.hasRedirectedToLogin) return;
-            const isExistingUser = await User.userExists(socket.user.username);
-            console.log("User exists:", isExistingUser);
-            if (!isExistingUser) {
-                socket.hasRedirectedToLogin = true;
-                messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOGIN, null, socket);
-            } else {
-                let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);
-                if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId }, socket);
-            }
+            const valid = await validateUserExistence(socket);
+            if (!valid) return;
+
+            let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);
+            if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId }, socket);
         };
 
         // Log every incoming message

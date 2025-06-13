@@ -83,14 +83,11 @@ UserSchema.statics.register = async function (userData) {
 UserSchema.statics.login = async function (username, password) {
     const user = await this.findOne({ username });
 
-    if (!user) {
-        throw Error("Invalid credentials");
-    }
+    if (!user) throw Error("Invalid credentials");
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-        throw Error("Invalid credentials");
-    }
+
+    if (!isMatch) throw Error("Invalid credentials");
 
     return user;
 };

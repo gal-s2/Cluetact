@@ -28,10 +28,10 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     try {
-        const user = await User.login(email, password);
+        const user = await User.login(username, password);
         const token = generateToken(user);
         res.status(200).json({ user, token });
     } catch (err) {
