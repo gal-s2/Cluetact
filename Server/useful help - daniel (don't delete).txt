@@ -35,7 +35,9 @@ tunnels:
         addr: 8000
 -run in cmd "ngrok start --all"
 -get the mapping of the server/client, replace in the app in "baseUrl.js" the path to the server's, and give people the client's mapping
-
+-replace in index.js and in vite.config.js
+#instructions:
+-search for #client-url and #server-url to understand where to put each ngrok url
 
 
 

@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import styles from "./PlayerCard.module.css";
+import React, { useState } from "react";
 
 const images = import.meta.glob("../../../../assets/avatars/avatar_*.png", { eager: true });
 
@@ -10,11 +11,17 @@ const avatarMap = Object.fromEntries(
     })
 );
 
-const PlayerCard = ({ player, me, onClick }) => {
+const PlayerCard = ({ player, me, onClick, setSelectedPlayer }) => {
     const avatarSrc = avatarMap[player.avatar] || avatarMap[0];
 
     return (
-        <div className={classNames(styles.card, { [styles.me]: me })} onClick={onClick}>
+        <div
+            className={classNames(styles.card, { [styles.me]: me })}
+            onClick={() => {
+                onClick(player);
+                setSelectedPlayer(player);
+            }}
+        >
             <div className={styles.inner}>
                 <div className={styles.playerImageContainer}>
                     <img className={styles.playerImage} src={avatarSrc} alt={`${player.username}'s avatar`} />

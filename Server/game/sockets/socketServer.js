@@ -8,6 +8,7 @@ const overWatchHandlers = require("../controllers/overWatchHandlers");
 const messageEmitter = require("./MessageEmitter");
 const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 const GameManager = require("../managers/GameManager");
+const User = require("../../models/User");
 
 module.exports = function (io) {
     // middleware for socket message
@@ -33,9 +34,17 @@ module.exports = function (io) {
 
         socketManager.register(socket, socket.user.username);
 
-        const reconnect = (socket) => {
-            let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);
-            if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId }, socket);
+        const reconnect = async (socket) => {
+            if (socket.hasRedirectedToLogin) return;
+            const isExistingUser = await User.userExists(socket.user.username);
+            console.log("User exists:", isExistingUser);
+            if (!isExistingUser) {
+                socket.hasRedirectedToLogin = true;
+                messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOGIN, null, socket);
+            } else {
+                let roomId = GameManager.getRoomIdByUsername(socket?.user?.username);
+                if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId }, socket);
+            }
         };
 
         // Log every incoming message

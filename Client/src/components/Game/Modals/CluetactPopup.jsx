@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import styles from "./CluetactPopup.module.css";
+import { useGameRoom } from "../../../contexts/GameRoomContext";
 
-function CluetactPopup({ word, guesser, onClose }) {
-    const [secondsLeft, setSecondsLeft] = useState(3);
+function CluetactPopup() {
+    const [secondsLeft, setSecondsLeft] = useState(5);
+    const { gameState, setCluetact } = useGameRoom();
+    const word = gameState.cluetact?.word || "";
+    const guesser = gameState.cluetact?.guesser || "";
+
+    // Check if the word will be fully revealed after this cluetact
+    const isWordFullyRevealed = gameState.isWordComplete;
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -10,24 +17,33 @@ function CluetactPopup({ word, guesser, onClose }) {
         }, 1000);
 
         const timeout = setTimeout(() => {
-            onClose();
-        }, 3000);
+            setCluetact(null);
+        }, 5000);
 
         return () => {
             clearInterval(interval);
             clearTimeout(timeout);
         };
-    }, [onClose]);
+    }, []);
 
     return (
         <div className={styles.overlay}>
-            <div className={styles.popup}>
-                <h2>🧠 Cluetact Achieved!</h2>
+            <div className={`${styles.popup} ${isWordFullyRevealed ? styles.finalReveal : ""}`}>
+                <h2>{isWordFullyRevealed ? "🎉 WORD FULLY REVEALED!" : "🧠 Cluetact Achieved!"}</h2>
                 <p>
-                    <strong>{guesser}</strong> guessed the word{" "}
-                    <strong>{word}</strong>!
+                    <strong>{guesser}</strong> guessed the word <strong>{word}</strong>!
                 </p>
-                <p>Next letter is being revealed... ({secondsLeft})</p>
+
+                {isWordFullyRevealed ? (
+                    <div className={styles.finalRevealSection}>
+                        <p className={styles.finalWordDisplay}>
+                            The complete word is: <span className={styles.finalWord}>{gameState.revealedWord}</span>
+                        </p>
+                        <p className={styles.gameEndMessage}>🏆 Game Complete! ({secondsLeft})</p>
+                    </div>
+                ) : (
+                    <p>Next letter is being revealed... ({secondsLeft})</p>
+                )}
             </div>
         </div>
     );

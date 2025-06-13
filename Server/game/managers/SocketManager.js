@@ -12,6 +12,12 @@ class SocketManager {
         // Maps username to socket and socket id to username
         this.usernameToSocket = new Map();
         this.socketIdToUsername = new Map();
+        this.guestCount = 0;
+    }
+
+    addAndFetchGuestCount() {
+        this.guestCount++;
+        return this.guestCount;
     }
 
     /**

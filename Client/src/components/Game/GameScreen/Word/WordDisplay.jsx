@@ -1,6 +1,12 @@
 import styles from "./WordDisplay.module.css";
+import { useGameRoom } from "../../../../contexts/GameRoomContext";
 
-function WordDisplay({ isKeeper, revealedWord, word, length }) {
+function WordDisplay() {
+    const { gameState } = useGameRoom();
+    const isKeeper = gameState.isKeeper;
+    const word = gameState.keeperWord || "";
+    const revealedWord = gameState.revealedWord || "";
+    const length = gameState.wordLength || 0;
     let currentDisplay = "";
 
     if (isKeeper) {
@@ -13,7 +19,7 @@ function WordDisplay({ isKeeper, revealedWord, word, length }) {
             );
         });
     } else {
-        currentDisplay = <b>{revealedWord + "…"}</b>;
+        currentDisplay = <b>{revealedWord + "..."}</b>;
     }
 
     return <div className={styles.word}>{currentDisplay}</div>;

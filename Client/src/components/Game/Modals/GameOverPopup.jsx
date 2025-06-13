@@ -1,8 +1,11 @@
 import { useUser } from "../../../contexts/UserContext";
 import styles from "./GameOverPopup.module.css";
+import { useGameRoom } from "../../../contexts/GameRoomContext";
 
-function GameOverPopup({ winners, onNextRound, onExit }) {
+function GameOverPopup() {
     const { user } = useUser();
+    const { gameState, handleNextRound, handleExitGame } = useGameRoom();
+    const winners = gameState.winners || [];
     const isWinner = winners.includes(user.username);
 
     return (
@@ -20,10 +23,10 @@ function GameOverPopup({ winners, onNextRound, onExit }) {
                 </div>
 
                 <div className={styles.buttons}>
-                    <button className={styles.nextButton} onClick={onNextRound}>
+                    <button className={styles.nextButton} onClick={handleNextRound}>
                         Next Round
                     </button>
-                    <button className={styles.exitButton} onClick={onExit}>
+                    <button className={styles.exitButton} onClick={handleExitGame}>
                         Exit
                     </button>
                 </div>

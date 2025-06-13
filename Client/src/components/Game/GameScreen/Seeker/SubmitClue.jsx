@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import styles from "./SubmitClue.module.css";
 import socket from "../../../../services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
+import { useUser } from "../../../../contexts/UserContext";
+import { useGameRoom } from "../../../../contexts/GameRoomContext";
 
 const WORD_MAX_LENGTH = 20;
 const DEFINITION_MAX_LENGTH = 100;
 
-function SubmitClue({ revealedPrefix, setNotification }) {
+function SubmitClue() {
+    const { gameState, setNotification } = useGameRoom();
+    const revealedPrefix = gameState.revealedWord || "";
+    const clues = gameState.clues || [];
     const [definition, setDefinition] = useState("");
     const [word, setWord] = useState("");
+    const { user } = useUser();
+    console.log("clues", clues);
+
+    // Check if the last clue was submitted by the current user
+    const lastClue = clues[clues.length - 1];
 
     const handleSubmit = (e) => {
         e.preventDefault();

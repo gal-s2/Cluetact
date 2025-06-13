@@ -45,6 +45,8 @@ const gameEventsHandlers = {
 
         const username = socket.user.username;
         const keeperWordOrNull = username === room.keeperUsername ? room.getKeeperWord() : null;
+        const guesses = room.getGuesses();
+        const clueGiverUsername = room.getCurrentClueGiverUsername();
         messageEmitter.emitToSocket(
             SOCKET_EVENTS.SERVER_GAME_JOIN,
             {
@@ -55,6 +57,8 @@ const gameEventsHandlers = {
                 clues: room.currentRound.getClues(),
                 isKeeper: room.keeperUsername === socket.user.username,
                 isWordChosen: !!room.getKeeperWord(),
+                guesses: guesses,
+                clueGiverUsername: clueGiverUsername,
             },
             socket
         );
@@ -69,17 +73,18 @@ const gameEventsHandlers = {
 
         if (valid) {
             word = room.getKeeperWord();
-
+            const clueGiverUsername = room.seekersUsernames[room.indexOfSeekerOfCurrentTurn];
             // send all players in room a word chosen
             for (const player of room.players) {
-                const message = {
+                const data = {
                     success: true,
                     word: player.role === ROLES.KEEPER ? word : undefined,
                     revealedWord: room.getRevealedLetters(),
                     length: word.length,
+                    clueGiverUsername,
                 };
 
-                messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN, message, player.username);
+                messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN, data, player.username);
             }
             room.status = "MID-ROUND";
         } else {
@@ -101,14 +106,7 @@ const gameEventsHandlers = {
         const success = await room.startNewClueRound(username, word, definition);
         if (success) {
             const addedClue = room.currentRound.clues.at(-1);
-            messageEmitter.emitToKeeper(
-                SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK,
-                {
-                    from: username,
-                    definition,
-                },
-                room.roomId
-            );
+            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, room.currentRound.getClues(), room.roomId);
 
             for (const player of room.players) {
                 if (player.role === ROLES.SEEKER) {
@@ -125,13 +123,11 @@ const gameEventsHandlers = {
         if (!room) return;
 
         const guesserUsername = socket.user.username;
-        const clueGiverUserName = room.currentRound.clues.find((clue) => clue.id === clueId).from;
-        if (guesserUsername === clueGiverUserName) {
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "You cannot guess your own clue", socket);
-            return;
-        }
-        const result = await room.submitGuess(guesserUsername, guess, clueId);
 
+        const result = await room.submitGuess(guesserUsername, guess, clueId);
+        const clueGiverUsername = room.getCurrentClueGiverUsername();
+        console.log("clue giver username is ", clueGiverUsername);
+        console.log("revealed letters are ", room.getRevealedLetters());
         if (result.correct) {
             const data = {
                 guesser: guesserUsername,
@@ -141,12 +137,15 @@ const gameEventsHandlers = {
                 isWordComplete: result.isWordComplete,
                 keeper: room.keeperUsername,
                 players: room.players,
+                clueGiverUsername: clueGiverUsername,
             };
             if (result.isGameEnded) {
                 data.winners = room.getWinners();
             }
             messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, data, room.roomId);
         } else {
+            const guesses = room.getGuesses();
+            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_GUESS_FAILED, guesses, room.roomId);
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Incorrect Guess", socket);
         }
     },
@@ -163,13 +162,12 @@ const gameEventsHandlers = {
         const result = room.tryBlockClue(guess, userId);
 
         if (result.success) {
+            const clueGiverUsername = room.getCurrentClueGiverUsername();
             messageEmitter.broadcastToRoom(
                 SOCKET_EVENTS.SERVER_CLUE_BLOCKED,
                 {
-                    word: result.blockedClue.word,
-                    from: result.blockedClue.from,
-                    definition: result.blockedClue.definition,
-                    blockedBy: userId,
+                    clue: result.blockedClue,
+                    clueGiverUsername: clueGiverUsername,
                 },
                 room.roomId
             );
@@ -182,6 +180,10 @@ const gameEventsHandlers = {
         if (!socket.user) return;
         const roomId = gameManager.getRoomIdByUsername(socket.user.username);
         const room = gameManager.getRoom(roomId);
+        if (!room) {
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
+            return;
+        }
         const otherUsernames = room.players.filter((player) => player.username !== socket.user.username).map((player) => player.username);
         console.log("other usernames are ", otherUsernames);
 

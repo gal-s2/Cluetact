@@ -15,21 +15,18 @@ export default function useSocketNavigation() {
         };
 
         const handleRedirectToRoom = ({ roomId }) => {
-            const currentPath = location.pathname;
             const targetPath = `/game/${roomId}`;
-            console.log(currentPath);
-            console.log(targetPath);
-            const condition = currentPath != targetPath;
-            if (condition) {
-                console.log("condition is true");
-                navigate(targetPath);
-            } else {
-                console.log("condition is false");
-            }
+            handleRedirect(targetPath);
         };
 
         const handleRedirectToLogin = () => {
-            navigate("/login");
+            localStorage.clear();
+            handleRedirect("/");
+        };
+
+        const handleRedirect = (tartgetPath) => {
+            const currentPath = location.pathname;
+            if (currentPath !== tartgetPath) navigate(tartgetPath);
         };
 
         socket.on(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, handleRedirectToLobby);
