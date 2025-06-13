@@ -113,8 +113,8 @@ function Lobby() {
         setCreatedRoomCode(newCode);
         setShowCreateModal(true);
 
-        socket.emit(SOCKET_EVENTS.CLIENT_CREATE_WAITING_LOBBY, {
-            lobbyId: newCode,
+        socket.emit(SOCKET_EVENTS.CLIENT_CREATE_WAITING_ROOM, {
+            waitingRoomId: newCode,
             username: user.username,
         });
 
@@ -124,8 +124,8 @@ function Lobby() {
     const handleJoinRoom = () => {
         if (!user) return;
 
-        socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_LOBBY, {
-            lobbyId: roomCodeInput,
+        socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_ROOM, {
+            waitingRoomId: roomCodeInput,
             username: user.username,
         });
 

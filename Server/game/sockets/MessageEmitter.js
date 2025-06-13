@@ -1,6 +1,6 @@
 const socketManager = require("../managers/SocketManager");
 const gameManager = require("../managers/GameManager");
-const waitingLobbyManager = require("../managers/WaitingLobbyManager");
+const waitingRoomManager = require("../managers/WaitingRoomManager");
 const { ROLES } = require("../constants");
 
 class MessageEmitter {
@@ -79,7 +79,7 @@ class MessageEmitter {
      * @param {string} waitingRoomId - The ID of the waiting lobby.
      */
     broadcastToWaitingRoom(event, data, waitingRoomId) {
-        const users = waitingLobbyManager.getLobbyUsers(waitingRoomId);
+        const users = waitingRoomManager.getWaitingRoomUsers(waitingRoomId);
         users.forEach((username) => {
             const socket = socketManager.getSocketByUsername(username);
             if (socket) socket.emit(event, data);

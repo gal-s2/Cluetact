@@ -2,7 +2,7 @@ const socketManager = require("../managers/SocketManager");
 
 const { socketLogger } = require("../../utils/logger");
 const { verifyToken } = require("../../utils/jwt");
-const waitingLobbyHandlers = require("../controllers/waitingLobbyHandlers");
+const waitingRoomHandlers = require("../controllers/waitingRoomHandlers");
 const gameEventsHandlers = require("../controllers/gameEventsHandlers");
 const overWatchHandlers = require("../controllers/overWatchHandlers");
 const messageEmitter = require("./MessageEmitter");
@@ -49,7 +49,7 @@ module.exports = function (io) {
         });
 
         console.log("[Client connected:", socket.id, "]");
-        waitingLobbyHandlers(io, socket);
+        waitingRoomHandlers(io, socket);
 
         socketManager.register(socket, socket.user.username);
 

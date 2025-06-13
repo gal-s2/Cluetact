@@ -1,6 +1,6 @@
 const gameManager = require("../managers/GameManager");
 const socketManager = require("../managers/SocketManager");
-const waitingLobbyManager = require("../managers/WaitingLobbyManager");
+const WaitingRoomManager = require("../managers/WaitingRoomManager");
 const messageEmitter = require("../sockets/MessageEmitter");
 const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 const { ROLES } = require("../constants");
@@ -199,10 +199,10 @@ const gameEventsHandlers = {
     },
 
     disconnect: (socket, reason) => {
-        const lobbies = waitingLobbyManager.removeUserFromItsLobbies(socket.id);
-        lobbies.forEach((lobbyId) => {
-            socket.leave(lobbyId);
-            messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_LOBBY_UPDATE, waitingLobbyManager.getLobbyUsers(lobbyId), lobbyId);
+        const waitingRooms = WaitingRoomManager.removeUserFromItsWaitingRooms(socket.id);
+        waitingRooms.forEach((waitingRoomId) => {
+            socket.leave(waitingRoomId);
+            messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), waitingRoomId);
         });
         console.log("about to delete socket from socketManager");
         socketManager.unregister(socket);

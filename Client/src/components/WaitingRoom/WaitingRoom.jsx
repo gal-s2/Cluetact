@@ -27,8 +27,8 @@ function WaitingRoom() {
         return () => {
             if (savedUsername) {
                 console.log(`Leaving room ${roomId} as ${savedUsername}`);
-                socket.emit(SOCKET_EVENTS.CLIENT_LEAVE_WAITING_LOBBY, {
-                    lobbyId: roomId,
+                socket.emit(SOCKET_EVENTS.CLIENT_LEAVE_WAITING_ROOM, {
+                    waitingRoomId: roomId,
                     username: savedUsername,
                 });
             }
@@ -37,10 +37,10 @@ function WaitingRoom() {
 
     useEffect(() => {
         const handleConnect = () => {
-            console.log("Connected, now joining waiting lobby...");
+            console.log("Connected, now joining waiting room...");
             if (user && roomId) {
-                socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_LOBBY, {
-                    lobbyId: roomId,
+                socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_ROOM, {
+                    waitingRoomId: roomId,
                     username: user.username,
                 });
 
@@ -48,8 +48,8 @@ function WaitingRoom() {
             }
         };
 
-        const handleLobbyUpdate = (users) => {
-            console.log("Received lobby update:", users);
+        const handleWaitingRoomUpdate = (users) => {
+            console.log("Received waiting room update:", users);
             setUsers(users);
         };
 
@@ -58,7 +58,7 @@ function WaitingRoom() {
         });
 
         socket.on(SOCKET_EVENTS.CONNECT, handleConnect);
-        socket.on(SOCKET_EVENTS.SERVER_LOBBY_UPDATE, handleLobbyUpdate);
+        socket.on(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, handleWaitingRoomUpdate);
 
         if (!socket.connected && socket.disconnected) {
             socket.connect();
@@ -69,7 +69,7 @@ function WaitingRoom() {
 
         return () => {
             socket.off(SOCKET_EVENTS.CONNECT, handleConnect);
-            socket.off(SOCKET_EVENTS.LOBBY_UPDATE, handleLobbyUpdate);
+            socket.off(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, handleWaitingRoomUpdate);
         };
     }, [roomId, user]);
 
@@ -86,7 +86,7 @@ function WaitingRoom() {
     }, []);
 
     const handleStart = () => {
-        socket.emit(SOCKET_EVENTS.CLIENT_START_GAME_FROM_LOBBY, { lobbyId: roomId });
+        socket.emit(SOCKET_EVENTS.CLIENT_START_GAME_FROM_WAITING_ROOM, { waitingRoomId: roomId });
     };
 
     const handleCopy = () => {

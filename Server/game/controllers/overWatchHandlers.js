@@ -1,6 +1,6 @@
 const gameManager = require("../managers/GameManager");
 const socketManager = require("../managers/SocketManager");
-const waitingLobbyManager = require("../managers/WaitingLobbyManager");
+const waitingRoomManager = require("../managers/WaitingRoomManager");
 const messageEmitter = require("../sockets/MessageEmitter");
 const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
 
