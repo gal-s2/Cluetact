@@ -15,6 +15,7 @@
     "CLIENT_EXIT_ROOM": "client_exit_room",
     "CLIENT_GET_ONLINE_ROOMS": "client_get_online_rooms",
     "CLIENT_GET_ALL_USERS": "client_get_all_users",
+    "CLIENT_GET_ONLINE_WAITING_ROOMS": "client_get_online_waiting_rooms",
     "CONNECTION": "connection",
     "CONNECT": "connect",
     "DISCONNECT": "disconnect",
@@ -36,5 +37,6 @@
     "SERVER_ERROR_MESSAGE": "server_error_message",
     "SERVER_GAME_ENDED": "server_game_ended",
     "SERVER_POST_ONLINE_ROOMS": "server_post_online_rooms",
+    "SERVER_POST_ONLINE_WAITING_ROOMS": "server_post_online_waiting_rooms",
     "SERVER_POST_ALL_USERS": "server_post_all_users"
 }

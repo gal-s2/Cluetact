@@ -12,7 +12,11 @@ module.exports = function waitingRoomHandlers(io, socket) {
             return;
         }
 
-        messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), waitingRoomId);
+        messageEmitter.broadcastToWaitingRoom(
+            SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
+            { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host },
+            waitingRoomId
+        );
     });
 
     socket.on(SOCKET_EVENTS.CLIENT_JOIN_WAITING_ROOM, ({ waitingRoomId, username }) => {
@@ -25,16 +29,28 @@ module.exports = function waitingRoomHandlers(io, socket) {
 
         WaitingRoomManager.joinWaitingRoom(waitingRoomId, username, socket.id);
 
-        messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), waitingRoomId);
+        messageEmitter.broadcastToWaitingRoom(
+            SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
+            { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host },
+            waitingRoomId
+        );
     });
 
     socket.on(SOCKET_EVENTS.CLIENT_GET_WAITING_ROOM_USERS, ({ waitingRoomId }) => {
-        messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), waitingRoomId);
+        messageEmitter.broadcastToWaitingRoom(
+            SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
+            { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host },
+            waitingRoomId
+        );
     });
 
     socket.on(SOCKET_EVENTS.CLIENT_LEAVE_WAITING_ROOM, ({ waitingRoomId, username }) => {
         WaitingRoomManager.leaveWaitingRoom(waitingRoomId, username);
-        messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), waitingRoomId);
+        messageEmitter.broadcastToWaitingRoom(
+            SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
+            { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host },
+            waitingRoomId
+        );
     });
 
     socket.on(SOCKET_EVENTS.CLIENT_START_GAME_FROM_WAITING_ROOM, async ({ waitingRoomId }) => {
@@ -44,8 +60,9 @@ module.exports = function waitingRoomHandlers(io, socket) {
             return;
         }
 
-        const keeperUsername = waitingRoom.creator;
+        const keeperUsername = waitingRoom.host;
         const seekersUsernames = [...waitingRoom.users].filter((u) => u !== keeperUsername);
+        console.log("keeper username: ", keeperUsername);
         const keeper = await socketManager.getUserByUsername(keeperUsername);
         const seekers = await Promise.all(seekersUsernames.map((username) => socketManager.getUserByUsername(username)));
         console.log("keeper: ", keeper, " seekers are:", seekers);

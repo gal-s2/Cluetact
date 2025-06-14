@@ -56,6 +56,15 @@ function AppRoutesWithSocketNavigation({ user }) {
             />
 
             <Route
+                path="*"
+                element={
+                    <PublicRoute>
+                        <NotFoundPage />
+                    </PublicRoute>
+                }
+            />
+
+            <Route
                 path="/lobby"
                 element={
                     <PrivateRoute>
@@ -88,10 +97,22 @@ function AppRoutesWithSocketNavigation({ user }) {
                     </PrivateRoute>
                 }
             />
-            <Route path="/overwatch" element={<Overwatch />} />
-
-            <Route path="*" element={<NotFoundPage />} />
-            <Route path="/waiting/:roomId" element={<WaitingRoom />} />
+            <Route
+                path="/waiting/:roomId"
+                element={
+                    <PrivateRoute>
+                        <WaitingRoom />
+                    </PrivateRoute>
+                }
+            />
+            <Route
+                path="/overwatch"
+                element={
+                    <PrivateRoute>
+                        <Overwatch />
+                    </PrivateRoute>
+                }
+            />
         </Routes>
     );
 }

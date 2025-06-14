@@ -8,6 +8,20 @@ const overWatchHandlers = {
     handleGetOnlineRooms: async (socket) => {
         messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_POST_ONLINE_ROOMS, gameManager.rooms, socket);
     },
+    handleGetOnlineWaitingRooms: async (socket) => {
+        const serializedWaitingRooms = {};
+
+        for (const roomId in waitingRoomManager.waitingRooms) {
+            const room = waitingRoomManager.waitingRooms[roomId];
+
+            serializedWaitingRooms[roomId] = {
+                ...room,
+                users: Array.from(room.users), // convert Set to array
+            };
+        }
+
+        messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_POST_ONLINE_WAITING_ROOMS, serializedWaitingRooms, socket);
+    },
     handleGetAllUsers: async (socket) => {
         const usersObj = {};
         for (const [username, socketInstance] of socketManager.usernameToSocket.entries()) {
