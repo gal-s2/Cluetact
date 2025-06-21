@@ -19,7 +19,7 @@ const { requestLogger } = require("./utils/logger.js");
 app.use(
     cors({
         origin: [
-            "https://cluetact-client.onrender.com", //#client-url
+            "https://cluetact.onrender.com", //#client-url
             "http://localhost:5173",
         ],
         methods: ["GET", "POST"],
