@@ -19,7 +19,7 @@ const { requestLogger } = require("./utils/logger.js");
 app.use(
     cors({
         origin: [
-            "https://c934-95-35-191-50.ngrok-free.app", //#client-url
+            "https://cluetact-client.onrender.com", //#client-url
             "http://localhost:5173",
         ],
         methods: ["GET", "POST"],
