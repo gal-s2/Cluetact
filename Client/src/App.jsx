@@ -6,7 +6,7 @@ import AuthForm from "./components/Auth/AuthForm/AuthForm";
 import GameRoomWrapper from "./components/Game/GameRoomWrapper";
 import Lobby from "./components/Lobby/Lobby";
 import WelcomePage from "./components/Welcome/WelcomePage";
-import StatsPage from "./components/Statistics/StatsPage";
+import StatsPage from "./components/Stats/StatsPage";
 import ProfileDetails from "./components/Profile/ProfileDetails/ProfileDetails";
 import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
 import { useUser } from "./contexts/UserContext";
