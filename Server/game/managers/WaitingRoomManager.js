@@ -10,7 +10,7 @@ class WaitingRoomManager {
 
         console.log("new room created: ", waitingRoomId, "by ", creatorUsername);
         this.waitingRooms[waitingRoomId] = {
-            creator: creatorUsername,
+            host: creatorUsername,
             users: new Set([creatorUsername]),
             started: false,
         };
@@ -60,6 +60,9 @@ class WaitingRoomManager {
 
                 if (waitingRoom.users.size === 0) {
                     delete this.waitingRooms[waitingRoomId];
+                } else if (waitingRoom.host === username) {
+                    const usersArray = Array.from(waitingRoom.users);
+                    waitingRoom.host = usersArray[0];
                 }
 
                 return true;
@@ -82,7 +85,7 @@ class WaitingRoomManager {
         for (const waitingRoomId in this.waitingRooms) {
             const waitingRoom = this.waitingRooms[waitingRoomId];
             console.log(`🔑 Lobby ID: ${waitingRoomId}`);
-            console.log(`👤 Creator: ${waitingRoom.creator}`);
+            console.log(`👤 Creator: ${waitingRoom.host}`);
             console.log(`🎮 Started: ${waitingRoom.started}`);
             console.log(`👥 Users:`);
             let i = 1;

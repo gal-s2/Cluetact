@@ -202,7 +202,11 @@ const gameEventsHandlers = {
         const waitingRooms = WaitingRoomManager.removeUserFromItsWaitingRooms(socket.id);
         waitingRooms.forEach((waitingRoomId) => {
             socket.leave(waitingRoomId);
-            messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), waitingRoomId);
+            messageEmitter.broadcastToWaitingRoom(
+                SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
+                { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host },
+                waitingRoomId
+            );
         });
         console.log("about to delete socket from socketManager");
         socketManager.unregister(socket);

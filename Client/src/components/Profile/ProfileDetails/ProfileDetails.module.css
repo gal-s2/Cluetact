@@ -1,14 +1,86 @@
+/* Profile Details - Main Container */
 .container {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 2rem;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #fefefe, #eafaf1);
+    padding: 2rem;
+    font-family: "Poppins", "Inter", sans-serif;
+}
+
+/* Header Section */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 2rem;
+}
+
+.header h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2e7d32;
+    margin: 0;
+    text-align: center;
+}
+
+.backButton {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, #81c784, #66bb6a);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px rgba(129, 199, 132, 0.3);
+    z-index: 100;
+}
+
+.backButton:hover {
+    background: linear-gradient(135deg, #66bb6a, #4caf50);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(129, 199, 132, 0.4);
+}
+
+.backButton:active {
+    transform: translateY(0);
+}
+
+/* Profile Content Wrapper - Remove white background */
+.profileContent {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* Avatar Section */
+.avatarSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e8f5e8;
+    width: 100%;
 }
 
 .avatar {
@@ -16,39 +88,301 @@
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #ccc;
+    border: 4px solid #81c784;
+    box-shadow: 0 4px 15px rgba(129, 199, 132, 0.3);
+    transition: all 0.3s ease;
 }
 
+.avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(129, 199, 132, 0.4);
+}
+
+.changeAvatarButton {
+    background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 10px rgba(79, 195, 247, 0.3);
+}
+
+.changeAvatarButton:hover {
+    background: linear-gradient(135deg, #29b6f6, #0288d1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(79, 195, 247, 0.4);
+}
+
+.changeAvatarButton:active {
+    transform: translateY(0);
+}
+
+/* Form Field */
 .field {
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: 0.3rem;
+    gap: 0.5rem;
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e8f5e8;
 }
 
 .field label {
     font-weight: 600;
-    color: #333;
+    color: #2e7d32;
+    font-size: 1.1rem;
 }
 
 .field input {
-    padding: 0.5rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
     font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    background: white;
 }
 
-button {
-    padding: 0.7rem 1.5rem;
-    background-color: #007bff;
-    color: white;
-    font-size: 1rem;
+.field input:focus {
+    outline: none;
+    border-color: #81c784;
+    box-shadow: 0 0 0 3px rgba(129, 199, 132, 0.1);
+}
+
+.field input::placeholder {
+    color: #999;
+    font-weight: 400;
+}
+
+.error {
+    color: #e57373;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Update Button */
+.updateButton {
+    width: 100%;
+    padding: 1.2rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.2s ease;
+    margin-top: 1rem;
+    letter-spacing: 0.3px;
 }
 
-button:hover {
-    background-color: #0056b3;
+.updateButton.enabled {
+    background: linear-gradient(135deg, #81c784, #66bb6a);
+    color: white;
+    box-shadow: 0 3px 10px rgba(129, 199, 132, 0.3);
+}
+
+.updateButton.enabled:hover {
+    background: linear-gradient(135deg, #66bb6a, #4caf50);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(129, 199, 132, 0.4);
+}
+
+.updateButton.enabled:active {
+    transform: translateY(0);
+}
+
+.updateButton.disabled {
+    background: #e0e0e0;
+    color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Modal Overlay */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(240, 240, 255, 0.85);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 1rem;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal Content */
+.modal {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    border: 2px solid #e8f5e8;
+    animation: modalSlideIn 0.3s ease-out;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal h3 {
+    color: #2e7d32;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.cancelButton {
+    background: linear-gradient(135deg, #e57373, #ef5350);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 1.5rem;
+    box-shadow: 0 3px 10px rgba(229, 115, 115, 0.3);
+}
+
+.cancelButton:hover {
+    background: linear-gradient(135deg, #ef5350, #f44336);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(229, 115, 115, 0.4);
+}
+
+.cancelButton:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .header h2 {
+        font-size: 1.8rem;
+    }
+
+    .backButton {
+        bottom: 1rem;
+        right: 1rem;
+        padding: 0.8rem 1.2rem;
+    }
+
+    .avatarSection,
+    .field {
+        padding: 1.5rem;
+    }
+
+    .avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .modal {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .container {
+        background: linear-gradient(to bottom right, #1a1a1a, #0d4f1c);
+    }
+
+    .avatarSection,
+    .field {
+        background: #2a2a2a;
+        border-color: #4a9f4d;
+    }
+
+    .header h2 {
+        color: #81c784;
+    }
+
+    .field label {
+        color: #81c784;
+    }
+
+    .field input {
+        background: #333;
+        border-color: #555;
+        color: white;
+    }
+
+    .field input:focus {
+        border-color: #81c784;
+    }
+
+    .modal {
+        background: #2a2a2a;
+        border-color: #4a9f4d;
+    }
+
+    .modal h3 {
+        color: #81c784;
+    }
+
+    .error {
+        color: #ef5350;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .backButton,
+    .changeAvatarButton,
+    .updateButton,
+    .cancelButton,
+    .avatar {
+        transition: none;
+    }
+
+    .backButton:hover,
+    .changeAvatarButton:hover,
+    .updateButton.enabled:hover,
+    .cancelButton:hover,
+    .avatar:hover {
+        transform: none;
+    }
+
+    .modalOverlay,
+    .modal {
+        animation: none;
+    }
 }

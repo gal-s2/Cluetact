@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/Cluetact";
-//const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo:27017/';
 
 const connectMongo = async () => {
     try {

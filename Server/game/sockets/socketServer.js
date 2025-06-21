@@ -88,6 +88,7 @@ module.exports = function (io) {
         });
 
         socket.on(SOCKET_EVENTS.CLIENT_GET_ONLINE_ROOMS, () => overWatchHandlers.handleGetOnlineRooms(socket));
+        socket.on(SOCKET_EVENTS.CLIENT_GET_ONLINE_WAITING_ROOMS, () => overWatchHandlers.handleGetOnlineWaitingRooms(socket));
         socket.on(SOCKET_EVENTS.CLIENT_GET_ALL_USERS, () => overWatchHandlers.handleGetAllUsers(socket));
     });
 };

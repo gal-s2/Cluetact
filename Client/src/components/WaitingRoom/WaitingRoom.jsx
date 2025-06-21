@@ -1,21 +1,31 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import QRCode from "react-qr-code";
 import socket from "../../services/socket";
 import styles from "./WaitingRoom.module.css";
 import { useUser } from "../../contexts/UserContext";
-import { useLocation } from "react-router-dom";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 function WaitingRoom() {
     const { roomId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const { user } = useUser();
+    const [errorMessage, setErrorMessage] = useState("");
+
     const [users, setUsers] = useState([]);
+    const [host, setHost] = useState("");
     const [copied, setCopied] = useState(false);
     const [savedUsername, setSavedUsername] = useState("");
-    const location = useLocation();
-    const isCreator = location.state?.isCreator || false;
+
+    const isHost = user?.username === host;
+
+    // Sort users so host is always first
+    const sortedUsers = [...users].sort((a, b) => {
+        if (a === host) return -1;
+        if (b === host) return 1;
+        return 0;
+    });
 
     useEffect(() => {
         if (user?.username) {
@@ -26,7 +36,6 @@ function WaitingRoom() {
     useEffect(() => {
         return () => {
             if (savedUsername) {
-                console.log(`Leaving room ${roomId} as ${savedUsername}`);
                 socket.emit(SOCKET_EVENTS.CLIENT_LEAVE_WAITING_ROOM, {
                     waitingRoomId: roomId,
                     username: savedUsername,
@@ -37,56 +46,75 @@ function WaitingRoom() {
 
     useEffect(() => {
         const handleConnect = () => {
-            console.log("Connected, now joining waiting room...");
-            if (user && roomId) {
-                socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_ROOM, {
-                    waitingRoomId: roomId,
-                    username: user.username,
-                });
-
-                console.log(socket);
+            if (user?.username && roomId) {
+                setTimeout(() => {
+                    socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_ROOM, {
+                        waitingRoomId: roomId,
+                        username: user.username,
+                    });
+                }, 100);
             }
         };
 
-        const handleWaitingRoomUpdate = (users) => {
-            console.log("Received waiting room update:", users);
-            setUsers(users);
+        const handleWaitingRoomUpdate = ({ users, host }) => {
+            setUsers(users || []);
+            setHost(host || "");
         };
 
+        const handleDisconnect = (reason) => {
+            // Handle disconnect if needed
+        };
+
+        // Set up all event listeners
         socket.on(SOCKET_EVENTS.CONNECT_ERROR, (error) => {
-            console.error("Socket connect error:", error.message);
+            // Handle connection error if needed
         });
 
         socket.on(SOCKET_EVENTS.CONNECT, handleConnect);
         socket.on(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, handleWaitingRoomUpdate);
+        socket.on("disconnect", handleDisconnect);
 
-        if (!socket.connected && socket.disconnected) {
+        // Check current connection state
+        if (!socket.connected) {
             socket.connect();
         } else {
-            // If already connected (fast refresh?), emit immediately
             handleConnect();
         }
 
         return () => {
             socket.off(SOCKET_EVENTS.CONNECT, handleConnect);
             socket.off(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, handleWaitingRoomUpdate);
+            socket.off("disconnect", handleDisconnect);
         };
     }, [roomId, user]);
 
+    // Separate effect to handle when user becomes available
+    useEffect(() => {
+        if (socket.connected && user?.username && roomId) {
+            socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_ROOM, {
+                waitingRoomId: roomId,
+                username: user.username,
+            });
+        }
+    }, [user?.username, roomId]);
+
     useEffect(() => {
         const handleError = (message) => {
-            alert(message);
+            setErrorMessage(message);
+            setTimeout(() => setErrorMessage(""), 3000);
         };
 
         socket.on(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, handleError);
 
         return () => {
-            socket.off(SOCKET_EVENTS.ERROR_MESSAGE, handleError);
+            socket.off(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, handleError);
         };
     }, []);
 
     const handleStart = () => {
-        socket.emit(SOCKET_EVENTS.CLIENT_START_GAME_FROM_WAITING_ROOM, { waitingRoomId: roomId });
+        socket.emit(SOCKET_EVENTS.CLIENT_START_GAME_FROM_WAITING_ROOM, {
+            waitingRoomId: roomId,
+        });
     };
 
     const handleCopy = () => {
@@ -100,6 +128,7 @@ function WaitingRoom() {
         <div className={styles.backdrop}>
             <div className={styles.modal}>
                 <h2 className={styles.heading}>Waiting Room</h2>
+
                 <p className={styles.passKey}>
                     Pass-key: <strong>{roomId}</strong>
                     <button onClick={handleCopy} className={styles.copyButton}>
@@ -114,19 +143,23 @@ function WaitingRoom() {
 
                 <h4>Current Players:</h4>
                 <ul className={styles.userList}>
-                    {users.map((username) => (
-                        <li key={username}>
-                            <span className={styles.greenDot}></span> {username}
+                    {sortedUsers.map((username) => (
+                        <li key={username} className={`${username === host ? styles.hostItem : ""} ${username === user?.username ? styles.currentUser : ""}`}>
+                            <span className={styles.greenDot}></span>
+                            {username}
+                            {username === host && <span className={styles.crownIcon}>👑</span>}
+                            {username === user?.username && <span className={styles.meIndicator}>•</span>}
                         </li>
                     ))}
                 </ul>
 
-                {user && user.username === users[0] && users.length >= 3 && (
+                {isHost && users.length >= 3 && (
                     <button className={styles.startButton} onClick={handleStart}>
                         Start Game
                     </button>
                 )}
             </div>
+            {errorMessage && <div className={styles.toast}>{errorMessage}</div>}
         </div>
     );
 }
