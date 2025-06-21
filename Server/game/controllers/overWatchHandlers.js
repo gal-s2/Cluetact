@@ -2,7 +2,7 @@ const gameManager = require("../managers/GameManager");
 const socketManager = require("../managers/SocketManager");
 const waitingRoomManager = require("../managers/WaitingRoomManager");
 const messageEmitter = require("../sockets/MessageEmitter");
-const SOCKET_EVENTS = require("../../../shared/socketEvents.json");
+const SOCKET_EVENTS = require("../../common/socketEvents.json");
 
 const overWatchHandlers = {
     handleGetOnlineRooms: async (socket) => {
