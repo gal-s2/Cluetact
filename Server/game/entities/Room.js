@@ -174,7 +174,7 @@ class Room {
             result.correct = true;
             this.currentRound.guesses = [];
             if (username === this.keeperUsername) {
-                this.handleCorrectBlockByKeeper(username); // optional for keeper guess matching
+                this.handleCorrectBlockByKeeper(username);
                 result.revealed = false;
             } else {
                 this.wordsGuessedSuccesfully.add(guessLower);
@@ -232,8 +232,12 @@ class Room {
             this.pastKeepers.add(currentKeeper);
             this.seekersUsernames.push(currentKeeper);
             const nextKeeper = this.getNextKeeper();
-            this.seekersUsernames.filter((seekerUsername) => seekerUsername !== nextKeeper);
+            this.seekersUsernames = this.seekersUsernames.filter((seekerUsername) => seekerUsername !== nextKeeper);
             this.keeperUsername = nextKeeper;
+
+            console.log("word is fully revealed, preparing for next round where the keeper username is: ", this.keeperUsername);
+            console.log("and the seekers usernames are: ", this.seekersUsernames);
+            console.log("the next keeper is:", nextKeeper);
             this.players.find((player) => player.username === nextKeeper).setRole(ROLES.KEEPER);
 
             this.players.forEach((player) => {

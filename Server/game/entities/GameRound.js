@@ -4,6 +4,7 @@ const { ROLES } = require("../constants");
 
 class GameRound {
     constructor(players) {
+        console.log("about to start a round with players: ", players);
         this.roundNum = 1;
         this.keeperWord = null;
         this.revealedLetters = "";

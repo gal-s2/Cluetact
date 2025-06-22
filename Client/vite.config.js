@@ -6,7 +6,7 @@ import path from "path";
 export default defineConfig({
     plugins: [react()],
     server: {
-        allowedHosts: ["cluetact.onrender.com"], //#client-url
+        allowedHosts: ["cluetact.onrender.com", "localhost:5173"], //#client-url
     },
     resolve: {
         alias: {
