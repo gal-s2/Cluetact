@@ -2,29 +2,27 @@
 
 ![Cluetact Logo](Client/src/assets/Cluetact.jpeg)
 
-Cluetact is a fast-paced, real-time multiplayer word game where players race to solve clues before their opponents. Built with React, Node.js, and Socket.IO, it's designed to be competitive, fun, and responsive on both desktop and mobile.
+**Cluetact** is a real-time, multiplayer word game where players compete to guess secret words based on clever clues. Inspired by the Israeli game *Contact*, it blends deduction, creativity, and speed — all built for the modern web.
 
-## Status
-⚠️ Work in progress 
+## ✅ Project Status
 
-## 🚀 Features
+🟢 Actively maintained — developed as a final college project by a team of 3.
 
-- Real-time multiplayer gameplay
-- Login and registration system
-- Game lobby with matchmaking and room system
-- Custom user avatars and profiles
-- Playful and modern design
+## 🎮 Key Features
 
-## 🛠 Tech Stack
+- 🔗 Real-time gameplay with Socket.IO
+- 🎭 Player roles: **Keeper** (secret word holder) vs **Seekers** (guessers)
+- 🏠 Lobby system with room creation & joining
+- 🧑 Guest + registered user support
+- 📱 Responsive design for desktop & mobile
+- 🧠 Core mechanics: clue submission, letter reveals, blocking, winner rotation
+- 🔒 JWT-based login and session handling
 
-- **Frontend:** React, React Router, CSS Modules
+## 🧰 Tech Stack
+
+- **Frontend:** React, React Router, Context API, CSS Modules
 - **Backend:** Node.js, Express, Socket.IO
-- **Database:** MongoDB
-- **Session/Cache:** Redis
-- **Authentication:** Passport.js with email and social login
+- **Database:** MongoDB (Mongoose)
+- **Authentication:** JWT
 
-## 📦 Installation
-
-- TBD
-
-© 2025 Cluetact — built with love as part of a college project. Please don’t reuse the name or logo without asking. 
+© 2025 Cluetact. Please don’t reuse the name or logo without asking. 
