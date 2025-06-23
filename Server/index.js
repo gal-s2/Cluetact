@@ -1,20 +1,19 @@
 const express = require("express");
-
-//test words api
-//const { getNounsByMeaning,getNounsByPrefix,testWordUtils } = require('./game/wordUtils');
-//testWordUtils();
-
-// Import enviroment variables file
 require("dotenv").config();
-
-// Connect to dbs
-//require('./config/redis');
 require("./config/mongo");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
 const cors = require("cors");
 const { requestLogger } = require("./utils/logger.js");
+
+process.on("uncaughtException", (err) => {
+    console.error("🧨 Uncaught Exception:", err);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+    console.error("💥 Unhandled Rejection:", reason);
+});
 
 app.use(
     cors({
@@ -32,9 +31,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Import all routers from ./routes/index.js
-app.use(require("./routes"));
-app.use("/api/stats", require("./routes/stats"));
+app.use(require("./routes/router.js"));
 
 const http = require("http");
 const { Server } = require("socket.io");
