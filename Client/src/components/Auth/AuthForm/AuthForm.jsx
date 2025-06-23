@@ -10,7 +10,6 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 import { useUser } from "../../../contexts/UserContext";
 
 function AuthForm({ type }) {
-    console.log("Base URL:", baseUrl);
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -83,14 +82,7 @@ function AuthForm({ type }) {
                     <input type="text" placeholder="Username" value={username || ""} onChange={(e) => setUsername(e.target.value)} className={errors.username ? styles.invalidInput : ""} required />
                     {errors.username && <p className={styles.error}>{errors.username}</p>}
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password || ""}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className={errors.password ? styles.invalidInput : ""}
-                        required
-                    />
+                    <input type="password" placeholder="Password" value={password || ""} onChange={(e) => setPassword(e.target.value)} className={errors.password ? styles.invalidInput : ""} required />
 
                     {errors.password && <p className={styles.error}>{errors.password}</p>}
                     {errors.server && <p className={styles.error}>{errors.server}</p>}
