@@ -6,7 +6,7 @@ const waitingRoomHandlers = require("../controllers/waitingRoomHandlers");
 const gameEventsHandlers = require("../controllers/gameEventsHandlers");
 const overWatchHandlers = require("../controllers/overWatchHandlers");
 const messageEmitter = require("./MessageEmitter");
-const SOCKET_EVENTS = require("../../common/socketEvents.json");
+const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const GameManager = require("../managers/GameManager");
 const User = require("../../models/User");
 
