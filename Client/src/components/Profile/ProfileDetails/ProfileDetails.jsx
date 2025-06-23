@@ -1,21 +1,58 @@
+import axios from "axios";
 import { useUser } from "../../../contexts/UserContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../../../config/baseUrl";
 import styles from "./ProfileDetails.module.css";
 import AvatarPicker from "../AvatarPicker/AvatarPicker";
 
 function ProfileDetails() {
-    const { user } = useUser();
+    const { user, setUser } = useUser();
     const navigate = useNavigate();
     const [password, setPassword] = useState("");
     const [selectedAvatar, setSelectedAvatar] = useState(null);
     const [isAvatarShown, setAvatarShown] = useState(false);
 
-    const handleUpdate = () => {
-        // TODO: שלח לשרת עדכון פרטי משתמש
-        alert("Profile updated!");
+    const extractAvatarNumber = (avatarPath) => {
+        const match = avatarPath.match(/avatar_(\d+)/);
+        return match ? match[1] : null;
     };
 
+    const handleUpdate = async () => {
+        const updateData = {};
+
+        if (selectedAvatar && selectedAvatar !== user.avatarUrl) {
+            const avatarNumber = extractAvatarNumber(selectedAvatar);
+            console.log("extractedNumber is,", avatarNumber);
+            if (avatarNumber !== null) {
+                updateData.avatar = avatarNumber;
+            }
+        }
+
+        if (!user.guest && password.length >= 6) {
+            updateData.password = password;
+        }
+
+        if (Object.keys(updateData).length === 0) return;
+
+        try {
+            const res = await axios.patch(`${baseUrl}/user/update-profile`, updateData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+
+            setUser({
+                user: res.data.user,
+                token: localStorage.getItem("token"), // re-use existing token
+            });
+
+            alert("Profile updated successfully");
+        } catch (err) {
+            console.error("Update failed:", err);
+            alert("Something went wrong while updating your profile.");
+        }
+    };
     const showAvatarPicker = () => {
         setAvatarShown(true);
     };
@@ -49,11 +86,13 @@ function ProfileDetails() {
                     </button>
                 </div>
 
-                <div className={styles.field}>
-                    <label>New Password (optional):</label>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter new password (min 6 characters)" />
-                    {password.length > 0 && password.length < 6 && <span className={styles.error}>Password must be at least 6 characters</span>}
-                </div>
+                {!user.guest && (
+                    <div className={styles.field}>
+                        <label>New Password (optional):</label>
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter new password (min 6 characters)" />
+                        {password.length > 0 && password.length < 6 && <span className={styles.error}>Password must be at least 6 characters</span>}
+                    </div>
+                )}
 
                 <button className={`${styles.updateButton} ${isUpdateEnabled ? styles.enabled : styles.disabled}`} onClick={handleUpdate} disabled={!isUpdateEnabled}>
                     Update Profile

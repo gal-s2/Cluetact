@@ -22,7 +22,7 @@ app.use(
             "https://cluetact.onrender.com", //#client-url
             "http://localhost:5173",
         ],
-        methods: ["GET", "POST"],
+        methods: ["GET", "POST", "PATCH"],
         credentials: true,
     })
 );
@@ -45,6 +45,11 @@ const io = new Server(server, {
 });
 
 require("./game/sockets/socketServer.js")(io);
+
+app.use((req, res) => {
+    console.log("🚨 Unmatched route:", req.method, req.url);
+    res.status(404).send("Not found");
+});
 
 server.listen(PORT, "0.0.0.0", () => {
     console.log(`Server is listening on port ${PORT}`);

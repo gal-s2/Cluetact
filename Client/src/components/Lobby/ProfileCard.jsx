@@ -1,6 +1,11 @@
 import styles from "./Lobby.module.css";
+import { useUser } from "../../contexts/UserContext";
 
 function ProfileCard({ profileMenuOpen, setProfileMenuOpen, navigate, disconnect }) {
+    const { user } = useUser();
+    const PersonalDetailsMenuOptionString = user.guest === true ? "View Details" : "View & Edit Details";
+    console.log("user.guest is ", user.guest);
+
     return (
         <div className={styles.card}>
             <button className={styles.buttonSecondary} onClick={() => setProfileMenuOpen((prev) => !prev)}>
@@ -10,7 +15,7 @@ function ProfileCard({ profileMenuOpen, setProfileMenuOpen, navigate, disconnect
             {profileMenuOpen && (
                 <div className={styles.dropdown}>
                     <button onClick={() => navigate("/stats")}>My Stats</button>
-                    <button onClick={() => navigate("/profile")}>View & Edit Details</button>
+                    <button onClick={() => navigate("/profile")}>{PersonalDetailsMenuOptionString}</button>
                     <button className={styles.buttonDanger} onClick={disconnect}>
                         Disconnect
                     </button>

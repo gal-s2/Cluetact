@@ -16,6 +16,8 @@
     "CLIENT_GET_ONLINE_ROOMS": "client_get_online_rooms",
     "CLIENT_GET_ALL_USERS": "client_get_all_users",
     "CLIENT_GET_ONLINE_WAITING_ROOMS": "client_get_online_waiting_rooms",
+    "CLIENT_UPDATE_AVATAR": "client_update_avatar",
+    "CLIENT_UPDATE_PASSWORD": "client_update_password",
     "CONNECTION": "connection",
     "CONNECT": "connect",
     "DISCONNECT": "disconnect",
