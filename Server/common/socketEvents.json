@@ -16,6 +16,9 @@
     "CLIENT_GET_ONLINE_ROOMS": "client_get_online_rooms",
     "CLIENT_GET_ALL_USERS": "client_get_all_users",
     "CLIENT_GET_ONLINE_WAITING_ROOMS": "client_get_online_waiting_rooms",
+    "CLIENT_UPDATE_AVATAR": "client_update_avatar",
+    "CLIENT_UPDATE_PASSWORD": "client_update_password",
+    "CLIENT_CHECK_EVENTS_AVAILABILITY": "client_check_events_availability",
     "CONNECTION": "connection",
     "CONNECT": "connect",
     "DISCONNECT": "disconnect",
@@ -38,5 +41,6 @@
     "SERVER_GAME_ENDED": "server_game_ended",
     "SERVER_POST_ONLINE_ROOMS": "server_post_online_rooms",
     "SERVER_POST_ONLINE_WAITING_ROOMS": "server_post_online_waiting_rooms",
-    "SERVER_POST_ALL_USERS": "server_post_all_users"
+    "SERVER_POST_ALL_USERS": "server_post_all_users",
+    "SERVER_READY_FOR_EVENTS": "server_ready_for_events"
 }

@@ -122,4 +122,22 @@ UserSchema.statics.userExists = async function (username) {
     return !!user;
 };
 
+UserSchema.statics.updateProfile = async function (userId, updateFields) {
+    const user = await this.findById(userId);
+    if (!user) throw new Error("User not found");
+
+    if (user.guest && updateFields.password) {
+        throw new Error("Guests are not allowed to set a password");
+    }
+
+    if (updateFields.password) {
+        const salt = await bcrypt.genSalt(10);
+        updateFields.password = await bcrypt.hash(updateFields.password, salt);
+    }
+
+    const updatedUser = await this.findByIdAndUpdate(userId, { $set: updateFields }, { new: true, select: "-password" });
+
+    return updatedUser;
+};
+
 module.exports = mongoose.model("User", UserSchema);

@@ -38,8 +38,9 @@ const gameEventsHandlers = {
 
     handleJoinRoom: async (socket, args) => {
         const room = gameManager.getRoomBySocket(socket);
+        console.log("recieved request to try and join room, and found room is: ", room);
         if (!room) {
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, { room }, socket);
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
             return;
         }
 
