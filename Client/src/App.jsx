@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useUser } from "./contexts/UserContext";
 import PrivateRoute from "./components/Routes/PrivateRoute/PrivateRoute";
 import PublicRoute from "./components/Routes/PublicRoute/PublicRoute";
 import NotFoundPage from "./components/Routes/NotFoundPage/NotFoundPage";
@@ -9,10 +10,10 @@ import WelcomePage from "./components/Welcome/WelcomePage";
 import StatsPage from "./components/Stats/StatsPage";
 import ProfileDetails from "./components/Profile/ProfileDetails/ProfileDetails";
 import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
-import { useUser } from "./contexts/UserContext";
 import useSocketNavigation from "./hooks/useSocketNavigation";
 import Overwatch from "./components/Overwatch/Overwatch";
 import GlobalNotificationBox from "./components/General/GlobalNotificationBox";
+import About from "./components/About/About";
 
 function App() {
     const { user } = useUser();
@@ -71,6 +72,15 @@ function AppRoutesWithSocketNavigation({ user }) {
                 element={
                     <PrivateRoute>
                         <Lobby />
+                    </PrivateRoute>
+                }
+            />
+
+            <Route
+                path="/about"
+                element={
+                    <PrivateRoute>
+                        <About />
                     </PrivateRoute>
                 }
             />

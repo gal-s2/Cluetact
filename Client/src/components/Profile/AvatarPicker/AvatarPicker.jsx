@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styles from "./AvatarPicker.module.css";
 
-// טוען את כל התמונות מהתיקייה
 const images = import.meta.glob("../../../assets/avatars/*.png", { eager: true });
 const avatarList = Object.values(images).map((mod) => mod.default);
 

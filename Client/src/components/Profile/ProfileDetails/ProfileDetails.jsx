@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useUser } from "../../../contexts/UserContext";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../../../config/baseUrl";
 import styles from "./ProfileDetails.module.css";
 import AvatarPicker from "../AvatarPicker/AvatarPicker";
@@ -9,7 +8,6 @@ import BackToLobbyButton from "../../General/BackToLobbyButton";
 
 function ProfileDetails() {
     const { user, setUser } = useUser();
-    const navigate = useNavigate();
     const [password, setPassword] = useState("");
     const [selectedAvatar, setSelectedAvatar] = useState(null);
     const [isAvatarShown, setAvatarShown] = useState(false);
@@ -22,9 +20,8 @@ function ProfileDetails() {
     const handleUpdate = async () => {
         const updateData = {};
 
-        if (selectedAvatar && selectedAvatar !== user.avatarUrl) {
+        if (selectedAvatar && selectedAvatar !== user.avatar) {
             const avatarNumber = extractAvatarNumber(selectedAvatar);
-            console.log("extractedNumber is,", avatarNumber);
             if (avatarNumber !== null) {
                 updateData.avatar = avatarNumber;
             }
@@ -52,8 +49,12 @@ function ProfileDetails() {
         } catch (err) {
             console.error("Update failed:", err);
             alert("Something went wrong while updating your profile.");
+        } finally {
+            setSelectedAvatar(null);
+            setPassword("");
         }
     };
+
     const showAvatarPicker = () => {
         setAvatarShown(true);
     };
@@ -64,7 +65,7 @@ function ProfileDetails() {
     };
 
     // Check if update button should be enabled
-    const isUpdateEnabled = (selectedAvatar && selectedAvatar !== user.avatarUrl) || password.length >= 6;
+    const isUpdateEnabled = (selectedAvatar && selectedAvatar !== user.avatar) || password.length >= 6;
 
     return (
         <div className={styles.container}>
@@ -75,7 +76,7 @@ function ProfileDetails() {
 
             <div className={styles.profileContent}>
                 <div className={styles.avatarSection}>
-                    <img src={selectedAvatar || `/src/assets/avatars/avatar_${user.avatarUrl || 0}.png`} alt="Avatar" className={styles.avatar} />
+                    <img src={selectedAvatar || `/src/assets/avatars/avatar_${user.avatar || 0}.png`} alt="Avatar" className={styles.avatar} />
                     <button className={styles.changeAvatarButton} onClick={showAvatarPicker}>
                         Change Avatar
                     </button>

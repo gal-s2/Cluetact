@@ -1,9 +1,6 @@
 const router = require("express").Router();
 const User = require("../models/User");
-const bcrypt = require("bcryptjs");
 const requireAuth = require("../middleware/requireAuth");
-
-console.log("✅ /user routes loaded");
 
 router.patch("/update-profile", requireAuth, async (req, res) => {
     try {

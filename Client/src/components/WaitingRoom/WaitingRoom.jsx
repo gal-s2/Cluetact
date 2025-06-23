@@ -9,8 +9,6 @@ import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 function WaitingRoom() {
     const { roomId } = useParams();
-    const navigate = useNavigate();
-    const location = useLocation();
     const { user } = useUser();
     const [errorMessage, setErrorMessage] = useState("");
 
