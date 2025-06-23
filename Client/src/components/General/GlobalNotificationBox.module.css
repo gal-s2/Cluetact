@@ -1,0 +1,225 @@
+/* NotificationBox - Floating notification display */
+.notificationBox {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    pointer-events: none;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+}
+
+.notificationBox span {
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    color: white;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    max-width: 100%;
+    word-wrap: break-word;
+    line-height: 1.4;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Default notification styling */
+.notification span {
+    background: linear-gradient(135deg, #607d8b, #546e7a);
+    box-shadow: 0 6px 20px rgba(96, 125, 139, 0.3);
+}
+
+/* Success notification styling */
+.success span {
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+}
+
+/* Error notification styling */
+.error span {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.3);
+}
+
+/* Warning notification styling */
+.warning span {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.3);
+}
+
+/* Info notification styling */
+.info span {
+    background: linear-gradient(135deg, #2196f3, #1976d2);
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3);
+}
+
+/* Visible state */
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+    animation: slideInBounce 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hidden state */
+.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Slide in animation */
+@keyframes slideInBounce {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.9);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(5px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .notificationBox {
+        top: 15px;
+        width: 95%;
+        max-width: 350px;
+    }
+
+    .notificationBox span {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.95rem;
+        border-radius: 10px;
+    }
+}
+
+/* Small mobile screens */
+@media (max-width: 360px) {
+    .notificationBox {
+        width: 98%;
+        max-width: 320px;
+    }
+
+    .notificationBox span {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 481px) and (max-width: 768px) {
+    .notificationBox {
+        top: 25px;
+        max-width: 450px;
+    }
+
+    .notificationBox span {
+        padding: 1.125rem 1.75rem;
+        font-size: 1.05rem;
+        border-radius: 14px;
+    }
+}
+
+/* Desktop adjustments */
+@media (min-width: 769px) {
+    .notificationBox {
+        top: 30px;
+        max-width: 500px;
+    }
+
+    .notificationBox span {
+        padding: 1.25rem 2rem;
+        font-size: 1.1rem;
+        border-radius: 16px;
+    }
+}
+
+/* Mobile landscape optimization */
+@media (max-height: 600px) and (orientation: landscape) {
+    .notificationBox {
+        top: 10px;
+    }
+
+    .notificationBox span {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .notification span {
+        background: linear-gradient(135deg, #455a64, #37474f);
+        box-shadow: 0 6px 20px rgba(69, 90, 100, 0.4);
+    }
+
+    .success span {
+        background: linear-gradient(135deg, #4a9f4d, #3d8b40);
+        box-shadow: 0 6px 20px rgba(74, 159, 77, 0.4);
+    }
+
+    .warning span {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+    }
+
+    .error span {
+        background: linear-gradient(135deg, #f44336, #d32f2f);
+        box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+    }
+
+    .info span {
+        background: linear-gradient(135deg, #2196f3, #1976d2);
+        box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .notificationBox span {
+        transition: opacity 0.2s ease;
+    }
+
+    .visible {
+        animation: none;
+    }
+
+    .hidden {
+        transform: none;
+    }
+
+    @keyframes slideInBounce {
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .notificationBox span {
+        background: #000 !important;
+        color: #fff !important;
+        border: 3px solid #fff !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Ensure notification doesn't interfere with other fixed elements */
+@media (max-height: 500px) {
+    .notificationBox {
+        position: absolute;
+        top: 10px;
+    }
+}

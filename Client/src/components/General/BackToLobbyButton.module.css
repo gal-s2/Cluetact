@@ -1,0 +1,47 @@
+.backButton {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background: linear-gradient(135deg, #81c784, #66bb6a);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px rgba(129, 199, 132, 0.3);
+    z-index: 100;
+    font-family: "Poppins", "Inter", sans-serif;
+}
+
+.backButton:hover {
+    background: linear-gradient(135deg, #66bb6a, #4caf50);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(129, 199, 132, 0.4);
+}
+
+.backButton:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .backButton {
+        bottom: 1rem;
+        left: 1rem;
+        padding: 0.8rem 1.2rem;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .backButton {
+        transition: none;
+    }
+
+    .backButton:hover {
+        transform: none;
+    }
+}

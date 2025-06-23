@@ -12,6 +12,7 @@ import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
 import { useUser } from "./contexts/UserContext";
 import useSocketNavigation from "./hooks/useSocketNavigation";
 import Overwatch from "./components/Overwatch/Overwatch";
+import GlobalNotificationBox from "./components/General/GlobalNotificationBox";
 
 function App() {
     const { user } = useUser();
@@ -19,6 +20,7 @@ function App() {
     return (
         <Router>
             <AppRoutesWithSocketNavigation user={user} />
+            <GlobalNotificationBox />
         </Router>
     );
 }
