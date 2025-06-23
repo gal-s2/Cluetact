@@ -1,7 +1,7 @@
 const WaitingRoomManager = require("../managers/WaitingRoomManager");
 const GameManager = require("../managers/GameManager");
 const messageEmitter = require("../sockets/MessageEmitter");
-const SOCKET_EVENTS = require("../../common/socketEvents.json");
+const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const socketManager = require("../managers/SocketManager");
 
 module.exports = function waitingRoomHandlers(io, socket) {
