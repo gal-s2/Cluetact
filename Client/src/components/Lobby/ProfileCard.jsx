@@ -4,7 +4,6 @@ import { useUser } from "../../contexts/UserContext";
 function ProfileCard({ profileMenuOpen, setProfileMenuOpen, navigate, disconnect }) {
     const { user } = useUser();
     const PersonalDetailsMenuOptionString = user.guest === true ? "View & Edit Avatar" : "View & Edit Details";
-    console.log("user.guest is ", user.guest);
 
     return (
         <div className={styles.card}>
