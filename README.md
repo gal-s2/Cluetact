@@ -2,7 +2,7 @@
 
 ![Cluetact Logo](Client/src/assets/Cluetact.jpeg)
 
-**Cluetact** is a real-time, multiplayer word game where players compete to guess secret words based on clever clues. Inspired by the Israeli game *Contact*, it blends deduction, creativity, and speed — all built for the modern web.
+**Cluetact** is a real-time, multiplayer word game where players compete to guess secret words based on clever clues. It blends deduction, creativity, and speed — all built for the modern web.
 
 ## ✅ Project Status
 
