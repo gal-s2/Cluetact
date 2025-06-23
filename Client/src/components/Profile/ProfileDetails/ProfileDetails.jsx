@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../../../config/baseUrl";
 import styles from "./ProfileDetails.module.css";
 import AvatarPicker from "../AvatarPicker/AvatarPicker";
+import BackToLobbyButton from "../../General/BackToLobbyButton";
 
 function ProfileDetails() {
     const { user, setUser } = useUser();
@@ -62,25 +63,19 @@ function ProfileDetails() {
         setAvatarShown(false);
     };
 
-    const handleBack = () => {
-        navigate("/lobby");
-    };
-
     // Check if update button should be enabled
     const isUpdateEnabled = (selectedAvatar && selectedAvatar !== user.avatarUrl) || password.length >= 6;
 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <button className={styles.backButton} onClick={handleBack}>
-                    ← Back
-                </button>
+                <BackToLobbyButton />
                 <h2>Profile Details</h2>
             </div>
 
             <div className={styles.profileContent}>
                 <div className={styles.avatarSection}>
-                    <img src={selectedAvatar || user.avatarUrl || "/src/assets/avatars/avatar_0.png"} alt="Avatar" className={styles.avatar} />
+                    <img src={selectedAvatar || `/src/assets/avatars/avatar_${user.avatarUrl || 0}.png`} alt="Avatar" className={styles.avatar} />
                     <button className={styles.changeAvatarButton} onClick={showAvatarPicker}>
                         Change Avatar
                     </button>

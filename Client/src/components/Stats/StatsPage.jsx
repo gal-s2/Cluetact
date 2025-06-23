@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../../config/baseUrl";
 import styles from "./StatsPage.module.css";
+import BackToLobbyButton from "../General/BackToLobbyButton";
 
 function StatsPage() {
     const { user } = useUser();
@@ -32,10 +33,6 @@ function StatsPage() {
         }
     }, [user]);
 
-    const handleBack = () => {
-        navigate("/lobby");
-    };
-
     if (loading) {
         return (
             <div className={styles.container}>
@@ -54,9 +51,7 @@ function StatsPage() {
                     <h2>Oops!</h2>
                     <p>{error}</p>
                 </div>
-                <button className={styles.backButton} onClick={handleBack}>
-                    ← Back
-                </button>
+                <BackToLobbyButton />
             </div>
         );
     }
@@ -67,7 +62,6 @@ function StatsPage() {
                 <img src={user.avatarUrl || "/src/assets/avatars/avatar_0.png"} alt="Avatar" className={styles.avatar} />
                 <h2>{user.username}'s Stats</h2>
             </div>
-
             <div className={styles.statsGrid}>
                 <div className={styles.statCard}>
                     <div className={styles.statIcon}>🏆</div>
@@ -93,7 +87,6 @@ function StatsPage() {
                     <div className={styles.statLabel}>Win Rate</div>
                 </div>
             </div>
-
             {stats.totalGames > 0 ? (
                 <div className={styles.progressCard}>
                     <h3>Performance Overview</h3>
@@ -111,10 +104,7 @@ function StatsPage() {
                     <p>Start playing to see your statistics here.</p>
                 </div>
             )}
-
-            <button className={styles.backButton} onClick={handleBack}>
-                ← Back
-            </button>
+            <BackToLobbyButton />
         </div>
     );
 }

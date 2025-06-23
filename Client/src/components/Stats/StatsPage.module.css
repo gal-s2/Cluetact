@@ -248,34 +248,6 @@
     margin: 0;
 }
 
-/* Back Button */
-.backButton {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background: linear-gradient(135deg, #81c784, #66bb6a);
-    color: white;
-    border: none;
-    padding: 1rem 1.5rem;
-    border-radius: 50px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 20px rgba(129, 199, 132, 0.3);
-    z-index: 100;
-}
-
-.backButton:hover {
-    background: linear-gradient(135deg, #66bb6a, #4caf50);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(129, 199, 132, 0.4);
-}
-
-.backButton:active {
-    transform: translateY(0);
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {

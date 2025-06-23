@@ -3,6 +3,7 @@ import { baseUrl } from "../../config/baseUrl";
 import { useEffect, useState } from "react";
 import { useUser } from "../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { useGlobalNotification } from "../../contexts/GlobalNotificationContext";
 import socket from "../../services/socket";
 import styles from "./Lobby.module.css";
 import LobbyHeader from "./LobbyHeader";
@@ -23,6 +24,7 @@ function Lobby() {
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
     const [playMenuOpen, setPlayMenuOpen] = useState(false);
     const [inQueue, setInQueue] = useState(false);
+    const { setGlobalNotification } = useGlobalNotification();
 
     if (!user && !loading) {
         console.log("No user found in Lobby.jsx, skipping render.");
@@ -119,6 +121,10 @@ function Lobby() {
         });
 
         navigate(`/waiting/${newCode}`, { state: { isCreator: true } });
+        setGlobalNotification({
+            message: "Waiting room created — invite friends! You can start once 3 or more players join.",
+            type: "info",
+        });
     };
 
     const handleJoinRoom = () => {
