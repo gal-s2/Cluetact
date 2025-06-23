@@ -16,7 +16,7 @@ function StatsPage() {
         const fetchStats = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${baseUrl}/api/stats/${user._id}`);
+                const response = await axios.get(`${baseUrl}/stats/${user._id}`);
                 setStats(response.data.statistics);
                 setError(null);
             } catch (err) {

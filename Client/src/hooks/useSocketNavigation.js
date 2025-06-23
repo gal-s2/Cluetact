@@ -11,6 +11,7 @@ export default function useSocketNavigation() {
         socket.emit(SOCKET_EVENTS.CLIENT_NOTIFY_MY_SOCKET_IS_READY);
 
         const handleRedirectToLobby = () => {
+            console.log("received rediection to lobby");
             navigate("/lobby");
         };
 

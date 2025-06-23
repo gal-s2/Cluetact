@@ -6,7 +6,7 @@ const waitingRoomHandlers = require("../controllers/waitingRoomHandlers");
 const gameEventsHandlers = require("../controllers/gameEventsHandlers");
 const overWatchHandlers = require("../controllers/overWatchHandlers");
 const messageEmitter = require("./MessageEmitter");
-const SOCKET_EVENTS = require("../../common/socketEvents.json");
+const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const GameManager = require("../managers/GameManager");
 const User = require("../../models/User");
 
@@ -61,6 +61,8 @@ module.exports = function (io) {
             if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId }, socket);
         };
 
+        console.log("[SERVER] Setting up listeners for socket id:", socket.id);
+
         // Log every incoming message
         socket.onAny((event, ...args) => {
             socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);
@@ -69,6 +71,8 @@ module.exports = function (io) {
         socket.on(SOCKET_EVENTS.CLIENT_NOTIFY_MY_SOCKET_IS_READY, () => {
             reconnect(socket);
         });
+
+        socket.on(SOCKET_EVENTS.CLIENT_CHECK_EVENTS_AVAILABILITY, () => messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_READY_FOR_EVENTS, null, socket));
 
         socket.on(SOCKET_EVENTS.CLIENT_FIND_GAME, (args) => gameEventsHandlers.handleJoinQueue(socket, args));
 
@@ -88,7 +92,11 @@ module.exports = function (io) {
         });
 
         socket.on(SOCKET_EVENTS.CLIENT_GET_ONLINE_ROOMS, () => overWatchHandlers.handleGetOnlineRooms(socket));
+
         socket.on(SOCKET_EVENTS.CLIENT_GET_ONLINE_WAITING_ROOMS, () => overWatchHandlers.handleGetOnlineWaitingRooms(socket));
+
         socket.on(SOCKET_EVENTS.CLIENT_GET_ALL_USERS, () => overWatchHandlers.handleGetAllUsers(socket));
+
+        messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_READY_FOR_EVENTS, null, socket);
     });
 };

@@ -2,7 +2,7 @@ const gameManager = require("../managers/GameManager");
 const socketManager = require("../managers/SocketManager");
 const WaitingRoomManager = require("../managers/WaitingRoomManager");
 const messageEmitter = require("../sockets/MessageEmitter");
-const SOCKET_EVENTS = require("../../common/socketEvents.json");
+const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const { ROLES } = require("../constants");
 
 const gameEventsHandlers = {
@@ -38,8 +38,9 @@ const gameEventsHandlers = {
 
     handleJoinRoom: async (socket, args) => {
         const room = gameManager.getRoomBySocket(socket);
+        console.log("recieved request to try and join room, and found room is: ", room);
         if (!room) {
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, { room }, socket);
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
             return;
         }
 

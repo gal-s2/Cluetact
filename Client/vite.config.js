@@ -10,10 +10,7 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            "@shared": path.resolve(__dirname, "./common"),
+            "@shared": path.resolve(__dirname, "src/shared"),
         },
-    },
-    optimizeDeps: {
-        include: ["@shared/socketEvents"],
     },
 });
