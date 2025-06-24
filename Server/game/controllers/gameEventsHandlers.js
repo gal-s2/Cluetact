@@ -199,7 +199,6 @@ const gameEventsHandlers = {
     disconnect: (socket, reason) => {
         const waitingRooms = WaitingRoomManager.removeUserFromItsWaitingRooms(socket.id);
         waitingRooms.forEach((waitingRoomId) => {
-            socket.leave(waitingRoomId);
             messageEmitter.broadcastToWaitingRoom(
                 SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
                 { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host },

@@ -115,12 +115,15 @@ function Lobby() {
         setCreatedRoomCode(newCode);
         setShowCreateModal(true);
 
+        // Create the waiting room and join it
         socket.emit(SOCKET_EVENTS.CLIENT_CREATE_WAITING_ROOM, {
             waitingRoomId: newCode,
             username: user.username,
         });
 
+        // Navigate to waiting room with creator flag
         navigate(`/waiting/${newCode}`, { state: { isCreator: true } });
+
         setGlobalNotification({
             message: "Waiting room created — invite friends! You can start once 3 or more players join.",
             type: "info",
@@ -129,11 +132,6 @@ function Lobby() {
 
     const handleJoinRoom = () => {
         if (!user) return;
-
-        socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_ROOM, {
-            waitingRoomId: roomCodeInput,
-            username: user.username,
-        });
 
         navigate(`/waiting/${roomCodeInput}`);
     };

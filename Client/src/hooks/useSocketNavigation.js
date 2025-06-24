@@ -39,5 +39,5 @@ export default function useSocketNavigation() {
             socket.off(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOGIN, handleRedirectToLogin);
             socket.off(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, handleRedirectToRoom);
         };
-    }, [navigate, location]);
+    }, []);
 }

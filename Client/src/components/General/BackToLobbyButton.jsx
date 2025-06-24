@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./BackToLobbyButton.module.css";
 
-function BackToLobbyButton({ children = "← Back", className = "" }) {
+function BackToLobbyButton({ children = "← Back", className = "", onClick = () => {} }) {
     const navigate = useNavigate();
 
     const handleBack = () => {
