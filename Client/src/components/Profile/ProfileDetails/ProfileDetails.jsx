@@ -1,11 +1,13 @@
 import axios from "axios";
 import { useUser } from "../../../contexts/UserContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { baseUrl } from "../../../config/baseUrl";
 import styles from "./ProfileDetails.module.css";
 import AvatarPicker from "../AvatarPicker/AvatarPicker";
 import BackToLobbyButton from "../../General/BackToLobbyButton";
 import { useGlobalNotification } from "../../../contexts/GlobalNotificationContext";
+const images = import.meta.glob("../../../assets/avatars/*.png", { eager: true });
+const avatarList = Object.values(images).map((mod) => mod.default);
 
 function ProfileDetails() {
     const { user, setUser } = useUser();
@@ -71,6 +73,12 @@ function ProfileDetails() {
     // Check if update button should be enabled
     const isUpdateEnabled = (selectedAvatar && selectedAvatar !== user.avatar) || password.length >= 6;
 
+    useEffect(() => {
+        if (user?.avatar != null && avatarList[user.avatar]) {
+            setSelectedAvatar(avatarList[user.avatar]);
+        }
+    }, [user?.avatar]);
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
@@ -80,7 +88,7 @@ function ProfileDetails() {
 
             <div className={styles.profileContent}>
                 <div className={styles.avatarSection}>
-                    <img src={selectedAvatar || `/src/assets/avatars/avatar_${user.avatar || 0}.png`} alt="Avatar" className={styles.avatar} />
+                    <img src={selectedAvatar} alt="Avatar" className={styles.avatar} />
                     <button className={styles.changeAvatarButton} onClick={showAvatarPicker}>
                         Change Avatar
                     </button>

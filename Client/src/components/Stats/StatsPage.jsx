@@ -5,6 +5,8 @@ import axios from "axios";
 import { baseUrl } from "../../config/baseUrl";
 import styles from "./StatsPage.module.css";
 import BackToLobbyButton from "../General/BackToLobbyButton";
+const images = import.meta.glob("../../assets/avatars/*.png", { eager: true });
+const avatarList = Object.values(images).map((mod) => mod.default);
 
 function StatsPage() {
     const { user } = useUser();
@@ -59,7 +61,8 @@ function StatsPage() {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <img src={`/src/assets/avatars/avatar_${user.avatar || 0}.png`} alt="Avatar" className={styles.avatar} />
+                <img src={avatarList[user.avatar || 0]} alt="Avatar" className={styles.avatar} />
+
                 <h2>{user.username}'s Stats</h2>
             </div>
             <div className={styles.statsGrid}>
