@@ -5,12 +5,14 @@ import { baseUrl } from "../../../config/baseUrl";
 import styles from "./ProfileDetails.module.css";
 import AvatarPicker from "../AvatarPicker/AvatarPicker";
 import BackToLobbyButton from "../../General/BackToLobbyButton";
+import { useGlobalNotification } from "../../../contexts/GlobalNotificationContext";
 
 function ProfileDetails() {
     const { user, setUser } = useUser();
     const [password, setPassword] = useState("");
     const [selectedAvatar, setSelectedAvatar] = useState(null);
     const [isAvatarShown, setAvatarShown] = useState(false);
+    const { setGlobalNotification } = useGlobalNotification();
 
     const extractAvatarNumber = (avatarPath) => {
         const match = avatarPath.match(/avatar_(\d+)/);
@@ -44,8 +46,10 @@ function ProfileDetails() {
                 user: res.data.user,
                 token: localStorage.getItem("token"), // re-use existing token
             });
-
-            alert("Profile updated successfully");
+            setGlobalNotification({
+                message: "Profile updated successfully!",
+                type: "success",
+            });
         } catch (err) {
             console.error("Update failed:", err);
             alert("Something went wrong while updating your profile.");

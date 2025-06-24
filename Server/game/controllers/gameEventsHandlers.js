@@ -22,7 +22,6 @@ const gameEventsHandlers = {
 
         // Send welcome messages to all players if a room was created, otherwise notify them that they are in the queue
         if (room) {
-            console.log("i'm about to let everyone know that a new room was created");
             messageEmitter.broadcastToRoom(
                 SOCKET_EVENTS.SERVER_NEW_ROOM,
                 {
@@ -38,7 +37,6 @@ const gameEventsHandlers = {
 
     handleJoinRoom: async (socket, args) => {
         const room = gameManager.getRoomBySocket(socket);
-        console.log("recieved request to try and join room, and found room is: ", room);
         if (!room) {
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
             return;
@@ -127,8 +125,7 @@ const gameEventsHandlers = {
 
         const result = await room.submitGuess(guesserUsername, guess, clueId);
         const clueGiverUsername = room.getCurrentClueGiverUsername();
-        console.log("clue giver username is ", clueGiverUsername);
-        console.log("revealed letters are ", room.getRevealedLetters());
+
         if (result.correct) {
             const data = {
                 guesser: guesserUsername,
@@ -139,6 +136,7 @@ const gameEventsHandlers = {
                 keeper: room.keeperUsername,
                 players: room.players,
                 clueGiverUsername: clueGiverUsername,
+                keeperWord: result.isWordComplete ? result.keeperWord : null,
             };
             if (result.isGameEnded) {
                 data.winners = room.getWinners();
@@ -186,7 +184,6 @@ const gameEventsHandlers = {
             return;
         }
         const otherUsernames = room.players.filter((player) => player.username !== socket.user.username).map((player) => player.username);
-        console.log("other usernames are ", otherUsernames);
 
         gameManager.removePlayerFromRoom(roomId, socket.user.username);
 
@@ -209,7 +206,7 @@ const gameEventsHandlers = {
                 waitingRoomId
             );
         });
-        console.log("about to delete socket from socketManager");
+
         socketManager.unregister(socket);
 
         console.log(`[Socket ${socket.id}] disconnected.`);

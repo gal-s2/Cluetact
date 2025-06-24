@@ -62,10 +62,8 @@ module.exports = function waitingRoomHandlers(io, socket) {
 
         const keeperUsername = waitingRoom.host;
         const seekersUsernames = [...waitingRoom.users].filter((u) => u !== keeperUsername);
-        console.log("keeper username: ", keeperUsername);
         const keeper = await socketManager.getUserByUsername(keeperUsername);
         const seekers = await Promise.all(seekersUsernames.map((username) => socketManager.getUserByUsername(username)));
-        console.log("keeper: ", keeper, " seekers are:", seekers);
         const room = GameManager.createRoom(keeper, seekers);
         messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId: room.roomId }, waitingRoomId);
         WaitingRoomManager.deleteWaitingRoom(waitingRoomId);

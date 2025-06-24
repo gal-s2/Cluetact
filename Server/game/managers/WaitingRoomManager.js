@@ -24,13 +24,11 @@ class WaitingRoomManager {
 
     getWaitingRoom(waitingRoomId) {
         console.log("in get lobby");
-        this.printWaitingRooms();
         return this.waitingRooms[waitingRoomId];
     }
 
     joinWaitingRoom(waitingRoomId, username, socketId) {
         console.log("trying to join the lobby ", waitingRoomId, "with user ", username);
-        this.printWaitingRooms();
         const waitingRoom = this.waitingRooms[waitingRoomId];
         if (waitingRoom) {
             const alreadyActive = waitingRoom.users.has(username) && socketManager.isConnected(username);
@@ -101,7 +99,6 @@ class WaitingRoomManager {
         const username = socketManager.getUsernameBySocketId(socketId);
         const waitingRooms = [];
         if (!username) {
-            console.log(`No username found for socket ${socketId}`);
             return;
         }
 

@@ -113,7 +113,6 @@ UserSchema.statics.createGuest = async function () {
         username,
     });
 
-    console.log("Created guest:", username);
     return guest;
 };
 

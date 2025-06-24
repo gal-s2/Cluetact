@@ -4,8 +4,6 @@ const requireAuth = require("../middleware/requireAuth");
 
 router.patch("/update-profile", requireAuth, async (req, res) => {
     try {
-        console.log("🔧 PATCH /user/update-profile hit");
-
         const { id: userId } = req.user;
         const { avatar, password } = req.body;
 

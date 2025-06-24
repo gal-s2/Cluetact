@@ -81,7 +81,7 @@ export default function useGameRoomSocket(roomId) {
             }
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players, winners, clueGiverUsername }) => {
+        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players, winners, clueGiverUsername, keeperWord }) => {
             if (isWordComplete) {
                 setGameState((prev) => ({
                     ...prev,
@@ -101,6 +101,7 @@ export default function useGameRoomSocket(roomId) {
                 revealedWord: revealed,
                 isWordComplete,
                 guesses: null,
+                keeperWord,
             }));
         });
 

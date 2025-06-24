@@ -4,7 +4,6 @@ const { ROLES } = require("../constants");
 
 class GameRound {
     constructor(players) {
-        console.log("about to start a round with players: ", players);
         this.roundNum = 1;
         this.keeperWord = null;
         this.revealedLetters = "";
@@ -21,7 +20,7 @@ class GameRound {
 
     getActiveClue() {
         const numOfClues = this.clues.length;
-        console.log(`Number of clues: ${numOfClues}`);
+
         return numOfClues > 0 ? this.clues[numOfClues - 1] : null;
     }
 
@@ -37,7 +36,7 @@ class GameRound {
     tryBlockClue(wordGuess, keeperUsername) {
         const lowerGuess = wordGuess.toLowerCase();
         const activeClue = this.getActiveClue();
-        console.log("Trying to block clue :", activeClue, "with guess:", lowerGuess);
+
         if (!activeClue.blocked && activeClue.word === lowerGuess) {
             activeClue.blocked = true;
             activeClue.active = false;
@@ -51,12 +50,11 @@ class GameRound {
     }
 
     revealNextLetter() {
-        console.log("in the function to reveal next letter");
         const currentLength = this.revealedLetters.length;
         if (this.keeperWord && currentLength < this.keeperWord.length) {
             this.revealedLetters += this.keeperWord[currentLength];
             this.currentLength++;
-            console.log("revealed letters are now:", this.revealedLetters);
+
             // Return true if this was the last letter
             return this.revealedLetters.length === this.keeperWord.length;
         }

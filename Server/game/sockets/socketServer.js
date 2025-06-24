@@ -61,8 +61,6 @@ module.exports = function (io) {
             if (roomId) messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, { roomId }, socket);
         };
 
-        console.log("[SERVER] Setting up listeners for socket id:", socket.id);
-
         // Log every incoming message
         socket.onAny((event, ...args) => {
             socketLogger.info(`[Socket ${socket.id}] Event: ${event} | Data: ${JSON.stringify(args)}`);

@@ -14,7 +14,6 @@ function KeeperWordPopup() {
     };
 
     const handleQuit = () => {
-        // Your quit logic here (e.g., leave room, navigate)
         socket.emit(SOCKET_EVENTS.CLIENT_LEAVE_ROOM);
         window.location.href = "/lobby";
     };

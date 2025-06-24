@@ -5,11 +5,15 @@ import { useGameRoom } from "../../../contexts/GameRoomContext";
 function CluetactPopup() {
     const [secondsLeft, setSecondsLeft] = useState(5);
     const { gameState, setCluetact } = useGameRoom();
+    const { setKeeperWord } = useGameRoom();
     const word = gameState.cluetact?.word || "";
     const guesser = gameState.cluetact?.guesser || "";
 
     // Check if the word will be fully revealed after this cluetact
     const isWordFullyRevealed = gameState.isWordComplete;
+
+    // Check if the guessed word is actually the keeper word (more impressive!)
+    const isDirectWordGuess = isWordFullyRevealed && word.toLowerCase() === gameState.keeperWord?.toLowerCase();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -18,6 +22,7 @@ function CluetactPopup() {
 
         const timeout = setTimeout(() => {
             setCluetact(null);
+            setKeeperWord("");
         }, 5000);
 
         return () => {
@@ -26,20 +31,49 @@ function CluetactPopup() {
         };
     }, []);
 
+    // Determine popup style and content based on the case
+    const getPopupClass = () => {
+        if (isDirectWordGuess) return `${styles.popup} ${styles.directWordGuess}`;
+        if (isWordFullyRevealed) return `${styles.popup} ${styles.finalReveal}`;
+        return styles.popup;
+    };
+
+    const getTitle = () => {
+        if (isDirectWordGuess) return "🔥 DIRECT HIT!";
+        if (isWordFullyRevealed) return "🎉 WORD FULLY REVEALED!";
+        return "🧠 Cluetact Achieved!";
+    };
+
+    const getMainMessage = () => {
+        if (isDirectWordGuess) {
+            return (
+                <p>
+                    <strong>{guesser}</strong> guessed the entire word <strong>{word}</strong> directly!
+                </p>
+            );
+        }
+        return (
+            <p>
+                <strong>{guesser}</strong> guessed the word <strong>{word}</strong>!
+            </p>
+        );
+    };
+
     return (
         <div className={styles.overlay}>
-            <div className={`${styles.popup} ${isWordFullyRevealed ? styles.finalReveal : ""}`}>
-                <h2>{isWordFullyRevealed ? "🎉 WORD FULLY REVEALED!" : "🧠 Cluetact Achieved!"}</h2>
-                <p>
-                    <strong>{guesser}</strong> guessed the word <strong>{word}</strong>!
-                </p>
+            <div className={getPopupClass()}>
+                <h2>{getTitle()}</h2>
+                {getMainMessage()}
 
                 {isWordFullyRevealed ? (
                     <div className={styles.finalRevealSection}>
                         <p className={styles.finalWordDisplay}>
-                            The complete word is: <span className={styles.finalWord}>{gameState.revealedWord}</span>
+                            {isDirectWordGuess ? "Amazing guess! The word was:" : "The complete word is:"}
+                            <span className={styles.finalWord}>{gameState.keeperWord}</span>
                         </p>
-                        <p className={styles.gameEndMessage}>🏆 Game Complete! ({secondsLeft})</p>
+                        <p className={styles.gameEndMessage}>
+                            {isDirectWordGuess ? "🚀 Incredible! Round Complete!" : "🏆 Round Complete!"} ({secondsLeft})
+                        </p>
                     </div>
                 ) : (
                     <p>Next letter is being revealed... ({secondsLeft})</p>

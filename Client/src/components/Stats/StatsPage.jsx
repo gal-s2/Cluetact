@@ -59,7 +59,7 @@ function StatsPage() {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <img src={user.avatarUrl || "/src/assets/avatars/avatar_0.png"} alt="Avatar" className={styles.avatar} />
+                <img src={`/src/assets/avatars/avatar_${user.avatar || 0}.png`} alt="Avatar" className={styles.avatar} />
                 <h2>{user.username}'s Stats</h2>
             </div>
             <div className={styles.statsGrid}>
