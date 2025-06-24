@@ -47,11 +47,13 @@
 .sectionGroup {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
     width: 100%;
     max-width: 400px;
     align-items: center;
-    height: 200px;
+    /* Remove fixed height to allow for dropdown expansion */
+    min-height: 300px;
+    padding-bottom: 2rem;
 }
 
 /* Card Styling */
@@ -67,12 +69,19 @@
     transition: all 0.3s ease;
     position: relative;
     display: inline-block;
+    /* Ensure cards don't overlap dropdowns */
+    z-index: 1;
 }
 
 .card:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     border-color: #81c784;
+}
+
+/* When dropdown is open, increase z-index */
+.card:has(.dropdown) {
+    z-index: 10;
 }
 
 /* Button Styling */
@@ -142,18 +151,22 @@
     transform: translateY(0);
 }
 
-/* Dropdown Menu */
+/* Dropdown Menu - Fixed for mobile */
 .dropdown {
     position: absolute;
     top: 100%;
     left: 0;
+    right: 0;
     margin-top: 1rem;
     background: white;
     border: 2px solid #e8f5e8;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     overflow: hidden;
     animation: dropdownSlide 0.2s ease-out;
+    z-index: 100;
+    /* Ensure dropdown doesn't get cut off */
+    min-width: 100%;
 }
 
 @keyframes dropdownSlide {
@@ -179,6 +192,7 @@
     color: #333;
     width: 100%;
     position: relative;
+    display: block;
 }
 
 .dropdown button:hover {
@@ -194,6 +208,28 @@
     right: 1rem;
     height: 1px;
     background: #f0f0f0;
+}
+
+/* Mobile-specific dropdown adjustments */
+@media (max-width: 479px) {
+    .sectionGroup {
+        gap: 3rem;
+        /* Add extra space between cards on mobile */
+        padding-bottom: 4rem;
+        /* Extra bottom padding for dropdown space */
+    }
+
+    .dropdown {
+        /* On mobile, position dropdown with more space */
+        margin-top: 1.5rem;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .dropdown button {
+        padding: 1.2rem 1.5rem;
+        font-size: 1.1rem;
+        /* Larger touch targets on mobile */
+    }
 }
 
 /* Modal Overlay */
@@ -385,6 +421,8 @@
         flex-direction: row;
         gap: 2rem;
         max-width: 600px;
+        /* Reset padding for larger screens */
+        padding-bottom: 2rem;
     }
 
     .card {

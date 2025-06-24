@@ -63,9 +63,34 @@ function Lobby() {
         };
     }, [navigate]);
 
+    // Close any open dropdown when the other opens
+    const handlePlayMenuToggle = () => {
+        setPlayMenuOpen((prev) => !prev);
+        if (profileMenuOpen) setProfileMenuOpen(false);
+    };
+
+    const handleProfileMenuToggle = () => {
+        setProfileMenuOpen((prev) => !prev);
+        if (playMenuOpen) setPlayMenuOpen(false);
+    };
+
+    // Close dropdowns when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!event.target.closest(`.${styles.card}`)) {
+                setPlayMenuOpen(false);
+                setProfileMenuOpen(false);
+            }
+        };
+
+        document.addEventListener("click", handleClickOutside);
+        return () => document.removeEventListener("click", handleClickOutside);
+    }, []);
+
     const findGame = () => {
         if (!user) return;
         socket.emit(SOCKET_EVENTS.CLIENT_FIND_GAME, { userId: user._id, username: user.username });
+        setPlayMenuOpen(false);
     };
 
     const disconnect = async () => {
@@ -97,9 +122,8 @@ function Lobby() {
         }
 
         console.log("Navigating to home page BEFORE clearing user state...");
-        navigate("/", { replace: true }); // 🚀 Navigate to root before clearing user
+        navigate("/", { replace: true });
 
-        // 💥 Now wait one tick so React Router can process the navigation
         setTimeout(() => {
             console.log("Clearing socket.auth and user state...");
             socket.auth = {};
@@ -114,6 +138,7 @@ function Lobby() {
         const newCode = generateRoomCode();
         setCreatedRoomCode(newCode);
         setShowCreateModal(true);
+        setPlayMenuOpen(false);
 
         socket.emit(SOCKET_EVENTS.CLIENT_CREATE_WAITING_ROOM, {
             waitingRoomId: newCode,
@@ -121,6 +146,7 @@ function Lobby() {
         });
 
         navigate(`/waiting/${newCode}`, { state: { isCreator: true } });
+
         setGlobalNotification({
             message: "Waiting room created — invite friends! You can start once 3 or more players join.",
             type: "info",
@@ -129,13 +155,23 @@ function Lobby() {
 
     const handleJoinRoom = () => {
         if (!user) return;
-
-        socket.emit(SOCKET_EVENTS.CLIENT_JOIN_WAITING_ROOM, {
-            waitingRoomId: roomCodeInput,
-            username: user.username,
-        });
-
         navigate(`/waiting/${roomCodeInput}`);
+        setPlayMenuOpen(false);
+    };
+
+    const handleShowJoinModal = () => {
+        setShowJoinModal(true);
+        setPlayMenuOpen(false);
+    };
+
+    const handleNavigateToStats = () => {
+        navigate("/stats");
+        setProfileMenuOpen(false);
+    };
+
+    const handleNavigateToProfile = () => {
+        navigate("/profile");
+        setProfileMenuOpen(false);
     };
 
     return (
@@ -154,8 +190,15 @@ function Lobby() {
             ) : (
                 <main className={styles.main}>
                     <div className={styles.sectionGroup}>
-                        <PlayCard playMenuOpen={playMenuOpen} setPlayMenuOpen={setPlayMenuOpen} findGame={findGame} setShowJoinModal={setShowJoinModal} handleCreateRoom={handleCreateRoom} />
-                        <ProfileCard profileMenuOpen={profileMenuOpen} setProfileMenuOpen={setProfileMenuOpen} navigate={navigate} disconnect={disconnect} />
+                        <PlayCard playMenuOpen={playMenuOpen} setPlayMenuOpen={handlePlayMenuToggle} findGame={findGame} setShowJoinModal={handleShowJoinModal} handleCreateRoom={handleCreateRoom} />
+                        <ProfileCard
+                            profileMenuOpen={profileMenuOpen}
+                            setProfileMenuOpen={handleProfileMenuToggle}
+                            navigate={navigate}
+                            disconnect={disconnect}
+                            onNavigateToStats={handleNavigateToStats}
+                            onNavigateToProfile={handleNavigateToProfile}
+                        />
                     </div>
                 </main>
             )}
