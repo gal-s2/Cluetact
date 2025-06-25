@@ -8,7 +8,6 @@ const UserSchema = new mongoose.Schema({
     authProvider: {
         type: String,
         enum: ["local", "google", "guest"],
-        default: "local",
     },
     username: {
         type: String,
@@ -19,11 +18,11 @@ const UserSchema = new mongoose.Schema({
         type: String,
         unique: true,
         sparse: true,
-        required: requiredIfNotGuest,
+        required: requiredIfNotGuestUser,
     },
     password: {
         type: String,
-        required: requiredIfNotGuest,
+        required: requiredIfLocalUser,
     },
     country: {
         type: String,
@@ -56,7 +55,11 @@ const UserSchema = new mongoose.Schema({
     },
 });
 
-function requiredIfNotGuest() {
+function requiredIfNotGuestUser() {
+    return this.authProvider !== "guest";
+}
+
+function requiredIfLocalUser() {
     return this.authProvider === "local";
 }
 
@@ -104,6 +107,7 @@ UserSchema.statics.register = async function (userData) {
         password: hash,
         gender,
         country,
+        authProvider: "local",
     });
 
     return user;
@@ -150,6 +154,7 @@ UserSchema.statics.createGuest = async function () {
     const guest = await this.create({
         guest: true,
         username,
+        authProvider: "guest",
     });
 
     return guest;
