@@ -5,6 +5,11 @@ const descriptors = ["black", "blue", "crimson", "dark", "golden", "icy", "red",
 const animals = ["cat", "dog", "fox", "wolf", "hawk", "bear", "owl", "lynx", "panther", "cheetah", "lion", "tiger", "cobra", "raven", "eagle", "koala", "otter", "bat", "ferret", "puma"];
 
 const UserSchema = new mongoose.Schema({
+    authProvider: {
+        type: String,
+        enum: ["local", "google", "guest"],
+        default: "local",
+    },
     username: {
         type: String,
         unique: true,
@@ -44,11 +49,35 @@ const UserSchema = new mongoose.Schema({
         default: Date.now,
         expires: 60 * 60 * 24,
     },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true,
+    },
 });
 
 function requiredIfNotGuest() {
-    return !this.guest;
+    return this.authProvider === "local";
 }
+
+UserSchema.statics.generateRandomUsername = async function generateRandomUsername() {
+    let username;
+    let exists = true;
+
+    while (exists) {
+        const rawName = uniqueNamesGenerator({
+            dictionaries: [descriptors, animals],
+            separator: "",
+            style: "capital",
+        });
+
+        const number = Math.floor(Math.random() * 99) + 1;
+        username = `${rawName}${number}`;
+        exists = await this.findOne({ username });
+    }
+
+    return username;
+};
 
 // static register method
 UserSchema.statics.register = async function (userData) {
@@ -80,6 +109,29 @@ UserSchema.statics.register = async function (userData) {
     return user;
 };
 
+UserSchema.statics.loginWithGoogle = async function (googleId, email) {
+    let user = await this.findOne({ googleId });
+
+    if (!user) {
+        user = await this.findOne({ email });
+        if (user && !user.googleId) {
+            user.googleId = googleId;
+            user.authProvider = "google";
+            await user.save();
+            return user;
+        }
+        const username = await this.generateRandomUsername();
+        user = await this.create({
+            googleId,
+            email,
+            username,
+            authProvider: "google",
+        });
+    }
+
+    return user;
+};
+
 UserSchema.statics.login = async function (username, password) {
     const user = await this.findOne({ username });
 
@@ -93,20 +145,7 @@ UserSchema.statics.login = async function (username, password) {
 };
 
 UserSchema.statics.createGuest = async function () {
-    let username;
-    let exists = true;
-
-    while (exists) {
-        const rawName = uniqueNamesGenerator({
-            dictionaries: [descriptors, animals],
-            separator: "",
-            style: "capital",
-        });
-
-        const number = Math.floor(Math.random() * 99) + 1;
-        username = `${rawName}${number}[Guest]`;
-        exists = await this.findOne({ username });
-    }
+    const username = await this.generateRandomUsername();
 
     const guest = await this.create({
         guest: true,
