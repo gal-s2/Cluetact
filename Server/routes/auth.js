@@ -3,7 +3,11 @@ const User = require("../models/User");
 const socketManager = require("../game/managers/SocketManager");
 const { generateToken } = require("../utils/jwt");
 const { OAuth2Client } = require("google-auth-library");
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const client = new OAuth2Client({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    redirectUri: "postmessage",
+});
 
 router.post("/guest", async (req, res) => {
     try {
@@ -42,11 +46,12 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/google", async (req, res) => {
-    const { token } = req.body;
+    const { token: authCode } = req.body;
 
     try {
+        const { tokens } = await client.getToken(authCode);
         const ticket = await client.verifyIdToken({
-            idToken: token,
+            idToken: tokens.id_token,
             audience: process.env.GOOGLE_CLIENT_ID,
         });
 
@@ -54,11 +59,12 @@ router.post("/google", async (req, res) => {
         const { sub: googleId, email } = payload;
 
         const user = await User.loginWithGoogle(googleId, email);
+
         const jwt = generateToken(user);
 
         res.status(200).json({ user, token: jwt });
     } catch (err) {
-        console.error("Google login error:", err.message);
+        console.error("Google login error (full):", err.response?.data || err.message || err);
         res.status(401).json({ error: "Google authentication failed" });
     }
 });
