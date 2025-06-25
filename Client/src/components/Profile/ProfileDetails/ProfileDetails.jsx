@@ -15,7 +15,7 @@ function ProfileDetails() {
     const [selectedAvatar, setSelectedAvatar] = useState(null);
     const [isAvatarShown, setAvatarShown] = useState(false);
     const { setGlobalNotification } = useGlobalNotification();
-
+    const LOCAL_USER = "local";
     const extractAvatarNumber = (avatarPath) => {
         const match = avatarPath.match(/avatar_(\d+)/);
         return match ? match[1] : null;
@@ -31,7 +31,7 @@ function ProfileDetails() {
             }
         }
 
-        if (!user.guest && password.length >= 6) {
+        if (user.authProvider === LOCAL_USER && password.length >= 6) {
             updateData.password = password;
         }
 
@@ -94,7 +94,7 @@ function ProfileDetails() {
                     </button>
                 </div>
 
-                {!user.guest && (
+                {user.authProvider === LOCAL_USER && (
                     <div className={styles.field}>
                         <label>New Password (optional):</label>
                         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter new password (min 6 characters)" />
