@@ -72,20 +72,13 @@ function AuthForm({ type }) {
 
     // Custom Google login using useGoogleLogin hook
     const googleLogin = useGoogleLogin({
-        onSuccess: async (tokenResponse) => {
+        flow: "auth-code",
+        ux_mode: "popup",
+        onSuccess: async (codeResponse) => {
             try {
-                // Get user info from Google
-                const userInfoResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-                    headers: {
-                        Authorization: `Bearer ${tokenResponse.access_token}`,
-                    },
-                });
-                const userInfo = await userInfoResponse.json();
-
-                // Send to your backend
+                console.log("Google login code:", codeResponse.code);
                 const response = await axios.post(`${baseUrl}/auth/google`, {
-                    token: tokenResponse.access_token,
-                    userInfo: userInfo,
+                    token: codeResponse.code,
                 });
 
                 if (response.status === 200) {
