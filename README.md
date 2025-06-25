@@ -12,6 +12,8 @@
 
 👉 Try it here: [https://cluetact.onrender.com](https://cluetact.onrender.com)
 
+*Note: there's a cold start of 30–60 seconds on the first access to the server.*
+
 ## 🎮 Key Features
 
 - 🔗 Real-time gameplay with Socket.IO
