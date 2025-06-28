@@ -1,17 +1,32 @@
-import { useState, useEffect, useRef } from "react";
+// GameScreen/Keeper/KeeperCluePanel.jsx
+import { useEffect, useRef, useState } from "react";
 import socket from "../../../../services/socket";
-import styles from "./KeeperClueList.module.css";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import { useGameRoom } from "../../../../contexts/GameRoomContext";
+import styles from "./KeeperCluePanel.module.css";
+import { useUser } from "../../../../contexts/UserContext";
+import GuessStream from "../Shared/GuessStream";
 
-function KeeperClueList({ maxVisibleItems = 4 }) {
+function KeeperCluePanel({ maxVisibleItems = 4 }) {
     const { gameState } = useGameRoom();
     const clues = gameState.clues || [];
-
+    const { user } = useUser();
     const [guess, setGuess] = useState("");
-    const [showBlocked, setShowBlocked] = useState(true);
+    const unblockedClues = clues.filter((clue) => !clue.blocked);
+    const blockedClues = clues.filter((clue) => clue.blocked);
+
     const unblockedListRef = useRef(null);
     const blockedListRef = useRef(null);
+
+    useEffect(() => {
+        if (unblockedListRef.current) {
+            unblockedListRef.current.style.setProperty("--max-visible-items", maxVisibleItems);
+            unblockedListRef.current.scrollTop = unblockedListRef.current.scrollHeight;
+        }
+        if (blockedListRef.current) {
+            blockedListRef.current.style.setProperty("--max-visible-items", maxVisibleItems);
+        }
+    }, [unblockedClues]);
 
     const handleSubmit = () => {
         if (guess.trim()) {
@@ -20,32 +35,13 @@ function KeeperClueList({ maxVisibleItems = 4 }) {
         }
     };
 
-    const unblockedClues = clues.filter((clue) => !clue.blocked);
-    const blockedClues = clues.filter((clue) => clue.blocked);
-
-    // Set CSS custom properties for dynamic height calculation
-    useEffect(() => {
-        if (unblockedListRef.current) {
-            unblockedListRef.current.style.setProperty("--max-visible-items", maxVisibleItems);
-        }
-        if (blockedListRef.current) {
-            blockedListRef.current.style.setProperty("--max-visible-items", maxVisibleItems);
-        }
-    }, [maxVisibleItems]);
-
-    // Auto-scroll to bottom when new clues arrive
-    useEffect(() => {
-        if (unblockedListRef.current) {
-            unblockedListRef.current.scrollTop = unblockedListRef.current.scrollHeight;
-        }
-    }, [unblockedClues, gameState]);
-
     return (
         <div className={styles.keeperContainer}>
+            {/* Unblocked clues section */}
             <div className={styles.incomingSection}>
-                <h4 className={styles.heading}>Incoming Clues</h4>
+                <h4 className={styles.heading}>Incoming Clue</h4>
                 {unblockedClues.length === 0 ? (
-                    <p className={styles.emptyMessage}>No new clues yet.</p>
+                    <p className={styles.emptyMessage}>No active clue yet.</p>
                 ) : (
                     <div ref={unblockedListRef} className={styles.scrollableClueList} data-clue-count={unblockedClues.length}>
                         {unblockedClues.map((clue, index) => (
@@ -65,7 +61,6 @@ function KeeperClueList({ maxVisibleItems = 4 }) {
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") {
                                     e.preventDefault();
-                                    if (!guess.trim()) return;
                                     handleSubmit();
                                 }
                             }}
@@ -77,8 +72,30 @@ function KeeperClueList({ maxVisibleItems = 4 }) {
                     </div>
                 )}
             </div>
+
+            {gameState.activeClue && gameState.clueGiverUsername !== user.username && (
+                <>
+                    <h4 className={styles.heading}>Live Guesses</h4>
+                    <GuessStream guesses={gameState.guesses} />
+                </>
+            )}
+
+            {/* Blocked clues section */}
+            {blockedClues.length > 0 && (
+                <div className={styles.blockedSection}>
+                    <h4 className={styles.subHeading}>Blocked Clues</h4>
+                    <div ref={blockedListRef} className={styles.scrollableClueList}>
+                        {blockedClues.map((clue, index) => (
+                            <div key={index} className={styles.blockedClueItem}>
+                                <div className={styles.blockedWord}>Blocked: {clue.word}</div>
+                                <div className={styles.blockedDefinition}>{clue.definition}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
 
-export default KeeperClueList;
+export default KeeperCluePanel;

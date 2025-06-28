@@ -6,16 +6,15 @@ import Spinner from "../Routes/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./GameScreen/Keeper/KeeperWordPopup";
 import SubmitClue from "./GameScreen/Seeker/SubmitClue";
-import KeeperClueList from "./GameScreen/Keeper/KeeperClueList";
-import ClueSection from "./GameScreen/ClueSection/ClueSection";
 import CluetactPopup from "./Modals/CluetactPopup";
 import BlockedCluesSection from "./GameScreen/BlockedClues/BlockedCluesSection";
-import GuessActionLine from "./GameScreen/Seeker/GuessActionLine";
 import GameOverPopup from "./Modals/GameOverPopup";
 import FloatingLetters from "../Animations/FloatingLetters/FloatingLetters";
 import NotificationBox from "./NotificationBox/NotificationBox";
 import PlayersTable from "./GameScreen/Player/PlayersTable";
 import PlayerMainMessageHeader from "./GameScreen/Player/PlayerMainMessageHeader";
+import SeekerCluePanel from "./GameScreen/Seeker/SeekerCluePanel";
+import KeeperCluePanel from "./GameScreen/Keeper/KeeperCluePanel";
 
 function GameRoom() {
     const { gameState, loading, handleExitGame, notification } = useGameRoom();
@@ -63,10 +62,7 @@ function GameRoom() {
                     </div>
                 )}
 
-                <div className={styles.cluesSection}>
-                    {!gameState.isKeeper && (!gameState.isSubmittingClue || gameState.activeClue) && <ClueSection />}
-                    {gameState.isKeeper && <KeeperClueList />}
-                </div>
+                <div className={styles.cluesSection}>{gameState.isKeeper ? <KeeperCluePanel /> : <SeekerCluePanel />}</div>
 
                 {gameState.isKeeper && <BlockedCluesSection maxVisibleItems={5} />}
                 <FloatingLetters />

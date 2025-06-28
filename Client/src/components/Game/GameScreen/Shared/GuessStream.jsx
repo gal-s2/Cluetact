@@ -6,15 +6,11 @@ function GuessStream({ guesses = [] }) {
     const containerRef = useRef(null);
 
     useEffect(() => {
-        // Handle case where guesses might be undefined or null
         const validGuesses = guesses || [];
 
-        // If guesses array is smaller than displayed (like after refresh/reset)
-        if (validGuesses.length < displayedGuesses.length) {
-            setDisplayedGuesses(validGuesses);
-        } else if (validGuesses.length > displayedGuesses.length) {
-            const newGuesses = validGuesses.slice(displayedGuesses.length);
-            setDisplayedGuesses((prev) => [...newGuesses, ...prev]); // Add new guesses to the beginning
+        // Sync all guesses if a new game or refresh happened
+        if (validGuesses.length !== displayedGuesses.length || JSON.stringify(validGuesses) !== JSON.stringify(displayedGuesses)) {
+            setDisplayedGuesses([...validGuesses].reverse());
         }
     }, [guesses]);
 

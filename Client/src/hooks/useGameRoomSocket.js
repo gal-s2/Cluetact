@@ -100,7 +100,7 @@ export default function useGameRoomSocket(roomId) {
                 activeClue: null,
                 revealedWord: revealed,
                 isWordComplete,
-                guesses: null,
+                guesses: [],
                 keeperWord,
             }));
         });
