@@ -124,6 +124,7 @@ export default function useGameRoomSocket(roomId) {
                 isSubmittingClue: clueGiverUsername === user.username,
                 clueGiverUsername,
                 activeClue: null,
+                guesses: [],
             }));
             setNotification({
                 message: gameState.isKeeper ? `You blocked "${clue.from}" by guessing the word "${clue.word}"` : `The keeper blocked "${clue.from}" by guessing the word "${clue.word}"`,

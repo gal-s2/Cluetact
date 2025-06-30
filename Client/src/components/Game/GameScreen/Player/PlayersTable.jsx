@@ -19,7 +19,6 @@ export default function PlayersTable() {
 
     return (
         <div className={styles.playersTable}>
-            {console.log("PlayersTable", players)}
             {players.map((player) => (
                 <PlayerCard key={player.username} player={player} me={player.username === user.username} onClick={handlePlayerCardClick} setSelectedPlayer={setSelectedPlayer} />
             ))}

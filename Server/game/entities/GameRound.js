@@ -40,11 +40,12 @@ class GameRound {
         if (!activeClue.blocked && activeClue.word === lowerGuess) {
             activeClue.blocked = true;
             activeClue.active = false;
+            this.guesses = [];
             return {
                 success: true,
                 blockedClue: activeClue,
             };
-        }
+        } else this.guesses.push(new Guess(keeperUsername, lowerGuess));
 
         return { success: false };
     }

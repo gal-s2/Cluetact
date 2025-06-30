@@ -55,7 +55,7 @@ function KeeperCluePanel({ maxVisibleItems = 4 }) {
                     <div className={styles.inputRow}>
                         <input
                             type="text"
-                            placeholder="Try to block a clue..."
+                            placeholder="Try to block the active clue"
                             value={guess}
                             onChange={(e) => setGuess(e.target.value)}
                             onKeyDown={(e) => {
@@ -71,14 +71,13 @@ function KeeperCluePanel({ maxVisibleItems = 4 }) {
                         </button>
                     </div>
                 )}
+                {gameState.activeClue && gameState.clueGiverUsername !== user.username && (
+                    <>
+                        <h4 className={styles.heading}>Live Guesses</h4>
+                        <GuessStream guesses={gameState.guesses} />
+                    </>
+                )}
             </div>
-
-            {gameState.activeClue && gameState.clueGiverUsername !== user.username && (
-                <>
-                    <h4 className={styles.heading}>Live Guesses</h4>
-                    <GuessStream guesses={gameState.guesses} />
-                </>
-            )}
 
             {/* Blocked clues section */}
             {blockedClues.length > 0 && (
