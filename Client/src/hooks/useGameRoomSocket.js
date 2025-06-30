@@ -147,10 +147,6 @@ export default function useGameRoomSocket(roomId) {
             setGameState((prev) => ({ ...prev, guesses }));
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, (message) => {
-            setNotification({ message, type: "error" });
-        });
-
         return () => {
             socket.off(SOCKET_EVENTS.SERVER_GAME_JOIN);
             socket.off(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN);
@@ -159,7 +155,6 @@ export default function useGameRoomSocket(roomId) {
             socket.off(SOCKET_EVENTS.SERVER_CLUE_BLOCKED);
             socket.off(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK);
             socket.off(SOCKET_EVENTS.SERVER_GUESS_FAILED);
-            socket.off(SOCKET_EVENTS.SERVER_ERROR_MESSAGE);
         };
     }, [user?.username, gameState.isKeeper]);
 
