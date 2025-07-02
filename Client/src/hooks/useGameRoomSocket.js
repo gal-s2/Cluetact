@@ -100,7 +100,7 @@ export default function useGameRoomSocket(roomId) {
                 activeClue: null,
                 revealedWord: revealed,
                 isWordComplete,
-                guesses: null,
+                guesses: [],
                 keeperWord,
             }));
         });
@@ -124,6 +124,7 @@ export default function useGameRoomSocket(roomId) {
                 isSubmittingClue: clueGiverUsername === user.username,
                 clueGiverUsername,
                 activeClue: null,
+                guesses: [],
             }));
             setNotification({
                 message: gameState.isKeeper ? `You blocked "${clue.from}" by guessing the word "${clue.word}"` : `The keeper blocked "${clue.from}" by guessing the word "${clue.word}"`,
@@ -146,10 +147,6 @@ export default function useGameRoomSocket(roomId) {
             setGameState((prev) => ({ ...prev, guesses }));
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, (message) => {
-            setNotification({ message, type: "error" });
-        });
-
         return () => {
             socket.off(SOCKET_EVENTS.SERVER_GAME_JOIN);
             socket.off(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN);
@@ -158,7 +155,6 @@ export default function useGameRoomSocket(roomId) {
             socket.off(SOCKET_EVENTS.SERVER_CLUE_BLOCKED);
             socket.off(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK);
             socket.off(SOCKET_EVENTS.SERVER_GUESS_FAILED);
-            socket.off(SOCKET_EVENTS.SERVER_ERROR_MESSAGE);
         };
     }, [user?.username, gameState.isKeeper]);
 

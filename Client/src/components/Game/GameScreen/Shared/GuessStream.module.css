@@ -56,10 +56,28 @@
     box-shadow: 0 4px 12px rgba(255, 193, 7, 0.25);
 }
 
+/* My guess bubble styling */
+.myGuessBubble {
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border: 1px solid #4caf50;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
+}
+
+.myGuessBubble:hover {
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.25);
+}
+
 .guessUser {
     font-weight: 600;
     color: #f57c00;
     margin-right: 0.5rem;
+}
+
+/* My guess user styling */
+.myGuessUser {
+    color: #2e7d32;
+    font-weight: 700;
+    font-style: italic;
 }
 
 /* Animation for new guesses - now from top */
@@ -218,8 +236,23 @@
         box-shadow: 0 4px 12px rgba(255, 143, 0, 0.25);
     }
 
+    /* Dark mode for my guess bubbles */
+    .myGuessBubble {
+        background: linear-gradient(135deg, #1b2e1b 0%, #2d4a2d 100%);
+        border-color: #4caf50;
+        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+    }
+
+    .myGuessBubble:hover {
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
     .guessUser {
         color: #ffb74d;
+    }
+
+    .myGuessUser {
+        color: #81c784;
     }
 
     .guessStreamContainer:empty::before {
@@ -264,5 +297,10 @@
 
     .guessUser {
         text-decoration: underline;
+    }
+
+    .myGuessUser {
+        text-decoration: underline;
+        font-weight: 800;
     }
 }

@@ -156,7 +156,7 @@ const gameEventsHandlers = {
         const userId = socket.user.username;
         const isKeeper = room.keeperUsername === userId;
 
-        if (!isKeeper) return; // optional: prevent non-keepers from blocking
+        if (!isKeeper) return;
 
         const result = room.tryBlockClue(guess, userId);
 
@@ -171,7 +171,9 @@ const gameEventsHandlers = {
                 room.roomId
             );
         } else {
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Block failed. Either the clue does not exist or it has already been blocked.", socket);
+            const guesses = room.getGuesses();
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Block failed", socket);
+            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_GUESS_FAILED, guesses, room.roomId);
         }
     },
 

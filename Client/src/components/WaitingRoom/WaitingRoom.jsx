@@ -100,17 +100,6 @@ function WaitingRoom() {
             }
         };
 
-        const handleErrorMessage = (message) => {
-            setErrorMessage(message);
-            setTimeout(() => {
-                navigate("/lobby");
-            }, 2000);
-        };
-
-        const handleRedirectToLobby = () => {
-            navigate("/lobby");
-        };
-
         const handleRedirectToRoom = ({ roomId: gameRoomId }) => {
             hasJoinedRef.current = false; // Don't send leave event when redirecting to game
             navigate(`/game/${gameRoomId}`);
@@ -119,8 +108,6 @@ function WaitingRoom() {
         // Attach listeners
         socket.on(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, handleWaitingRoomUpdate);
         socket.on(SOCKET_EVENTS.SERVER_READY_FOR_EVENTS, handleServerReady);
-        socket.on(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, handleErrorMessage);
-        socket.on(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, handleRedirectToLobby);
         socket.on(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, handleRedirectToRoom);
 
         // Check if server is ready for events
@@ -141,8 +128,6 @@ function WaitingRoom() {
         return () => {
             socket.off(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, handleWaitingRoomUpdate);
             socket.off(SOCKET_EVENTS.SERVER_READY_FOR_EVENTS, handleServerReady);
-            socket.off(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, handleErrorMessage);
-            socket.off(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, handleRedirectToLobby);
             socket.off(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, handleRedirectToRoom);
         };
     }, [roomId, user?.username, isCreator, navigate]);
