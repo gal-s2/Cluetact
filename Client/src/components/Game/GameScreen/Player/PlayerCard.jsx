@@ -11,12 +11,17 @@ const avatarMap = Object.fromEntries(
     })
 );
 
-const PlayerCard = ({ player, me, onClick, setSelectedPlayer }) => {
+const PlayerCard = ({ player, me, isActiveClueGiver, onClick, setSelectedPlayer }) => {
     const avatarSrc = avatarMap[player.avatar] || avatarMap[0];
 
     return (
         <div
-            className={classNames(styles.card, { [styles.me]: me })}
+            className={classNames(styles.card, {
+                [styles.me]: me,
+                [styles.activeClueGiver]: isActiveClueGiver,
+                [styles.keeper]: player.role === "keeper",
+                [styles.seeker]: player.role === "seeker",
+            })}
             onClick={() => {
                 onClick(player);
                 setSelectedPlayer(player);
@@ -25,11 +30,27 @@ const PlayerCard = ({ player, me, onClick, setSelectedPlayer }) => {
             <div className={styles.inner}>
                 <div className={styles.playerImageContainer}>
                     <img className={styles.playerImage} src={avatarSrc} alt={`${player.username}'s avatar`} />
+                    {isActiveClueGiver && (
+                        <div className={styles.turnIndicator}>
+                            <span className={styles.turnDot}></span>
+                        </div>
+                    )}
                 </div>
                 <div className={styles.playerDataContainer}>
                     <h3>{player.username}</h3>
                     <p>{player.gameScore} pts</p>
-                    <span className={styles.roleTag}>{player.role.toUpperCase()}</span>
+                    <div className={styles.badgeContainer}>
+                        <span
+                            className={classNames(styles.roleTag, {
+                                [styles.keeperRole]: player.role === "keeper",
+                                [styles.seekerRole]: player.role === "seeker",
+                            })}
+                        >
+                            {player.role === "keeper" ? "🔐 KEEPER" : "🔍 SEEKER"}
+                        </span>
+                        {me && <span className={styles.youTag}>YOU</span>}
+                        {isActiveClueGiver && <span className={styles.turnTag}>YOUR TURN</span>}
+                    </div>
                 </div>
             </div>
         </div>

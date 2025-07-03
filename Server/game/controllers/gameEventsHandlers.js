@@ -127,7 +127,7 @@ const gameEventsHandlers = {
         const clueGiverUsername = room.getCurrentClueGiverUsername();
 
         if (result.correct) {
-            const data = {
+            const dataToSeekers = {
                 guesser: guesserUsername,
                 word: guess,
                 clues: room.currentRound.getClues(),
@@ -138,10 +138,12 @@ const gameEventsHandlers = {
                 clueGiverUsername: clueGiverUsername,
                 keeperWord: result.isWordComplete ? result.keeperWord : null,
             };
+            const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
             if (result.isGameEnded) {
-                data.winners = room.getWinners();
+                dataToSeekers.winners = room.getWinners();
             }
-            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, data, room.roomId);
+            messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToSeekers, room.roomId);
+            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToKeeper, room.roomId);
         } else {
             const guesses = room.getGuesses();
             messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_GUESS_FAILED, guesses, room.roomId);
