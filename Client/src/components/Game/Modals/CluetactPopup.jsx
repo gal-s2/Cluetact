@@ -8,6 +8,7 @@ function CluetactPopup() {
     const { setKeeperWord } = useGameRoom();
     const word = gameState.cluetact?.word || "";
     const guesser = gameState.cluetact?.guesser || "";
+    const isKeeper = gameState.isKeeper;
 
     // Check if the word will be fully revealed after this cluetact
     const isWordFullyRevealed = gameState.isWordComplete;
@@ -22,7 +23,7 @@ function CluetactPopup() {
 
         const timeout = setTimeout(() => {
             setCluetact(null);
-            setKeeperWord("");
+            if (!isKeeper) setKeeperWord("");
         }, 5000);
 
         return () => {

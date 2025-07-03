@@ -17,11 +17,57 @@ export default function PlayersTable() {
         console.log("recognized selected player ", player);
     };
 
+    // Separate players by role
+    const keeper = players.find((player) => player.role === "keeper");
+    const seekers = players.filter((player) => player.role === "seeker");
+
     return (
         <div className={styles.playersTable}>
-            {players.map((player) => (
-                <PlayerCard key={player.username} player={player} me={player.username === user.username} onClick={handlePlayerCardClick} setSelectedPlayer={setSelectedPlayer} />
-            ))}
+            {/* Keeper Section */}
+            {keeper && (
+                <div className={styles.keeperSection}>
+                    <div className={styles.sectionHeader}>
+                        <h3 className={styles.keeperTitle}>🔐 Keeper</h3>
+                        <span className={styles.keeperSubtitle}>Defends the secret word</span>
+                    </div>
+                    <div className={styles.keeperContainer}>
+                        <PlayerCard
+                            key={keeper.username}
+                            player={keeper}
+                            me={keeper.username === user.username}
+                            isActiveClueGiver={false}
+                            onClick={handlePlayerCardClick}
+                            setSelectedPlayer={setSelectedPlayer}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* VS Divider */}
+            <div className={styles.divider}>
+                <span className={styles.vsText}>VS</span>
+            </div>
+
+            {/* Seekers Section */}
+            <div className={styles.seekersSection}>
+                <div className={styles.sectionHeader}>
+                    <h3 className={styles.seekersTitle}>🔍 Seekers</h3>
+                    <span className={styles.seekersSubtitle}>Guess words that start with {gameState.revealedWord}</span>
+                </div>
+                <div className={styles.seekersContainer}>
+                    {seekers.map((player) => (
+                        <PlayerCard
+                            key={player.username}
+                            player={player}
+                            me={player.username === user.username}
+                            isActiveClueGiver={player.username === gameState.clueGiverUsername}
+                            onClick={handlePlayerCardClick}
+                            setSelectedPlayer={setSelectedPlayer}
+                        />
+                    ))}
+                </div>
+            </div>
+
             {selectedPlayer && <PlayerProfileModal player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />}
         </div>
     );
