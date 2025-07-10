@@ -1,13 +1,12 @@
 import { useState } from "react";
 import styles from "./AvatarPicker.module.css";
-
-const images = import.meta.glob("../../../assets/avatars/*.png", { eager: true });
-const avatarList = Object.values(images).map((mod) => mod.default);
+import { avatarList } from "../../../utils/loadAvatars";
 
 export default function AvatarPicker({ onAvatarSelect }) {
     const [selected, setSelected] = useState(null);
 
     const handleAvatarClick = (index) => {
+        console.log(index);
         setSelected(index);
         if (onAvatarSelect) {
             onAvatarSelect(avatarList[index]);

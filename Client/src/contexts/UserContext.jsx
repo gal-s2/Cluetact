@@ -9,10 +9,10 @@ export const UserProvider = ({ children }) => {
 
     useEffect(() => {
         if (!loading && user) {
-            console.log("[UserContext] User loaded, connecting socket...");
-            console.log("Token in localStorage (connecting socket):", localStorage.getItem("token"));
+            //console.log("[UserContext] User loaded, connecting socket...");
+            //console.log("Token in localStorage (connecting socket):", localStorage.getItem("token"));
             socket.auth = { token: localStorage.getItem("token") };
-            console.log("Calling socket.connect() with auth:", socket.auth);
+            //console.log("Calling socket.connect() with auth:", socket.auth);
             socket.connect();
         }
     }, [loading, user]);

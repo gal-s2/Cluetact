@@ -4,11 +4,10 @@ import axios from "axios";
 import styles from "./AuthForm.module.css";
 import logo from "../../../assets/Cluetact.jpeg";
 import { baseUrl } from "../../../config/baseUrl";
-import { useGoogleLogin } from "@react-oauth/google";
+//import { useGoogleLogin } from "@react-oauth/google";
+import { useUser } from "../../../contexts/UserContext";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-import { useUser } from "../../../contexts/UserContext";
 
 function AuthForm({ type }) {
     const navigate = useNavigate();
@@ -71,7 +70,7 @@ function AuthForm({ type }) {
     };
 
     // Custom Google login using useGoogleLogin hook
-    const googleLogin = useGoogleLogin({
+    /*const googleLogin = useGoogleLogin({
         flow: "auth-code",
         ux_mode: "popup",
         onSuccess: async (codeResponse) => {
@@ -93,7 +92,7 @@ function AuthForm({ type }) {
             }
         },
         onError: () => setErrors({ server: "Google login failed" }),
-    });
+    });*/
 
     return (
         <div className={styles.authContainer}>
@@ -102,7 +101,7 @@ function AuthForm({ type }) {
                 <h2>{type === "login" ? "Login" : "Register"}</h2>
 
                 {/* Custom Google Login Button */}
-                <button onClick={googleLogin} className={styles.googleLoginBtn} type="button">
+                {/*<button onClick={googleLogin} className={styles.googleLoginBtn} type="button">
                     <svg width="18" height="18" viewBox="0 0 18 18">
                         <path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z" />
                         <path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2.04a4.8 4.8 0 0 1-7.18-2.53H1.83v2.07A8 8 0 0 0 8.98 17z" />
@@ -111,6 +110,7 @@ function AuthForm({ type }) {
                     </svg>
                     Continue with Google
                 </button>
+                */}
 
                 <form onSubmit={handleSubmit} className={styles.authForm}>
                     {type === "register" && <input type="text" placeholder="Email" value={email || ""} onChange={(e) => setEmail(e.target.value)} required />}
@@ -118,14 +118,7 @@ function AuthForm({ type }) {
                     <input type="text" placeholder="Username" value={username || ""} onChange={(e) => setUsername(e.target.value)} className={errors.username ? styles.invalidInput : ""} required />
                     {errors.username && <p className={styles.error}>{errors.username}</p>}
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password || ""}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className={errors.password ? styles.invalidInput : ""}
-                        required
-                    />
+                    <input type="password" placeholder="Password" value={password || ""} onChange={(e) => setPassword(e.target.value)} className={errors.password ? styles.invalidInput : ""} required />
 
                     {errors.password && <p className={styles.error}>{errors.password}</p>}
                     {errors.server && <p className={styles.error}>{errors.server}</p>}

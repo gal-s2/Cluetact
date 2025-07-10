@@ -6,8 +6,8 @@ import styles from "./ProfileDetails.module.css";
 import AvatarPicker from "../AvatarPicker/AvatarPicker";
 import BackToLobbyButton from "../../General/BackToLobbyButton";
 import { useGlobalNotification } from "../../../contexts/GlobalNotificationContext";
-const images = import.meta.glob("../../../assets/avatars/*.png", { eager: true });
-const avatarList = Object.values(images).map((mod) => mod.default);
+import { avatarList } from "../../../utils/loadAvatars";
+import Modal from "../../Modal";
 
 function ProfileDetails() {
     const { user, setUser } = useUser();
@@ -48,6 +48,7 @@ function ProfileDetails() {
                 user: res.data.user,
                 token: localStorage.getItem("token"), // re-use existing token
             });
+
             setGlobalNotification({
                 message: "Profile updated successfully!",
                 type: "success",
@@ -89,9 +90,11 @@ function ProfileDetails() {
             <div className={styles.profileContent}>
                 <div className={styles.avatarSection}>
                     <img src={selectedAvatar} alt="Avatar" className={styles.avatar} />
-                    <button className={styles.changeAvatarButton} onClick={showAvatarPicker}>
-                        Change Avatar
-                    </button>
+                    {user.authProvider === LOCAL_USER && (
+                        <button className={styles.changeAvatarButton} onClick={showAvatarPicker}>
+                            Change Avatar
+                        </button>
+                    )}
                 </div>
 
                 {user.authProvider === LOCAL_USER && (
@@ -109,15 +112,13 @@ function ProfileDetails() {
 
             {/* Avatar Picker Modal */}
             {isAvatarShown && (
-                <div className={styles.modalOverlay}>
-                    <div className={styles.modal}>
-                        <h3>Choose Your Avatar</h3>
-                        <AvatarPicker onAvatarSelect={handleAvatarSelect} />
-                        <button className={styles.cancelButton} onClick={() => setAvatarShown(false)}>
-                            Cancel
-                        </button>
-                    </div>
-                </div>
+                <Modal isOpen={isAvatarShown} onClose={() => setAvatarShown(false)}>
+                    <h3>Choose Your Avatar</h3>
+                    <AvatarPicker onAvatarSelect={handleAvatarSelect} />
+                    <button className={styles.cancelButton} onClick={() => setAvatarShown(false)}>
+                        Cancel
+                    </button>
+                </Modal>
             )}
         </div>
     );
