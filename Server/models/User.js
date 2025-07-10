@@ -37,7 +37,7 @@ const UserSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-        default: Math.floor(Math.random() * 10),
+        default: Math.floor(Math.random() * 10) + 1,
     },
     guest: {
         type: Boolean,
@@ -169,8 +169,6 @@ UserSchema.statics.updateProfile = async function (userId, updateFields) {
     const user = await this.findById(userId);
     if (!user) throw new Error("User not found");
 
-    console.log("Update fields:", updateFields);
-
     if (user.guest) {
         if (updateFields.password) throw new Error("Guests are not allowed to set a password");
         if (updateFields.avatar) throw new Error("Guests are not allowed to change their avatar");
@@ -182,7 +180,6 @@ UserSchema.statics.updateProfile = async function (userId, updateFields) {
     }
 
     const updatedUser = await this.findByIdAndUpdate(userId, { $set: updateFields }, { new: true, select: "-password" });
-    console.log("Updated user:", updatedUser);
     return updatedUser;
 };
 
