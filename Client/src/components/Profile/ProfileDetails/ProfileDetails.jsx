@@ -7,7 +7,6 @@ import AvatarPicker from "../AvatarPicker/AvatarPicker";
 import BackToLobbyButton from "../../General/BackToLobbyButton";
 import { useGlobalNotification } from "../../../contexts/GlobalNotificationContext";
 import { avatarList } from "../../../utils/loadAvatars";
-import Modal from "../../Modal";
 
 function ProfileDetails() {
     const { user, setUser } = useUser();
@@ -112,13 +111,15 @@ function ProfileDetails() {
 
             {/* Avatar Picker Modal */}
             {isAvatarShown && (
-                <Modal isOpen={isAvatarShown} onClose={() => setAvatarShown(false)}>
-                    <h3>Choose Your Avatar</h3>
-                    <AvatarPicker onAvatarSelect={handleAvatarSelect} />
-                    <button className={styles.cancelButton} onClick={() => setAvatarShown(false)}>
-                        Cancel
-                    </button>
-                </Modal>
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                        <h3>Choose Your Avatar</h3>
+                        <AvatarPicker onAvatarSelect={handleAvatarSelect} />
+                        <button className={styles.cancelButton} onClick={() => setAvatarShown(false)}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );
