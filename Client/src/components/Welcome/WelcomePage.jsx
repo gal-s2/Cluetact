@@ -1,9 +1,9 @@
 import axios from "axios";
-import logo from "../../assets/Cluetact.jpeg";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import { baseUrl } from "../../config/baseUrl";
 import styles from "./WelcomePage.module.css";
+import Logo from "../General/Logo/Logo";
 
 export default function WelcomePage() {
     const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function WelcomePage() {
 
     return (
         <div className={styles.container}>
-            <img src={logo} alt="Cluetact Logo" className={styles.logo} />
+            <Logo className={styles.logo} />
 
             <div className={styles.buttons}>
                 <button className={styles.primaryButton} onClick={() => navigate("/login")}>

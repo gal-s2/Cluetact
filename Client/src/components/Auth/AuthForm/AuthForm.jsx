@@ -2,12 +2,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./AuthForm.module.css";
-import logo from "../../../assets/Cluetact.jpeg";
 import { baseUrl } from "../../../config/baseUrl";
 //import { useGoogleLogin } from "@react-oauth/google";
 import { useUser } from "../../../contexts/UserContext";
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import Logo from "../../General/Logo/Logo";
 
 function AuthForm({ type }) {
     const navigate = useNavigate();
@@ -97,7 +95,7 @@ function AuthForm({ type }) {
     return (
         <div className={styles.authContainer}>
             <div className={styles.content}>
-                <img src={logo} alt="Cluetact Logo" className={styles.logo} />
+                <Logo className={styles.logo} />
                 <h2>{type === "login" ? "Login" : "Register"}</h2>
 
                 {/* Custom Google Login Button */}
