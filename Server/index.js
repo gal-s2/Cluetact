@@ -1,6 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 require("./config/mongo");
+require("./jobs/deleteOldGuests");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
