@@ -5,8 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "jest",
-        "start": "copyfiles ../shared/* shared && node -r module-alias/register index.js",
-        "dev": "copyfiles ../shared/* shared && nodemon --require module-alias/register index.js"
+        "start": "copyfiles ../shared/* shared && node -r module-alias/register ./src/index.js",
+        "dev": "copyfiles ../shared/* shared && nodemon --require module-alias/register ./src/index.js"
     },
     "author": "",
     "license": "ISC",
