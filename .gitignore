@@ -6,5 +6,6 @@ Client/.env
 
 */logs
 
+.vscode
 .DS_Store
 runme.bat

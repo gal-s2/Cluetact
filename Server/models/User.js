@@ -28,7 +28,6 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
-
     statistics: {
         totalGames: { type: Number, default: 0 },
         Losses: { type: Number, default: 0 },
@@ -46,7 +45,6 @@ const UserSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        expires: 60 * 60 * 24,
     },
     googleId: {
         type: String,
