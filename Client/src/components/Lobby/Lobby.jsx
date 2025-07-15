@@ -13,6 +13,7 @@ import ProfileCard from "./ProfileCard";
 import PlayCard from "./PlayCard";
 import generateRoomCode from "../../utils/generateRoomCode";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
+import Modal from "../UI/Modal/Modal";
 
 function Lobby() {
     const { user, setUser, loading } = useUser();
@@ -191,14 +192,7 @@ function Lobby() {
                 <main className={styles.main}>
                     <div className={styles.sectionGroup}>
                         <PlayCard playMenuOpen={playMenuOpen} setPlayMenuOpen={handlePlayMenuToggle} findGame={findGame} setShowJoinModal={handleShowJoinModal} handleCreateRoom={handleCreateRoom} />
-                        <ProfileCard
-                            profileMenuOpen={profileMenuOpen}
-                            setProfileMenuOpen={handleProfileMenuToggle}
-                            navigate={navigate}
-                            disconnect={disconnect}
-                            onNavigateToStats={handleNavigateToStats}
-                            onNavigateToProfile={handleNavigateToProfile}
-                        />
+                        <ProfileCard profileMenuOpen={profileMenuOpen} setProfileMenuOpen={handleProfileMenuToggle} navigate={navigate} disconnect={disconnect} onNavigateToStats={handleNavigateToStats} onNavigateToProfile={handleNavigateToProfile} />
                     </div>
                 </main>
             )}

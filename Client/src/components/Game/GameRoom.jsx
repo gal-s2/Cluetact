@@ -1,5 +1,3 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { useGameRoom } from "../../contexts/GameRoomContext";
 import WordDisplay from "./GameScreen/Word/WordDisplay";
 import Spinner from "../Routes/Spinner/Spinner";
@@ -15,6 +13,7 @@ import PlayersTable from "./GameScreen/Player/PlayersTable";
 import PlayerMainMessageHeader from "./GameScreen/Player/PlayerMainMessageHeader";
 import SeekerCluePanel from "./GameScreen/Seeker/SeekerCluePanel";
 import KeeperCluePanel from "./GameScreen/Keeper/KeeperCluePanel";
+import ExitGameButton from "./ExitGameButton";
 
 function GameRoom() {
     const { gameState, loading, handleExitGame, notification } = useGameRoom();
@@ -68,9 +67,7 @@ function GameRoom() {
                 <FloatingLetters />
             </div>
 
-            <button className={styles.exitButton} onClick={handleExitGame} title="Exit Game">
-                <FontAwesomeIcon icon={faArrowRightFromBracket} />
-            </button>
+            <ExitGameButton onExit={handleExitGame} />
         </div>
     );
 }
