@@ -17,6 +17,7 @@
 }
 
 .modal {
+    position: relative;
     background: white;
     border-radius: 1rem;
     padding: 2rem;
