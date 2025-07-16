@@ -14,9 +14,13 @@ import PlayerMainMessageHeader from "./GameScreen/Player/PlayerMainMessageHeader
 import SeekerCluePanel from "./GameScreen/Seeker/SeekerCluePanel";
 import KeeperCluePanel from "./GameScreen/Keeper/KeeperCluePanel";
 import ExitGameButton from "./ExitGameButton";
+import ConfimModal from "./Modals/ConfirmModal";
+import { useState } from "react";
 
 function GameRoom() {
     const { gameState, loading, handleExitGame, notification } = useGameRoom();
+
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     if (loading) return <Spinner />;
 
@@ -31,7 +35,7 @@ function GameRoom() {
             {gameState.isKeeper && !gameState.isWordChosen && (
                 <div className={styles.waitOverlay}>
                     <div className={styles.popupWrapper}>
-                        <KeeperWordPopup />
+                        <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />
                     </div>
                 </div>
             )}
@@ -67,7 +71,9 @@ function GameRoom() {
                 <FloatingLetters />
             </div>
 
-            <ExitGameButton onExit={handleExitGame} />
+            <ExitGameButton onExit={() => setShowConfirmModal(true)} />
+
+            {showConfirmModal && <ConfimModal handleCloseModal={() => setShowConfirmModal(false)} handleConfirmExit={handleExitGame} />}
         </div>
     );
 }
