@@ -169,7 +169,6 @@ UserSchema.statics.updateProfile = async function (userId, updateFields) {
 
     if (user.guest) {
         if (updateFields.password) throw new Error("Guests are not allowed to set a password");
-        if (updateFields.avatar) throw new Error("Guests are not allowed to change their avatar");
     }
 
     if (updateFields.password) {

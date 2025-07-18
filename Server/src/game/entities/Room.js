@@ -4,9 +4,12 @@ const { ROLES } = require("../constants");
 const { isValidEnglishWord } = require("../../utils/wordUtils");
 const Logger = require("../Logger");
 const User = require("../../models/User");
+const CountdownTimer = require("../entities/CountdownTimer");
 
 const BASE_POINTS = 15;
 const CLUE_BONUS = 5;
+
+const TURN_INTERVAL = 5;
 
 class Room {
     constructor(roomId, keeper, seekers) {
@@ -14,7 +17,7 @@ class Room {
         this.status = "PRE-ROUND"; //options: "PRE-ROUND","MID-ROUND","END";
         this.keeperUsername = keeper.username;
         this.setPlayersData(keeper, seekers);
-        this.currentRound = new GameRound(this.players);
+        this.currentRound = new GameRound();
         this.roundsHistory = [];
         this.turnQueue = seekers.map((user) => user.username).slice();
         this.seekersUsernames = this.playersArrayToUsernamesOfSeekers(this.players);
@@ -24,6 +27,7 @@ class Room {
         this.pastKeepers = new Set();
         this.pastKeepers.add(this.keeperUsername);
         this.isWordFullyRevealed = false;
+        this.timer = null;
     }
 
     playersArrayToUsernamesOfSeekers(players) {
@@ -103,7 +107,7 @@ class Room {
         }
     }
 
-    async startNewClueRound(clueGiverUsername, clueWord, clueDefinition) {
+    async startNewClueRound(clueGiverUsername, clueWord, clueDefinition, onRaceTimeout) {
         const valid = await isValidEnglishWord(clueWord);
         if (!valid) {
             Logger.logInvalidSeekerWord(this.roomId, clueWord);
@@ -133,7 +137,30 @@ class Room {
         this.currentRound.addClue(clueGiverUsername, clueWord, clueDefinition);
         Logger.logClueSet(this.roomId, clueGiverUsername, clueDefinition);
 
+        this.timer = new CountdownTimer(TURN_INTERVAL, onRaceTimeout);
+        this.timer.start();
+
         return true;
+    }
+
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    handleTimeoutAdvanceTurn() {
+        const session = this.currentRound;
+        const clue = session.getActiveClue();
+
+        // Block the clue without assigning points
+        clue.blocked = true;
+        clue.active = false;
+
+        // Advance to next seeker
+        this.advanceToNextSeeker();
+
+        // Reveal next letter
+        this.isWordFullyRevealed = session.revealNextLetter();
+
+        // Reset clue history and guesses
+        session.resetCluesHistory();
+        session.guesses = [];
     }
 
     async submitGuess(guesserUsername, guessWord, clueId) {
@@ -142,7 +169,6 @@ class Room {
         const revealedPrefix = revealed.toLowerCase();
         const guessLower = guessWord.toLowerCase();
         const result = { correct: false, isGameEnded: false };
-        const clueGiverUsername = session.getActiveClue()?.from;
 
         const valid = await isValidEnglishWord(guessWord);
         if (!valid) {
@@ -226,7 +252,7 @@ class Room {
 
         this.roundsHistory.push(this.currentRound);
 
-        this.currentRound = new GameRound(this.players);
+        this.currentRound = new GameRound();
         this.currentRound.roundNum = this.roundsHistory.length + 1;
         this.status = "PRE-ROUND";
         Logger.logNextKeeper(this.roomId, nextKeeper);
@@ -241,8 +267,6 @@ class Room {
         Logger.logKeeperGuessedClue(this.roomId, keeperUsername);
         this.players.find((player) => player.username === keeperUsername).addScore(2);
 
-        session.clueGiverId = null;
-        session.clueTargetWord = null;
         session.status = "waiting";
     }
 

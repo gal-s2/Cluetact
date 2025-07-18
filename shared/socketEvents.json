@@ -34,6 +34,7 @@
     "SERVER_CLUE_BLOCKED": "server_clue_blocked",
     "SERVER_GUESS_FAILED": "server_guess_failed",
     "SERVER_CLUETACT_SUCCESS": "server_cluetact_success",
+    "SERVER_RACE_TIMEOUT": "server_race_timeout",
     "SERVER_WAITING_ROOM_UPDATE": "server_waiting_room_update",
     "SERVER_CONNECT_ERROR": "server_connect_error",
     "SERVER_GAME_JOIN": "server_game_join",

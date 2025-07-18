@@ -23,6 +23,7 @@ export default function useGameRoomSocket(roomId) {
         winners: [],
         activeClue: null,
         isWordComplete: false,
+        // timeOptions: keeper choosing word / seeker submitting clue / race
     });
 
     const setKeeperWord = (word) => {
@@ -103,6 +104,10 @@ export default function useGameRoomSocket(roomId) {
                 guesses: [],
                 keeperWord,
             }));
+        });
+
+        socket.on(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, () => {
+            setNotification({ message: "hi", type: "notification" });
         });
 
         socket.on(SOCKET_EVENTS.SERVER_CLUE_REVEALED, (clues) => {

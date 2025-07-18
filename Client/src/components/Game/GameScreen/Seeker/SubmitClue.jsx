@@ -15,7 +15,6 @@ function SubmitClue() {
     const [definition, setDefinition] = useState("");
     const [word, setWord] = useState("");
     const { user } = useUser();
-    console.log("clues", clues);
 
     // Check if the last clue was submitted by the current user
     const lastClue = clues[clues.length - 1];

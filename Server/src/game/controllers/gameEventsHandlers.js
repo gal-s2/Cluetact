@@ -102,9 +102,14 @@ const gameEventsHandlers = {
         if (!room) return;
 
         const username = socket.user.username;
-        const success = await room.startNewClueRound(username, word, definition);
+        const success = await room.startNewClueRound(username, word, definition, () => {
+            // a function in room that goes to the next player and not giving points
+            // send here data to the players that time is up
+
+            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, null, room.roomId);
+        });
+
         if (success) {
-            const addedClue = room.currentRound.clues.at(-1);
             messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, room.currentRound.getClues(), room.roomId);
 
             for (const player of room.players) {
@@ -203,11 +208,7 @@ const gameEventsHandlers = {
     disconnect: (socket, reason) => {
         const waitingRooms = WaitingRoomManager.removeUserFromItsWaitingRooms(socket.id);
         waitingRooms.forEach((waitingRoomId) => {
-            messageEmitter.broadcastToWaitingRoom(
-                SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
-                { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host },
-                waitingRoomId
-            );
+            messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host }, waitingRoomId);
         });
 
         socketManager.unregister(socket);

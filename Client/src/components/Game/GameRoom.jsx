@@ -16,6 +16,7 @@ import KeeperCluePanel from "./GameScreen/Keeper/KeeperCluePanel";
 import ExitGameButton from "./ExitGameButton";
 import ConfimModal from "./Modals/ConfirmModal";
 import { useState } from "react";
+import CountdownTimer from "./CountdownTimer";
 
 function GameRoom() {
     const { gameState, loading, handleExitGame, notification } = useGameRoom();
@@ -54,6 +55,8 @@ function GameRoom() {
                         <WordDisplay />
                     </div>
                 )}
+
+                <CountdownTimer duration={5} />
 
                 <>
                     <PlayerMainMessageHeader></PlayerMainMessageHeader>

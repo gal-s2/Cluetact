@@ -82,11 +82,9 @@ function ProfileDetails() {
             <div className={styles.profileContent}>
                 <div className={styles.avatarSection}>
                     <img src={avatarList[selectedAvatar]} alt="Avatar" className={styles.avatar} />
-                    {user.authProvider === LOCAL_USER && (
-                        <button className={styles.changeAvatarButton} onClick={showAvatarPicker}>
-                            Change Avatar
-                        </button>
-                    )}
+                    <button className={styles.changeAvatarButton} onClick={showAvatarPicker}>
+                        Change Avatar
+                    </button>
                 </div>
 
                 {user.authProvider === LOCAL_USER && (
