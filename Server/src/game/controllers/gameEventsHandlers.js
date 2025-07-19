@@ -5,6 +5,25 @@ const messageEmitter = require("../sockets/MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const { ROLES } = require("../constants");
 
+const handleRaceTimeout = (roomId) => {
+    const room = gameManager.getRoom(roomId);
+    if (!room) return;
+    room.handleRaceTimeout();
+    const clueGiverUsername = room.getCurrentClueGiverUsername();
+    const dataToSeekers = {
+        clues: room.currentRound.getClues(),
+        revealed: room.getRevealedLetters(),
+        isWordComplete: room.isWordFullyRevealed,
+        keeper: room.keeperUsername,
+        players: room.players,
+        clueGiverUsername,
+        keeperWord: null,
+    };
+    const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
+    messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
+    messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
+};
+
 const gameEventsHandlers = {
     handleJoinQueue: async (socket, args) => {
         // const { username } = args;
@@ -103,18 +122,16 @@ const gameEventsHandlers = {
 
         const username = socket.user.username;
         const success = await room.startNewClueRound(username, word, definition, () => {
-            // a function in room that goes to the next player and not giving points
-            // send here data to the players that time is up
-
-            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, null, room.roomId);
+            handleRaceTimeout(room.roomId);
         });
+        const timeLeft = room.getTimeLeft();
 
         if (success) {
-            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, room.currentRound.getClues(), room.roomId);
+            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, { clues: room.currentRound.getClues(), timeLeft }, room.roomId);
 
             for (const player of room.players) {
                 if (player.role === ROLES.SEEKER) {
-                    messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_CLUE_REVEALED, room.currentRound.getClues(), player.username);
+                    messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_CLUE_REVEALED, { clues: room.currentRound.getClues(), timeLeft }, player.username);
                 }
             }
         } else {
@@ -208,7 +225,11 @@ const gameEventsHandlers = {
     disconnect: (socket, reason) => {
         const waitingRooms = WaitingRoomManager.removeUserFromItsWaitingRooms(socket.id);
         waitingRooms.forEach((waitingRoomId) => {
-            messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host }, waitingRoomId);
+            messageEmitter.broadcastToWaitingRoom(
+                SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
+                { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host },
+                waitingRoomId
+            );
         });
 
         socketManager.unregister(socket);

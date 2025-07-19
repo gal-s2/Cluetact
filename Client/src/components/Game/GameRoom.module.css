@@ -127,6 +127,24 @@
     transform: scale(0.95);
 }
 
+.countdownTimer {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    background: rgba(59, 130, 246, 0.9);
+    color: white;
+    border: 2px solid rgba(59, 130, 246, 1);
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    min-width: 60px;
+    text-align: center;
+}
+
 /* Tablet styles */
 @media (min-width: 480px) {
     .content {
@@ -145,6 +163,13 @@
         height: 52px;
         bottom: 1.5rem;
         right: 1.5rem;
+    }
+
+    .countdownTimer {
+        bottom: 1.5rem;
+        left: 1.5rem;
+        padding: 0.75rem 1.25rem;
+        font-size: 1.3rem;
     }
 
     .clueSubmitWrapper {
@@ -188,6 +213,13 @@
         bottom: 2rem;
         right: 2rem;
     }
+
+    .countdownTimer {
+        bottom: 2rem;
+        left: 2rem;
+        padding: 1rem 1.5rem;
+        font-size: 1.4rem;
+    }
 }
 
 /* Large desktop */
@@ -228,6 +260,13 @@
         bottom: 0.5rem;
         right: 0.5rem;
     }
+
+    .countdownTimer {
+        bottom: 0.5rem;
+        left: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        font-size: 1.1rem;
+    }
 }
 
 /* Dark mode support (if needed) */
@@ -246,6 +285,11 @@
         background-color: #2a2a2a;
         color: #f0f0f0;
         border-color: #ffb74d;
+    }
+
+    .countdownTimer {
+        background: rgba(59, 130, 246, 0.95);
+        border-color: rgba(96, 165, 250, 1);
     }
 }
 

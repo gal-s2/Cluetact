@@ -8,8 +8,8 @@ const CountdownTimer = require("../entities/CountdownTimer");
 
 const BASE_POINTS = 15;
 const CLUE_BONUS = 5;
-
-const TURN_INTERVAL = 5;
+const RACE_TIMEOUT_BONUS = 2;
+const TURN_INTERVAL = 40;
 
 class Room {
     constructor(roomId, keeper, seekers) {
@@ -65,6 +65,10 @@ class Room {
 
     getGuesses() {
         return this.currentRound.guesses;
+    }
+
+    getTimeLeft() {
+        return this.timer ? this.timer.getTimeLeft() : 0;
     }
 
     /**
@@ -144,7 +148,7 @@ class Room {
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    handleTimeoutAdvanceTurn() {
+    handleRaceTimeout() {
         const session = this.currentRound;
         const clue = session.getActiveClue();
 

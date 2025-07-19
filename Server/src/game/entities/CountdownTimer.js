@@ -19,6 +19,12 @@ class CountdownTimer {
         }, 1000);
     }
 
+    getTimeLeft() {
+        if (!this.endTime) return 0;
+        const msLeft = this.endTime - Date.now();
+        return Math.max(0, Math.round(msLeft / 1000));
+    }
+
     stop() {
         if (this.interval) {
             clearInterval(this.interval);

@@ -19,7 +19,7 @@ import { useState } from "react";
 import CountdownTimer from "./CountdownTimer";
 
 function GameRoom() {
-    const { gameState, loading, handleExitGame, notification } = useGameRoom();
+    const { timeLeft, setTimeLeft, gameState, loading, handleExitGame, notification } = useGameRoom();
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -56,8 +56,6 @@ function GameRoom() {
                     </div>
                 )}
 
-                <CountdownTimer duration={5} />
-
                 <>
                     <PlayerMainMessageHeader></PlayerMainMessageHeader>
                 </>
@@ -73,6 +71,8 @@ function GameRoom() {
                 {gameState.isKeeper && <BlockedCluesSection maxVisibleItems={5} />}
                 <FloatingLetters />
             </div>
+
+            {timeLeft > 0 && <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />}
 
             <ExitGameButton onExit={() => setShowConfirmModal(true)} />
 

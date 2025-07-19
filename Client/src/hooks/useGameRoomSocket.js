@@ -7,6 +7,7 @@ export default function useGameRoomSocket(roomId) {
     const { user } = useUser();
     const [loading, setLoading] = useState(true);
     const [notification, setNotification] = useState({ message: "", type: "notification" });
+    const [timeLeft, setTimeLeft] = useState(0);
     const [gameState, setGameState] = useState({
         players: [],
         revealedWord: "",
@@ -106,11 +107,22 @@ export default function useGameRoomSocket(roomId) {
             }));
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, () => {
-            setNotification({ message: "hi", type: "notification" });
+        socket.on(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, (data) => {
+            setGameState((prev) => ({
+                ...prev,
+                players: data.players,
+                clues: data.clues,
+                isSubmittingClue: data.clueGiverUsername === user.username,
+                clueGiverUsername: data.clueGiverUsername,
+                activeClue: null,
+                revealedWord: data.revealed,
+                isWordComplete: data.isWordComplete,
+                guesses: [],
+                keeperWord: data.keeperWord,
+            }));
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_CLUE_REVEALED, (clues) => {
+        socket.on(SOCKET_EVENTS.SERVER_CLUE_REVEALED, ({ clues, timeLeft }) => {
             const lastClue = clues[clues.length - 1];
             setGameState((prev) => ({
                 ...prev,
@@ -120,6 +132,7 @@ export default function useGameRoomSocket(roomId) {
             if (lastClue?.from !== user.username) {
                 setNotification({ message: `new clue definition by ${lastClue.from}: "${lastClue.definition}"`, type: "notification" });
             }
+            setTimeLeft(timeLeft);
         });
 
         socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ clue, clueGiverUsername }) => {
@@ -137,7 +150,7 @@ export default function useGameRoomSocket(roomId) {
             });
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, (clues) => {
+        socket.on(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, ({ clues, timeLeft }) => {
             const clue = clues[clues.length - 1];
             setGameState((prev) => ({
                 ...prev,
@@ -145,6 +158,7 @@ export default function useGameRoomSocket(roomId) {
                 clues,
                 activeClue: clue,
             }));
+            setTimeLeft(timeLeft);
             setNotification({ message: `new clue definition by ${clue.from}: "${clue.definition}"`, type: "notification" });
         });
 
@@ -184,5 +198,7 @@ export default function useGameRoomSocket(roomId) {
         handleExitGame,
         notification,
         setNotification,
+        timeLeft,
+        setTimeLeft,
     };
 }

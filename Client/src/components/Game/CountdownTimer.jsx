@@ -1,13 +1,14 @@
 import { useEffect, useState, useRef } from "react";
+import styles from "./GameRoom.module.css";
 
-function CountdownTimer({ duration, onComplete }) {
-    const [timeLeft, setTimeLeft] = useState(duration);
+function CountdownTimer({ timeLeft, setTimeLeft, onComplete }) {
     const endTimeRef = useRef(null);
     const intervalRef = useRef(null);
 
     useEffect(() => {
-        endTimeRef.current = Date.now() + duration * 1000;
-        setTimeLeft(duration);
+        if (timeLeft === null) return;
+
+        endTimeRef.current = Date.now() + timeLeft * 1000;
 
         intervalRef.current = setInterval(() => {
             const secondsLeft = Math.max(0, Math.round((endTimeRef.current - Date.now()) / 1000));
@@ -20,7 +21,7 @@ function CountdownTimer({ duration, onComplete }) {
         }, 1000);
 
         return () => clearInterval(intervalRef.current);
-    }, [duration, onComplete]);
+    }, [timeLeft, onComplete]);
 
     const formatTime = (seconds) => {
         const m = Math.floor(seconds / 60)
@@ -30,7 +31,7 @@ function CountdownTimer({ duration, onComplete }) {
         return `${m}:${s}`;
     };
 
-    return <div style={{ fontSize: "1.25rem", fontWeight: "bold", color: "#dc2626" }}>{formatTime(timeLeft)}</div>;
+    return <div className={styles.countdownTimer}>{formatTime(timeLeft ?? 0)}</div>;
 }
 
 export default CountdownTimer;

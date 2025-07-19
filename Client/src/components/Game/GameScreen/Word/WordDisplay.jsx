@@ -10,7 +10,6 @@ function WordDisplay() {
     let currentDisplay = "";
 
     if (isKeeper) {
-        console.log("Keeper's word:", word);
         currentDisplay = word.split("").map((char, index) => {
             const isRevealed = index < revealedWord.length;
             return (
