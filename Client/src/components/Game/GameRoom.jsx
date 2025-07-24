@@ -2,7 +2,7 @@ import { useGameRoom } from "../../contexts/GameRoomContext";
 import WordDisplay from "./GameScreen/Word/WordDisplay";
 import Spinner from "../Routes/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
-import KeeperWordPopup from "./GameScreen/Keeper/KeeperWordPopup";
+import KeeperWordPopup from "./Modals/KeeperWordPopup";
 import SubmitClue from "./GameScreen/Seeker/SubmitClue";
 import CluetactPopup from "./Modals/CluetactPopup";
 import BlockedCluesSection from "./GameScreen/BlockedClues/BlockedCluesSection";

@@ -6,10 +6,10 @@ function confirmModal({ handleCloseModal, handleConfirmExit }) {
         <Modal onClose={handleCloseModal}>
             <h3>Are you sure you want to quit the room?</h3>
             <div style={{ display: "flex", gap: "12px" }}>
-                <Button type="danger" onClick={handleConfirmExit}>
+                <Button color="danger" onClick={handleConfirmExit}>
                     Yes
                 </Button>
-                <Button type="cancel" onClick={handleCloseModal}>
+                <Button color="cancel" onClick={handleCloseModal}>
                     Cancel
                 </Button>
             </div>

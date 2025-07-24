@@ -1,9 +1,9 @@
 import styles from "./KeeperWordPopup.module.css";
-import socket from "../../../../services/socket";
+import socket from "../../../services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
-import { useGameRoom } from "../../../../contexts/GameRoomContext";
-import Modal from "../../../UI/Modal/Modal";
-import Button from "../../../UI/Button/Button";
+import { useGameRoom } from "../../../contexts/GameRoomContext";
+import Modal from "../../UI/Modal/Modal";
+import Button from "../../UI/Button/Button";
 
 function KeeperWordPopup({ showConfirmModal }) {
     const { gameState, setKeeperWord } = useGameRoom();
@@ -15,14 +15,11 @@ function KeeperWordPopup({ showConfirmModal }) {
     };
 
     return (
-        <Modal>
-            <button className={styles.closeButton} onClick={() => showConfirmModal()}>
-                &times;
-            </button>
+        <Modal onClose={() => showConfirmModal()} showCloseButton={true}>
             <div className={styles.container}>
                 <p>{logMessage}</p>
                 <input type="text" value={keeperWord} onChange={(e) => setKeeperWord(e.target.value)} placeholder="Enter your secret word" />
-                <Button type="accept" onClick={handleSubmit} disabled={!keeperWord || keeperWord.trim() === ""}>
+                <Button color="accept" onClick={handleSubmit} disabled={!keeperWord || keeperWord.trim() === ""}>
                     Submit
                 </Button>
             </div>
