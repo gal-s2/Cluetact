@@ -14,6 +14,7 @@ import useSocketNavigation from "./hooks/useSocketNavigation";
 import Overwatch from "./components/Overwatch/Overwatch";
 import GlobalNotificationBox from "./components/General/GlobalNotificationBox";
 import About from "./components/About/About";
+import AdminRoute from "./components/Routes/AdminRoute/AdminRoute";
 
 function App() {
     const { user } = useUser();
@@ -120,9 +121,9 @@ function AppRoutesWithSocketNavigation({ user }) {
             <Route
                 path="/overwatch"
                 element={
-                    <PrivateRoute>
+                    <AdminRoute>
                         <Overwatch />
-                    </PrivateRoute>
+                    </AdminRoute>
                 }
             />
         </Routes>
