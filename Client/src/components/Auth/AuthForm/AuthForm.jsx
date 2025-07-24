@@ -2,13 +2,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./AuthForm.module.css";
-import logo from "../../../assets/Cluetact.jpeg";
 import { baseUrl } from "../../../config/baseUrl";
 import { useGoogleLogin } from "@react-oauth/google";
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 import { useUser } from "../../../contexts/UserContext";
+import Logo from "../../General/Logo/Logo";
 
 function AuthForm({ type }) {
     const navigate = useNavigate();
@@ -98,7 +95,7 @@ function AuthForm({ type }) {
     return (
         <div className={styles.authContainer}>
             <div className={styles.content}>
-                <img src={logo} alt="Cluetact Logo" className={styles.logo} />
+                <Logo className={styles.logo} />
                 <h2>{type === "login" ? "Login" : "Register"}</h2>
 
                 {/* Custom Google Login Button */}
@@ -118,14 +115,7 @@ function AuthForm({ type }) {
                     <input type="text" placeholder="Username" value={username || ""} onChange={(e) => setUsername(e.target.value)} className={errors.username ? styles.invalidInput : ""} required />
                     {errors.username && <p className={styles.error}>{errors.username}</p>}
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password || ""}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className={errors.password ? styles.invalidInput : ""}
-                        required
-                    />
+                    <input type="password" placeholder="Password" value={password || ""} onChange={(e) => setPassword(e.target.value)} className={errors.password ? styles.invalidInput : ""} required />
 
                     {errors.password && <p className={styles.error}>{errors.password}</p>}
                     {errors.server && <p className={styles.error}>{errors.server}</p>}

@@ -1,34 +1,32 @@
 import axios from "axios";
 import { useUser } from "../../../contexts/UserContext";
 import { useState, useEffect } from "react";
-import { baseUrl } from "../../../config/baseUrl";
 import styles from "./ProfileDetails.module.css";
 import AvatarPicker from "../AvatarPicker/AvatarPicker";
-import BackToLobbyButton from "../../General/BackToLobbyButton";
+import BackToLobbyButton from "../../General/BackToLobbyButton/BackToLobbyButton";
 import { useGlobalNotification } from "../../../contexts/GlobalNotificationContext";
-const images = import.meta.glob("../../../assets/avatars/*.png", { eager: true });
-const avatarList = Object.values(images).map((mod) => mod.default);
+import { baseUrl } from "../../../config/baseUrl";
+import { avatarList } from "../../../utils/loadAvatars";
 
 function ProfileDetails() {
     const { user, setUser } = useUser();
     const [password, setPassword] = useState("");
     const [selectedAvatar, setSelectedAvatar] = useState(null);
-    const [isAvatarShown, setAvatarShown] = useState(false);
+    const [isAvatarPickerShown, setAvatarPickerShown] = useState(false);
     const { setGlobalNotification } = useGlobalNotification();
     const LOCAL_USER = "local";
-    const extractAvatarNumber = (avatarPath) => {
-        const match = avatarPath.match(/avatar_(\d+)/);
-        return match ? match[1] : null;
-    };
+
+    useEffect(() => {
+        if (user?.avatar != null && avatarList[user.avatar]) {
+            setSelectedAvatar(user.avatar);
+        }
+    }, [user?.avatar]);
 
     const handleUpdate = async () => {
         const updateData = {};
 
         if (selectedAvatar && selectedAvatar !== user.avatar) {
-            const avatarNumber = extractAvatarNumber(selectedAvatar);
-            if (avatarNumber !== null) {
-                updateData.avatar = avatarNumber;
-            }
+            updateData.avatar = selectedAvatar;
         }
 
         if (user.authProvider === LOCAL_USER && password.length >= 6) {
@@ -48,6 +46,7 @@ function ProfileDetails() {
                 user: res.data.user,
                 token: localStorage.getItem("token"), // re-use existing token
             });
+
             setGlobalNotification({
                 message: "Profile updated successfully!",
                 type: "success",
@@ -62,22 +61,16 @@ function ProfileDetails() {
     };
 
     const showAvatarPicker = () => {
-        setAvatarShown(true);
+        setAvatarPickerShown(true);
     };
 
-    const handleAvatarSelect = (avatarUrl) => {
-        setSelectedAvatar(avatarUrl);
-        setAvatarShown(false);
+    const handleAvatarSelect = (avatar) => {
+        setSelectedAvatar(avatar);
+        setAvatarPickerShown(false);
     };
 
     // Check if update button should be enabled
     const isUpdateEnabled = (selectedAvatar && selectedAvatar !== user.avatar) || password.length >= 6;
-
-    useEffect(() => {
-        if (user?.avatar != null && avatarList[user.avatar]) {
-            setSelectedAvatar(avatarList[user.avatar]);
-        }
-    }, [user?.avatar]);
 
     return (
         <div className={styles.container}>
@@ -88,7 +81,7 @@ function ProfileDetails() {
 
             <div className={styles.profileContent}>
                 <div className={styles.avatarSection}>
-                    <img src={selectedAvatar} alt="Avatar" className={styles.avatar} />
+                    <img src={avatarList[selectedAvatar]} alt="Avatar" className={styles.avatar} />
                     <button className={styles.changeAvatarButton} onClick={showAvatarPicker}>
                         Change Avatar
                     </button>
@@ -108,12 +101,12 @@ function ProfileDetails() {
             </div>
 
             {/* Avatar Picker Modal */}
-            {isAvatarShown && (
+            {isAvatarPickerShown && (
                 <div className={styles.modalOverlay}>
                     <div className={styles.modal}>
                         <h3>Choose Your Avatar</h3>
                         <AvatarPicker onAvatarSelect={handleAvatarSelect} />
-                        <button className={styles.cancelButton} onClick={() => setAvatarShown(false)}>
+                        <button className={styles.cancelButton} onClick={() => setAvatarPickerShown(false)}>
                             Cancel
                         </button>
                     </div>

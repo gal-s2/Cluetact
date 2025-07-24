@@ -5,8 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "jest",
-        "start": "copyfiles ../shared/* shared && node -r module-alias/register index.js",
-        "dev": "copyfiles ../shared/* shared && nodemon --require module-alias/register index.js"
+        "start": "copyfiles ../shared/* shared && node -r module-alias/register ./src/index.js",
+        "dev": "copyfiles ../shared/* shared && nodemon --require module-alias/register ./src/index.js"
     },
     "author": "",
     "license": "ISC",
@@ -16,10 +16,10 @@
         "dotenv": "^16.5.0",
         "express": "^4.21.2",
         "google-auth-library": "^10.1.0",
-        "ioredis": "^5.5.0",
         "jsonwebtoken": "^9.0.2",
         "module-alias": "^2.2.3",
         "mongoose": "^8.11.0",
+        "node-cron": "^4.2.1",
         "node-fetch": "^2.7.0",
         "prompt-sync": "^4.2.0",
         "socket.io": "^4.8.1",

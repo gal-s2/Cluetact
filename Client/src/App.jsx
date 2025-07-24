@@ -12,17 +12,22 @@ import ProfileDetails from "./components/Profile/ProfileDetails/ProfileDetails";
 import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
 import useSocketNavigation from "./hooks/useSocketNavigation";
 import Overwatch from "./components/Overwatch/Overwatch";
-import GlobalNotificationBox from "./components/General/GlobalNotificationBox";
+import GlobalNotificationBox from "./components/General/GlobalNotificationBox/GlobalNotificationBox";
 import About from "./components/About/About";
+import AdminRoute from "./components/Routes/AdminRoute/AdminRoute";
+import Footer from "./components/General/Footer/Footer";
 
 function App() {
     const { user } = useUser();
 
     return (
-        <Router>
-            <AppRoutesWithSocketNavigation user={user} />
-            <GlobalNotificationBox />
-        </Router>
+        <>
+            <Router>
+                <AppRoutesWithSocketNavigation user={user} />
+                <GlobalNotificationBox />
+            </Router>
+            <Footer />
+        </>
     );
 }
 
@@ -120,9 +125,9 @@ function AppRoutesWithSocketNavigation({ user }) {
             <Route
                 path="/overwatch"
                 element={
-                    <PrivateRoute>
+                    <AdminRoute>
                         <Overwatch />
-                    </PrivateRoute>
+                    </AdminRoute>
                 }
             />
         </Routes>

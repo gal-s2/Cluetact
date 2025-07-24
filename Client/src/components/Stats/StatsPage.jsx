@@ -1,16 +1,13 @@
 import { useUser } from "../../contexts/UserContext";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../../config/baseUrl";
 import styles from "./StatsPage.module.css";
-import BackToLobbyButton from "../General/BackToLobbyButton";
-const images = import.meta.glob("../../assets/avatars/*.png", { eager: true });
-const avatarList = Object.values(images).map((mod) => mod.default);
+import BackToLobbyButton from "../General/BackToLobbyButton/BackToLobbyButton";
+import { avatarList } from "../../utils/loadAvatars";
 
 function StatsPage() {
     const { user } = useUser();
-    const navigate = useNavigate();
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

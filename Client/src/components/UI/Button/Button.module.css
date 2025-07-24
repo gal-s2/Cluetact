@@ -1,0 +1,130 @@
+.customButton {
+    flex: 1;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.green {
+    background: linear-gradient(135deg, #4caf50, #45a049);
+    color: white;
+    box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
+}
+
+.green:hover:not(:disabled) {
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.green:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.danger {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.danger:hover {
+    background: linear-gradient(135deg, #c82333, #a71e2a);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+}
+
+.cancel {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: white;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.cancel:hover {
+    background: linear-gradient(135deg, #5a6268, #495057);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
+.accept {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.accept:hover {
+    background: linear-gradient(135deg, #0056b3, #004085);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+.customButton:active {
+    transform: translateY(0);
+}
+
+/* Tablet adjustments */
+@media (min-width: 480px) {
+    .customButton {
+        padding: 1rem 2rem;
+        font-size: 1.05rem;
+    }
+}
+
+/* Desktop adjustments */
+@media (min-width: 768px) {
+    .customButton {
+        font-size: 1.1rem;
+    }
+}
+
+/* Mobile landscape optimization */
+@media (max-height: 600px) and (orientation: landscape) {
+    .customButton {
+        padding: 0.75rem 1.5rem;
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .green {
+        background: linear-gradient(135deg, #4a9f4d, #3d8b40);
+        box-shadow: 0 3px 10px rgba(74, 159, 77, 0.3);
+    }
+
+    .green:hover:not(:disabled) {
+        background: linear-gradient(135deg, #3d8b40, #2e7d32);
+        box-shadow: 0 4px 15px rgba(74, 159, 77, 0.4);
+    }
+
+    .customButton:disabled {
+        background: #555;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .customButton {
+        transition: none;
+    }
+
+    .customButton:hover:not(:disabled) {
+        transform: none;
+    }
+
+    .customButton:active:not(:disabled) {
+        transform: none;
+    }
+}

@@ -1,9 +1,8 @@
 const Clue = require("./Clue");
 const Guess = require("./Guess");
-const { ROLES } = require("../constants");
 
 class GameRound {
-    constructor(players) {
+    constructor() {
         this.roundNum = 1;
         this.keeperWord = null;
         this.revealedLetters = "";

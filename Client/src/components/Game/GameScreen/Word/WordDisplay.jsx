@@ -6,11 +6,9 @@ function WordDisplay() {
     const isKeeper = gameState.isKeeper;
     const word = gameState.keeperWord || "";
     const revealedWord = gameState.revealedWord || "";
-    const length = gameState.wordLength || 0;
     let currentDisplay = "";
 
     if (isKeeper) {
-        console.log("Keeper's word:", word);
         currentDisplay = word.split("").map((char, index) => {
             const isRevealed = index < revealedWord.length;
             return (
@@ -27,5 +25,3 @@ function WordDisplay() {
 }
 
 export default WordDisplay;
-
-//the _ addition code: "_".repeat(length - revealedWord.length).trim()

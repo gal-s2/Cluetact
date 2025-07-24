@@ -1,11 +1,10 @@
 class Logger {
-
     static logKeeperWordSet(roomId, word) {
         console.log(`[Room ${roomId}]  Keeper word set: "${word}"`);
     }
 
-    static logClueSet(roomId, clueGiverId, definition) {
-        console.log(`[Room ${roomId}]  Clue set by ${clueGiverId}: "${definition}"`);
+    static logClueSet(roomId, clueGiverUsername, definition) {
+        console.log(`[Room ${roomId}]  Clue set by ${clueGiverUsername}: "${definition}"`);
     }
 
     static logInvalidClue(roomId, clueWord, expectedLetter) {
@@ -71,7 +70,7 @@ class Logger {
     static logCorrectGuessNoReveal(roomId, username) {
         console.log(`[Room ${roomId}] ${username} guessed correctly, but no letter was revealed.`);
     }
-    
+
     static logManualTestComplete() {
         console.log(`Manual test complete.`);
     }
@@ -81,10 +80,8 @@ class Logger {
     }
 
     static logRoomCreated(roomId, players) {
-        const formattedPlayers = Object.values(players).map(player =>
-            player.username
-        );
-        console.log(` Room ${roomId} created with: ${formattedPlayers.join(', ')}`);
+        const formattedPlayers = Object.values(players).map((player) => player.username);
+        console.log(` Room ${roomId} created with: ${formattedPlayers.join(", ")}`);
     }
 
     static logClueWordAlreadyUsed(roomId, word) {
@@ -93,4 +90,3 @@ class Logger {
 }
 
 module.exports = Logger;
-

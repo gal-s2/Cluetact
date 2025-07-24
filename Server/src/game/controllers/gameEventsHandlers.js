@@ -5,6 +5,25 @@ const messageEmitter = require("../sockets/MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const { ROLES } = require("../constants");
 
+const handleRaceTimeout = (roomId) => {
+    const room = gameManager.getRoom(roomId);
+    if (!room) return;
+    room.handleRaceTimeout();
+    const clueGiverUsername = room.getCurrentClueGiverUsername();
+    const dataToSeekers = {
+        clues: room.currentRound.getClues(),
+        revealed: room.getRevealedLetters(),
+        isWordComplete: room.isWordFullyRevealed,
+        keeper: room.keeperUsername,
+        players: room.players,
+        clueGiverUsername,
+        keeperWord: null,
+    };
+    const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
+    messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
+    messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
+};
+
 const gameEventsHandlers = {
     handleJoinQueue: async (socket, args) => {
         // const { username } = args;
@@ -102,14 +121,17 @@ const gameEventsHandlers = {
         if (!room) return;
 
         const username = socket.user.username;
-        const success = await room.startNewClueRound(username, word, definition);
+        const success = await room.startNewClueRound(username, word, definition, () => {
+            handleRaceTimeout(room.roomId);
+        });
+        const timeLeft = room.getTimeLeft();
+
         if (success) {
-            const addedClue = room.currentRound.clues.at(-1);
-            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, room.currentRound.getClues(), room.roomId);
+            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, { clues: room.currentRound.getClues(), timeLeft }, room.roomId);
 
             for (const player of room.players) {
                 if (player.role === ROLES.SEEKER) {
-                    messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_CLUE_REVEALED, room.currentRound.getClues(), player.username);
+                    messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_CLUE_REVEALED, { clues: room.currentRound.getClues(), timeLeft }, player.username);
                 }
             }
         } else {

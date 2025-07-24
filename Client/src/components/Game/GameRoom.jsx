@@ -1,10 +1,8 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { useGameRoom } from "../../contexts/GameRoomContext";
 import WordDisplay from "./GameScreen/Word/WordDisplay";
 import Spinner from "../Routes/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
-import KeeperWordPopup from "./GameScreen/Keeper/KeeperWordPopup";
+import KeeperWordPopup from "./Modals/KeeperWordPopup";
 import SubmitClue from "./GameScreen/Seeker/SubmitClue";
 import CluetactPopup from "./Modals/CluetactPopup";
 import BlockedCluesSection from "./GameScreen/BlockedClues/BlockedCluesSection";
@@ -15,9 +13,15 @@ import PlayersTable from "./GameScreen/Player/PlayersTable";
 import PlayerMainMessageHeader from "./GameScreen/Player/PlayerMainMessageHeader";
 import SeekerCluePanel from "./GameScreen/Seeker/SeekerCluePanel";
 import KeeperCluePanel from "./GameScreen/Keeper/KeeperCluePanel";
+import ExitGameButton from "./ExitGameButton";
+import ConfimModal from "./Modals/ConfirmModal";
+import { useState } from "react";
+import CountdownTimer from "./CountdownTimer";
 
 function GameRoom() {
-    const { gameState, loading, handleExitGame, notification } = useGameRoom();
+    const { timeLeft, setTimeLeft, gameState, loading, handleExitGame, notification } = useGameRoom();
+
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     if (loading) return <Spinner />;
 
@@ -32,7 +36,7 @@ function GameRoom() {
             {gameState.isKeeper && !gameState.isWordChosen && (
                 <div className={styles.waitOverlay}>
                     <div className={styles.popupWrapper}>
-                        <KeeperWordPopup />
+                        <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />
                     </div>
                 </div>
             )}
@@ -68,9 +72,11 @@ function GameRoom() {
                 <FloatingLetters />
             </div>
 
-            <button className={styles.exitButton} onClick={handleExitGame} title="Exit Game">
-                <FontAwesomeIcon icon={faArrowRightFromBracket} />
-            </button>
+            {timeLeft > 0 && <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />}
+
+            <ExitGameButton onExit={() => setShowConfirmModal(true)} />
+
+            {showConfirmModal && <ConfimModal handleCloseModal={() => setShowConfirmModal(false)} handleConfirmExit={handleExitGame} />}
         </div>
     );
 }

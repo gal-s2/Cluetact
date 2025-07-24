@@ -1,23 +1,19 @@
 import { useState } from "react";
 import styles from "./AvatarPicker.module.css";
-
-const images = import.meta.glob("../../../assets/avatars/*.png", { eager: true });
-const avatarList = Object.values(images).map((mod) => mod.default);
+import { avatarList } from "../../../utils/loadAvatars";
 
 export default function AvatarPicker({ onAvatarSelect }) {
     const [selected, setSelected] = useState(null);
 
     const handleAvatarClick = (index) => {
         setSelected(index);
-        if (onAvatarSelect) {
-            onAvatarSelect(avatarList[index]);
-        }
+        onAvatarSelect(index);
     };
 
     return (
         <div className={styles.avatarGrid}>
-            {avatarList.map((src, index) => (
-                <img key={index} src={src} alt={`Avatar ${index + 1}`} className={`${styles.avatar} ${selected === index ? styles.selected : ""}`} onClick={() => handleAvatarClick(index)} />
+            {Object.keys(avatarList).map((key) => (
+                <img key={key} src={avatarList[key]} alt="Avatar" className={`${styles.avatar} ${selected === key ? styles.selected : ""}`} onClick={() => handleAvatarClick(key)} />
             ))}
         </div>
     );

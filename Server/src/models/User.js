@@ -28,7 +28,6 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
-
     statistics: {
         totalGames: { type: Number, default: 0 },
         Losses: { type: Number, default: 0 },
@@ -37,16 +36,19 @@ const UserSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-        default: "0",
+        default: Math.floor(Math.random() * 10) + 1,
     },
     guest: {
+        type: Boolean,
+        default: false,
+    },
+    admin: {
         type: Boolean,
         default: false,
     },
     createdAt: {
         type: Date,
         default: Date.now,
-        expires: 60 * 60 * 24,
     },
     googleId: {
         type: String,
@@ -169,8 +171,8 @@ UserSchema.statics.updateProfile = async function (userId, updateFields) {
     const user = await this.findById(userId);
     if (!user) throw new Error("User not found");
 
-    if (user.guest && updateFields.password) {
-        throw new Error("Guests are not allowed to set a password");
+    if (user.guest) {
+        if (updateFields.password) throw new Error("Guests are not allowed to set a password");
     }
 
     if (updateFields.password) {
@@ -179,7 +181,6 @@ UserSchema.statics.updateProfile = async function (userId, updateFields) {
     }
 
     const updatedUser = await this.findByIdAndUpdate(userId, { $set: updateFields }, { new: true, select: "-password" });
-
     return updatedUser;
 };
 
