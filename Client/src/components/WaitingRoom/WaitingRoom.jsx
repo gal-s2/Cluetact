@@ -6,7 +6,6 @@ import styles from "./WaitingRoom.module.css";
 import BackToLobbyButton from "../General/BackToLobbyButton";
 import { useUser } from "../../contexts/UserContext";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
-import { baseUrl } from "../../config/baseUrl";
 
 function WaitingRoom() {
     const { roomId } = useParams();

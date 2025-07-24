@@ -2,7 +2,6 @@ import { useState } from "react";
 import styles from "./SubmitClue.module.css";
 import socket from "../../../../services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
-import { useUser } from "../../../../contexts/UserContext";
 import { useGameRoom } from "../../../../contexts/GameRoomContext";
 import Button from "../../../UI/Button/Button";
 
