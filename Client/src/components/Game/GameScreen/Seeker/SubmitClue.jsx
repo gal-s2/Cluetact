@@ -43,7 +43,7 @@ function SubmitClue() {
                 {word.length} / {WORD_MAX_LENGTH} characters
             </div>
 
-            <textarea className={styles.textarea} value={definition} onChange={(e) => onChangeDefinition(e.target.value)} placeholder="Enter your definition" maxLength={DEFINITION_MAX_LENGTH} />
+            <textarea style={{ resize: "none" }} className={styles.textarea} value={definition} onChange={(e) => onChangeDefinition(e.target.value)} placeholder="Enter your definition" maxLength={DEFINITION_MAX_LENGTH} />
             <div className={styles.charCount}>
                 {definition.length} / {DEFINITION_MAX_LENGTH} characters
             </div>

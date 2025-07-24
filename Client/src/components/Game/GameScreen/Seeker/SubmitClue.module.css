@@ -100,40 +100,6 @@
     font-weight: 500;
 }
 
-/* Submit button */
-.button {
-    background: linear-gradient(135deg, #4caf50, #45a049);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 0.875rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
-    margin-top: 0.5rem;
-}
-
-.button:hover:not(:disabled) {
-    background: linear-gradient(135deg, #45a049, #3d8b40);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-}
-
-.button:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
-}
-
-.button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-    opacity: 0.6;
-}
-
 /* Waiting message styles */
 .waitingMessage {
     text-align: center;
@@ -386,17 +352,8 @@
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
     .input,
-    .textarea,
-    .button {
+    .textarea {
         transition: none;
-    }
-
-    .button:hover:not(:disabled) {
-        transform: none;
-    }
-
-    .button:active:not(:disabled) {
-        transform: none;
     }
 
     .waitingIcon,
