@@ -104,13 +104,6 @@ class Room {
         return result;
     }
 
-    async waitForKeeperWord(getWordFromSocket) {
-        while (!this.currentRound.keeperWord) {
-            const word = await getWordFromSocket(this.keeperUsername);
-            await this.setKeeperWordWithValidation(word);
-        }
-    }
-
     async startNewClueRound(clueGiverUsername, clueWord, clueDefinition, onRaceTimeout) {
         const valid = await isValidEnglishWord(clueWord);
         if (!valid) {

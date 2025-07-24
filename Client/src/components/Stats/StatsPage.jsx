@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { baseUrl } from "../../config/baseUrl";
 import styles from "./StatsPage.module.css";
-import BackToLobbyButton from "../General/BackToLobbyButton";
+import BackToLobbyButton from "../General/BackToLobbyButton/BackToLobbyButton";
 import { avatarList } from "../../utils/loadAvatars";
 
 function StatsPage() {
