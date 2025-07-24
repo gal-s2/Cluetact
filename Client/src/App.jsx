@@ -15,15 +15,19 @@ import Overwatch from "./components/Overwatch/Overwatch";
 import GlobalNotificationBox from "./components/General/GlobalNotificationBox";
 import About from "./components/About/About";
 import AdminRoute from "./components/Routes/AdminRoute/AdminRoute";
+import Footer from "./components/General/Footer/Footer";
 
 function App() {
     const { user } = useUser();
 
     return (
-        <Router>
-            <AppRoutesWithSocketNavigation user={user} />
-            <GlobalNotificationBox />
-        </Router>
+        <>
+            <Router>
+                <AppRoutesWithSocketNavigation user={user} />
+                <GlobalNotificationBox />
+            </Router>
+            <Footer />
+        </>
     );
 }
 
