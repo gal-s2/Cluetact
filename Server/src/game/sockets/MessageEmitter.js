@@ -1,7 +1,7 @@
 const socketManager = require("../managers/SocketManager");
 const gameManager = require("../managers/GameManager");
 const waitingRoomManager = require("../managers/WaitingRoomManager");
-const { ROLES } = require("../constants");
+const ROLES = require("../constants/roles");
 
 class MessageEmitter {
     /**

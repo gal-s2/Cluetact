@@ -3,7 +3,7 @@ const socketManager = require("../managers/SocketManager");
 const WaitingRoomManager = require("../managers/WaitingRoomManager");
 const messageEmitter = require("../sockets/MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
-const { ROLES } = require("../constants");
+const ROLES = require("../constants/roles");
 
 const handleRaceTimeout = (roomId) => {
     const room = gameManager.getRoom(roomId);
@@ -225,11 +225,7 @@ const gameEventsHandlers = {
     disconnect: (socket, reason) => {
         const waitingRooms = WaitingRoomManager.removeUserFromItsWaitingRooms(socket.id);
         waitingRooms.forEach((waitingRoomId) => {
-            messageEmitter.broadcastToWaitingRoom(
-                SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
-                { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host },
-                waitingRoomId
-            );
+            messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host }, waitingRoomId);
         });
 
         socketManager.unregister(socket);

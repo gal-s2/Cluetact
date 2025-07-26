@@ -1,6 +1,6 @@
 const Player = require("./Player");
 const GameRound = require("./GameRound");
-const { ROLES } = require("../constants");
+const ROLES = require("../constants/roles");
 const { isValidEnglishWord } = require("../../utils/wordUtils");
 const Logger = require("../Logger");
 const User = require("../../models/User");
