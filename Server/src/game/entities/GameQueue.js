@@ -1,3 +1,6 @@
+/**
+ * GameQueue class manages the queue of users waiting to join a game.
+ */
 class GameQueue {
     static minUsersInRoom = 3;
     static userInstance = null;
@@ -8,9 +11,13 @@ class GameQueue {
         GameQueue.userInstance = this;
     }
 
-    // return value: [boolean,arr] where boolean is true if there are enough users to start a room
-    // arr is the id's of these users (only appear if true)
+    /**
+     * Adds a user to the game queue.
+     * @param {User} user
+     * @returns {[boolean, string[]]} - Returns an object with roomCreationPossible flag and chosenUsers array.
+     */
     addUser(user) {
+        console.log("[GameQueue] Adding user to queue:", user.username);
         let roomCreationPossible = false;
         let chosenUsers = [];
         // if user already in queue, he cannot enter again
@@ -25,6 +32,18 @@ class GameQueue {
         }
 
         return { roomCreationPossible, chosenUsers };
+    }
+
+    /**
+     * Removes a user from the queue.
+     * @param {string} user - The username of the user to remove.
+     */
+    removeUser(user) {
+        console.log("[GameQueue] Removing user from queue:", user);
+        const index = this.awaitingUsers.findIndex((awaitingUser) => awaitingUser.username === user);
+        if (index !== -1) {
+            this.awaitingUsers.splice(index, 1);
+        }
     }
 }
 

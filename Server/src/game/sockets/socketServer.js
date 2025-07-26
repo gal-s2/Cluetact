@@ -74,6 +74,8 @@ module.exports = function (io) {
 
         socket.on(SOCKET_EVENTS.CLIENT_FIND_GAME, (args) => gameEventsHandlers.handleJoinQueue(socket, args));
 
+        socket.on(SOCKET_EVENTS.CLIENT_LEAVE_QUEUE, () => gameEventsHandlers.handleLeaveQueue(socket));
+
         socket.on(SOCKET_EVENTS.CLIENT_JOIN_ROOM, (args) => gameEventsHandlers.handleJoinRoom(socket, args));
 
         socket.on(SOCKET_EVENTS.CLIENT_KEEPER_WORD_SUBMISSION, (args) => gameEventsHandlers.handleKeeperWordSubmission(socket, args));

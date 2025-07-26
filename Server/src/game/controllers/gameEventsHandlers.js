@@ -54,6 +54,15 @@ const gameEventsHandlers = {
         }
     },
 
+    handleLeaveQueue: async (socket) => {
+        // first check if player is already in a room.
+        const room = gameManager.getRoomBySocket(socket);
+        if (room) return;
+
+        const username = await socketManager.getUsernameBySocketId(socket.id);
+        gameManager.removeUserFromQueue(username);
+    },
+
     handleJoinRoom: async (socket, args) => {
         const room = gameManager.getRoomBySocket(socket);
         if (!room) {

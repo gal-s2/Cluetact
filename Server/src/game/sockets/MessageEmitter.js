@@ -3,6 +3,9 @@ const gameManager = require("../managers/GameManager");
 const waitingRoomManager = require("../managers/WaitingRoomManager");
 const ROLES = require("../constants/roles");
 
+/**
+ * A class to handle message emission to players and rooms.
+ */
 class MessageEmitter {
     /**
      * Emits an event to the keeper in the specified room.

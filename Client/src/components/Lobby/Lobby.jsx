@@ -51,7 +51,6 @@ function Lobby() {
         };
 
         const handleInQueue = () => {
-            console.log("here");
             setInQueue(true);
         };
 
@@ -92,6 +91,12 @@ function Lobby() {
         if (!user) return;
         socket.emit(SOCKET_EVENTS.CLIENT_FIND_GAME, { userId: user._id, username: user.username });
         setPlayMenuOpen(false);
+    };
+
+    const leaveQueue = () => {
+        if (!user) return;
+        socket.emit(SOCKET_EVENTS.CLIENT_LEAVE_QUEUE);
+        setInQueue(false);
     };
 
     const disconnect = async () => {
@@ -180,14 +185,16 @@ function Lobby() {
             <LobbyHeader username={user.username} />
 
             {inQueue ? (
-                <div className={styles.queueLoading}>
-                    <span className={styles.typingDots}>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </span>
-                    <p>Searching for a game</p>
-                </div>
+                <Modal onClose={leaveQueue} showCloseButton={true}>
+                    <div className={styles.queueLoading}>
+                        <span className={styles.typingDots}>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                        <p>Searching for a game</p>
+                    </div>
+                </Modal>
             ) : (
                 <main className={styles.main}>
                     <div className={styles.sectionGroup}>
