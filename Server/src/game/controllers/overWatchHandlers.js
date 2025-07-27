@@ -8,6 +8,7 @@ const overWatchHandlers = {
     handleGetOnlineRooms: async (socket) => {
         messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_POST_ONLINE_ROOMS, gameManager.rooms, socket);
     },
+
     handleGetOnlineWaitingRooms: async (socket) => {
         const serializedWaitingRooms = {};
 
@@ -22,6 +23,7 @@ const overWatchHandlers = {
 
         messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_POST_ONLINE_WAITING_ROOMS, serializedWaitingRooms, socket);
     },
+
     handleGetAllUsers: async (socket) => {
         const usersObj = {};
         for (const [username, socketInstance] of socketManager.usernameToSocket.entries()) {

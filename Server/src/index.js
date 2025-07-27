@@ -32,7 +32,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(require("./routes/router.js"));
+app.use(require("./api/routes/router.js"));
 
 const http = require("http");
 const { Server } = require("socket.io");
