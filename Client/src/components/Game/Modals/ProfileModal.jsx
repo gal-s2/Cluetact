@@ -15,6 +15,7 @@ export default function PlayerProfileModal({ player, onClose }) {
                 }
                 {/*player.country && <img src={`https://flagcdn.com/24x18/${player.country.toLowerCase()}.png`} alt={`${player.country}-flag`} />*/}
                 <p>Wins: {player.wins}</p>
+                <p>Total Games: {player.totalGames}</p>
             </div>
         </Modal>
     );

@@ -232,78 +232,28 @@
     }
 }
 
-/* Modal Overlay */
-.modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(240, 240, 255, 0.85);
-    backdrop-filter: blur(3px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    padding: 1rem;
-    box-sizing: border-box;
-    animation: modalFadeIn 0.2s ease-out;
-}
-
-@keyframes modalFadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
 /* Modal Content */
-.modal {
-    background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    border: 2px solid #e8f5e8;
-    animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.modal h2 {
+.modalContent h2 {
     color: #2e7d32;
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
     font-weight: 600;
 }
 
-.modal p {
+.modalContent p {
     color: #555;
     margin-bottom: 1.5rem;
     font-size: 1.1rem;
 }
 
-.modal strong {
+.modalContent strong {
     color: #2e7d32;
     font-weight: 700;
     font-size: 1.2rem;
     letter-spacing: 2px;
 }
 
-.modal input {
+.modalContent input {
     width: 100%;
     margin: 1rem 0;
     padding: 1rem;
@@ -315,13 +265,13 @@
     font-family: inherit;
 }
 
-.modal input:focus {
+.modalContent input:focus {
     outline: none;
     border-color: #81c784;
     box-shadow: 0 0 0 3px rgba(129, 199, 132, 0.1);
 }
 
-.modal input::placeholder {
+.modalContent input::placeholder {
     color: #999;
     font-weight: 400;
 }
@@ -461,7 +411,7 @@
         padding: 1.2rem 2rem;
     }
 
-    .modal {
+    .modalContent {
         padding: 2.5rem;
     }
 }
@@ -507,26 +457,26 @@
         color: #81c784;
     }
 
-    .modal {
+    .modalContent {
         background: #2a2a2a;
         border-color: #4a9f4d;
     }
 
-    .modal h2 {
+    .modalContent h2 {
         color: #81c784;
     }
 
-    .modal p {
+    .modalContent p {
         color: #ccc;
     }
 
-    .modal input {
+    .modalContent input {
         background: #333;
         border-color: #555;
         color: white;
     }
 
-    .modal input:focus {
+    .modalContent input:focus {
         border-color: #81c784;
     }
 }
@@ -548,9 +498,7 @@
         transform: none;
     }
 
-    .dropdown,
-    .modalOverlay,
-    .modal {
+    .dropdown {
         animation: none;
     }
 
@@ -567,8 +515,7 @@
         color: black;
     }
 
-    .queueLoading,
-    .modalOverlay {
+    .queueLoading {
         display: none;
     }
 }
