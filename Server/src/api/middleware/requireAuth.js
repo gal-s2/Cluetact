@@ -1,6 +1,4 @@
-// middleware/requireAuth.js
-const jwt = require("jsonwebtoken");
-const JWT_SECRET = process.env.JWT_SECRET;
+const { verifyToken } = require("../../utils/jwt");
 
 const requireAuth = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -12,7 +10,7 @@ const requireAuth = (req, res, next) => {
     const token = authHeader.split(" ")[1];
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = verifyToken(token);
         req.user = { id: decoded.userId, username: decoded.username }; // match your token
         next();
     } catch (err) {
