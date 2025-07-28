@@ -1,7 +1,7 @@
-const socketManager = require("../managers/SocketManager");
-const gameManager = require("../managers/GameManager");
-const waitingRoomManager = require("../managers/WaitingRoomManager");
-const ROLES = require("../constants/roles");
+const socketManager = require("../game/managers/SocketManager");
+const gameManager = require("../game/managers/GameManager");
+const waitingRoomManager = require("../game/managers/WaitingRoomManager");
+const ROLES = require("../game/constants/roles");
 
 /**
  * A class to handle message emission to players and rooms.

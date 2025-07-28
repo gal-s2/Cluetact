@@ -1,9 +1,9 @@
-const gameManager = require("../managers/GameManager");
-const socketManager = require("../managers/SocketManager");
-const WaitingRoomManager = require("../managers/WaitingRoomManager");
-const messageEmitter = require("../../sockets/MessageEmitter");
+const gameManager = require("../../game/managers/GameManager");
+const socketManager = require("../../game/managers/SocketManager");
+const WaitingRoomManager = require("../../game/managers/WaitingRoomManager");
+const messageEmitter = require("../MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
-const ROLES = require("../constants/roles");
+const ROLES = require("../../game/constants/roles");
 
 const handleRaceTimeout = (roomId) => {
     const room = gameManager.getRoom(roomId);

@@ -42,7 +42,7 @@ const io = new Server(server, {
     cors: { origin: "*", methods: ["GET", "POST"] },
 });
 
-require("./game/sockets/socketServer.js")(io);
+require("./sockets/socketServer.js")(io);
 
 app.use((req, res) => {
     console.log("🚨 Unmatched route:", req.method, req.url);

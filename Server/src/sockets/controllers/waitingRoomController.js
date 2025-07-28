@@ -1,13 +1,12 @@
-const WaitingRoomManager = require("../managers/WaitingRoomManager");
-const GameManager = require("../managers/GameManager");
-const messageEmitter = require("../sockets/MessageEmitter");
+const WaitingRoomManager = require("../../game/managers/WaitingRoomManager");
+const GameManager = require("../../game/managers/GameManager");
+const messageEmitter = require("../MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
-const socketManager = require("../managers/SocketManager");
+const socketManager = require("../../game/managers/SocketManager");
 
-module.exports = function waitingRoomHandlers(io, socket) {
-    // Handle socket disconnection
-    socket.on("disconnect", () => {
-        // Clean up user from waiting rooms when they disconnect
+const waitingRoomHandlers = {
+    handleDisconnect: (socket) => {
+        // Handle socket disconnection
         const affectedRoomIds = WaitingRoomManager.removeUserFromItsWaitingRooms(socket.id);
 
         // Broadcast updates to affected rooms
@@ -26,9 +25,9 @@ module.exports = function waitingRoomHandlers(io, socket) {
                 }
             });
         }
-    });
+    },
 
-    socket.on(SOCKET_EVENTS.CLIENT_CREATE_WAITING_ROOM, ({ waitingRoomId, username }) => {
+    handleCreateWaitingRoom: (socket, { waitingRoomId, username }) => {
         const waitingRoom = WaitingRoomManager.createWaitingRoom(waitingRoomId, username, socket.id);
         if (!waitingRoom) {
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Waiting room already exists.", socket);
@@ -44,9 +43,9 @@ module.exports = function waitingRoomHandlers(io, socket) {
             },
             waitingRoomId
         );
-    });
+    },
 
-    socket.on(SOCKET_EVENTS.CLIENT_JOIN_WAITING_ROOM, ({ waitingRoomId, username }) => {
+    handleJoinWaitingRoom: (socket, { waitingRoomId, username }) => {
         const isWaitingRoomExist = WaitingRoomManager.isWaitingRoomExist(waitingRoomId);
         if (!isWaitingRoomExist) {
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Waiting room does not exist.", socket);
@@ -81,9 +80,9 @@ module.exports = function waitingRoomHandlers(io, socket) {
             },
             waitingRoomId
         );
-    });
+    },
 
-    socket.on(SOCKET_EVENTS.CLIENT_GET_WAITING_ROOM_USERS, ({ waitingRoomId }) => {
+    handleGetWaitingRoomUsers: (socket, { waitingRoomId }) => {
         const waitingRoom = WaitingRoomManager.getWaitingRoom(waitingRoomId);
         if (!waitingRoom) {
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Waiting room does not exist.", socket);
@@ -99,9 +98,9 @@ module.exports = function waitingRoomHandlers(io, socket) {
             },
             waitingRoomId
         );
-    });
+    },
 
-    socket.on(SOCKET_EVENTS.CLIENT_LEAVE_WAITING_ROOM, ({ waitingRoomId, username }) => {
+    handleLeaveWaitingRoom: (socket, { waitingRoomId, username }) => {
         const leftSuccessfully = WaitingRoomManager.leaveWaitingRoom(waitingRoomId, username);
 
         if (leftSuccessfully) {
@@ -119,9 +118,9 @@ module.exports = function waitingRoomHandlers(io, socket) {
             }
             // If room doesn't exist anymore (was deleted), no need to broadcast
         }
-    });
+    },
 
-    socket.on(SOCKET_EVENTS.CLIENT_START_GAME_FROM_WAITING_ROOM, async ({ waitingRoomId }) => {
+    handleStartGameFromWaitingRoom: async (socket, { waitingRoomId }) => {
         const waitingRoom = WaitingRoomManager.getWaitingRoom(waitingRoomId);
         if (!waitingRoom || waitingRoom.users.size < 3) {
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Not enough users to start the game.", socket);
@@ -147,5 +146,7 @@ module.exports = function waitingRoomHandlers(io, socket) {
 
         // Clean up the waiting room
         WaitingRoomManager.deleteWaitingRoom(waitingRoomId);
-    });
+    },
 };
+
+module.exports = waitingRoomHandlers;
