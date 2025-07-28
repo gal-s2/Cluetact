@@ -24,7 +24,7 @@ const handleRaceTimeout = (roomId) => {
     messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
 };
 
-const gameEventsHandlers = {
+const gameController = {
     handleJoinQueue: async (socket, args) => {
         // const { username } = args;
         let room;
@@ -243,4 +243,4 @@ const gameEventsHandlers = {
     },
 };
 
-module.exports = gameEventsHandlers;
+module.exports = gameController;

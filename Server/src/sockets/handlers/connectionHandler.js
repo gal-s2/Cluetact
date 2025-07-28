@@ -1,6 +1,6 @@
 const socketManager = require("../../game/managers/SocketManager");
 const { socketLogger } = require("../../utils/logger");
-const gameEventsHandlers = require("../controllers/gameController");
+const gameController = require("../controllers/gameController");
 const messageEmitter = require("../MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const GameManager = require("../../game/managers/GameManager");
@@ -14,7 +14,7 @@ async function validateUserExistence(socket) {
     return exists;
 }
 
-async function connectionHandler(io, socket) {
+async function connectionHandler(socket) {
     await validateUserExistence(socket).then((exists) => {
         if (!exists) {
             console.log("[Socket connection error: User does not exist]", socket.id);
@@ -26,7 +26,7 @@ async function connectionHandler(io, socket) {
         }
     });
 
-    console.log("[Client connected:", socket.id, "]");
+    console.log("[Client connected:", socket.id, socket?.user?.username, "]");
 
     socketManager.register(socket, socket.user.username);
 
@@ -49,7 +49,7 @@ async function connectionHandler(io, socket) {
 
     socket.on(SOCKET_EVENTS.CLIENT_CHECK_EVENTS_AVAILABILITY, () => messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_READY_FOR_EVENTS, null, socket));
 
-    socket.on(SOCKET_EVENTS.DISCONNECT, (reason) => gameEventsHandlers.disconnect(socket, reason));
+    socket.on(SOCKET_EVENTS.DISCONNECT, (reason) => gameController.disconnect(socket, reason));
 
     bindGameEvents(socket);
     bindOverWatchEvents(socket);
