@@ -16,9 +16,12 @@ import GlobalNotificationBox from "./components/General/GlobalNotificationBox/Gl
 import About from "./components/About/About";
 import AdminRoute from "./components/Routes/AdminRoute/AdminRoute";
 import Footer from "./components/General/Footer/Footer";
+import useConnectionStatus from "./hooks/useConnectionStatus";
+import DisconnectedPopup from "./components/General/DisconnectModal/DisconnectModal";
 
 function App() {
     const { user } = useUser();
+    const isDisconnected = useConnectionStatus();
 
     return (
         <>
@@ -27,6 +30,7 @@ function App() {
                 <GlobalNotificationBox />
             </Router>
             <Footer />
+            {isDisconnected && <DisconnectedPopup />}
         </>
     );
 }
