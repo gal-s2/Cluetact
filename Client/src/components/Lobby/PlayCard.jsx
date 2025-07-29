@@ -1,27 +1,13 @@
-import styles from "./Lobby.module.css";
+import DropdownCard from "./DropdownCard";
 
 function PlayCard({ playMenuOpen, setPlayMenuOpen, findGame, setShowJoinModal, handleCreateRoom }) {
-    return (
-        <div className={styles.card}>
-            <button className={styles.buttonPrimary} onClick={setPlayMenuOpen} aria-expanded={playMenuOpen} aria-haspopup="true">
-                Play
-            </button>
+    const menuItems = [
+        { label: "Find Game", onClick: findGame },
+        { label: "Join Room", onClick: setShowJoinModal },
+        { label: "Create Room", onClick: handleCreateRoom },
+    ];
 
-            {playMenuOpen && (
-                <div className={styles.dropdown} role="menu">
-                    <button onClick={findGame} role="menuitem">
-                        Find Game
-                    </button>
-                    <button onClick={setShowJoinModal} role="menuitem">
-                        Join Room
-                    </button>
-                    <button onClick={handleCreateRoom} role="menuitem">
-                        Create Room
-                    </button>
-                </div>
-            )}
-        </div>
-    );
+    return <DropdownCard isOpen={playMenuOpen} setIsOpen={setPlayMenuOpen} buttonLabel="Play" menuItems={menuItems} />;
 }
 
 export default PlayCard;
