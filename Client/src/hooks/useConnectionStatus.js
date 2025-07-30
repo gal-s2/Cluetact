@@ -2,18 +2,28 @@ import { useEffect, useState } from "react";
 import socket from "../services/socket";
 
 function useConnectionStatus() {
-    const [isDisconnected, setIsDisconnected] = useState(!socket.connected || !navigator.onLine);
+    const [isDisconnected, setIsDisconnected] = useState(false);
+    const [delayPassed, setDelayPassed] = useState(false);
 
     useEffect(() => {
-        const handleDisconnect = () => setIsDisconnected(true);
+        const timeout = setTimeout(() => setDelayPassed(true), 1000); // 1-second delay
+        return () => clearTimeout(timeout);
+    }, []);
+
+    useEffect(() => {
+        const updateDisconnected = (disconnected) => {
+            if (disconnected && !delayPassed) return;
+            setIsDisconnected(disconnected);
+        };
+
+        const handleDisconnect = () => updateDisconnected(true);
         const handleConnect = () => setIsDisconnected(false);
         const handleReconnect = () => setIsDisconnected(false);
-        const handleConnectError = () => setIsDisconnected(true);
+        const handleConnectError = () => updateDisconnected(true);
 
         // Network events
-        const handleOffline = () => setIsDisconnected(true);
+        const handleOffline = () => updateDisconnected(true);
         const handleOnline = () => {
-            // Only clear disconnect if socket is connected
             if (socket.connected) setIsDisconnected(false);
         };
 
@@ -25,9 +35,9 @@ function useConnectionStatus() {
         window.addEventListener("offline", handleOffline);
         window.addEventListener("online", handleOnline);
 
-        // Initial check
-        if (!navigator.onLine) {
-            setIsDisconnected(true);
+        // Initial state check
+        if (!navigator.onLine || !socket.connected) {
+            updateDisconnected(true);
         }
 
         return () => {
@@ -39,7 +49,7 @@ function useConnectionStatus() {
             window.removeEventListener("offline", handleOffline);
             window.removeEventListener("online", handleOnline);
         };
-    }, []);
+    }, [delayPassed]);
 
     return isDisconnected;
 }

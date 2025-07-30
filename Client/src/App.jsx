@@ -16,12 +16,10 @@ import GlobalNotificationBox from "@components/General/GlobalNotificationBox/Glo
 import About from "@components/About/About";
 import AdminRoute from "@components/Routes/AdminRoute/AdminRoute";
 import Footer from "@components/General/Footer/Footer";
-import useConnectionStatus from "@hooks/useConnectionStatus";
-import DisconnectedPopup from "@components/General/DisconnectModal/DisconnectModal";
+import SocketPageWrapper from "@components/SocketPageWrapper";
 
 function App() {
     const { user } = useUser();
-    const isDisconnected = useConnectionStatus();
 
     return (
         <>
@@ -30,7 +28,6 @@ function App() {
                 <GlobalNotificationBox />
             </Router>
             <Footer />
-            {isDisconnected && <DisconnectedPopup />}
         </>
     );
 }
@@ -80,7 +77,9 @@ function AppRoutesWithSocketNavigation({ user }) {
                 path="/lobby"
                 element={
                     <PrivateRoute>
-                        <Lobby />
+                        <SocketPageWrapper>
+                            <Lobby />
+                        </SocketPageWrapper>
                     </PrivateRoute>
                 }
             />
@@ -88,9 +87,9 @@ function AppRoutesWithSocketNavigation({ user }) {
             <Route
                 path="/about"
                 element={
-                    <PrivateRoute>
+                    <PublicRoute>
                         <About />
-                    </PrivateRoute>
+                    </PublicRoute>
                 }
             />
 
@@ -98,10 +97,13 @@ function AppRoutesWithSocketNavigation({ user }) {
                 path="/game/:roomId"
                 element={
                     <PrivateRoute>
-                        <GameRoomWrapper />
+                        <SocketPageWrapper>
+                            <GameRoomWrapper />
+                        </SocketPageWrapper>
                     </PrivateRoute>
                 }
             />
+
             <Route
                 path="/stats"
                 element={
@@ -110,6 +112,7 @@ function AppRoutesWithSocketNavigation({ user }) {
                     </PrivateRoute>
                 }
             />
+
             <Route
                 path="/profile"
                 element={
@@ -118,14 +121,18 @@ function AppRoutesWithSocketNavigation({ user }) {
                     </PrivateRoute>
                 }
             />
+
             <Route
                 path="/waiting/:roomId"
                 element={
                     <PrivateRoute>
-                        <WaitingRoom />
+                        <SocketPageWrapper>
+                            <WaitingRoom />
+                        </SocketPageWrapper>
                     </PrivateRoute>
                 }
             />
+
             <Route
                 path="/overwatch"
                 element={
