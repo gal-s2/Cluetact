@@ -2,8 +2,8 @@ import styles from "./KeeperWordPopup.module.css";
 import socket from "../../../services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import { useGameRoom } from "../../../contexts/GameRoomContext";
-import Modal from "../../UI/Modal/Modal";
-import Button from "../../UI/Button/Button";
+import Modal from "@common/Modal/Modal";
+import Button from "@common/Button/Button";
 
 function KeeperWordPopup({ showConfirmModal }) {
     const { gameState, setKeeperWord } = useGameRoom();

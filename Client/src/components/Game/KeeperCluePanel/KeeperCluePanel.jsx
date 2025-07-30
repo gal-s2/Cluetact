@@ -1,11 +1,10 @@
-// GameScreen/Keeper/KeeperCluePanel.jsx
 import { useEffect, useRef, useState } from "react";
-import socket from "../../../../services/socket";
+import socket from "../../../services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
-import { useGameRoom } from "../../../../contexts/GameRoomContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
+import { useUser } from "@contexts/UserContext";
+import GuessStream from "../GameScreen/Shared/GuessStream";
 import styles from "./KeeperCluePanel.module.css";
-import { useUser } from "../../../../contexts/UserContext";
-import GuessStream from "../Shared/GuessStream";
 
 function KeeperCluePanel({ maxVisibleItems = 4 }) {
     const { gameState } = useGameRoom();

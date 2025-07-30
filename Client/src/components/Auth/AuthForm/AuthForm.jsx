@@ -4,8 +4,8 @@ import axios from "axios";
 import styles from "./AuthForm.module.css";
 import { baseUrl } from "../../../config/baseUrl";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useUser } from "../../../contexts/UserContext";
-import Logo from "../../General/Logo/Logo";
+import { useUser } from "@contexts/UserContext";
+import Logo from "@components/General/Logo/Logo";
 import GoogleButton from "../GoogleButton/GoogleButton";
 
 function AuthForm({ type }) {

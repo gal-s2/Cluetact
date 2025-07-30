@@ -12,7 +12,7 @@ import NotificationBox from "./NotificationBox/NotificationBox";
 import PlayersTable from "./GameScreen/Player/PlayersTable";
 import PlayerMainMessageHeader from "./GameScreen/Player/PlayerMainMessageHeader";
 import SeekerCluePanel from "./GameScreen/Seeker/SeekerCluePanel";
-import KeeperCluePanel from "./GameScreen/Keeper/KeeperCluePanel";
+import KeeperCluePanel from "@components/Game/KeeperCluePanel/KeeperCluePanel";
 import ExitGameButton from "./ExitGameButton";
 import ConfimModal from "./Modals/ConfirmModal";
 import { useState } from "react";

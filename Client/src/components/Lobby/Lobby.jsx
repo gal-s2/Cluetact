@@ -12,7 +12,7 @@ import ProfileCard from "./ProfileCard";
 import PlayCard from "./PlayCard";
 import generateRoomCode from "../../utils/generateRoomCode";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
-import Modal from "../UI/Modal/Modal";
+import Modal from "@common/Modal/Modal";
 
 function Lobby() {
     const { user, setUser, loading } = useUser();

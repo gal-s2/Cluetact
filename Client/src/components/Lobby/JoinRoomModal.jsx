@@ -1,5 +1,5 @@
-import Button from "../UI/Button/Button";
-import Modal from "../UI/Modal/Modal";
+import Button from "@common/Button/Button";
+import Modal from "@common/Modal/Modal";
 import styles from "./Lobby.module.css";
 
 function JoinRoomModal({ roomCodeInput, setRoomCodeInput, handleJoinRoom, closeModal }) {

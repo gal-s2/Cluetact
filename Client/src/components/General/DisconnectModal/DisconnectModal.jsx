@@ -1,4 +1,4 @@
-import Modal from "../../UI/Modal/Modal";
+import Modal from "@common/Modal/Modal";
 
 export default function DisconnectedPopup() {
     return (

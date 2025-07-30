@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import socket from "../services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
-import { useGlobalNotification } from "../contexts/GlobalNotificationContext";
+import { useGlobalNotification } from "@contexts/GlobalNotificationContext";
 
 export default function useSocketNavigation() {
     const navigate = useNavigate();

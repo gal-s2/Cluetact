@@ -1,4 +1,4 @@
-import Button from "../UI/Button/Button";
+import Button from "@common/Button/Button";
 import styles from "./Lobby.module.css";
 
 export default function DropdownCard({ isOpen, setIsOpen, buttonLabel, buttonColor = "light-blue", menuItems = [] }) {

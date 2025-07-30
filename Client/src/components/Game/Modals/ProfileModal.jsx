@@ -1,4 +1,4 @@
-import Modal from "../../UI/Modal/Modal";
+import Modal from "@common/Modal/Modal";
 import styles from "./ProfileModal.module.css";
 
 export default function PlayerProfileModal({ player, onClose }) {
