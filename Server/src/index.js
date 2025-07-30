@@ -20,9 +20,10 @@ app.use(
     cors({
         origin: [
             "https://cluetact.onrender.com", //#client-url
+            "http://localhost", // port 80
             "http://localhost:5173",
         ],
-        methods: ["GET", "POST", "PATCH"],
+        methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
         credentials: true,
     })
 );

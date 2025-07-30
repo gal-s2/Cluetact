@@ -3,6 +3,7 @@ Client/node_modules
 
 Server/.env
 Client/.env
+.env.*
 
 */logs
 
