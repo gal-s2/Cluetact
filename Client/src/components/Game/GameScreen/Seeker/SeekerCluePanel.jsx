@@ -1,7 +1,6 @@
-// GameScreen/Seeker/SeekerCluePanel.jsx
 import { useEffect, useRef } from "react";
-import { useGameRoom } from "../../../../contexts/GameRoomContext";
-import { useUser } from "../../../../contexts/UserContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
+import { useUser } from "@contexts/UserContext";
 import GuessActionLine from "./GuessActionLine";
 import GuessStream from "../Shared/GuessStream";
 import ClueBubble from "../Shared/ClueBubble";

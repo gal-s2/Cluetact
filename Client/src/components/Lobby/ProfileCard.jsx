@@ -1,5 +1,5 @@
 import DropdownCard from "./DropdownCard";
-import { useUser } from "../../contexts/UserContext";
+import { useUser } from "@contexts/UserContext";
 
 function ProfileCard({ profileMenuOpen, setProfileMenuOpen, disconnect, onNavigateToStats, onNavigateToProfile }) {
     const { user } = useUser();

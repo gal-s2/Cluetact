@@ -4,7 +4,7 @@ import QRCode from "react-qr-code";
 import socket from "../../services/socket";
 import styles from "./WaitingRoom.module.css";
 import BackToLobbyButton from "../General/BackToLobbyButton/BackToLobbyButton";
-import { useUser } from "../../contexts/UserContext";
+import { useUser } from "@contexts/UserContext";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
 function WaitingRoom() {

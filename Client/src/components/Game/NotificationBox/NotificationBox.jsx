@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./NotificationBox.module.css";
-import { useGameRoom } from "../../../contexts/GameRoomContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
 
 function NotificationBox() {
     const [showText, setShowText] = useState(false);

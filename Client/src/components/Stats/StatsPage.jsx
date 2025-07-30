@@ -1,10 +1,10 @@
-import { useUser } from "../../contexts/UserContext";
+import { useUser } from "@contexts/UserContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { baseUrl } from "../../config/baseUrl";
 import styles from "./StatsPage.module.css";
 import BackToLobbyButton from "../General/BackToLobbyButton/BackToLobbyButton";
-import { avatarList } from "../../utils/loadAvatars";
+import { avatarList } from "@utils/loadAvatars";
 
 function StatsPage() {
     const { user } = useUser();

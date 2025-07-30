@@ -1,5 +1,5 @@
 import styles from "./WordDisplay.module.css";
-import { useGameRoom } from "../../../../contexts/GameRoomContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
 
 function WordDisplay() {
     const { gameState } = useGameRoom();

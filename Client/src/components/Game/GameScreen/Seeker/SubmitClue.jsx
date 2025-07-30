@@ -2,7 +2,7 @@ import { useState } from "react";
 import styles from "./SubmitClue.module.css";
 import socket from "../../../../services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
-import { useGameRoom } from "../../../../contexts/GameRoomContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
 import Button from "@common/Button/Button";
 
 const WORD_MAX_LENGTH = 20;

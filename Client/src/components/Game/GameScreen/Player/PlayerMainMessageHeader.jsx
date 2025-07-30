@@ -1,5 +1,5 @@
-import { useGameRoom } from "../../../../contexts/GameRoomContext";
-import { useUser } from "../../../../contexts/UserContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
+import { useUser } from "@contexts/UserContext";
 import { useEffect } from "react";
 import styles from "./PlayerMainMessageHeader.module.css";
 

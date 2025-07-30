@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../contexts/UserContext";
+import { useUser } from "@contexts/UserContext";
 import { baseUrl } from "../../config/baseUrl";
 import styles from "./WelcomePage.module.css";
 import Logo from "../General/Logo/Logo";

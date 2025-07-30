@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "./GuessActionLine.module.css";
-import { useGameRoom } from "../../../../contexts/GameRoomContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
 
 function GuessActionLine() {
     //

@@ -1,6 +1,6 @@
-import { useUser } from "../../../contexts/UserContext";
+import { useUser } from "@contexts/UserContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
 import styles from "./GameOverPopup.module.css";
-import { useGameRoom } from "../../../contexts/GameRoomContext";
 
 function GameOverPopup() {
     const { user } = useUser();

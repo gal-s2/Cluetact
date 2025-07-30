@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "./BlockedCluesSection.module.css";
-import { useGameRoom } from "../../../../contexts/GameRoomContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
 
 function BlockedCluesSection({ maxVisibleItems = 4, containerClassName = "" }) {
     const { gameState } = useGameRoom();

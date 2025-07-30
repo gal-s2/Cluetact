@@ -1,6 +1,6 @@
-import { useGameRoom } from "../../contexts/GameRoomContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
 import WordDisplay from "./GameScreen/Word/WordDisplay";
-import Spinner from "../Routes/Spinner/Spinner";
+import Spinner from "@common/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./Modals/KeeperWordPopup";
 import SubmitClue from "./GameScreen/Seeker/SubmitClue";
