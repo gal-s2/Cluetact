@@ -1,4 +1,4 @@
-import { useUser } from "../../../../contexts/UserContext";
+import { useUser } from "@contexts/UserContext";
 import styles from "./ClueBubble.module.css";
 
 function ClueBubble({ from, definition, word, blocked, onGuess, selected = false }) {

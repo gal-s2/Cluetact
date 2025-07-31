@@ -1,12 +1,12 @@
 import axios from "axios";
-import { useUser } from "../../../contexts/UserContext";
+import { useUser } from "@contexts/UserContext";
 import { useState, useEffect } from "react";
 import styles from "./ProfileDetails.module.css";
 import AvatarPicker from "../AvatarPicker/AvatarPicker";
 import BackToLobbyButton from "../../General/BackToLobbyButton/BackToLobbyButton";
-import { useGlobalNotification } from "../../../contexts/GlobalNotificationContext";
+import { useGlobalNotification } from "@contexts/GlobalNotificationContext";
 import { baseUrl } from "../../../config/baseUrl";
-import { avatarList } from "../../../utils/loadAvatars";
+import { avatarList } from "@utils/loadAvatars";
 
 function ProfileDetails() {
     const { user, setUser } = useUser();

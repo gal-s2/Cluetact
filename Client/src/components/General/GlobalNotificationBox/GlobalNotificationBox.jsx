@@ -1,4 +1,4 @@
-import { useGlobalNotification } from "../../../contexts/GlobalNotificationContext";
+import { useGlobalNotification } from "@contexts/GlobalNotificationContext";
 import styles from "./GlobalNotificationBox.module.css";
 
 function GlobalNotificationBox() {

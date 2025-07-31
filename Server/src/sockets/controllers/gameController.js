@@ -1,9 +1,9 @@
-const gameManager = require("../managers/GameManager");
-const socketManager = require("../managers/SocketManager");
-const WaitingRoomManager = require("../managers/WaitingRoomManager");
-const messageEmitter = require("../sockets/MessageEmitter");
+const gameManager = require("../../game/managers/GameManager");
+const socketManager = require("../../game/managers/SocketManager");
+const WaitingRoomManager = require("../../game/managers/WaitingRoomManager");
+const messageEmitter = require("../MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
-const { ROLES } = require("../constants");
+const ROLES = require("../../game/constants/roles");
 
 const handleRaceTimeout = (roomId) => {
     const room = gameManager.getRoom(roomId);
@@ -24,7 +24,7 @@ const handleRaceTimeout = (roomId) => {
     messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
 };
 
-const gameEventsHandlers = {
+const gameController = {
     handleJoinQueue: async (socket, args) => {
         // const { username } = args;
         let room;
@@ -52,6 +52,15 @@ const gameEventsHandlers = {
         } else {
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ENTERED_QUEUE, null, socket);
         }
+    },
+
+    handleLeaveQueue: async (socket) => {
+        // first check if player is already in a room.
+        const room = gameManager.getRoomBySocket(socket);
+        if (room) return;
+
+        const username = await socketManager.getUsernameBySocketId(socket.id);
+        gameManager.removeUserFromQueue(username);
     },
 
     handleJoinRoom: async (socket, args) => {
@@ -225,11 +234,7 @@ const gameEventsHandlers = {
     disconnect: (socket, reason) => {
         const waitingRooms = WaitingRoomManager.removeUserFromItsWaitingRooms(socket.id);
         waitingRooms.forEach((waitingRoomId) => {
-            messageEmitter.broadcastToWaitingRoom(
-                SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
-                { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host },
-                waitingRoomId
-            );
+            messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host }, waitingRoomId);
         });
 
         socketManager.unregister(socket);
@@ -238,4 +243,4 @@ const gameEventsHandlers = {
     },
 };
 
-module.exports = gameEventsHandlers;
+module.exports = gameController;

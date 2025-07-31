@@ -1,15 +1,14 @@
-const router = require("express").Router();
-const User = require("../models/User");
-const socketManager = require("../game/managers/SocketManager");
-const { generateToken } = require("../utils/jwt");
+const User = require("../../models/User");
+const { generateToken } = require("../../utils/jwt");
 const { OAuth2Client } = require("google-auth-library");
+
 const client = new OAuth2Client({
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     redirectUri: "postmessage",
 });
 
-router.post("/guest", async (req, res) => {
+async function guest(req, res) {
     try {
         const user = await User.createGuest();
         const token = generateToken(user);
@@ -18,9 +17,9 @@ router.post("/guest", async (req, res) => {
         console.log(err.message);
         res.status(401).json({ error: err.message });
     }
-});
+}
 
-router.post("/register", async (req, res) => {
+async function register(req, res) {
     const userData = req.body;
 
     try {
@@ -31,9 +30,9 @@ router.post("/register", async (req, res) => {
         console.log(err.message);
         res.status(401).json({ error: err.message });
     }
-});
+}
 
-router.post("/login", async (req, res) => {
+async function login(req, res) {
     const { username, password } = req.body;
 
     try {
@@ -43,9 +42,9 @@ router.post("/login", async (req, res) => {
     } catch (err) {
         res.status(401).json({ error: err.message });
     }
-});
+}
 
-router.post("/google", async (req, res) => {
+async function google(req, res) {
     const { token: authCode } = req.body;
 
     try {
@@ -67,9 +66,9 @@ router.post("/google", async (req, res) => {
         console.error("Google login error (full):", err.response?.data || err.message || err);
         res.status(401).json({ error: "Google authentication failed" });
     }
-});
+}
 
-router.post("/logout", (req, res) => {
+function logout(req, res) {
     try {
         const { username } = req.body;
 
@@ -86,9 +85,9 @@ router.post("/logout", (req, res) => {
         console.error(err);
         res.status(500).json({ error: "Server error" });
     }
-});
+}
 
-router.post("/disconnect", (req, res) => {
+function disconnect(req, res) {
     try {
         const { username } = req.body;
 
@@ -105,6 +104,13 @@ router.post("/disconnect", (req, res) => {
         console.error(err);
         res.status(500).json({ error: "Server error" });
     }
-});
+}
 
-module.exports = router;
+module.exports = {
+    guest,
+    register,
+    login,
+    google,
+    logout,
+    disconnect,
+};

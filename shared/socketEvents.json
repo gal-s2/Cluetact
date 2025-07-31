@@ -1,5 +1,6 @@
 {
     "CLIENT_FIND_GAME": "client_find_game",
+    "CLIENT_LEAVE_QUEUE": "client_leave_queue",
     "CLIENT_JOIN_ROOM": "client_join_room",
     "CLIENT_KEEPER_WORD_SUBMISSION": "client_keeper_word_submission",
     "CLIENT_SUBMIT_CLUE": "client_submit_clue",

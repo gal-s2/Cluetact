@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./CluetactPopup.module.css";
-import { useGameRoom } from "../../../contexts/GameRoomContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
 
 function CluetactPopup() {
     const [secondsLeft, setSecondsLeft] = useState(5);

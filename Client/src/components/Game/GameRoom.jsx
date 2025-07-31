@@ -1,6 +1,6 @@
-import { useGameRoom } from "../../contexts/GameRoomContext";
+import { useGameRoom } from "@contexts/GameRoomContext";
 import WordDisplay from "./GameScreen/Word/WordDisplay";
-import Spinner from "../Routes/Spinner/Spinner";
+import Spinner from "@common/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./Modals/KeeperWordPopup";
 import SubmitClue from "./GameScreen/Seeker/SubmitClue";
@@ -12,7 +12,7 @@ import NotificationBox from "./NotificationBox/NotificationBox";
 import PlayersTable from "./GameScreen/Player/PlayersTable";
 import PlayerMainMessageHeader from "./GameScreen/Player/PlayerMainMessageHeader";
 import SeekerCluePanel from "./GameScreen/Seeker/SeekerCluePanel";
-import KeeperCluePanel from "./GameScreen/Keeper/KeeperCluePanel";
+import KeeperCluePanel from "@components/Game/KeeperCluePanel/KeeperCluePanel";
 import ExitGameButton from "./ExitGameButton";
 import ConfimModal from "./Modals/ConfirmModal";
 import { useState } from "react";

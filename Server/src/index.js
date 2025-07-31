@@ -20,9 +20,10 @@ app.use(
     cors({
         origin: [
             "https://cluetact.onrender.com", //#client-url
+            "http://localhost", // port 80
             "http://localhost:5173",
         ],
-        methods: ["GET", "POST", "PATCH"],
+        methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
         credentials: true,
     })
 );
@@ -32,7 +33,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(require("./routes/router.js"));
+app.use(require("./api/routes/router.js"));
 
 const http = require("http");
 const { Server } = require("socket.io");
@@ -42,7 +43,7 @@ const io = new Server(server, {
     cors: { origin: "*", methods: ["GET", "POST"] },
 });
 
-require("./game/sockets/socketServer.js")(io);
+require("./sockets/socketServer.js")(io);
 
 app.use((req, res) => {
     console.log("🚨 Unmatched route:", req.method, req.url);

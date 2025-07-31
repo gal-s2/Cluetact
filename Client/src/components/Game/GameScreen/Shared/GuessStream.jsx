@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useUser } from "../../../../contexts/UserContext";
+import { useUser } from "@contexts/UserContext";
 import styles from "./GuessStream.module.css";
 
 function GuessStream({ guesses = [] }) {

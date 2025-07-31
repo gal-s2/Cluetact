@@ -1,21 +1,22 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useUser } from "./contexts/UserContext";
-import PrivateRoute from "./components/Routes/PrivateRoute/PrivateRoute";
-import PublicRoute from "./components/Routes/PublicRoute/PublicRoute";
-import NotFoundPage from "./components/Routes/NotFoundPage/NotFoundPage";
-import AuthForm from "./components/Auth/AuthForm/AuthForm";
-import GameRoomWrapper from "./components/Game/GameRoomWrapper";
-import Lobby from "./components/Lobby/Lobby";
-import WelcomePage from "./components/Welcome/WelcomePage";
-import StatsPage from "./components/Stats/StatsPage";
-import ProfileDetails from "./components/Profile/ProfileDetails/ProfileDetails";
-import WaitingRoom from "./components/WaitingRoom/WaitingRoom";
-import useSocketNavigation from "./hooks/useSocketNavigation";
-import Overwatch from "./components/Overwatch/Overwatch";
-import GlobalNotificationBox from "./components/General/GlobalNotificationBox/GlobalNotificationBox";
-import About from "./components/About/About";
-import AdminRoute from "./components/Routes/AdminRoute/AdminRoute";
-import Footer from "./components/General/Footer/Footer";
+import { useUser } from "@contexts/UserContext";
+import PrivateRoute from "@components/Routes/PrivateRoute/PrivateRoute";
+import PublicRoute from "@components/Routes/PublicRoute/PublicRoute";
+import NotFoundPage from "@components/Routes/NotFoundPage/NotFoundPage";
+import AuthForm from "@components/Auth/AuthForm/AuthForm";
+import GameRoomWrapper from "@components/Game/GameRoomWrapper";
+import Lobby from "@components/Lobby/Lobby";
+import WelcomePage from "@components/Welcome/WelcomePage";
+import StatsPage from "@components/Stats/StatsPage";
+import ProfileDetails from "@components/Profile/ProfileDetails/ProfileDetails";
+import WaitingRoom from "@components/WaitingRoom/WaitingRoom";
+import useSocketNavigation from "@hooks/useSocketNavigation";
+import Overwatch from "@components/Overwatch/Overwatch";
+import GlobalNotificationBox from "@components/General/GlobalNotificationBox/GlobalNotificationBox";
+import About from "@components/About/About";
+import AdminRoute from "@components/Routes/AdminRoute/AdminRoute";
+import Footer from "@components/General/Footer/Footer";
+import SocketPageWrapper from "@components/SocketPageWrapper";
 
 function App() {
     const { user } = useUser();
@@ -76,7 +77,9 @@ function AppRoutesWithSocketNavigation({ user }) {
                 path="/lobby"
                 element={
                     <PrivateRoute>
-                        <Lobby />
+                        <SocketPageWrapper>
+                            <Lobby />
+                        </SocketPageWrapper>
                     </PrivateRoute>
                 }
             />
@@ -84,9 +87,9 @@ function AppRoutesWithSocketNavigation({ user }) {
             <Route
                 path="/about"
                 element={
-                    <PrivateRoute>
+                    <PublicRoute>
                         <About />
-                    </PrivateRoute>
+                    </PublicRoute>
                 }
             />
 
@@ -94,10 +97,13 @@ function AppRoutesWithSocketNavigation({ user }) {
                 path="/game/:roomId"
                 element={
                     <PrivateRoute>
-                        <GameRoomWrapper />
+                        <SocketPageWrapper>
+                            <GameRoomWrapper />
+                        </SocketPageWrapper>
                     </PrivateRoute>
                 }
             />
+
             <Route
                 path="/stats"
                 element={
@@ -106,6 +112,7 @@ function AppRoutesWithSocketNavigation({ user }) {
                     </PrivateRoute>
                 }
             />
+
             <Route
                 path="/profile"
                 element={
@@ -114,14 +121,18 @@ function AppRoutesWithSocketNavigation({ user }) {
                     </PrivateRoute>
                 }
             />
+
             <Route
                 path="/waiting/:roomId"
                 element={
                     <PrivateRoute>
-                        <WaitingRoom />
+                        <SocketPageWrapper>
+                            <WaitingRoom />
+                        </SocketPageWrapper>
                     </PrivateRoute>
                 }
             />
+
             <Route
                 path="/overwatch"
                 element={

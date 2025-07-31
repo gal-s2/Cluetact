@@ -1,8 +1,6 @@
-const router = require("express").Router();
-const User = require("../models/User");
-const requireAuth = require("../middleware/requireAuth");
+const User = require("../../models/User");
 
-router.patch("/update-profile", requireAuth, async (req, res) => {
+async function updateProfile(req, res) {
     try {
         const { id: userId } = req.user;
         const { avatar, password } = req.body;
@@ -26,6 +24,8 @@ router.patch("/update-profile", requireAuth, async (req, res) => {
 
         res.status(500).json({ error: "Server error" });
     }
-});
+}
 
-module.exports = router;
+module.exports = {
+    updateProfile,
+};

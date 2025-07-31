@@ -1,9 +1,6 @@
-// routes/stats.js
-const router = require("express").Router();
-const User = require("../models/User");
+const User = require("../../models/User");
 
-// GET /api/stats/:userId
-router.get("/:userId", async (req, res) => {
+async function getUserStatsById(req, res) {
     try {
         const user = await User.findById(req.params.userId);
         if (!user) {
@@ -15,6 +12,8 @@ router.get("/:userId", async (req, res) => {
         console.error("Error fetching user stats:", err);
         res.status(500).json({ error: "Server error" });
     }
-});
+}
 
-module.exports = router;
+module.exports = {
+    getUserStatsById,
+};

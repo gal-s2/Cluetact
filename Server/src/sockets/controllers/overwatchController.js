@@ -1,13 +1,14 @@
-const gameManager = require("../managers/GameManager");
-const socketManager = require("../managers/SocketManager");
-const waitingRoomManager = require("../managers/WaitingRoomManager");
-const messageEmitter = require("../sockets/MessageEmitter");
+const gameManager = require("../../game/managers/GameManager");
+const socketManager = require("../../game/managers/SocketManager");
+const waitingRoomManager = require("../../game/managers/WaitingRoomManager");
+const messageEmitter = require("../MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 
 const overWatchHandlers = {
     handleGetOnlineRooms: async (socket) => {
         messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_POST_ONLINE_ROOMS, gameManager.rooms, socket);
     },
+
     handleGetOnlineWaitingRooms: async (socket) => {
         const serializedWaitingRooms = {};
 
@@ -22,6 +23,7 @@ const overWatchHandlers = {
 
         messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_POST_ONLINE_WAITING_ROOMS, serializedWaitingRooms, socket);
     },
+
     handleGetAllUsers: async (socket) => {
         const usersObj = {};
         for (const [username, socketInstance] of socketManager.usernameToSocket.entries()) {

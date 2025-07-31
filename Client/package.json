@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "copyfiles ../shared/* src/shared && vite --host",
         "build": "copyfiles ../shared/* src/shared && vite build",
+        "build:docker": "copyfiles ../shared/* src/shared && vite build --mode docker",
         "lint": "eslint .",
         "preview": "vite preview"
     },

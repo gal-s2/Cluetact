@@ -39,6 +39,10 @@ class GameManager {
         return null;
     }
 
+    removeUserFromQueue(user) {
+        this.gameQueue.removeUser(user);
+    }
+
     /**
      * Gets roomId and return the room object of this id
      * @param {string} roomId
