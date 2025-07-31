@@ -140,6 +140,30 @@
     border-bottom-color: #1b5e20;
 }
 
+.passwordWrapper {
+    position: relative;
+}
+
+.passwordWrapper input {
+    width: 100%;
+    padding-right: 3rem; /* space for the eye icon */
+}
+
+.eyeIcon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+    font-size: 1rem;
+    z-index: 2;
+}
+
+.eyeIcon:hover {
+    color: #555;
+}
+
 /* Tablet styles */
 @media (min-width: 480px) {
     .authContainer {

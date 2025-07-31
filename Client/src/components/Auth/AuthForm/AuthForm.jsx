@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./AuthForm.module.css";
-import { baseUrl } from "../../../config/baseUrl";
+import { baseUrl } from "@config/baseUrl";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useUser } from "@contexts/UserContext";
 import Logo from "@components/General/Logo/Logo";
 import GoogleButton from "../GoogleButton/GoogleButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 function AuthForm({ type }) {
     const navigate = useNavigate();
@@ -14,6 +16,7 @@ function AuthForm({ type }) {
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
     const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
 
     const { setUser } = useUser();
 
@@ -107,8 +110,10 @@ function AuthForm({ type }) {
                     <input type="text" placeholder="Username" value={username || ""} onChange={(e) => setUsername(e.target.value)} className={errors.username ? styles.invalidInput : ""} required />
                     {errors.username && <p className={styles.error}>{errors.username}</p>}
 
-                    <input type="password" placeholder="Password" value={password || ""} onChange={(e) => setPassword(e.target.value)} className={errors.password ? styles.invalidInput : ""} required />
-
+                    <div className={styles.passwordWrapper}>
+                        <input type={showPassword ? "text" : "password"} placeholder="Password" value={password || ""} onChange={(e) => setPassword(e.target.value)} className={errors.password ? styles.invalidInput : ""} required />
+                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className={styles.eyeIcon} onClick={() => setShowPassword((prev) => !prev)} />
+                    </div>
                     {errors.password && <p className={styles.error}>{errors.password}</p>}
                     {errors.server && <p className={styles.error}>{errors.server}</p>}
 

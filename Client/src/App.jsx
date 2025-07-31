@@ -16,7 +16,7 @@ import GlobalNotificationBox from "@components/General/GlobalNotificationBox/Glo
 import About from "@components/About/About";
 import AdminRoute from "@components/Routes/AdminRoute/AdminRoute";
 import Footer from "@components/General/Footer/Footer";
-import SocketPageWrapper from "@components/SocketPageWrapper";
+import SocketPageWrapper from "@components/Routes/SocketPageWrapper/SocketPageWrapper";
 
 function App() {
     const { user } = useUser();
