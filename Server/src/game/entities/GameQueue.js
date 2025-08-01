@@ -20,8 +20,9 @@ class GameQueue {
         console.log("[GameQueue] Adding user to queue:", user.username);
         let roomCreationPossible = false;
         let chosenUsers = [];
+
         // if user already in queue, he cannot enter again
-        if (this.awaitingUsers.find((awaitingUser) => user.username === awaitingUser)) {
+        if (this.awaitingUsers.find((awaitingUser) => user.username === awaitingUser.username)) {
             return { roomCreationPossible };
         }
 
@@ -36,11 +37,11 @@ class GameQueue {
 
     /**
      * Removes a user from the queue.
-     * @param {string} user - The username of the user to remove.
+     * @param {string} username - The username of the user to remove.
      */
-    removeUser(user) {
-        console.log("[GameQueue] Removing user from queue:", user);
-        const index = this.awaitingUsers.findIndex((awaitingUser) => awaitingUser.username === user);
+    removeUser(username) {
+        console.log("[GameQueue] Removing user from queue:", username);
+        const index = this.awaitingUsers.findIndex((awaitingUser) => awaitingUser.username === username);
         if (index !== -1) {
             this.awaitingUsers.splice(index, 1);
         }

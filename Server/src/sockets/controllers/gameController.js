@@ -237,6 +237,8 @@ const gameController = {
             messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host }, waitingRoomId);
         });
 
+        gameManager.removeUserFromQueue(socket?.user?.username);
+
         socketManager.unregister(socket);
 
         console.log(`[Socket ${socket.id}] disconnected.`);

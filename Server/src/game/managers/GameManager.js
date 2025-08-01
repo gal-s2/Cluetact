@@ -39,8 +39,9 @@ class GameManager {
         return null;
     }
 
-    removeUserFromQueue(user) {
-        this.gameQueue.removeUser(user);
+    removeUserFromQueue(username) {
+        if (!username) return;
+        this.gameQueue.removeUser(username);
     }
 
     /**
