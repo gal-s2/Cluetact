@@ -23,7 +23,7 @@ function startMatchmaker(gameManager) {
             },
             room.roomId
         );
-    }, 15000); // Runs every 5 seconds
+    }, 15000); // Runs every 15 seconds
 }
 
 module.exports = { startMatchmaker };
