@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import QRCode from "react-qr-code";
-import socket from "../../services/socket";
+import socket from "@services/socket";
 import styles from "./WaitingRoom.module.css";
 import BackToLobbyButton from "../General/BackToLobbyButton/BackToLobbyButton";
 import { useUser } from "@contexts/UserContext";

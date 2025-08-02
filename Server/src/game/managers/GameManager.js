@@ -8,39 +8,51 @@ class GameManager {
     constructor() {
         this.rooms = {};
         this.playerToRoomId = new Map();
-        this.gameQueue = new GameQueue();
+        this._queue = new GameQueue();
     }
 
+    get queue() {
+        return this._queue;
+    }
+
+    /**
+     * Creates a new room with the given keeper and seekers.
+     * @param {Player} keeper
+     * @param {Player} seekers
+     * @returns {Room} The created room object.
+     */
     createRoom(keeper, seekers) {
         const room = new Room(GameManager.roomId, keeper, seekers);
 
         this.rooms[GameManager.roomId] = room;
         Logger.logRoomCreated(GameManager.roomId, room.players);
-        GameManager.roomId++;
 
         room.players.forEach((player) => {
             this.playerToRoomId.set(player.username, room.roomId);
         });
 
+        GameManager.roomId++;
         return room;
     }
 
-    addUserToQueue(user) {
-        const result = this.gameQueue.addUser(user);
-        if (result.roomCreationPossible) {
-            const keeper = result.chosenUsers[0];
-            const seekers = result.chosenUsers.slice(1);
-
-            const room = this.createRoom(keeper, seekers);
-
-            return room;
-        }
-
-        return null;
+    /**
+     * Adds a user to the game queue.
+     * @param {string} username
+     * @returns {boolean} true if the user is in the queue, false otherwise
+     */
+    addUserToQueue(username) {
+        if (!username) return;
+        return this._queue.addUser(username);
     }
 
-    removeUserFromQueue(user) {
-        this.gameQueue.removeUser(user);
+    /**
+     * Removes a user from the game queue.
+     * @param {string} username
+     * @returns {void}
+     */
+    removeUserFromQueue(username) {
+        if (!username) return;
+        this._queue.removeUser(username);
     }
 
     /**
@@ -73,17 +85,22 @@ class GameManager {
         return room;
     }
 
+    /**
+     * Removes a player from the room
+     * @param {number} roomId
+     * @param {string} username
+     */
     removePlayerFromRoom(roomId, username) {
         this.playerToRoomId.delete(username);
         const room = this.getRoom(roomId);
         if (room) {
             room.removePlayer(username);
-            if (room.players.length < 3) {
-                for (const player of room.players) {
-                    this.playerToRoomId.delete(player.username);
-                }
-                delete this.rooms[roomId];
+            //if (room.players.length < 3) { right now we delete the room if a player exits
+            for (const player of room.players) {
+                this.playerToRoomId.delete(player.username);
             }
+            delete this.rooms[roomId];
+            //}
         }
     }
 }

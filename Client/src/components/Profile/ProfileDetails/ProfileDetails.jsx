@@ -5,7 +5,7 @@ import styles from "./ProfileDetails.module.css";
 import AvatarPicker from "../AvatarPicker/AvatarPicker";
 import BackToLobbyButton from "../../General/BackToLobbyButton/BackToLobbyButton";
 import { useGlobalNotification } from "@contexts/GlobalNotificationContext";
-import { baseUrl } from "../../../config/baseUrl";
+import { baseUrl } from "@config/baseUrl";
 import { avatarList } from "@utils/loadAvatars";
 
 function ProfileDetails() {

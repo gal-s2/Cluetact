@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@contexts/UserContext";
-import socket from "../../services/socket";
+import socket from "@services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import { useNavigate } from "react-router-dom";
 import styles from "./Overwatch.module.css";

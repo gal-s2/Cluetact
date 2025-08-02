@@ -9,6 +9,9 @@ const bindOverWatchEvents = require("./overwatchHandlers");
 const bindGameEvents = require("./gameHandlers");
 const bindWaitingRoomEvents = require("./waitingRoomHandlers");
 
+const { startMatchmaker } = require("../matchmaker");
+startMatchmaker(GameManager);
+
 async function validateUserExistence(socket) {
     const exists = await User.userExists(socket.user.username);
     return exists;

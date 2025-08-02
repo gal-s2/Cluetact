@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import socket from "../services/socket";
+import socket from "@services/socket";
 import { useUser } from "@contexts/UserContext";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 
@@ -8,6 +8,8 @@ export default function useGameRoomSocket(roomId) {
     const [loading, setLoading] = useState(true);
     const [notification, setNotification] = useState({ message: "", type: "notification" });
     const [timeLeft, setTimeLeft] = useState(0);
+    const [isKeeperWordRejected, setIsKeeperWordRejected] = useState(false);
+
     const [gameState, setGameState] = useState({
         players: [],
         revealedWord: "",
@@ -67,6 +69,7 @@ export default function useGameRoomSocket(roomId) {
 
         socket.on(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN, (data) => {
             if (data.success) {
+                setIsKeeperWordRejected(false);
                 setGameState((prev) => ({
                     ...prev,
                     wordLength: data.length,
@@ -79,6 +82,7 @@ export default function useGameRoomSocket(roomId) {
                     isWordComplete: false,
                 }));
             } else {
+                setIsKeeperWordRejected(true);
                 setNotification({ message: "The word you entered is invalid. Please enter a valid English word.", type: "error" });
             }
         });
@@ -200,5 +204,7 @@ export default function useGameRoomSocket(roomId) {
         setNotification,
         timeLeft,
         setTimeLeft,
+        isKeeperWordRejected,
+        setIsKeeperWordRejected,
     };
 }

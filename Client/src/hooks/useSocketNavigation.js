@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import socket from "../services/socket";
+import socket from "@services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import { useGlobalNotification } from "@contexts/GlobalNotificationContext";
 
@@ -10,7 +10,6 @@ export default function useSocketNavigation() {
     const { setGlobalNotification } = useGlobalNotification();
 
     useEffect(() => {
-        console.log("[Socket Navigation] Initializing socket navigation");
         socket.emit(SOCKET_EVENTS.CLIENT_NOTIFY_MY_SOCKET_IS_READY);
 
         const handleRedirect = (targetPath) => {

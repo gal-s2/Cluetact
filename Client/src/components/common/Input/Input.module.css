@@ -1,0 +1,49 @@
+.customInput {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px 20px;
+    border: 2px solid #dee2e6;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #495057;
+    background: #ffffff;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.customInput:focus {
+    transform: translateY(-1px);
+}
+
+.blue:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.green:focus {
+    border-color: #81c784;
+    box-shadow: 0 0 0 3px rgba(129, 199, 132, 0.1);
+}
+
+.invalidInput {
+    border-color: #e57373 !important;
+    background: #ffeaea !important;
+}
+
+.invalidInput:focus {
+    border-color: #d32f2f !important;
+    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1) !important;
+}
+
+.customInput::placeholder {
+    color: #adb5bd;
+    font-weight: 400;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    input {
+        padding: 14px 16px;
+    }
+}

@@ -5,7 +5,7 @@ services:
         ports:
             - "80:80"
         env_file:
-            - ./Client/.env.docker
+            - ./Client/.env
         networks:
             - cluetact-network
 

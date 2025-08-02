@@ -5,10 +5,12 @@
             "@shared/*": ["shared/*"],
             "@components/*": ["components/*"],
             "@common/*": ["components/common/*"],
+            "@config/*": ["config/*"],
             "@contexts/*": ["contexts/*"],
             "@hooks/*": ["hooks/*"],
             "@utils/*": ["utils/*"],
-            "@assets/*": ["assets/*"]
+            "@assets/*": ["assets/*"],
+            "@services/*": ["services/*"]
         }
     },
     "include": ["src"]

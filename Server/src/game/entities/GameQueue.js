@@ -3,12 +3,10 @@
  */
 class GameQueue {
     static minUsersInRoom = 3;
-    static userInstance = null;
+    static maxUsersInRoom = 6;
 
     constructor() {
-        if (GameQueue.userInstance) return GameQueue.userInstance;
         this.awaitingUsers = [];
-        GameQueue.userInstance = this;
     }
 
     /**
@@ -16,34 +14,49 @@ class GameQueue {
      * @param {User} user
      * @returns {[boolean, string[]]} - Returns an object with roomCreationPossible flag and chosenUsers array.
      */
-    addUser(user) {
-        console.log("[GameQueue] Adding user to queue:", user.username);
-        let roomCreationPossible = false;
-        let chosenUsers = [];
+    addUser(username) {
+        console.log("[GameQueue] Adding user to queue:", username);
+
         // if user already in queue, he cannot enter again
-        if (this.awaitingUsers.find((awaitingUser) => user.username === awaitingUser)) {
-            return { roomCreationPossible };
+        if (this.awaitingUsers.find((awaitingUser) => username === awaitingUser.username)) {
+            return false;
         }
 
-        this.awaitingUsers.push(user);
-        if (this.awaitingUsers.length >= GameQueue.minUsersInRoom) {
-            roomCreationPossible = true;
-            chosenUsers = this.awaitingUsers.splice(0, 3);
-        }
+        this.awaitingUsers.push({ username });
 
-        return { roomCreationPossible, chosenUsers };
+        return true;
     }
 
     /**
      * Removes a user from the queue.
-     * @param {string} user - The username of the user to remove.
+     * @param {string} username - The username of the user to remove.
      */
-    removeUser(user) {
-        console.log("[GameQueue] Removing user from queue:", user);
-        const index = this.awaitingUsers.findIndex((awaitingUser) => awaitingUser.username === user);
+    removeUser(username) {
+        console.log("[GameQueue] Removing user from queue:", username);
+        const index = this.awaitingUsers.findIndex((awaitingUser) => awaitingUser.username === username);
         if (index !== -1) {
             this.awaitingUsers.splice(index, 1);
         }
+    }
+
+    /**
+     * Gets users ready to start a game.
+     * @returns {string[] | null} - Returns an array of usernames ready to start a game, or null if not enough users.
+     */
+    getReadyUsers() {
+        if (this.awaitingUsers.length >= GameQueue.minUsersInRoom) {
+            const count = Math.min(this.awaitingUsers.length, GameQueue.maxUsersInRoom);
+            return this.awaitingUsers.splice(0, count); // return and remove
+        }
+        return null;
+    }
+
+    /**
+     * Gets all users currently in the queue.
+     * @returns {string[]} - Returns an array of all usernames currently in the queue.
+     */
+    getAllUsers() {
+        return [...this.awaitingUsers];
     }
 }
 

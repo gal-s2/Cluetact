@@ -26,7 +26,6 @@ const handleRaceTimeout = (roomId) => {
 
 const gameController = {
     handleJoinQueue: async (socket, args) => {
-        // const { username } = args;
         let room;
         const user = await socketManager.getUserBySocketId(socket.id);
 
@@ -35,12 +34,17 @@ const gameController = {
         if (room) {
             // TODO: send current room data to player. can happen in middle of the game
             return;
+        }
+
+        const added = gameManager.addUserToQueue(user.username);
+        if (added) {
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ENTERED_QUEUE, null, socket);
         } else {
-            room = gameManager.addUserToQueue(user);
+            // send something to the user if he couldnt enter the queue
         }
 
         // Send welcome messages to all players if a room was created, otherwise notify them that they are in the queue
-        if (room) {
+        /*if (room) {
             messageEmitter.broadcastToRoom(
                 SOCKET_EVENTS.SERVER_NEW_ROOM,
                 {
@@ -50,8 +54,7 @@ const gameController = {
                 room.roomId
             );
         } else {
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ENTERED_QUEUE, null, socket);
-        }
+        }*/
     },
 
     handleLeaveQueue: async (socket) => {
@@ -61,6 +64,7 @@ const gameController = {
 
         const username = await socketManager.getUsernameBySocketId(socket.id);
         gameManager.removeUserFromQueue(username);
+        // should send something?
     },
 
     handleJoinRoom: async (socket, args) => {
@@ -236,6 +240,8 @@ const gameController = {
         waitingRooms.forEach((waitingRoomId) => {
             messageEmitter.broadcastToWaitingRoom(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, { users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId), host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host }, waitingRoomId);
         });
+
+        gameManager.removeUserFromQueue(socket?.user?.username);
 
         socketManager.unregister(socket);
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./CluetactPopup.module.css";
 import { useGameRoom } from "@contexts/GameRoomContext";
+import Confetti from "@components/Animations/Confetti/Confetti";
 
 function CluetactPopup() {
     const [secondsLeft, setSecondsLeft] = useState(5);
@@ -61,26 +62,30 @@ function CluetactPopup() {
     };
 
     return (
-        <div className={styles.overlay}>
-            <div className={getPopupClass()}>
-                <h2>{getTitle()}</h2>
-                {getMainMessage()}
+        <>
+            <div className={styles.overlay}>
+                <div className={getPopupClass()}>
+                    <h2>{getTitle()}</h2>
+                    {getMainMessage()}
 
-                {isWordFullyRevealed ? (
-                    <div className={styles.finalRevealSection}>
-                        <p className={styles.finalWordDisplay}>
-                            {isDirectWordGuess ? "Amazing guess! The word was:" : "The complete word is:"}
-                            <span className={styles.finalWord}>{gameState.keeperWord}</span>
-                        </p>
-                        <p className={styles.gameEndMessage}>
-                            {isDirectWordGuess ? "🚀 Incredible! Round Complete!" : "🏆 Round Complete!"} ({secondsLeft})
-                        </p>
-                    </div>
-                ) : (
-                    <p>Next letter is being revealed... ({secondsLeft})</p>
-                )}
+                    {isWordFullyRevealed ? (
+                        <div className={styles.finalRevealSection}>
+                            <p className={styles.finalWordDisplay}>
+                                {isDirectWordGuess ? "Amazing guess! The word was:" : "The complete word is:"}
+                                <span className={styles.finalWord}>{gameState.keeperWord}</span>
+                            </p>
+                            <p className={styles.gameEndMessage}>
+                                {isDirectWordGuess ? "🚀 Incredible! Round Complete!" : "🏆 Round Complete!"} ({secondsLeft})
+                            </p>
+                        </div>
+                    ) : (
+                        <p>Next letter is being revealed... ({secondsLeft})</p>
+                    )}
+                </div>
             </div>
-        </div>
+
+            {isWordFullyRevealed && <Confetti trigger={isWordFullyRevealed} />}
+        </>
     );
 }
 

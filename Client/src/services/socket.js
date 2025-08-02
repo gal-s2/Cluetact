@@ -3,7 +3,6 @@ import SOCKET_EVENTS from "@shared/socketEvents.json";
 import { baseUrl } from "../config/baseUrl";
 
 const token = localStorage.getItem("token");
-console.log("Socket Base URL:", baseUrl);
 const socket = io(baseUrl, {
     autoConnect: false,
     auth: {

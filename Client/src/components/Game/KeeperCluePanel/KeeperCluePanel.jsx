@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import socket from "../../../services/socket";
+import socket from "@services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import { useUser } from "@contexts/UserContext";
