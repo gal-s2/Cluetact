@@ -1,4 +1,6 @@
-/* PlayerCard.module.css */
+.cardWrapper {
+    position: relative;
+}
 
 .card {
     background: white;
@@ -12,25 +14,15 @@
     overflow: hidden;
 }
 
-.expanded .expandContent {
-    max-height: 200px;
-    padding-top: 8px;
-    opacity: 1;
-}
-
-.expandContent {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.3s ease, opacity 0.3s ease, padding-top 0.3s ease;
-    font-size: 0.85rem;
-    color: #444;
-    border-top: 1px solid #eee;
-}
-
 .card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card.expanded {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .card.me {
@@ -194,6 +186,96 @@
     }
 }
 
+/* Expand Icon */
+.expandIcon {
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.chevron {
+    font-size: 12px;
+    color: #a0aec0;
+    transition: transform 0.2s ease;
+    display: inline-block;
+}
+
+.chevron.rotated {
+    transform: rotate(180deg);
+}
+
+/* Profile Dropdown */
+.profileDropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    animation: slideDown 0.2s ease-out;
+}
+
+.compactProfile {
+    padding: 12px;
+}
+
+.countryRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.countryRow img {
+    border-radius: 2px;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.stat {
+    background: #f7fafc;
+    padding: 6px 8px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.statLabel {
+    display: block;
+    font-size: 10px;
+    color: #718096;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.statValue {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .card {
@@ -232,6 +314,31 @@
     .turnTag {
         font-size: 8px;
         padding: 1px 4px;
+    }
+
+    .compactProfile {
+        padding: 10px;
+    }
+
+    .countryRow {
+        font-size: 11px;
+        margin-bottom: 6px;
+    }
+
+    .statsGrid {
+        gap: 6px;
+    }
+
+    .stat {
+        padding: 4px 6px;
+    }
+
+    .statLabel {
+        font-size: 9px;
+    }
+
+    .statValue {
+        font-size: 12px;
     }
 }
 
@@ -276,6 +383,31 @@
         font-size: 7px;
         padding: 1px 3px;
     }
+
+    .compactProfile {
+        padding: 8px;
+    }
+
+    .countryRow {
+        font-size: 10px;
+        margin-bottom: 4px;
+    }
+
+    .statsGrid {
+        gap: 4px;
+    }
+
+    .stat {
+        padding: 3px 4px;
+    }
+
+    .statLabel {
+        font-size: 8px;
+    }
+
+    .statValue {
+        font-size: 11px;
+    }
 }
 
 /* Status indicators for online/offline */
@@ -318,7 +450,9 @@
     .card,
     .playerImage,
     .turnDot,
-    .turnTag {
+    .turnTag,
+    .chevron,
+    .profileDropdown {
         animation: none;
         transition: none;
     }
