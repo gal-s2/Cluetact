@@ -31,14 +31,6 @@ const PlayerCard = ({ player, me, isActiveClueGiver, onClick, setSelectedPlayer 
                     <h3>{player.username}</h3>
                     <p>{player.gameScore} pts</p>
                     <div className={styles.badgeContainer}>
-                        <span
-                            className={classNames(styles.roleTag, {
-                                [styles.keeperRole]: player.role === "keeper",
-                                [styles.seekerRole]: player.role === "seeker",
-                            })}
-                        >
-                            {player.role === "keeper" ? "🔐 KEEPER" : "🔍 SEEKER"}
-                        </span>
                         {me && <span className={styles.youTag}>YOU</span>}
                         {isActiveClueGiver && <span className={styles.turnTag}>CURRENT TURN</span>}
                     </div>

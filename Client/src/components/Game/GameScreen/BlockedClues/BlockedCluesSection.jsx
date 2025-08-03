@@ -25,18 +25,21 @@ function BlockedCluesSection({ maxVisibleItems = 4, containerClassName = "" }) {
     return (
         <div className={`${styles.blockedSection} ${containerClassName}`}>
             <button className={styles.blockedHeader} onClick={() => setShowBlocked((prev) => !prev)} aria-expanded={showBlocked} aria-controls="blocked-clues-content">
-                <h4 className={styles.subHeading}>Blocked Clues ({blockedClues.length})</h4>
+                <h4 className={styles.subHeading}>Blocked Clues</h4>
                 <span className={`${styles.toggleIcon} ${showBlocked ? styles.expanded : ""}`}>▼</span>
             </button>
 
             <div id="blocked-clues-content" ref={contentRef} className={`${styles.contentWrapper} ${showBlocked ? styles.expanded : styles.collapsed}`}>
                 <div ref={listRef} className={styles.scrollableClueList}>
-                    {blockedClues.map((clue, index) => (
-                        <div key={clue.id || index} className={styles.clueItem}>
-                            <div className={styles.clueWord}>{clue.word}</div>
-                            <div className={styles.clueDefinition}>{clue.definition}</div>
-                        </div>
-                    ))}
+                    {blockedClues
+                        .reverse()
+                        .slice(0, 5)
+                        .map((clue, index) => (
+                            <div key={clue.id || index} className={styles.clueItem}>
+                                <div className={styles.clueWord}>{clue.word}</div>
+                                <div className={styles.clueDefinition}>{clue.definition}</div>
+                            </div>
+                        ))}
                 </div>
             </div>
         </div>

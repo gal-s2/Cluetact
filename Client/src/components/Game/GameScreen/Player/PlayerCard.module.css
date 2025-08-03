@@ -161,27 +161,6 @@
     align-items: center;
 }
 
-.roleTag {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.roleTag.keeperRole {
-    background: rgba(245, 101, 101, 0.1);
-    color: #e53e3e;
-    border: 1px solid rgba(245, 101, 101, 0.2);
-}
-
-.roleTag.seekerRole {
-    background: rgba(66, 153, 225, 0.1);
-    color: #3182ce;
-    border: 1px solid rgba(66, 153, 225, 0.2);
-}
-
 .youTag {
     font-size: 9px;
     font-weight: 700;
@@ -249,11 +228,6 @@
         font-size: 11px;
     }
 
-    .roleTag {
-        font-size: 9px;
-        padding: 1px 5px;
-    }
-
     .youTag,
     .turnTag {
         font-size: 8px;
@@ -295,11 +269,6 @@
 
     .badgeContainer {
         gap: 3px;
-    }
-
-    .roleTag {
-        font-size: 8px;
-        padding: 1px 4px;
     }
 
     .youTag,

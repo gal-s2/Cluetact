@@ -17,6 +17,7 @@ import ExitGameButton from "./ExitGameButton";
 import ConfimModal from "./Modals/ConfirmModal";
 import { useState } from "react";
 import CountdownTimer from "./CountdownTimer";
+import Modal from "@components/common/Modal/Modal";
 
 function GameRoom() {
     const { timeLeft, setTimeLeft, gameState, loading, handleExitGame, notification } = useGameRoom();
@@ -26,19 +27,9 @@ function GameRoom() {
 
     return (
         <div className={styles.room}>
-            {!gameState.isKeeper && !gameState.isWordChosen && (
-                <div className={styles.waitOverlay}>
-                    <div className={styles.waitMessage}>Waiting for the keeper to choose a word...</div>
-                </div>
-            )}
+            {!gameState.isKeeper && !gameState.isWordChosen && <Modal>Waiting for the keeper to choose a word...</Modal>}
 
-            {gameState.isKeeper && !gameState.isWordChosen && (
-                <div className={styles.waitOverlay}>
-                    <div className={styles.popupWrapper}>
-                        <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />
-                    </div>
-                </div>
-            )}
+            {gameState.isKeeper && !gameState.isWordChosen && <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />}
 
             {gameState.cluetact && <CluetactPopup />}
             {gameState.winners?.length > 0 && <GameOverPopup />}
@@ -80,11 +71,10 @@ function GameRoom() {
                 <div className={styles.cluesSection}>{gameState.isKeeper ? <KeeperCluePanel /> : <SeekerCluePanel />}</div>
 
                 {/* Blocked Clues for Keeper */}
-                {gameState.isKeeper && (
-                    <div className={styles.blockedCluesContainer}>
-                        <BlockedCluesSection maxVisibleItems={5} />
-                    </div>
-                )}
+
+                <div className={styles.blockedCluesContainer}>
+                    <BlockedCluesSection maxVisibleItems={5} />
+                </div>
             </div>
 
             <ExitGameButton onExit={() => setShowConfirmModal(true)} />

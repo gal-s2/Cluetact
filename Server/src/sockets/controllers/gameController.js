@@ -36,7 +36,7 @@ const gameController = {
             return;
         }
 
-        const added = gameManager.addUserToQueue(user.username);
+        const added = gameManager.addUserToQueue(user);
         if (added) {
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ENTERED_QUEUE, null, socket);
         } else {
@@ -78,6 +78,7 @@ const gameController = {
         const keeperWordOrNull = username === room.keeperUsername ? room.getKeeperWord() : null;
         const guesses = room.getGuesses();
         const clueGiverUsername = room.getCurrentClueGiverUsername();
+
         messageEmitter.emitToSocket(
             SOCKET_EVENTS.SERVER_GAME_JOIN,
             {

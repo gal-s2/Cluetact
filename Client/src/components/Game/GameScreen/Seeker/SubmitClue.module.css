@@ -8,8 +8,7 @@
     border: 2px solid rgba(72, 187, 120, 0.2);
 }
 
-.input,
-.textarea {
+.input {
     width: 100%;
     padding: 10px 12px;
     border: 2px solid #e2e8f0;
@@ -21,22 +20,14 @@
     background: white;
 }
 
-.input:focus,
-.textarea:focus {
+.input:focus {
     outline: none;
     border-color: #48bb78;
     box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
 }
 
-.input::placeholder,
-.textarea::placeholder {
+.input::placeholder {
     color: #a0aec0;
-}
-
-.textarea {
-    min-height: 80px;
-    resize: vertical;
-    max-height: 120px;
 }
 
 .charCount {

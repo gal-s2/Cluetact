@@ -27,7 +27,7 @@ function App() {
                 <AppRoutesWithSocketNavigation user={user} />
                 <GlobalNotificationBox />
             </Router>
-            <Footer />
+            {/*<Footer />*/}
         </div>
     );
 }

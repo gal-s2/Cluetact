@@ -65,16 +65,19 @@
 }
 
 .scrollableClueList {
-    --max-visible-items: 4;
-    max-height: calc(var(--max-visible-items) * 60px);
-    overflow-y: auto;
+    --max-visible-items: 5;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
     padding: 15px;
     scrollbar-width: thin;
     scrollbar-color: #cbd5e0 #f7fafc;
+    white-space: nowrap;
 }
 
 .scrollableClueList::-webkit-scrollbar {
-    width: 6px;
+    height: 6px;
 }
 
 .scrollableClueList::-webkit-scrollbar-track {
@@ -95,16 +98,18 @@
     background: #fed7d7;
     border-radius: 8px;
     padding: 12px;
-    margin-bottom: 8px;
     border-left: 3px solid #f56565;
     transition: all 0.2s ease;
     animation: slideIn 0.3s ease-out;
+    flex-shrink: 0;
+    min-width: 200px;
+    max-width: 250px;
 }
 
 .clueItem:hover {
     background: #fecaca;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(245, 101, 101, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(245, 101, 101, 0.2);
 }
 
 .clueItem:last-child {
@@ -159,11 +164,13 @@
 
     .scrollableClueList {
         padding: 12px;
-        max-height: calc(var(--max-visible-items) * 55px);
+        gap: 8px;
     }
 
     .clueItem {
         padding: 10px;
+        min-width: 180px;
+        max-width: 220px;
     }
 
     .clueWord {

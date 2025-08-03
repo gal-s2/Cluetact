@@ -1,10 +1,11 @@
 import styles from "./ProfileModal.module.css";
 
-export default function PlayerProfileModal({ selectedPlayer }) {
-    console.log(selectedPlayer);
+export default function PlayerProfileModal({ selectedPlayer, onClose }) {
+    if (!selectedPlayer) return null;
+
     return (
         <div className={styles.profileCard}>
-            <button className={styles.closeButton} onClick={() => setSelectedPlayer(null)}>
+            <button className={styles.closeButton} onClick={onClose}>
                 &times;
             </button>
             <h2 className={styles.username}>{selectedPlayer.username}</h2>
@@ -14,10 +15,13 @@ export default function PlayerProfileModal({ selectedPlayer }) {
             </div>
             <div className={styles.stats}>
                 <p>
-                    <strong>Wins:</strong> {selectedPlayer.wins}
+                    <strong>Wins:</strong> {selectedPlayer.wins || 0}
                 </p>
                 <p>
-                    <strong>Total Games:</strong> {selectedPlayer.totalGames}
+                    <strong>Total Games:</strong> {selectedPlayer.totalGames || 0}
+                </p>
+                <p>
+                    <strong>Current Score:</strong> {selectedPlayer.gameScore || 0} pts
                 </p>
             </div>
         </div>

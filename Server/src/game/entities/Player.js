@@ -1,5 +1,5 @@
 class Player {
-    constructor(username, avatar = "0") {
+    constructor(username, avatar) {
         this.username = username;
         this.gameScore = 0;
         this.role = null;

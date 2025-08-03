@@ -45,7 +45,7 @@ function SeekerCluePanel() {
                 </>
             )}
 
-            <h3 className={styles.heading}>Blocked Clues</h3>
+            {/* <h3 className={styles.heading}>Blocked Clues</h3>
             {historyClues.length === 0 ? (
                 <p className={styles.emptyMessage}>No history yet.</p>
             ) : (
@@ -54,7 +54,7 @@ function SeekerCluePanel() {
                         <ClueBubble key={clue.id} from={clue.from} definition={clue.definition} blocked={clue.blocked} invalid={clue.invalid} word={clue.word} />
                     ))}
                 </div>
-            )}
+            )} */}
         </div>
     );
 }

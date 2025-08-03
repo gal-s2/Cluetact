@@ -35,6 +35,7 @@ class Room {
     }
 
     setPlayersData(keeper, seekers) {
+        console.log("keeper", keeper);
         this.players = [];
         const keeperPlayer = new Player(keeper.username, keeper.avatar);
         keeperPlayer.setRole(ROLES.KEEPER);
@@ -134,8 +135,8 @@ class Room {
         this.currentRound.addClue(clueGiverUsername, clueWord, clueDefinition);
         Logger.logClueSet(this.roomId, clueGiverUsername, clueDefinition);
 
-        this.timer = new CountdownTimer(TURN_INTERVAL, onRaceTimeout);
-        this.timer.start();
+        //this.timer = new CountdownTimer(TURN_INTERVAL, onRaceTimeout);
+        //this.timer.start();
 
         return true;
     }

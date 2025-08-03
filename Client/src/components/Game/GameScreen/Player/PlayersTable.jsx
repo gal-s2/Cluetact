@@ -9,6 +9,7 @@ export default function PlayersTable() {
     const { user } = useUser();
     const { gameState } = useGameRoom();
     const { players } = gameState;
+
     const [selectedPlayer, setSelectedPlayer] = useState(null);
 
     const handlePlayerCardClick = (player) => {
