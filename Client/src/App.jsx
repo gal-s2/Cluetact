@@ -22,13 +22,13 @@ function App() {
     const { user } = useUser();
 
     return (
-        <>
+        <div className="appContainer">
             <Router>
                 <AppRoutesWithSocketNavigation user={user} />
                 <GlobalNotificationBox />
             </Router>
             <Footer />
-        </>
+        </div>
     );
 }
 

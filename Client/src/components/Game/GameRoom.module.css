@@ -1,309 +1,152 @@
+/* GameRoom.module.css */
+
 .room {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(to bottom right, #fefefe, #eafaf1);
+    height: 100vh;
+    display: grid;
+    grid-template-areas:
+        "word word"
+        "sidebar main";
+    grid-template-columns: 280px 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 0;
     position: relative;
-    padding: 1rem 0;
-    width: 100%;
-    overflow-x: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    overflow: hidden;
 }
 
-.content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem;
-    gap: 1.5rem;
-    width: 100%;
-    max-width: 1200px;
-    box-sizing: border-box;
-    flex: 1 0 auto;
-}
-
-/* Word display - Mobile first */
+/* Word Display - Top Center */
 .wordDisplay {
-    width: 100%;
-    background: white;
-    padding: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border: 2px solid #81c784;
-    margin-bottom: 0.5rem;
-}
-
-/* Clues section - Better mobile spacing */
-.cluesSection {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 0 0.5rem;
-}
-
-/* Submit clue wrapper - Better mobile positioning */
-.clueSubmitWrapper {
-    width: 100%;
+    grid-area: word;
     display: flex;
     justify-content: center;
-    padding: 1rem 0.5rem 2rem;
-    position: sticky;
-    bottom: 0;
-    background: linear-gradient(transparent, rgba(254, 254, 254, 0.9) 20%);
-    backdrop-filter: blur(8px);
-    margin-top: auto;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    min-height: 80px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Wait overlay - Better mobile coverage */
+/* Sidebar - Left Side */
+.sidebar {
+    grid-area: sidebar;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-right: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.timerContainer {
+    flex-shrink: 0;
+}
+
+/* Main Game Panel */
+.main {
+    grid-area: main;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Clue Submit */
+.clueSubmitWrapper {
+    padding: 15px;
+    background: rgba(72, 187, 120, 0.1);
+    border-bottom: 1px solid rgba(72, 187, 120, 0.2);
+    flex-shrink: 0;
+}
+
+/* Clues Section */
+.cluesSection {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.blockedCluesContainer {
+    padding: 0 15px 15px;
+    flex-shrink: 0;
+}
+
+/* Overlays */
 .waitOverlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(240, 240, 255, 0.85);
-    backdrop-filter: blur(3px);
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 10;
-    pointer-events: none;
-    padding: 1rem;
-    box-sizing: border-box;
-    pointer-events: all;
+    justify-content: center;
+    z-index: 200;
+    backdrop-filter: blur(5px);
 }
 
 .waitMessage {
-    background-color: white;
-    border: 2px solid #ffd180;
-    padding: 1.5rem;
-    border-radius: 14px;
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #444;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
     text-align: center;
-    pointer-events: all;
-    max-width: 90vw;
-    word-wrap: break-word;
-    pointer-events: all;
+    font-size: 18px;
+    color: #2d3748;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .popupWrapper {
-    pointer-events: all;
-    width: 100%;
-    max-width: 90vw;
-    display: flex;
-    justify-content: center;
-}
-
-/* Exit button - Better mobile positioning */
-.exitButton {
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
-    background: rgb(225, 52, 52);
-    border: none;
-    border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    z-index: 1000;
-    font-size: 1rem;
-}
-
-.exitButton:hover {
-    background: rgb(173, 18, 18);
-    transform: scale(1.05);
-}
-
-.exitButton:active {
-    transform: scale(0.95);
-}
-
-.countdownTimer {
-    position: fixed;
-    bottom: 1rem;
-    left: 1rem;
-    background: rgba(59, 130, 246, 0.9);
-    color: white;
-    border: 2px solid rgba(59, 130, 246, 1);
+    background: white;
     border-radius: 12px;
-    padding: 0.5rem 1rem;
-    font-size: 1.25rem;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(4px);
-    z-index: 1000;
-    min-width: 60px;
-    text-align: center;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: auto;
 }
 
-/* Tablet styles */
-@media (min-width: 480px) {
-    .content {
-        padding: 1.5rem;
-        gap: 2rem;
-    }
-
-    .waitMessage {
-        padding: 2rem;
-        font-size: 1.2rem;
-        max-width: 80vw;
-    }
-
-    .exitButton {
-        width: 52px;
-        height: 52px;
-        bottom: 1.5rem;
-        right: 1.5rem;
-    }
-
-    .countdownTimer {
-        bottom: 1.5rem;
-        left: 1.5rem;
-        padding: 0.75rem 1.25rem;
-        font-size: 1.3rem;
-    }
-
-    .clueSubmitWrapper {
-        padding: 1.5rem 0 2rem;
-    }
-}
-
-/* Small desktop */
-@media (min-width: 768px) {
+/* Responsive Design */
+@media (max-width: 768px) {
     .room {
-        padding: 1.5rem 0;
+        grid-template-areas:
+            "word"
+            "sidebar"
+            "main";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
     }
 
-    .content {
-        padding: 2rem;
-        gap: 2.5rem;
-        max-width: 1000px;
+    .sidebar {
+        max-height: 35vh;
+        border-right: none;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
     }
 
+    .clueSubmitWrapper,
     .cluesSection {
-        padding: 0;
+        padding: 10px;
     }
+}
 
-    .clueSubmitWrapper {
-        padding: 2rem 0;
-        position: static;
-        background: none;
-        backdrop-filter: none;
-        margin-top: 0;
+@media (max-width: 480px) {
+    .clueSubmitWrapper,
+    .cluesSection {
+        padding: 8px;
     }
 
     .waitMessage {
-        padding: 2.5rem;
-        font-size: 1.4rem;
-        max-width: 70vw;
+        padding: 20px;
+        font-size: 16px;
     }
 
-    .exitButton {
-        width: 56px;
-        height: 56px;
-        bottom: 2rem;
-        right: 2rem;
-    }
-
-    .countdownTimer {
-        bottom: 2rem;
-        left: 2rem;
-        padding: 1rem 1.5rem;
-        font-size: 1.4rem;
-    }
-}
-
-/* Large desktop */
-@media (min-width: 1024px) {
-    .content {
-        padding: 2rem 3vw;
-        max-width: 1200px;
-    }
-
-    .waitMessage {
-        max-width: 600px;
-    }
-}
-
-/* Mobile landscape optimization */
-@media (max-height: 600px) and (orientation: landscape) {
-    .room {
-        padding: 0.5rem 0;
-    }
-
-    .content {
-        gap: 1rem;
-        padding: 0.5rem;
-    }
-
-    .wordDisplay {
-        padding: 0.75rem;
-        margin-bottom: 0;
-    }
-
-    .clueSubmitWrapper {
-        padding: 0.5rem 0.5rem 1rem;
-    }
-
-    .exitButton {
-        width: 44px;
-        height: 44px;
-        bottom: 0.5rem;
-        right: 0.5rem;
-    }
-
-    .countdownTimer {
-        bottom: 0.5rem;
-        left: 0.5rem;
-        padding: 0.4rem 0.8rem;
-        font-size: 1.1rem;
-    }
-}
-
-/* Dark mode support (if needed) */
-@media (prefers-color-scheme: dark) {
-    .room {
-        background: linear-gradient(to bottom right, #1a1a1a, #0d4f1c);
-    }
-
-    .wordDisplay {
-        background: #2a2a2a;
-        border-color: #4a9f4d;
-        color: white;
-    }
-
-    .waitMessage {
-        background-color: #2a2a2a;
-        color: #f0f0f0;
-        border-color: #ffb74d;
-    }
-
-    .countdownTimer {
-        background: rgba(59, 130, 246, 0.95);
-        border-color: rgba(96, 165, 250, 1);
-    }
-}
-
-/* Accessibility improvements */
-@media (prefers-reduced-motion: reduce) {
-    .exitButton {
-        transition: none;
-    }
-
-    .exitButton:hover {
-        transform: none;
-    }
-
-    .exitButton:active {
-        transform: none;
+    .popupWrapper {
+        padding: 15px;
     }
 }

@@ -14,7 +14,6 @@ export default function PlayersTable() {
     const handlePlayerCardClick = (player) => {
         const userData = players.find((p) => p.username === player.username);
         setSelectedPlayer(userData);
-        console.log("recognized selected player ", player);
     };
 
     // Separate players by role
@@ -54,7 +53,7 @@ export default function PlayersTable() {
                 </div>
             </div>
 
-            {selectedPlayer && <PlayerProfileModal player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />}
+            {selectedPlayer && <PlayerProfileModal selectedPlayer={selectedPlayer} onClose={() => setSelectedPlayer(null)} />}
         </div>
     );
 }

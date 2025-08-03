@@ -1,68 +1,47 @@
 /* BlockedCluesSection.module.css */
 
-/* Blocked section container */
 .blockedSection {
-    margin-top: 1.5rem;
-    border-top: 1px solid #e8e8e8;
-    padding-top: 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(160, 174, 192, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
-/* Blocked section header (clickable button) */
 .blockedHeader {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 12px 15px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    padding: 0.875rem 1.25rem;
-    background: linear-gradient(135deg, #fff8f0, #ffe8d1);
-    border: 2px solid #ffb74d;
-    border-radius: 12px;
-    transition: all 0.25s ease;
-    margin-bottom: 0.75rem;
-    user-select: none;
-    width: 100%;
-    font: inherit;
-    text-align: left;
+    transition: all 0.2s ease;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
 }
 
 .blockedHeader:hover {
-    background: linear-gradient(135deg, #ffe8d1, #ffd4a3);
-    border-color: #ff9800;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.15);
+    background: #e9ecef;
 }
 
-.blockedHeader:active {
-    transform: translateY(0);
+.blockedHeader[aria-expanded="true"] {
+    background: #dee2e6;
 }
 
-.blockedHeader:focus-visible {
-    outline: 3px solid #4caf50;
-    outline-offset: 2px;
-}
-
-/* Sub heading for blocked clues */
 .subHeading {
+    font-size: 14px;
+    color: #4a5568;
     margin: 0;
-    font-size: 1.1rem;
     font-weight: 600;
-    color: #e65100;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
 }
 
-.subHeading::before {
-    content: "🚫";
-    font-size: 1rem;
-}
-
-/* Toggle icon */
 .toggleIcon {
-    font-size: 0.9rem;
-    color: #e65100;
+    font-size: 12px;
+    color: #718096;
     transition: transform 0.3s ease;
-    font-weight: bold;
     transform: rotate(-90deg);
 }
 
@@ -70,75 +49,28 @@
     transform: rotate(0deg);
 }
 
-/* Content wrapper for smooth animation */
 .contentWrapper {
     overflow: hidden;
-    transition: max-height 0.35s ease-in-out, padding 0.35s ease-in-out;
+    transition: all 0.3s ease;
 }
 
 .contentWrapper.collapsed {
     max-height: 0;
-    padding: 0;
+    opacity: 0;
 }
 
 .contentWrapper.expanded {
-    max-height: 800px; /* Generous max height for animation */
-    padding-bottom: 0.5rem;
+    max-height: 400px;
+    opacity: 1;
 }
 
-/* Scrollable clue list container */
 .scrollableClueList {
-    max-height: calc(var(--max-visible-items, 4) * 80px);
+    --max-visible-items: 4;
+    max-height: calc(var(--max-visible-items) * 60px);
     overflow-y: auto;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    margin-right: -8px;
-    scroll-behavior: smooth;
-    background: #fafafa;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-
-    /* Custom scrollbar styling */
+    padding: 15px;
     scrollbar-width: thin;
-    scrollbar-color: #4caf50 #f0f8f0;
-}
-
-/* Style for individual clue items */
-.clueItem {
-    background: #fff;
-    border: 1px solid #e8e8e8;
-    border-radius: 6px;
-    padding: 0.75rem 1rem;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.clueItem:hover {
-    border-color: #d0d0d0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    transform: translateY(-1px);
-}
-
-.clueWord {
-    font-size: 1.1rem;
-    font-weight: 600;
-    line-height: 1.3;
-    color: #333;
-    margin-bottom: 0.25rem;
-}
-
-.clueDefinition {
-    font-size: 0.9rem;
-    line-height: 1.4;
-    color: #666;
-    font-style: italic;
-}
-
-.scrollableClueList > *:last-child {
-    margin-bottom: 0;
+    scrollbar-color: #cbd5e0 #f7fafc;
 }
 
 .scrollableClueList::-webkit-scrollbar {
@@ -146,301 +78,139 @@
 }
 
 .scrollableClueList::-webkit-scrollbar-track {
-    background: #f0f8f0;
+    background: #f7fafc;
     border-radius: 3px;
 }
 
 .scrollableClueList::-webkit-scrollbar-thumb {
-    background: #4caf50;
+    background: #cbd5e0;
     border-radius: 3px;
-    transition: background 0.2s ease;
 }
 
 .scrollableClueList::-webkit-scrollbar-thumb:hover {
-    background: #45a049;
+    background: #a0aec0;
 }
 
-/* Mobile adjustments */
+.clueItem {
+    background: #fed7d7;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-left: 3px solid #f56565;
+    transition: all 0.2s ease;
+    animation: slideIn 0.3s ease-out;
+}
+
+.clueItem:hover {
+    background: #fecaca;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(245, 101, 101, 0.2);
+}
+
+.clueItem:last-child {
+    margin-bottom: 0;
+}
+
+.clueWord {
+    font-weight: 600;
+    color: #e53e3e;
+    font-size: 14px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.clueDefinition {
+    font-size: 12px;
+    color: #4a5568;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Empty state */
+.emptyState {
+    padding: 20px;
+    text-align: center;
+    color: #a0aec0;
+    font-style: italic;
+    font-size: 14px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .blockedHeader {
+        padding: 10px 12px;
+    }
+
+    .subHeading {
+        font-size: 13px;
+    }
+
+    .scrollableClueList {
+        padding: 12px;
+        max-height: calc(var(--max-visible-items) * 55px);
+    }
+
+    .clueItem {
+        padding: 10px;
+    }
+
+    .clueWord {
+        font-size: 13px;
+    }
+
+    .clueDefinition {
+        font-size: 11px;
+    }
+
+    .contentWrapper.expanded {
+        max-height: 350px;
+    }
+}
+
 @media (max-width: 480px) {
-    .blockedSection {
-        margin-top: 1rem;
-        padding-top: 0.75rem;
-    }
-
     .blockedHeader {
-        padding: 0.75rem 1rem;
-        border-radius: 10px;
-        margin-bottom: 0.5rem;
+        padding: 8px 10px;
     }
 
     .subHeading {
-        font-size: 1rem;
-    }
-
-    .subHeading::before {
-        font-size: 0.9rem;
-    }
-
-    .toggleIcon {
-        font-size: 0.8rem;
+        font-size: 12px;
     }
 
     .scrollableClueList {
-        max-height: calc(var(--max-visible-items, 3) * 70px);
-        padding: 0.5rem;
-        margin-right: -4px;
-        gap: 0.375rem;
+        padding: 10px;
+        max-height: calc(var(--max-visible-items) * 50px);
     }
 
-    .scrollableClueList > * {
-        padding: 0.625rem 0.75rem;
+    .clueItem {
+        padding: 8px;
     }
 
     .clueWord {
-        font-size: 1rem;
+        font-size: 12px;
     }
 
     .clueDefinition {
-        font-size: 0.85rem;
-    }
-
-    .scrollableClueList::-webkit-scrollbar {
-        width: 4px;
+        font-size: 10px;
     }
 
     .contentWrapper.expanded {
-        max-height: 600px;
-    }
-}
-
-/* Small mobile screens */
-@media (max-width: 360px) {
-    .blockedHeader {
-        padding: 0.625rem 0.875rem;
+        max-height: 300px;
     }
 
-    .subHeading {
-        font-size: 0.95rem;
-        gap: 0.4rem;
-    }
-
-    .scrollableClueList {
-        max-height: calc(var(--max-visible-items, 3) * 65px);
-    }
-}
-
-/* Tablet adjustments */
-@media (min-width: 481px) and (max-width: 768px) {
-    .blockedHeader {
-        padding: 1rem 1.375rem;
-        border-radius: 14px;
-    }
-
-    .subHeading {
-        font-size: 1.15rem;
-    }
-
-    .toggleIcon {
-        font-size: 1rem;
-    }
-
-    .scrollableClueList {
-        max-height: calc(var(--max-visible-items, 4) * 75px);
-        padding: 0.625rem;
-        margin-right: -6px;
-    }
-}
-
-/* Desktop adjustments */
-@media (min-width: 769px) {
-    .blockedSection {
-        margin-top: 2rem;
-        padding-top: 1.25rem;
-    }
-
-    .blockedHeader {
-        padding: 1rem 1.5rem;
-        border-radius: 16px;
-        margin-bottom: 0.875rem;
-    }
-
-    .subHeading {
-        font-size: 1.2rem;
-    }
-
-    .toggleIcon {
-        font-size: 1.1rem;
-    }
-
-    .scrollableClueList {
-        max-height: calc(var(--max-visible-items, 4) * 85px);
-        padding: 0.75rem;
-        margin-right: -8px;
-    }
-
-    .contentWrapper.expanded {
-        max-height: 1000px;
-    }
-}
-
-/* Mobile landscape optimization */
-@media (max-height: 600px) and (orientation: landscape) {
-    .blockedSection {
-        margin-top: 0.75rem;
-        padding-top: 0.5rem;
-    }
-
-    .blockedHeader {
-        padding: 0.625rem 1rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .contentWrapper.expanded {
-        max-height: 400px;
-    }
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-    .blockedSection {
-        border-color: #404040;
-    }
-
-    .blockedHeader {
-        background: linear-gradient(135deg, #2a251f, #3a2f24);
-        border-color: #ff9800;
-        color: #fff;
-    }
-
-    .blockedHeader:hover {
-        background: linear-gradient(135deg, #3a2f24, #4a3929);
-        border-color: #ffb74d;
-    }
-
-    .subHeading {
-        color: #ffb74d;
-    }
-
-    .toggleIcon {
-        color: #ffb74d;
-    }
-
-    .scrollableClueList {
-        scrollbar-color: #66bb6a #333;
-        background: #2a2a2a;
-        border-color: #404040;
-    }
-
-    .scrollableClueList > * {
-        background: #333;
-        border-color: #555;
-        color: #fff;
-    }
-
-    .scrollableClueList > *:hover {
-        background: #3a3a3a;
-        border-color: #666;
-    }
-
-    .clueWord {
-        color: #fff;
-    }
-
-    .clueDefinition {
-        color: #ccc;
-    }
-
-    .scrollableClueList::-webkit-scrollbar-track {
-        background: #2a2a2a;
-    }
-
-    .scrollableClueList::-webkit-scrollbar-thumb {
-        background: #66bb6a;
-    }
-
-    .scrollableClueList::-webkit-scrollbar-thumb:hover {
-        background: #4a9f4d;
-    }
-}
-
-/* Accessibility - Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-    .blockedHeader {
-        transition: background 0.2s ease, border-color 0.2s ease;
-    }
-
-    .blockedHeader:hover {
-        transform: none;
-        box-shadow: none;
-    }
-
-    .blockedHeader:active {
-        transform: none;
-    }
-
-    .toggleIcon {
-        transition: none;
-    }
-
-    .contentWrapper {
-        transition: none;
-    }
-
-    .scrollableClueList > *:hover {
-        transform: none;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    .clueItem:hover {
-        transform: none;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-    .blockedSection {
-        border-color: #000;
-    }
-
-    .blockedHeader {
-        background: #fff;
-        border-color: #000;
-        color: #000;
-    }
-
-    .blockedHeader:hover {
-        background: #f0f0f0;
-    }
-
-    .subHeading {
-        color: #000;
-    }
-
-    .toggleIcon {
-        color: #000;
-    }
-
-    .scrollableClueList {
-        background: #fff;
-        border-color: #000;
-    }
-
-    .scrollableClueList > * {
-        background: #fff;
-        border-color: #000;
-        color: #000;
-    }
-
-    .scrollableClueList > *:hover {
-        background: #f5f5f5;
-    }
-
-    .clueWord {
-        color: #000;
-    }
-
-    .clueDefinition {
-        color: #000;
+    .emptyState {
+        padding: 15px;
+        font-size: 13px;
     }
 }

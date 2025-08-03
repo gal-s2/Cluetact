@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import styles from "./GameRoom.module.css";
+import styles from "./CountdownTimer.module.css";
 
 function CountdownTimer({ timeLeft, setTimeLeft, onComplete }) {
     const endTimeRef = useRef(null);

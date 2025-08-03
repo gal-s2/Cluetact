@@ -20,7 +20,6 @@ import CountdownTimer from "./CountdownTimer";
 
 function GameRoom() {
     const { timeLeft, setTimeLeft, gameState, loading, handleExitGame, notification } = useGameRoom();
-
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     if (loading) return <Spinner />;
@@ -42,41 +41,57 @@ function GameRoom() {
             )}
 
             {gameState.cluetact && <CluetactPopup />}
-
             {gameState.winners?.length > 0 && <GameOverPopup />}
 
-            <div className={styles.content}>
-                <PlayersTable players={gameState.players} />
+            {gameState.isWordChosen && (
+                <div className={styles.wordDisplay}>
+                    <WordDisplay />
+                </div>
+            )}
 
-                {notification.message && <NotificationBox />}
-
-                {gameState.isWordChosen && (
-                    <div className={styles.wordDisplay}>
-                        <WordDisplay />
+            <div className={styles.sidebar}>
+                {/* Timer */}
+                {timeLeft > 0 && (
+                    <div className={styles.timerContainer}>
+                        <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />
                     </div>
                 )}
 
-                <>
-                    <PlayerMainMessageHeader></PlayerMainMessageHeader>
-                </>
+                {/* Players Table */}
+                <PlayersTable players={gameState.players} />
+            </div>
 
+            {/* Main Game Panel */}
+            <div className={styles.main}>
+                {/* Notification */}
+                {notification.message && <NotificationBox />}
+
+                {/* Header Message */}
+                <PlayerMainMessageHeader />
+
+                {/* Clue Submit */}
                 {!gameState.isKeeper && gameState.isWordChosen && gameState.isSubmittingClue && !gameState.activeClue && (
                     <div className={styles.clueSubmitWrapper}>
                         <SubmitClue />
                     </div>
                 )}
 
+                {/* Clues Section */}
                 <div className={styles.cluesSection}>{gameState.isKeeper ? <KeeperCluePanel /> : <SeekerCluePanel />}</div>
 
-                {gameState.isKeeper && <BlockedCluesSection maxVisibleItems={5} />}
-                <FloatingLetters />
+                {/* Blocked Clues for Keeper */}
+                {gameState.isKeeper && (
+                    <div className={styles.blockedCluesContainer}>
+                        <BlockedCluesSection maxVisibleItems={5} />
+                    </div>
+                )}
             </div>
-
-            {timeLeft > 0 && <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />}
 
             <ExitGameButton onExit={() => setShowConfirmModal(true)} />
 
             {showConfirmModal && <ConfimModal handleCloseModal={() => setShowConfirmModal(false)} handleConfirmExit={handleExitGame} />}
+
+            <FloatingLetters />
         </div>
     );
 }

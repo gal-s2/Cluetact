@@ -1,21 +1,18 @@
+/* PlayerMainMessageHeader.module.css */
+
 .headerContainer {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1rem;
-    padding: 0 0.5rem;
-    box-sizing: border-box;
+    padding: 15px;
+    background: rgba(67, 56, 202, 0.1);
+    border-bottom: 1px solid rgba(67, 56, 202, 0.2);
+    flex-shrink: 0;
 }
 
 .messageBox {
-    background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
-    border: 2px solid #81c784;
-    border-radius: 16px;
-    padding: 1rem 1.5rem;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-    transform: translateY(0);
-    transition: all 0.3s ease;
-    max-width: 100%;
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #667eea;
     position: relative;
     overflow: hidden;
 }
@@ -24,128 +21,84 @@
     content: "";
     position: absolute;
     top: 0;
-    left: -100%;
-    width: 100%;
+    left: 0;
+    width: 4px;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    animation: shimmer 2s infinite;
+    background: linear-gradient(180deg, #667eea, #764ba2);
 }
 
 .statusMessage {
+    font-size: 14px;
+    color: #2d3748;
     margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #2e7d32;
-    text-align: center;
+    font-weight: 500;
     line-height: 1.4;
-    letter-spacing: 0.3px;
 }
 
-@keyframes shimmer {
-    0% {
-        left: -100%;
-    }
+/* Different message types */
+.messageBox.waiting {
+    border-left-color: #ed8936;
+    background: #fffaf0;
+}
+
+.messageBox.waiting::before {
+    background: linear-gradient(180deg, #ed8936, #f6ad55);
+}
+
+.messageBox.active {
+    border-left-color: #48bb78;
+    background: #f0fff4;
+}
+
+.messageBox.active::before {
+    background: linear-gradient(180deg, #48bb78, #68d391);
+}
+
+.messageBox.urgent {
+    border-left-color: #f56565;
+    background: #fed7d7;
+    animation: subtleGlow 2s infinite;
+}
+
+.messageBox.urgent::before {
+    background: linear-gradient(180deg, #f56565, #fc8181);
+}
+
+@keyframes subtleGlow {
+    0%,
     100% {
-        left: 100%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        box-shadow: 0 2px 8px rgba(245, 101, 101, 0.2);
     }
 }
 
-/* Tablet styles */
-@media (min-width: 480px) {
+/* Responsive adjustments */
+@media (max-width: 768px) {
     .headerContainer {
-        margin-bottom: 1.5rem;
-        padding: 0;
+        padding: 12px;
     }
 
     .messageBox {
-        padding: 1.25rem 2rem;
-        border-radius: 18px;
+        padding: 10px;
     }
 
     .statusMessage {
-        font-size: 1.1rem;
+        font-size: 13px;
     }
 }
 
-/* Desktop styles */
-@media (min-width: 768px) {
+@media (max-width: 480px) {
     .headerContainer {
-        margin-bottom: 2rem;
+        padding: 10px;
     }
 
     .messageBox {
-        padding: 1.5rem 2.5rem;
-        border-radius: 20px;
-        max-width: 600px;
+        padding: 8px;
     }
 
     .statusMessage {
-        font-size: 1.2rem;
-        font-weight: 500;
-    }
-
-    .messageBox:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-    }
-}
-
-/* Large desktop */
-@media (min-width: 1024px) {
-    .messageBox {
-        padding: 1.75rem 3rem;
-        max-width: 700px;
-    }
-
-    .statusMessage {
-        font-size: 1.3rem;
-    }
-}
-
-/* Mobile landscape optimization */
-@media (max-height: 600px) and (orientation: landscape) {
-    .headerContainer {
-        margin-bottom: 0.5rem;
-    }
-
-    .messageBox {
-        padding: 0.75rem 1.25rem;
-        border-radius: 12px;
-    }
-
-    .statusMessage {
-        font-size: 0.9rem;
-        line-height: 1.3;
-    }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    .messageBox {
-        background: linear-gradient(135deg, #1a3d1a 0%, #0f2a0f 100%);
-        border-color: #4a9f4d;
-    }
-
-    .statusMessage {
-        color: #81c784;
-    }
-
-    .messageBox::before {
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    }
-}
-
-/* Accessibility improvements */
-@media (prefers-reduced-motion: reduce) {
-    .messageBox {
-        transition: none;
-    }
-
-    .messageBox:hover {
-        transform: none;
-    }
-
-    .messageBox::before {
-        animation: none;
+        font-size: 12px;
     }
 }

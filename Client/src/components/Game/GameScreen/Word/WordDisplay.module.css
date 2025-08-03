@@ -1,218 +1,51 @@
-/* WordDisplay - Shows the word being guessed */
-.wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    padding: 1rem;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    border: 3px solid #81c784;
-    margin: 0 auto;
-    max-width: 600px;
-    min-height: 80px;
-}
+/* WordDisplay.module.css */
 
 .word {
-    font-family: "Courier New", "Monaco", monospace;
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: bold;
+    color: #2d3748;
     text-align: center;
-    color: #2e7d32;
-    text-transform: uppercase;
-    line-height: 1.2;
-    word-break: break-all;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 0.1em;
+    letter-spacing: 2px;
+    font-family: "Courier New", monospace;
 }
 
-/* Individual character styling */
-.word b {
-    display: inline-block;
-    min-width: 0.8em;
-    text-align: center;
-    position: relative;
-}
-
-/* Revealed characters */
 .revealed {
-    color: #1b5e20;
-    background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
-    border-radius: 6px;
-    padding: 0.1em 0.05em;
-    box-shadow: 0 2px 4px rgba(27, 94, 32, 0.1);
-    animation: revealPulse 0.6s ease-out;
+    color: #48bb78;
+    text-shadow: 0 2px 4px rgba(72, 187, 120, 0.3);
 }
 
-/* Hidden characters */
 .hidden {
-    color: #999;
-    background: linear-gradient(135deg, #f5f5f5, #eeeeee);
-    border-radius: 6px;
-    padding: 0.1em 0.05em;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    color: #a0aec0;
+    text-shadow: 0 2px 4px rgba(160, 174, 192, 0.3);
 }
 
-/* Reveal animation */
-@keyframes revealPulse {
-    0% {
+/* Animation for letter reveals */
+.revealed {
+    animation: letterReveal 0.5s ease-out;
+}
+
+@keyframes letterReveal {
+    from {
+        color: #a0aec0;
         transform: scale(0.8);
-        background: #ffeb3b;
     }
-    50% {
-        transform: scale(1.1);
-        background: #fff59d;
-    }
-    100% {
+    to {
+        color: #48bb78;
         transform: scale(1);
-        background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
     }
 }
 
-/* Mobile adjustments */
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .word {
+        font-size: clamp(20px, 5vw, 32px);
+        letter-spacing: 1px;
+    }
+}
+
 @media (max-width: 480px) {
-    .wrapper {
-        padding: 0.75rem;
-        min-height: 70px;
-        border-width: 2px;
-    }
-
     .word {
-        font-size: 1.5rem;
-        letter-spacing: 0.1em;
-    }
-
-    .word b {
-        min-width: 0.7em;
-    }
-}
-
-/* Small mobile screens */
-@media (max-width: 360px) {
-    .word {
-        font-size: 1.3rem;
-        letter-spacing: 0.08em;
-    }
-}
-
-/* Tablet adjustments */
-@media (min-width: 481px) and (max-width: 768px) {
-    .wrapper {
-        padding: 1.25rem;
-        min-height: 90px;
-    }
-
-    .word {
-        font-size: 2.2rem;
-        letter-spacing: 0.12em;
-    }
-}
-
-/* Desktop adjustments */
-@media (min-width: 769px) {
-    .wrapper {
-        padding: 1.5rem;
-        min-height: 100px;
-        max-width: 700px;
-    }
-
-    .word {
-        font-size: 2.5rem;
-        letter-spacing: 0.18em;
-    }
-
-    .word b {
-        min-width: 0.9em;
-    }
-}
-
-/* Large desktop */
-@media (min-width: 1024px) {
-    .word {
-        font-size: 3rem;
-        letter-spacing: 0.2em;
-    }
-
-    .word b {
-        min-width: 1em;
-    }
-}
-
-/* Mobile landscape optimization */
-@media (max-height: 600px) and (orientation: landscape) {
-    .wrapper {
-        padding: 0.5rem;
-        min-height: 60px;
-    }
-
-    .word {
-        font-size: 1.4rem;
-        letter-spacing: 0.08em;
-    }
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-    .wrapper {
-        background: #2a2a2a;
-        border-color: #4a9f4d;
-    }
-
-    .word {
-        color: #66bb6a;
-    }
-
-    .revealed {
-        color: #81c784;
-        background: linear-gradient(135deg, #1a2e1a, #2e4a2e);
-        box-shadow: 0 2px 4px rgba(129, 199, 132, 0.2);
-    }
-
-    .hidden {
-        color: #666;
-        background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
-        box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.05);
-    }
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-    .revealed {
-        animation: none;
-    }
-
-    @keyframes revealPulse {
-        to {
-            transform: none;
-        }
-    }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-    .wrapper {
-        border-width: 4px;
-        border-color: #000;
-    }
-
-    .word {
-        color: #000;
-    }
-
-    .revealed {
-        background: #fff;
-        color: #000;
-        border: 2px solid #000;
-    }
-
-    .hidden {
-        background: #ccc;
-        color: #666;
-        border: 1px solid #999;
+        font-size: clamp(18px, 6vw, 28px);
+        letter-spacing: 0.5px;
     }
 }

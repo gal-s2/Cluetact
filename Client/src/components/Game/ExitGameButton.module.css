@@ -1,0 +1,118 @@
+/* ExitGameButton.module.css */
+
+.exitButton {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(245, 101, 101, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+    z-index: 100;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.exitButton:hover {
+    background: rgba(229, 62, 62, 0.95);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(245, 101, 101, 0.4);
+}
+
+.exitButton:active {
+    transform: scale(0.95);
+}
+
+/* Tooltip */
+.exitButton::before {
+    content: "Exit Game";
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    font-weight: normal;
+}
+
+.exitButton:hover::before {
+    opacity: 1;
+}
+
+/* Warning state when game is active */
+.exitButton.gameActive {
+    animation: pulseWarning 3s infinite;
+}
+
+@keyframes pulseWarning {
+    0%,
+    90%,
+    100% {
+        background: rgba(245, 101, 101, 0.9);
+    }
+    95% {
+        background: rgba(255, 140, 0, 0.9);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .exitButton {
+        top: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+    }
+
+    .exitButton::before {
+        right: 55px;
+        font-size: 11px;
+        padding: 5px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .exitButton {
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .exitButton::before {
+        right: 50px;
+        font-size: 10px;
+        padding: 4px 6px;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .exitButton {
+        background: #d32f2f;
+        border: 2px solid white;
+    }
+
+    .exitButton:hover {
+        background: #b71c1c;
+    }
+}

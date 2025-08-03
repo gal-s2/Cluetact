@@ -1,18 +1,9 @@
 import classNames from "classnames";
 import styles from "./PlayerCard.module.css";
-import React, { useState } from "react";
-
-const images = import.meta.glob("../../../../assets/avatars/avatar_*.png", { eager: true });
-
-const avatarMap = Object.fromEntries(
-    Object.entries(images).map(([path, mod]) => {
-        const index = path.match(/avatar_(\d+)\.png$/)?.[1];
-        return [index, mod.default];
-    })
-);
+import { avatarList } from "@utils/loadAvatars";
 
 const PlayerCard = ({ player, me, isActiveClueGiver, onClick, setSelectedPlayer }) => {
-    const avatarSrc = avatarMap[player.avatar] || avatarMap[0];
+    const avatarSrc = avatarList[player.avatar] || avatarList[0];
 
     return (
         <div
@@ -49,7 +40,7 @@ const PlayerCard = ({ player, me, isActiveClueGiver, onClick, setSelectedPlayer 
                             {player.role === "keeper" ? "🔐 KEEPER" : "🔍 SEEKER"}
                         </span>
                         {me && <span className={styles.youTag}>YOU</span>}
-                        {isActiveClueGiver && <span className={styles.turnTag}>YOUR TURN</span>}
+                        {isActiveClueGiver && <span className={styles.turnTag}>CURRENT TURN</span>}
                     </div>
                 </div>
             </div>
