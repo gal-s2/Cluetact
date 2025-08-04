@@ -151,6 +151,14 @@ class Room {
             Logger.logClueWordAlreadyUsed(this.roomId, clueWord);
             return [false, "Invalid guess, this clue has already been given"];
         }
+        console.log("clue word ", clueWord);
+        console.log("clue definition ", clueDefinition);
+        if (clueDefinition.toLowerCase().includes(clueWord.toLowerCase())) {
+            return [
+                false,
+                "Invalid guess, definition containing the word cannot be used.",
+            ];
+        }
 
         this.currentRound.addClue(clueGiverUsername, clueWord, clueDefinition);
         Logger.logClueSet(this.roomId, clueGiverUsername, clueDefinition);
