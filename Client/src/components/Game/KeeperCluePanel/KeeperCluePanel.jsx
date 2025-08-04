@@ -3,7 +3,7 @@ import socket from "@services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import { useUser } from "@contexts/UserContext";
-import GuessStream from "../GameScreen/Shared/GuessStream";
+import GuessStream from "../GuessStream/GuessStream";
 import styles from "./KeeperCluePanel.module.css";
 
 function KeeperCluePanel({ maxVisibleItems = 4 }) {

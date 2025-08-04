@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import PlayerCard from "./PlayerCard";
+import PlayerCard from "../PlayerCard/PlayerCard";
 import { useUser } from "@contexts/UserContext";
 import { useGameRoom } from "@contexts/GameRoomContext";
-import styles from "./PlayersTable.module.css";
+import styles from "./PlayersList.module.css";
 
-export default function PlayersTable() {
+export default function PlayersList() {
     const { user } = useUser();
     const { gameState } = useGameRoom();
     const { players } = gameState;

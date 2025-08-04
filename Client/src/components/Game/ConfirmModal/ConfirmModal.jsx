@@ -1,7 +1,7 @@
 import Button from "@common/Button/Button";
 import Modal from "@common/Modal/Modal";
 
-function confirmModal({ handleCloseModal, handleConfirmExit }) {
+function ConfirmModal({ handleCloseModal, handleConfirmExit }) {
     return (
         <Modal onClose={handleCloseModal}>
             <h3>Are you sure you want to quit the room?</h3>
@@ -17,4 +17,4 @@ function confirmModal({ handleCloseModal, handleConfirmExit }) {
     );
 }
 
-export default confirmModal;
+export default ConfirmModal;

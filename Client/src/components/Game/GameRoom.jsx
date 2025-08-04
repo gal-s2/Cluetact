@@ -1,22 +1,22 @@
+import { useState } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
-import WordDisplay from "./GameScreen/Word/WordDisplay";
+import WordDisplay from "./WordDisplay/WordDisplay";
 import Spinner from "@common/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
-import KeeperWordPopup from "./Modals/KeeperWordPopup";
-import SubmitClue from "./GameScreen/Seeker/SubmitClue";
-import CluetactPopup from "./Modals/CluetactPopup";
-import BlockedCluesSection from "./GameScreen/BlockedClues/BlockedCluesSection";
-import GameOverPopup from "./Modals/GameOverPopup";
+import KeeperWordPopup from "./KeeperWordPopup/KeeperWordPopup";
+import SubmitClue from "./SubmitClue/SubmitClue";
+import CluetactPopup from "./CluetactPopup/CluetactPopup";
+import BlockedCluesSection from "./BlockedClues/BlockedCluesSection";
+import GameOverPopup from "./GameOverPopup/GameOverPopup";
 import FloatingLetters from "../Animations/FloatingLetters/FloatingLetters";
 import NotificationBox from "./NotificationBox/NotificationBox";
-import PlayersTable from "./GameScreen/Player/PlayersTable";
-import PlayerMainMessageHeader from "./GameScreen/Player/PlayerMainMessageHeader";
-import SeekerCluePanel from "./GameScreen/Seeker/SeekerCluePanel";
+import PlayersList from "./PlayersList/PlayersList";
+import PlayerMainMessageHeader from "./PlayerMainMessageHeader/PlayerMainMessageHeader";
+import SeekerCluePanel from "./SeekerCluePanel/SeekerCluePanel";
 import KeeperCluePanel from "@components/Game/KeeperCluePanel/KeeperCluePanel";
-import ExitGameButton from "./ExitGameButton";
-import ConfimModal from "./Modals/ConfirmModal";
-import { useState } from "react";
-import CountdownTimer from "./CountdownTimer";
+import ExitGameButton from "./ExitGameButton/ExitGameButton";
+import ConfirmModal from "./ConfirmModal/ConfirmModal";
+import CountdownTimer from "./CountdownTimer/CountdownTimer";
 import Modal from "@components/common/Modal/Modal";
 
 function GameRoom() {
@@ -28,7 +28,6 @@ function GameRoom() {
     return (
         <div className={styles.room}>
             {!gameState.isKeeper && !gameState.isWordChosen && <Modal>Waiting for the keeper to choose a word...</Modal>}
-
             {gameState.isKeeper && !gameState.isWordChosen && <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />}
 
             {gameState.cluetact && <CluetactPopup />}
@@ -49,7 +48,7 @@ function GameRoom() {
                 )}
 
                 {/* Players Table */}
-                <PlayersTable players={gameState.players} />
+                <PlayersList players={gameState.players} />
             </div>
 
             {/* Main Game Panel */}
@@ -79,7 +78,7 @@ function GameRoom() {
 
             <ExitGameButton onExit={() => setShowConfirmModal(true)} />
 
-            {showConfirmModal && <ConfimModal handleCloseModal={() => setShowConfirmModal(false)} handleConfirmExit={handleExitGame} />}
+            {showConfirmModal && <ConfirmModal handleCloseModal={() => setShowConfirmModal(false)} handleConfirmExit={handleExitGame} />}
 
             <FloatingLetters />
         </div>

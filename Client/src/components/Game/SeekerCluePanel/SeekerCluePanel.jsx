@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import { useUser } from "@contexts/UserContext";
-import GuessActionLine from "./GuessActionLine";
-import GuessStream from "../Shared/GuessStream";
-import ClueBubble from "../Shared/ClueBubble";
+import GuessActionLine from "../GuessActionLine/GuessActionLine";
+import GuessStream from "../GuessStream/GuessStream";
+import ClueBubble from "../ClueBubble/ClueBubble";
 import styles from "./SeekerCluePanel.module.css";
 
 function SeekerCluePanel() {
