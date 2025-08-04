@@ -147,7 +147,15 @@ class Room {
             return [false, `Word should start with ${revealedPrefix}`];
         }
 
-        if (this.wordsGuessedSuccesfully.has(clueWord.toLowerCase())) {
+        if (
+            this.currentRound.clues.find(
+                (clue) => clue.toLowerCase() === clueWord.toLowerCase()
+            )
+        ) {
+            console.log("word Gessed Success: ");
+            console.log(this.wordsGuessedSuccesfully);
+            console.log("clue word: ");
+            console.log(clueWord);
             Logger.logClueWordAlreadyUsed(this.roomId, clueWord);
             return [false, "Invalid guess, this clue has already been given"];
         }
@@ -184,7 +192,7 @@ class Room {
 
         // Reset clue history and guesses
         session.resetCluesHistory();
-        session.guesses = [];
+        session.resetGuessesHistory();
     }
 
     async submitGuess(guesserUsername, guessWord, clueId) {
@@ -221,7 +229,7 @@ class Room {
         if (clue && clue.word === guessLower) {
             clue.active = false;
             result.correct = true;
-            this.currentRound.guesses = [];
+            this.currentRound.resetGuessesHistory();
             if (guesserUsername === this.keeperUsername) {
                 this.handleCorrectBlockByKeeper(guesserUsername);
                 result.revealed = false;

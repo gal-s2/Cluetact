@@ -65,6 +65,9 @@ class GameRound {
     resetCluesHistory() {
         this.clues = [];
     }
+    resetGuessesHistory() {
+        this.guesses = [];
+    }
 
     getClues() {
         return this.clues;
