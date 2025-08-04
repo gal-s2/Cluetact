@@ -79,8 +79,6 @@ function CluetactPopup() {
                                 {isDirectWordGuess
                                     ? "Amazing guess! The word was:"
                                     : "The complete word is:"}
-                                {console.log("Game state:")}
-                                {console.log(gameState)}
                                 <span className={styles.finalWord}>
                                     {gameState.cluetact.word.toUpperCase()}
                                 </span>
