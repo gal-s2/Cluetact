@@ -118,10 +118,13 @@ const gameController = {
         const room = gameManager.getRoomBySocket(socket);
         if (!room) return;
 
-        const valid = await room.setKeeperWordWithValidation(word);
+        const result = await room.setKeeperWordWithValidation(
+            word.toLowerCase()
+        );
 
-        if (valid) {
+        if (result[0]) {
             word = room.getKeeperWord();
+            room.keepersWordsHistory.add(word.toLowerCase());
             const clueGiverUsername =
                 room.seekersUsernames[room.indexOfSeekerOfCurrentTurn];
             // send all players in room a word chosen
@@ -146,6 +149,7 @@ const gameController = {
                 SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN,
                 {
                     success: false,
+                    message: result[1],
                 },
                 socket
             );

@@ -5,6 +5,7 @@ const { isValidEnglishWord } = require("../../utils/wordUtils");
 const Logger = require("../Logger");
 const User = require("../../models/User");
 const CountdownTimer = require("../entities/CountdownTimer");
+const { set } = require("mongoose");
 
 const BASE_POINTS = 15;
 const CLUE_BONUS = 5;
@@ -30,6 +31,7 @@ class Room {
         this.pastKeepers.add(this.keeperUsername);
         this.isWordFullyRevealed = false;
         this.timer = null;
+        this.keepersWordsHistory = new Set();
     }
 
     playersArrayToUsernamesOfSeekers(players) {
@@ -152,10 +154,6 @@ class Room {
                 (clue) => clue.toLowerCase() === clueWord.toLowerCase()
             )
         ) {
-            console.log("word Gessed Success: ");
-            console.log(this.wordsGuessedSuccesfully);
-            console.log("clue word: ");
-            console.log(clueWord);
             Logger.logClueWordAlreadyUsed(this.roomId, clueWord);
             return [false, "Invalid guess, this clue has already been given"];
         }
@@ -393,15 +391,21 @@ class Room {
     }
 
     async setKeeperWordWithValidation(word) {
+        if (this.keepersWordsHistory.has(word)) {
+            return [
+                false,
+                "Previous keeper has already chose this word, Please enter another word",
+            ];
+        }
         const valid = await isValidEnglishWord(word);
         if (!valid) {
             Logger.logInvalidKeeperWord(this.roomId, word);
-            return false;
+            return [false, "Invalid English word, please try again"];
         }
 
         this.currentRound.setKeeperWord(word);
         Logger.logKeeperWordSet(this.roomId, word);
-        return true;
+        return [true];
     }
 }
 
