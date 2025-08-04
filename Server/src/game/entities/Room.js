@@ -151,8 +151,6 @@ class Room {
             Logger.logClueWordAlreadyUsed(this.roomId, clueWord);
             return [false, "Invalid guess, this clue has already been given"];
         }
-        console.log("clue word ", clueWord);
-        console.log("clue definition ", clueDefinition);
         if (clueDefinition.toLowerCase().includes(clueWord.toLowerCase())) {
             return [
                 false,
@@ -194,21 +192,24 @@ class Room {
         const revealed = session.revealedLetters;
         const revealedPrefix = revealed.toLowerCase();
         const guessLower = guessWord.toLowerCase();
-        const result = { correct: false, isGameEnded: false };
-
-        const valid = await isValidEnglishWord(guessWord);
-        if (!valid) {
-            Logger.logInvalidSeekerWord(this.roomId, guessWord);
-            return result;
-        }
+        const result = { correct: false, isGameEnded: false, message: "" };
 
         if (!guessLower.startsWith(revealedPrefix)) {
             Logger.logInvalidGuess(this.roomId, guessWord, revealedPrefix);
+            result.message = "Guess should start with " + revealedPrefix;
             return result;
         }
 
         if (session.guesses.find((g) => g.word.toLowerCase() === guessLower)) {
             Logger.logDuplicateGuess(this.roomId, guessWord);
+            result.message = "Guess has already been submitted";
+            return result;
+        }
+        const valid = await isValidEnglishWord(guessWord);
+
+        if (!valid) {
+            Logger.logInvalidSeekerWord(this.roomId, guessWord);
+            result.message = "Invalid English word, please try again";
             return result;
         }
 

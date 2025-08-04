@@ -239,7 +239,7 @@ const gameController = {
             );
             messageEmitter.emitToSocket(
                 SOCKET_EVENTS.SERVER_ERROR_MESSAGE,
-                "Incorrect Guess",
+                result.message,
                 socket
             );
         }

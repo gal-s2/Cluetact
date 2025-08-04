@@ -82,7 +82,7 @@ function CluetactPopup() {
                                 {console.log("Game state:")}
                                 {console.log(gameState)}
                                 <span className={styles.finalWord}>
-                                    {gameState.revealedWord}
+                                    {gameState.cluetact.word.toUpperCase()}
                                 </span>
                             </p>
                             <p className={styles.gameEndMessage}>
