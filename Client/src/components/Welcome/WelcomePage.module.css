@@ -1,72 +1,127 @@
-/* WelcomePage - Main Container */
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     min-height: 100vh;
     background: linear-gradient(to bottom right, #fefefe, #eafaf1);
-    padding: 2rem;
+    position: relative;
+    padding: 1rem;
+    width: 100%;
+    overflow-x: hidden;
     font-family: "Poppins", "Inter", sans-serif;
-    position: relative;
-    overflow: hidden;
 }
 
-/* Subtle background pattern */
-.container::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: radial-gradient(circle at 25% 25%, rgba(129, 199, 132, 0.05) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(79, 195, 247, 0.05) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 1;
+/* Header Section */
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 600px;
 }
 
-/* Logo Styling */
 .logo {
-    width: 120px;
-    height: 120px;
-    border-radius: 20px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    margin-bottom: 3rem;
-    transition: all 0.3s ease;
-    position: relative;
-    z-index: 2;
-    border: 3px solid rgba(255, 255, 255, 0.8);
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: block;
 }
 
-.logo:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+.header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2e7d32;
+    margin: 0 0 0.5rem 0;
+    padding: 0 1rem;
 }
 
-/* Buttons Container */
-.buttons {
+.subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* Main Content */
+.main {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    margin-bottom: 2rem;
+}
+
+.actionCards {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
     width: 100%;
-    max-width: 320px;
-    position: relative;
-    z-index: 2;
+    max-width: 400px;
+    align-items: center;
 }
 
-/* Primary Button */
+/* Card Styling */
+.card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.primaryCard:hover {
+    border-color: #4fc3f7;
+}
+
+.secondaryCard:hover {
+    border-color: #81c784;
+}
+
+.cardIcon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.card h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #2e7d32;
+    margin: 0 0 0.5rem 0;
+}
+
+.card p {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.4;
+}
+
+/* Button Styling */
 .primaryButton {
     background: linear-gradient(135deg, #4fc3f7, #29b6f6);
     color: white;
     border: none;
-    padding: 1.2rem 2rem;
-    font-size: 1.2rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    border-radius: 14px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(79, 195, 247, 0.3);
-    letter-spacing: 0.5px;
+    box-shadow: 0 3px 12px rgba(79, 195, 247, 0.3);
+    width: 100%;
     position: relative;
     overflow: hidden;
 }
@@ -88,28 +143,22 @@
 
 .primaryButton:hover {
     background: linear-gradient(135deg, #29b6f6, #0288d1);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(79, 195, 247, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 18px rgba(79, 195, 247, 0.4);
 }
 
-.primaryButton:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 10px rgba(79, 195, 247, 0.3);
-}
-
-/* Secondary Button */
 .secondaryButton {
     background: linear-gradient(135deg, #81c784, #66bb6a);
     color: white;
     border: none;
-    padding: 1.2rem 2rem;
-    font-size: 1.2rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    border-radius: 14px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(129, 199, 132, 0.3);
-    letter-spacing: 0.5px;
+    box-shadow: 0 3px 12px rgba(129, 199, 132, 0.3);
+    width: 100%;
     position: relative;
     overflow: hidden;
 }
@@ -131,74 +180,129 @@
 
 .secondaryButton:hover {
     background: linear-gradient(135deg, #66bb6a, #4caf50);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(129, 199, 132, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 18px rgba(129, 199, 132, 0.4);
 }
 
-.secondaryButton:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 10px rgba(129, 199, 132, 0.3);
+/* Bottom Info Section */
+.infoSection {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 3rem;
+    padding: 2rem 1rem;
+    background: #f0fdf4;
+    border-top: 2px solid #c8e6c9;
+    width: 100%;
+    max-width: 1024px;
+    box-sizing: border-box;
+}
+
+.infoColumn {
+    flex: 1;
+    text-align: center;
+}
+
+.infoColumn h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #2e7d32;
+    margin-bottom: 0.5rem;
+}
+
+.infoColumn p {
+    font-size: 1rem;
+    color: #444;
+    line-height: 1.4;
+    margin: 0;
 }
 
 /* Tablet Styles */
 @media (min-width: 480px) {
     .container {
-        padding: 2.5rem;
+        padding: 1.5rem;
+    }
+
+    .header {
+        margin-bottom: 2.5rem;
     }
 
     .logo {
-        width: 140px;
-        height: 140px;
-        margin-bottom: 3.5rem;
+        width: 90px;
+        height: 90px;
     }
 
-    .buttons {
-        max-width: 360px;
+    .header h1 {
+        font-size: 2.2rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+    }
+
+    .actionCards {
+        flex-direction: row;
         gap: 2rem;
+        max-width: 600px;
     }
 
-    .primaryButton,
-    .secondaryButton {
-        padding: 1.4rem 2.5rem;
-        font-size: 1.3rem;
+    .card {
+        max-width: 280px;
     }
 }
 
 /* Desktop Styles */
 @media (min-width: 768px) {
     .container {
-        padding: 3rem;
+        padding: 2rem;
+    }
+
+    .header {
+        margin-bottom: 3rem;
     }
 
     .logo {
-        width: 160px;
-        height: 160px;
-        margin-bottom: 4rem;
+        width: 100px;
+        height: 100px;
     }
 
-    .buttons {
-        max-width: 400px;
+    .header h1 {
+        font-size: 2.5rem;
+    }
+
+    .subtitle {
+        font-size: 1.3rem;
+    }
+
+    .actionCards {
         gap: 2.5rem;
+        max-width: 700px;
     }
 
-    .primaryButton,
-    .secondaryButton {
-        padding: 1.6rem 3rem;
-        font-size: 1.4rem;
-        border-radius: 16px;
+    .card {
+        padding: 2.5rem;
+        max-width: 320px;
+    }
+
+    .infoSection {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .infoColumn {
+        padding: 0 1rem;
     }
 }
 
 /* Large Desktop */
 @media (min-width: 1024px) {
-    .logo {
-        width: 180px;
-        height: 180px;
-        margin-bottom: 4.5rem;
+    .header h1 {
+        font-size: 2.8rem;
     }
 
-    .buttons {
-        max-width: 450px;
+    .actionCards {
+        gap: 3rem;
+        max-width: 800px;
     }
 }
 
@@ -208,24 +312,54 @@
         background: linear-gradient(to bottom right, #1a1a1a, #0d4f1c);
     }
 
-    .container::before {
-        background-image: radial-gradient(circle at 25% 25%, rgba(129, 199, 132, 0.1) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(79, 195, 247, 0.1) 0%, transparent 50%);
+    .card {
+        background: #2a2a2a;
     }
 
-    .logo {
-        border-color: rgba(129, 199, 132, 0.3);
+    .primaryCard:hover {
+        border-color: #4fc3f7;
+    }
+
+    .secondaryCard:hover {
+        border-color: #81c784;
+    }
+
+    .header h1 {
+        color: #81c784;
+    }
+
+    .subtitle,
+    .card p {
+        color: #ccc;
+    }
+
+    .card h2 {
+        color: #81c784;
+    }
+
+    .infoSection {
+        background: #1a2e1a;
+        border-color: #4a9f4d;
+    }
+
+    .infoColumn h3 {
+        color: #81c784;
+    }
+
+    .infoColumn p {
+        color: #ccc;
     }
 }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-    .logo,
+    .card,
     .primaryButton,
     .secondaryButton {
         transition: none;
     }
 
-    .logo:hover,
+    .card:hover,
     .primaryButton:hover,
     .secondaryButton:hover {
         transform: none;
@@ -254,19 +388,33 @@
         padding: 1rem;
     }
 
+    .header {
+        margin-bottom: 1.5rem;
+    }
+
     .logo {
-        width: 80px;
-        height: 80px;
-        margin-bottom: 2rem;
+        width: 60px;
+        height: 60px;
     }
 
-    .buttons {
-        gap: 1rem;
+    .header h1 {
+        font-size: 1.8rem;
     }
 
-    .primaryButton,
-    .secondaryButton {
-        padding: 1rem 1.5rem;
-        font-size: 1.1rem;
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .actionCards {
+        gap: 1.5rem;
+    }
+
+    .card {
+        padding: 1.5rem;
+    }
+
+    .infoSection {
+        margin-top: 2rem;
+        padding: 1.5rem 1rem;
     }
 }
