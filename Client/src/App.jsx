@@ -13,7 +13,6 @@ import WaitingRoom from "@components/WaitingRoom/WaitingRoom";
 import useSocketNavigation from "@hooks/useSocketNavigation";
 import Overwatch from "@components/Overwatch/Overwatch";
 import GlobalNotificationBox from "@components/General/GlobalNotificationBox/GlobalNotificationBox";
-import About from "@components/About/About";
 import AdminRoute from "@components/Routes/AdminRoute/AdminRoute";
 import Footer from "@components/General/Footer/Footer";
 import SocketPageWrapper from "@components/Routes/SocketPageWrapper/SocketPageWrapper";
@@ -81,15 +80,6 @@ function AppRoutesWithSocketNavigation({ user }) {
                             <Lobby />
                         </SocketPageWrapper>
                     </PrivateRoute>
-                }
-            />
-
-            <Route
-                path="/about"
-                element={
-                    <PublicRoute>
-                        <About />
-                    </PublicRoute>
                 }
             />
 
