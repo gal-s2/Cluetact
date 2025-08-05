@@ -212,7 +212,7 @@ function Lobby() {
 
     return (
         <div className={styles.container}>
-            <audio ref={audioRef} src={bgMusic} autoPlay loop />
+            {/*<audio ref={audioRef} src={bgMusic} autoPlay loop />*/}
             <LobbyHeader username={user.username} />
 
             {inQueue && (

@@ -9,10 +9,15 @@ class GameManager {
         this.rooms = {};
         this.playerToRoomId = new Map();
         this._queue = new GameQueue();
+        this.callbacks = {};
     }
 
     get queue() {
         return this._queue;
+    }
+
+    setCallbacks(callbacks) {
+        this.callbacks = callbacks;
     }
 
     /**
@@ -22,7 +27,7 @@ class GameManager {
      * @returns {Room} The created room object.
      */
     createRoom(keeper, seekers) {
-        const room = new Room(GameManager.roomId, keeper, seekers);
+        const room = new Room(GameManager.roomId, keeper, seekers, this.callbacks);
 
         this.rooms[GameManager.roomId] = room;
         Logger.logRoomCreated(GameManager.roomId, room.players);
@@ -95,7 +100,7 @@ class GameManager {
         const room = this.getRoom(roomId);
 
         if (room) {
-            room.removePlayer(username);
+            room.removePlayerByUsername(username);
             //if (room.players.length < 3) { right now we delete the room if a player exits
             for (const player of room.players) {
                 this.playerToRoomId.delete(player.username);

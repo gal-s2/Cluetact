@@ -1,20 +1,34 @@
 const Player = require("./Player");
 const GameRound = require("./GameRound");
-const ROLES = require("../constants/roles");
-const POINTS = require("../constants/points");
 const { isValidEnglishWord } = require("../../utils/wordUtils");
 const Logger = require("../Logger");
 const User = require("../../models/User");
 const CountdownTimer = require("../entities/CountdownTimer");
 
+// Constants
+const ROLES = require("../constants/roles");
+const POINTS = require("../constants/points");
+const GAME_STAGES = require("../constants/gameStages");
+
+/**
+ * Game Room Class
+ */
 class Room {
+    // Private properties:
     #roomId;
 
-    constructor(roomId, keeper, seekers) {
+    constructor(roomId, keeper, seekers, callbacks = {}) {
         this.#roomId = roomId;
-        this.status = "PRE-ROUND"; //options: "PRE-ROUND","MID-ROUND","END";
-        this.keeperUsername = keeper.username;
+        this.status = GAME_STAGES.PRE_ROUND;
+        this.callbacks = callbacks;
+
+        // Players
+        this.keepers = null;
+        this.seekers = [];
+        this.players = [];
+        this.keeperUsername = keeper.username; // remove in the future, should use keeper.username
         this.setPlayersData(keeper, seekers);
+
         this.currentRound = new GameRound();
         this.roundsHistory = [];
         this.turnQueue = seekers.map((user) => user.username).slice();
@@ -27,28 +41,55 @@ class Room {
         this.isWordFullyRevealed = false;
         this.timer = null;
         this.keepersWordsHistory = new Set();
+
+        this.setStatus(GAME_STAGES.KEEPER_CHOOSING_WORD);
     }
 
     get roomId() {
         return this.#roomId;
     }
 
+    setStatus(newStatus) {
+        if (!newStatus) return;
+
+        console.log(`changing to ${newStatus} status`);
+        console.log(this.callbacks);
+
+        switch (newStatus) {
+            case GAME_STAGES.KEEPER_CHOOSING_WORD:
+                this.keeperChoosingWordTimer = new CountdownTimer(10, () => {
+                    this.setStatus(GAME_STAGES.MID_ROUND);
+                    this.callbacks?.onKeeperWordTimeout?.(this);
+                });
+
+                this.keeperChoosingWordTimer.start();
+                break;
+
+            default:
+                return;
+        }
+    }
+
     setPlayersData(keeper, seekers) {
-        console.log(keeper);
-        console.log(seekers);
         this.players = [];
         const keeperPlayer = new Player(keeper.username, keeper.avatar);
         keeperPlayer.setRole(ROLES.KEEPER);
         this.players.push(keeperPlayer);
+        this.keeper = keeperPlayer;
 
         seekers.forEach((seeker) => {
             const seekerPlayer = new Player(seeker.username, seeker.avatar);
+            this.seekers.push(seekerPlayer);
             seekerPlayer.setRole(ROLES.SEEKER);
             this.players.push(seekerPlayer);
         });
     }
 
-    removePlayer(username) {
+    /**
+     * Removing player from room by username
+     * @param {string} username
+     */
+    removePlayerByUsername(username) {
         this.players = this.players.filter((player) => player.username !== username);
     }
 
@@ -332,10 +373,16 @@ class Room {
         }
     }
 
+    /**
+     * Checking if given word is valid and if it is, setting it as keeper word
+     * @param {string} word
+     * @returns {Array} [is word valid, reason for when word is not valid]
+     */
     async setKeeperWordWithValidation(word) {
         if (this.keepersWordsHistory.has(word)) {
             return [false, "Previous keeper has already chose this word, Please enter another word"];
         }
+
         const valid = await isValidEnglishWord(word);
         if (!valid) {
             Logger.logInvalidKeeperWord(this.roomId, word);
@@ -343,6 +390,8 @@ class Room {
         }
 
         this.currentRound.setKeeperWord(word);
+        this.keeperChoosingWordTimer?.stop();
+
         Logger.logKeeperWordSet(this.roomId, word);
         return [true];
     }
