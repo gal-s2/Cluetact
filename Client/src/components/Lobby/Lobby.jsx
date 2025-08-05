@@ -15,6 +15,7 @@ import SOCKET_EVENTS from "@shared/socketEvents.json";
 import Modal from "@common/Modal/Modal";
 import bgMusic from "../../assets/audio/lobby-music.mp3";
 import InfoSection from "./InfoSection";
+import MusicToggleButton from "./MusicToggleButton";
 
 function Lobby() {
     const { user, setUser, loading } = useUser();
@@ -25,14 +26,37 @@ function Lobby() {
     const [playMenuOpen, setPlayMenuOpen] = useState(false);
     const [inQueue, setInQueue] = useState(false);
     const { setGlobalNotification } = useGlobalNotification();
+
     const audioRef = useRef(null);
+    const [isMusicOn, setIsMusicOn] = useState(() => {
+        const saved = localStorage.getItem("isMusicOn");
+        return saved === null ? true : saved === "true";
+    });
+
+    const handleMusicToggle = () => {
+        if (!audioRef.current) return;
+
+        if (isMusicOn) {
+            audioRef.current.pause();
+        } else {
+            audioRef.current.play().catch((err) => console.log("Autoplay blocked:", err));
+        }
+
+        setIsMusicOn((prev) => {
+            const newState = !prev;
+            localStorage.setItem("isMusicOn", newState);
+            return newState;
+        });
+    };
 
     useEffect(() => {
         if (audioRef.current) {
             audioRef.current.volume = 0.4;
-            audioRef.current.play().catch((err) => console.log("Autoplay blocked:", err));
+            if (isMusicOn) {
+                audioRef.current.play().catch((err) => console.log("Autoplay blocked:", err));
+            }
         }
-    }, []);
+    }, [isMusicOn]);
 
     if (!user && !loading) {
         console.log("No user found in Lobby.jsx, skipping render.");
@@ -211,9 +235,11 @@ function Lobby() {
                 </div>
             </main>
 
-            {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
-
             <InfoSection />
+
+            <MusicToggleButton isMusicOn={isMusicOn} onToggle={handleMusicToggle} />
+
+            {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
         </div>
     );
 }
