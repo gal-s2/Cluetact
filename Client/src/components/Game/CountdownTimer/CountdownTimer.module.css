@@ -1,0 +1,86 @@
+/* CountdownTimer.module.css */
+
+.countdownTimer {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    text-align: center;
+    padding: 12px;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Courier New", monospace;
+    letter-spacing: 1px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated background for urgency */
+.countdownTimer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Warning state when time is low */
+.countdownTimer.warning {
+    background: linear-gradient(135deg, #ff4757, #ff3742);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+/* Critical state when time is very low */
+.countdownTimer.critical {
+    background: linear-gradient(135deg, #ff3742, #ff2f3a);
+    animation: urgentPulse 0.5s infinite;
+}
+
+@keyframes urgentPulse {
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(255, 55, 66, 0.4);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .countdownTimer {
+        font-size: 18px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .countdownTimer {
+        font-size: 16px;
+        padding: 8px;
+    }
+}

@@ -14,15 +14,15 @@ class GameQueue {
      * @param {User} user
      * @returns {[boolean, string[]]} - Returns an object with roomCreationPossible flag and chosenUsers array.
      */
-    addUser(username) {
-        console.log("[GameQueue] Adding user to queue:", username);
+    addUser(user) {
+        console.log("[GameQueue] Adding user to queue:", user.username);
 
         // if user already in queue, he cannot enter again
-        if (this.awaitingUsers.find((awaitingUser) => username === awaitingUser.username)) {
+        if (this.awaitingUsers.find((awaitingUser) => user.username === awaitingUser.username)) {
             return false;
         }
 
-        this.awaitingUsers.push({ username });
+        this.awaitingUsers.push(user);
 
         return true;
     }

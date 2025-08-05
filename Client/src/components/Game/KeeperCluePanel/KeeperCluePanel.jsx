@@ -3,7 +3,7 @@ import socket from "@services/socket";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import { useUser } from "@contexts/UserContext";
-import GuessStream from "../GameScreen/Shared/GuessStream";
+import GuessStream from "../GuessStream/GuessStream";
 import styles from "./KeeperCluePanel.module.css";
 
 function KeeperCluePanel({ maxVisibleItems = 4 }) {
@@ -79,7 +79,7 @@ function KeeperCluePanel({ maxVisibleItems = 4 }) {
             </div>
 
             {/* Blocked clues section */}
-            {blockedClues.length > 0 && (
+            {/* {blockedClues.length > 0 && (
                 <div className={styles.blockedSection}>
                     <h4 className={styles.subHeading}>Blocked Clues</h4>
                     <div ref={blockedListRef} className={styles.scrollableClueList}>
@@ -91,7 +91,7 @@ function KeeperCluePanel({ maxVisibleItems = 4 }) {
                         ))}
                     </div>
                 </div>
-            )}
+            )} */}
         </div>
     );
 }

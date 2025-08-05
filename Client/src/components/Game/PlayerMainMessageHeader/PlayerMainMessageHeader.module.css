@@ -1,0 +1,104 @@
+/* PlayerMainMessageHeader.module.css */
+
+.headerContainer {
+    padding: 15px;
+    background: rgba(67, 56, 202, 0.1);
+    border-bottom: 1px solid rgba(67, 56, 202, 0.2);
+    flex-shrink: 0;
+}
+
+.messageBox {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #667eea;
+    position: relative;
+    overflow: hidden;
+}
+
+.messageBox::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #667eea, #764ba2);
+}
+
+.statusMessage {
+    font-size: 14px;
+    color: #2d3748;
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Different message types */
+.messageBox.waiting {
+    border-left-color: #ed8936;
+    background: #fffaf0;
+}
+
+.messageBox.waiting::before {
+    background: linear-gradient(180deg, #ed8936, #f6ad55);
+}
+
+.messageBox.active {
+    border-left-color: #48bb78;
+    background: #f0fff4;
+}
+
+.messageBox.active::before {
+    background: linear-gradient(180deg, #48bb78, #68d391);
+}
+
+.messageBox.urgent {
+    border-left-color: #f56565;
+    background: #fed7d7;
+    animation: subtleGlow 2s infinite;
+}
+
+.messageBox.urgent::before {
+    background: linear-gradient(180deg, #f56565, #fc8181);
+}
+
+@keyframes subtleGlow {
+    0%,
+    100% {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        box-shadow: 0 2px 8px rgba(245, 101, 101, 0.2);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .headerContainer {
+        padding: 12px;
+    }
+
+    .messageBox {
+        padding: 10px;
+    }
+
+    .statusMessage {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .headerContainer {
+        padding: 10px;
+    }
+
+    .messageBox {
+        padding: 8px;
+    }
+
+    .statusMessage {
+        font-size: 12px;
+    }
+}

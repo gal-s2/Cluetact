@@ -1,18 +1,25 @@
+/* App.css */
 html,
-body,
-#root {
-    margin: 0;
-    padding: 0;
-    width: 100vw;
+body {
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+    margin: 0;
+}
+
+#root {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .appContainer {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #121212;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100vh;
+}
+
+.mainContent {
+    flex: 1; /* 🟢 This is critical: pushes footer down */
+    display: flex;
+    flex-direction: column;
 }

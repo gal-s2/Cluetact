@@ -6,14 +6,13 @@ import NotFoundPage from "@components/Routes/NotFoundPage/NotFoundPage";
 import AuthForm from "@components/Auth/AuthForm/AuthForm";
 import GameRoomWrapper from "@components/Game/GameRoomWrapper";
 import Lobby from "@components/Lobby/Lobby";
-import WelcomePage from "@components/Welcome/WelcomePage";
+import WelcomePage from "@components/Lobby/WelcomePage";
 import StatsPage from "@components/Stats/StatsPage";
 import ProfileDetails from "@components/Profile/ProfileDetails/ProfileDetails";
 import WaitingRoom from "@components/WaitingRoom/WaitingRoom";
 import useSocketNavigation from "@hooks/useSocketNavigation";
 import Overwatch from "@components/Overwatch/Overwatch";
 import GlobalNotificationBox from "@components/General/GlobalNotificationBox/GlobalNotificationBox";
-import About from "@components/About/About";
 import AdminRoute from "@components/Routes/AdminRoute/AdminRoute";
 import Footer from "@components/General/Footer/Footer";
 import SocketPageWrapper from "@components/Routes/SocketPageWrapper/SocketPageWrapper";
@@ -22,13 +21,13 @@ function App() {
     const { user } = useUser();
 
     return (
-        <>
+        <div className="appContainer">
             <Router>
                 <AppRoutesWithSocketNavigation user={user} />
                 <GlobalNotificationBox />
             </Router>
-            <Footer />
-        </>
+            {/*<Footer />*/}
+        </div>
     );
 }
 
@@ -81,15 +80,6 @@ function AppRoutesWithSocketNavigation({ user }) {
                             <Lobby />
                         </SocketPageWrapper>
                     </PrivateRoute>
-                }
-            />
-
-            <Route
-                path="/about"
-                element={
-                    <PublicRoute>
-                        <About />
-                    </PublicRoute>
                 }
             />
 

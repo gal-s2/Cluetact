@@ -1,0 +1,463 @@
+.cardWrapper {
+    position: relative;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #e2e8f0;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card.expanded {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.card.me {
+    border-left-color: #48bb78;
+    background: linear-gradient(135deg, #f0fff4, #ffffff);
+}
+
+.card.activeClueGiver {
+    border-left-color: #ed8936;
+    background: linear-gradient(135deg, #fffaf0, #ffffff);
+    box-shadow: 0 2px 8px rgba(237, 137, 54, 0.2);
+}
+
+.card.me.activeClueGiver {
+    border-left-color: #f6ad55;
+    background: linear-gradient(135deg, #f0fff4, #fffaf0);
+}
+
+.card.keeper {
+    border-top: 2px solid rgba(245, 101, 101, 0.3);
+}
+
+.card.seeker {
+    border-top: 2px solid rgba(66, 153, 225, 0.3);
+}
+
+/* Inner container */
+.inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Player Image Container */
+.playerImageContainer {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.playerImage {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.card.me .playerImage {
+    border-color: #48bb78;
+    box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.2);
+}
+
+.card.activeClueGiver .playerImage {
+    border-color: #ed8936;
+    box-shadow: 0 0 0 2px rgba(237, 137, 54, 0.2);
+}
+
+.card.me.activeClueGiver .playerImage {
+    border-color: #f6ad55;
+    box-shadow: 0 0 0 2px rgba(246, 173, 85, 0.2);
+}
+
+/* Turn Indicator */
+.turnIndicator {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 16px;
+    height: 16px;
+    background: #ed8936;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.turnDot {
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(0.8);
+    }
+}
+
+/* Player Data Container */
+.playerDataContainer {
+    flex: 1;
+    min-width: 0;
+}
+
+.playerDataContainer h3 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2d3748;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.playerDataContainer p {
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    color: #718096;
+    font-weight: 500;
+}
+
+/* Badge Container */
+.badgeContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+
+.youTag {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.turnTag {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ed8936, #dd6b20);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    animation: glow 2s infinite;
+}
+
+@keyframes glow {
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(237, 137, 54, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(237, 137, 54, 0.6);
+    }
+}
+
+/* Expand Icon */
+.expandIcon {
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.chevron {
+    font-size: 12px;
+    color: #a0aec0;
+    transition: transform 0.2s ease;
+    display: inline-block;
+}
+
+.chevron.rotated {
+    transform: rotate(180deg);
+}
+
+/* Profile Dropdown */
+.profileDropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    animation: slideDown 0.2s ease-out;
+}
+
+.compactProfile {
+    padding: 12px;
+}
+
+.countryRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.countryRow img {
+    border-radius: 2px;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.stat {
+    background: #f7fafc;
+    padding: 6px 8px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.statLabel {
+    display: block;
+    font-size: 10px;
+    color: #718096;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.statValue {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card {
+        padding: 10px;
+    }
+
+    .inner {
+        gap: 10px;
+    }
+
+    .playerImage {
+        width: 45px;
+        height: 45px;
+        border-width: 2px;
+    }
+
+    .turnIndicator {
+        width: 14px;
+        height: 14px;
+    }
+
+    .turnDot {
+        width: 5px;
+        height: 5px;
+    }
+
+    .playerDataContainer h3 {
+        font-size: 13px;
+    }
+
+    .playerDataContainer p {
+        font-size: 11px;
+    }
+
+    .youTag,
+    .turnTag {
+        font-size: 8px;
+        padding: 1px 4px;
+    }
+
+    .compactProfile {
+        padding: 10px;
+    }
+
+    .countryRow {
+        font-size: 11px;
+        margin-bottom: 6px;
+    }
+
+    .statsGrid {
+        gap: 6px;
+    }
+
+    .stat {
+        padding: 4px 6px;
+    }
+
+    .statLabel {
+        font-size: 9px;
+    }
+
+    .statValue {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 8px;
+    }
+
+    .inner {
+        gap: 8px;
+    }
+
+    .playerImage {
+        width: 40px;
+        height: 40px;
+    }
+
+    .turnIndicator {
+        width: 12px;
+        height: 12px;
+    }
+
+    .turnDot {
+        width: 4px;
+        height: 4px;
+    }
+
+    .playerDataContainer h3 {
+        font-size: 12px;
+    }
+
+    .playerDataContainer p {
+        font-size: 10px;
+    }
+
+    .badgeContainer {
+        gap: 3px;
+    }
+
+    .youTag,
+    .turnTag {
+        font-size: 7px;
+        padding: 1px 3px;
+    }
+
+    .compactProfile {
+        padding: 8px;
+    }
+
+    .countryRow {
+        font-size: 10px;
+        margin-bottom: 4px;
+    }
+
+    .statsGrid {
+        gap: 4px;
+    }
+
+    .stat {
+        padding: 3px 4px;
+    }
+
+    .statLabel {
+        font-size: 8px;
+    }
+
+    .statValue {
+        font-size: 11px;
+    }
+}
+
+/* Status indicators for online/offline */
+.statusIndicator {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.statusIndicator.online {
+    background: #48bb78;
+}
+
+.statusIndicator.offline {
+    background: #a0aec0;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .card {
+        border: 2px solid #000;
+    }
+
+    .playerImage {
+        border-color: #000;
+    }
+
+    .playerDataContainer h3 {
+        color: #000;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .card,
+    .playerImage,
+    .turnDot,
+    .turnTag,
+    .chevron,
+    .profileDropdown {
+        animation: none;
+        transition: none;
+    }
+
+    .card:hover {
+        transform: none;
+    }
+}

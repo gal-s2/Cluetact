@@ -1,10 +1,10 @@
-/* Lobby - Main Container */
+/* Shared styles for Lobby and Welcome pages */
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(to bottom right, #fefefe, #eafaf1);
+    background: linear-gradient(135deg, #fefefe 0%, #f0fdf4 50%, #eafaf1 100%);
     position: relative;
     padding: 1rem;
     width: 100%;
@@ -12,71 +12,134 @@
     font-family: "Poppins", "Inter", sans-serif;
 }
 
-/* Header Section */
+/* Header Section - Enhanced to match welcome style */
 .header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
     width: 100%;
     max-width: 600px;
+    padding: 2rem 0;
+    position: relative;
+}
+
+.header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #4caf50, #81c784);
+    border-radius: 2px;
+    opacity: 0.7;
 }
 
 .logo {
-    height: 60px;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: 70px;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(76, 175, 80, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 24px rgba(76, 175, 80, 0.3);
 }
 
 .header h1 {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #2e7d32;
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2e7d32, #4caf50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin: 0;
     padding: 0 1rem;
+    letter-spacing: -0.5px;
+}
+
+/* Welcome page specific subtitle */
+.subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+    font-weight: 400;
+    margin-top: 0.5rem;
 }
 
 /* Main Content */
 .main {
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
     display: flex;
     justify-content: center;
     flex: 1;
+    margin-bottom: 2rem;
 }
 
+/* Lobby-specific section group */
 .sectionGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 400px;
+    align-items: center;
+    min-height: 300px;
+    padding-bottom: 3rem;
+}
+
+/* Welcome page specific action cards */
+.actionCards {
     display: flex;
     flex-direction: column;
     gap: 2rem;
     width: 100%;
     max-width: 400px;
     align-items: center;
-    /* Remove fixed height to allow for dropdown expansion */
-    min-height: 300px;
-    padding-bottom: 2rem;
 }
 
-/* Card Styling */
+/* Enhanced Card Styling */
 .card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border: 2px solid transparent;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(129, 199, 132, 0.2);
     width: 100%;
-    max-width: 300px;
+    max-width: 320px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    display: inline-block;
-    /* Ensure cards don't overlap dropdowns */
     z-index: 1;
+    overflow: visible;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.05), rgba(129, 199, 132, 0.05));
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
 }
 
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    border-color: #81c784;
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(76, 175, 80, 0.2);
+    border-color: rgba(76, 175, 80, 0.4);
+}
+
+.card:hover::before {
+    opacity: 1;
 }
 
 /* When dropdown is open, increase z-index */
@@ -84,44 +147,148 @@
     z-index: 10;
 }
 
-/* Dropdown Menu - Fixed for mobile */
+/* Welcome page specific card variants */
+.primaryCard:hover {
+    border-color: #4fc3f7;
+}
+
+.secondaryCard:hover {
+    border-color: #81c784;
+}
+
+.cardIcon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.card h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #2e7d32;
+    margin: 0 0 0.5rem 0;
+}
+
+.card p {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.4;
+}
+
+/* Welcome page button styles */
+.primaryButton {
+    background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 12px rgba(79, 195, 247, 0.3);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.primaryButton::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.primaryButton:hover::before {
+    left: 100%;
+}
+
+.primaryButton:hover {
+    background: linear-gradient(135deg, #29b6f6, #0288d1);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 18px rgba(79, 195, 247, 0.4);
+}
+
+.secondaryButton {
+    background: linear-gradient(135deg, #81c784, #66bb6a);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 12px rgba(129, 199, 132, 0.3);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.secondaryButton::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.secondaryButton:hover::before {
+    left: 100%;
+}
+
+.secondaryButton:hover {
+    background: linear-gradient(135deg, #66bb6a, #4caf50);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 18px rgba(129, 199, 132, 0.4);
+}
+
+/* Enhanced Dropdown Menu (Lobby specific) */
 .dropdown {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     margin-top: 1rem;
-    background: white;
-    border: 2px solid #e8f5e8;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(129, 199, 132, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(76, 175, 80, 0.15);
     overflow: hidden;
-    animation: dropdownSlide 0.2s ease-out;
+    animation: dropdownSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100;
-    /* Ensure dropdown doesn't get cut off */
     min-width: 100%;
 }
 
 @keyframes dropdownSlide {
     from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(-16px) scale(0.95);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
 .dropdown button {
     background: none;
     border: none;
-    padding: 1rem 1.5rem;
+    padding: 1.2rem 1.5rem;
     cursor: pointer;
     font-size: 1rem;
     font-weight: 500;
     text-align: center;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     color: #333;
     width: 100%;
     position: relative;
@@ -129,79 +296,141 @@
 }
 
 .dropdown button:hover {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(129, 199, 132, 0.08));
     color: #2e7d32;
+    transform: translateX(4px);
 }
 
 .dropdown button:not(:last-child)::after {
     content: "";
     position: absolute;
     bottom: 0;
-    left: 1rem;
-    right: 1rem;
+    left: 1.5rem;
+    right: 1.5rem;
     height: 1px;
-    background: #f0f0f0;
+    background: linear-gradient(90deg, transparent, rgba(129, 199, 132, 0.3), transparent);
 }
 
-/* Mobile-specific dropdown adjustments */
-@media (max-width: 479px) {
-    .sectionGroup {
-        gap: 3rem;
-        /* Add extra space between cards on mobile */
-        padding-bottom: 4rem;
-        /* Extra bottom padding for dropdown space */
-    }
-
-    .dropdown {
-        /* On mobile, position dropdown with more space */
-        margin-top: 1.5rem;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    .dropdown button {
-        padding: 1.2rem 1.5rem;
-        font-size: 1.1rem;
-        /* Larger touch targets on mobile */
-    }
+/* Enhanced Bottom Info Section */
+.infoSection {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    margin-top: auto;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, rgba(240, 253, 244, 0.9), rgba(232, 245, 233, 0.9));
+    backdrop-filter: blur(10px);
+    border-top: 2px solid rgba(200, 230, 201, 0.5);
+    width: 100%;
+    max-width: 1200px;
+    box-sizing: border-box;
+    border-radius: 24px 24px 0 0;
+    position: relative;
 }
 
-/* Modal Content */
+.infoSection::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #4caf50, #81c784);
+    border-radius: 2px;
+    opacity: 0.6;
+}
+
+.infoColumn {
+    flex: 1;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.infoColumn:hover {
+    transform: translateY(-4px);
+}
+
+.infoColumn h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2e7d32, #4caf50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.infoColumn h3::after {
+    content: "";
+    position: absolute;
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 2px;
+    background: linear-gradient(90deg, #4caf50, #81c784);
+    border-radius: 1px;
+    opacity: 0.7;
+}
+
+.infoColumn p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* Modal Content Enhancements (Lobby specific) */
 .modalContent h2 {
     color: #2e7d32;
     margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
 }
 
 .modalContent p {
     color: #555;
     margin-bottom: 1.5rem;
     font-size: 1.1rem;
+    text-align: center;
 }
 
 .modalContent strong {
     color: #2e7d32;
     font-weight: 700;
-    font-size: 1.2rem;
-    letter-spacing: 2px;
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    background: rgba(76, 175, 80, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    display: inline-block;
 }
 
 .modalContent input {
     width: 100%;
     margin: 1rem 0;
-    padding: 1rem;
+    padding: 1.2rem;
     font-size: 1.1rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
+    border: 2px solid rgba(224, 224, 224, 0.5);
+    border-radius: 12px;
     box-sizing: border-box;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     font-family: inherit;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
 }
 
 .modalContent input:focus {
     outline: none;
     border-color: #81c784;
-    box-shadow: 0 0 0 3px rgba(129, 199, 132, 0.1);
+    box-shadow: 0 0 0 4px rgba(129, 199, 132, 0.15);
+    background: rgba(255, 255, 255, 1);
 }
 
 .modalContent input::placeholder {
@@ -213,44 +442,52 @@
 .modalActions {
     display: flex;
     gap: 1rem;
-    margin-top: 1.5rem;
+    margin-top: 2rem;
     flex-direction: column;
 }
 
 .modalActions .buttonPrimary,
 .modalActions .buttonSecondary {
     margin: 0;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-/* Queue Loading */
+/* Enhanced Queue Loading (Lobby specific) */
 .queueLoading {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 2rem;
 }
 
 .queueLoading p {
-    font-size: 1.3rem;
-    font-weight: 500;
-    color: #2e7d32;
+    font-size: 1.4rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #2e7d32, #4caf50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin: 0;
     text-align: center;
 }
 
 .typingDots {
     display: flex;
-    gap: 0.4rem;
-    margin-bottom: 1rem;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .typingDots span {
-    width: 0.8rem;
-    height: 0.8rem;
+    width: 1rem;
+    height: 1rem;
     background: linear-gradient(135deg, #4fc3f7, #81c784);
     border-radius: 50%;
     animation: bounce 1.4s infinite ease-in-out;
-    box-shadow: 0 2px 8px rgba(79, 195, 247, 0.3);
+    box-shadow: 0 4px 12px rgba(79, 195, 247, 0.4);
 }
 
 .typingDots span:nth-child(2) {
@@ -269,12 +506,12 @@
         opacity: 0.7;
     }
     40% {
-        transform: translateY(-12px) scale(1.1);
+        transform: translateY(-16px) scale(1.15);
         opacity: 1;
     }
 }
 
-/* Tablet Styles */
+/* Responsive Design */
 @media (min-width: 480px) {
     .container {
         padding: 1.5rem;
@@ -285,23 +522,68 @@
     }
 
     .logo {
-        height: 70px;
+        width: 90px;
+        height: 90px;
     }
 
     .header h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
     }
 
-    .sectionGroup {
+    .subtitle {
+        font-size: 1.2rem;
+    }
+
+    .actionCards {
         flex-direction: row;
         gap: 2rem;
         max-width: 600px;
-        /* Reset padding for larger screens */
-        padding-bottom: 2rem;
     }
 
     .card {
         max-width: 280px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding: 2rem;
+    }
+
+    .infoSection {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 3rem;
+        padding: 4rem 3rem;
+    }
+
+    .infoColumn {
+        padding: 1.5rem;
+    }
+
+    .sectionGroup {
+        flex-direction: row;
+        gap: 3rem;
+        max-width: 700px;
+        padding-bottom: 2rem;
+    }
+
+    .actionCards {
+        gap: 2.5rem;
+        max-width: 700px;
+    }
+
+    .card {
+        padding: 2.5rem;
+        max-width: 320px;
+    }
+
+    .header h1 {
+        font-size: 2.4rem;
+    }
+
+    .subtitle {
+        font-size: 1.3rem;
     }
 
     .modalActions {
@@ -309,69 +591,121 @@
     }
 }
 
-/* Desktop Styles */
-@media (min-width: 768px) {
-    .container {
-        padding: 2rem;
-    }
-
-    .header {
-        margin-bottom: 3rem;
-    }
-
-    .logo {
-        height: 80px;
-    }
-
+@media (min-width: 1024px) {
     .header h1 {
-        font-size: 2.2rem;
+        font-size: 2.6rem;
     }
 
     .sectionGroup {
-        gap: 2.5rem;
-        max-width: 700px;
+        gap: 4rem;
+        max-width: 800px;
+    }
+
+    .actionCards {
+        gap: 3rem;
+        max-width: 800px;
     }
 
     .card {
-        padding: 2rem;
-        max-width: 320px;
-    }
-
-    .modalContent {
+        max-width: 350px;
         padding: 2.5rem;
     }
 }
 
-/* Large Desktop */
-@media (min-width: 1024px) {
-    .header h1 {
-        font-size: 2.5rem;
-    }
-
+/* Mobile-specific adjustments */
+@media (max-width: 479px) {
     .sectionGroup {
         gap: 3rem;
-        max-width: 800px;
+        padding-bottom: 4rem;
+    }
+
+    .dropdown {
+        margin-top: 1.5rem;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .dropdown button {
+        padding: 1.3rem 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .infoSection {
+        padding: 2rem 1rem;
+        margin-top: 2rem;
+    }
+
+    .header h1 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Mobile landscape optimization */
+@media (max-height: 600px) and (orientation: landscape) {
+    .container {
+        padding: 1rem;
+    }
+
+    .header {
+        margin-bottom: 1.5rem;
+    }
+
+    .logo {
+        width: 60px;
+        height: 60px;
+    }
+
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .actionCards {
+        gap: 1.5rem;
+    }
+
+    .card {
+        padding: 1.5rem;
+    }
+
+    .infoSection {
+        margin-top: 2rem;
+        padding: 1.5rem 1rem;
     }
 }
 
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     .container {
-        background: linear-gradient(to bottom right, #1a1a1a, #0d4f1c);
+        background: linear-gradient(135deg, #0a0a0a 0%, #0d2818 50%, #1a1a1a 100%);
     }
 
     .card {
-        background: #2a2a2a;
-        border-color: #4a9f4d;
+        background: rgba(42, 42, 42, 0.95);
+        border-color: rgba(129, 199, 132, 0.3);
     }
 
     .header h1 {
+        background: linear-gradient(135deg, #81c784, #a5d6a7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .subtitle,
+    .card p {
+        color: #ccc;
+    }
+
+    .card h2 {
         color: #81c784;
     }
 
     .dropdown {
-        background: #2a2a2a;
-        border-color: #4a9f4d;
+        background: rgba(42, 42, 42, 0.98);
+        border-color: rgba(129, 199, 132, 0.4);
     }
 
     .dropdown button {
@@ -379,42 +713,41 @@
     }
 
     .dropdown button:hover {
-        background: linear-gradient(135deg, #333, #444);
+        background: linear-gradient(135deg, rgba(129, 199, 132, 0.15), rgba(165, 214, 167, 0.15));
         color: #81c784;
     }
 
-    .modalContent {
-        background: #2a2a2a;
-        border-color: #4a9f4d;
+    .infoSection {
+        background: linear-gradient(135deg, rgba(13, 40, 24, 0.9), rgba(26, 26, 26, 0.9));
+        border-top-color: rgba(129, 199, 132, 0.3);
     }
 
-    .modalContent h2 {
-        color: #81c784;
+    .infoColumn h3 {
+        background: linear-gradient(135deg, #81c784, #a5d6a7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
-    .modalContent p {
+    .infoColumn p {
         color: #ccc;
-    }
-
-    .modalContent input {
-        background: #333;
-        border-color: #555;
-        color: white;
-    }
-
-    .modalContent input:focus {
-        border-color: #81c784;
     }
 }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
     .card,
-    .dropdown button {
+    .dropdown button,
+    .logo,
+    .infoColumn,
+    .primaryButton,
+    .secondaryButton {
         transition: none;
     }
 
-    .card:hover {
+    .card:hover,
+    .primaryButton:hover,
+    .secondaryButton:hover {
         transform: none;
     }
 
@@ -426,6 +759,22 @@
         animation: none;
         opacity: 1;
     }
+
+    .primaryButton::before,
+    .secondaryButton::before {
+        display: none;
+    }
+}
+
+/* Focus states for accessibility */
+.primaryButton:focus,
+.secondaryButton:focus {
+    outline: 3px solid rgba(79, 195, 247, 0.5);
+    outline-offset: 2px;
+}
+
+.secondaryButton:focus {
+    outline-color: rgba(129, 199, 132, 0.5);
 }
 
 /* Print Styles */
@@ -436,6 +785,10 @@
     }
 
     .queueLoading {
+        display: none;
+    }
+
+    .dropdown {
         display: none;
     }
 }

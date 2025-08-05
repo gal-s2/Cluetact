@@ -40,9 +40,9 @@ class GameManager {
      * @param {string} username
      * @returns {boolean} true if the user is in the queue, false otherwise
      */
-    addUserToQueue(username) {
-        if (!username) return;
-        return this._queue.addUser(username);
+    addUserToQueue(user) {
+        if (!user) return;
+        return this._queue.addUser(user);
     }
 
     /**

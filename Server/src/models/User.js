@@ -110,6 +110,7 @@ UserSchema.statics.register = async function (userData) {
         gender,
         country,
         authProvider: "local",
+        avatar: Math.floor(Math.random() * 10) + 1,
     });
 
     return user;
@@ -132,6 +133,7 @@ UserSchema.statics.loginWithGoogle = async function (googleId, email) {
             email,
             username,
             authProvider: "google",
+            avatar: Math.floor(Math.random() * 10) + 1,
         });
     }
 
@@ -157,6 +159,7 @@ UserSchema.statics.createGuest = async function () {
         guest: true,
         username,
         authProvider: "guest",
+        avatar: Math.floor(Math.random() * 10) + 1,
     });
 
     return guest;

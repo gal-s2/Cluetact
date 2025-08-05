@@ -1,0 +1,302 @@
+/* SeekerCluePanel.module.css */
+
+.clueSection {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow: hidden;
+}
+
+.heading {
+    font-size: 16px;
+    color: #2d3748;
+    margin: 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e2e8f0;
+    position: relative;
+}
+
+.heading::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 1px;
+}
+
+/* Active Clue Section */
+.activeClueWrapper {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(72, 187, 120, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.activeClueWrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, #48bb78, #38a169);
+}
+
+.emptyMessage {
+    text-align: center;
+    color: #a0aec0;
+    font-style: italic;
+    padding: 30px 20px;
+    font-size: 14px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px dashed #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+}
+
+/* Scrollable History List */
+.scrollableHistoryList {
+    flex: 1;
+    overflow-y: auto;
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(160, 174, 192, 0.2);
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+    min-height: 0;
+}
+
+.scrollableHistoryList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrollableHistoryList::-webkit-scrollbar-track {
+    background: #f7fafc;
+    border-radius: 3px;
+}
+
+.scrollableHistoryList::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+.scrollableHistoryList::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+/* Auto-scroll indicator */
+.scrollableHistoryList::after {
+    content: "";
+    display: block;
+    height: 1px;
+    width: 100%;
+}
+
+/* Live Guesses Section */
+.liveGuessesWrapper {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(237, 137, 54, 0.2);
+    max-height: 200px;
+    overflow: hidden;
+    position: relative;
+}
+
+.liveGuessesWrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, #ed8936, #dd6b20);
+}
+
+/* Guess Action Line Container */
+.guessActionWrapper {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(66, 153, 225, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.guessActionWrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, #4299e1, #3182ce);
+}
+
+/* Section dividers */
+.sectionDivider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+    margin: 10px 0;
+}
+
+/* Loading states */
+.loadingState {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #718096;
+    font-style: italic;
+}
+
+.loadingSpinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e2e8f0;
+    border-top: 2px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Pulse animation for active elements */
+.activeClueWrapper {
+    animation: subtlePulse 3s infinite;
+}
+
+@keyframes subtlePulse {
+    0%,
+    100% {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        box-shadow: 0 2px 12px rgba(72, 187, 120, 0.2);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .clueSection {
+        gap: 12px;
+    }
+
+    .heading {
+        font-size: 15px;
+        padding-bottom: 6px;
+    }
+
+    .heading::after {
+        width: 30px;
+    }
+
+    .activeClueWrapper,
+    .scrollableHistoryList,
+    .liveGuessesWrapper,
+    .guessActionWrapper {
+        padding: 12px;
+    }
+
+    .emptyMessage {
+        padding: 20px 15px;
+        font-size: 13px;
+        min-height: 60px;
+    }
+
+    .liveGuessesWrapper {
+        max-height: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .clueSection {
+        gap: 10px;
+    }
+
+    .heading {
+        font-size: 14px;
+        padding-bottom: 5px;
+    }
+
+    .heading::after {
+        width: 25px;
+    }
+
+    .activeClueWrapper,
+    .scrollableHistoryList,
+    .liveGuessesWrapper,
+    .guessActionWrapper {
+        padding: 10px;
+    }
+
+    .emptyMessage {
+        padding: 15px 10px;
+        font-size: 12px;
+        min-height: 50px;
+    }
+
+    .liveGuessesWrapper {
+        max-height: 120px;
+    }
+
+    .loadingState {
+        padding: 30px;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .heading {
+        color: #000;
+    }
+
+    .activeClueWrapper,
+    .scrollableHistoryList,
+    .liveGuessesWrapper,
+    .guessActionWrapper {
+        border-color: #000;
+    }
+
+    .emptyMessage {
+        border-color: #666;
+        color: #666;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .activeClueWrapper,
+    .loadingSpinner {
+        animation: none;
+    }
+
+    .heading::after {
+        transition: none;
+    }
+}

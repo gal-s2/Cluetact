@@ -1,0 +1,107 @@
+/* SubmitClue.module.css */
+
+.container {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(72, 187, 120, 0.2);
+}
+
+.input {
+    width: 98%;
+    padding: 10px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    background: white;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #48bb78;
+    box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+}
+
+.input::placeholder {
+    color: #a0aec0;
+}
+
+.charCount {
+    font-size: 12px;
+    color: #718096;
+    text-align: right;
+    margin-bottom: 10px;
+    margin-top: -4px;
+}
+
+.charCount.warning {
+    color: #ed8936;
+}
+
+.charCount.danger {
+    color: #f56565;
+    font-weight: 600;
+}
+
+/* Submit Button */
+.submitButton {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.submitButton:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+    background: linear-gradient(135deg, #38a169, #2f855a);
+}
+
+.submitButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.submitButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #a0aec0;
+}
+
+/* Loading state */
+.submitButton.loading {
+    position: relative;
+    color: transparent;
+}
+
+.submitButton.loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

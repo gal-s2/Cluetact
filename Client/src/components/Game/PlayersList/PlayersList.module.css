@@ -1,0 +1,114 @@
+/* PlayersTable.module.css */
+
+.playersTable {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.keeperSection,
+.seekersSection {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sectionHeader {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.keeperTitle,
+.seekersTitle {
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.keeperSubtitle,
+.seekersSubtitle {
+    font-size: 12px;
+    color: #718096;
+    display: block;
+}
+
+.divider {
+    text-align: center;
+    padding: 8px 0;
+    flex-shrink: 0;
+}
+
+.vsText {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.keeperContainer,
+.seekersContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .playersTable {
+        flex-direction: row;
+        gap: 10px;
+        padding: 10px;
+        overflow-x: auto;
+    }
+
+    .keeperSection,
+    .seekersSection {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .divider {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        align-self: center;
+        padding: 0 8px;
+    }
+
+    .seekersContainer {
+        max-height: 120px;
+        overflow-y: auto;
+    }
+
+    .sectionHeader {
+        margin-bottom: 8px;
+    }
+
+    .keeperTitle,
+    .seekersTitle {
+        font-size: 14px;
+    }
+
+    .keeperSubtitle,
+    .seekersSubtitle {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .playersTable {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .keeperSection,
+    .seekersSection {
+        padding: 8px;
+    }
+}

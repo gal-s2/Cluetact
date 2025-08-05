@@ -1,26 +1,33 @@
+import { useState } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
-import WordDisplay from "./GameScreen/Word/WordDisplay";
+import WordDisplay from "./WordDisplay/WordDisplay";
 import Spinner from "@common/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
-import KeeperWordPopup from "./Modals/KeeperWordPopup";
-import SubmitClue from "./GameScreen/Seeker/SubmitClue";
-import CluetactPopup from "./Modals/CluetactPopup";
-import BlockedCluesSection from "./GameScreen/BlockedClues/BlockedCluesSection";
-import GameOverPopup from "./Modals/GameOverPopup";
+import KeeperWordPopup from "./KeeperWordPopup/KeeperWordPopup";
+import SubmitClue from "./SubmitClue/SubmitClue";
+import CluetactPopup from "./CluetactPopup/CluetactPopup";
+import BlockedCluesSection from "./BlockedClues/BlockedCluesSection";
+import GameOverPopup from "./GameOverPopup/GameOverPopup";
 import FloatingLetters from "../Animations/FloatingLetters/FloatingLetters";
 import NotificationBox from "./NotificationBox/NotificationBox";
-import PlayersTable from "./GameScreen/Player/PlayersTable";
-import PlayerMainMessageHeader from "./GameScreen/Player/PlayerMainMessageHeader";
-import SeekerCluePanel from "./GameScreen/Seeker/SeekerCluePanel";
+import PlayersList from "./PlayersList/PlayersList";
+import PlayerMainMessageHeader from "./PlayerMainMessageHeader/PlayerMainMessageHeader";
+import SeekerCluePanel from "./SeekerCluePanel/SeekerCluePanel";
 import KeeperCluePanel from "@components/Game/KeeperCluePanel/KeeperCluePanel";
-import ExitGameButton from "./ExitGameButton";
-import ConfimModal from "./Modals/ConfirmModal";
-import { useState } from "react";
-import CountdownTimer from "./CountdownTimer";
+import ExitGameButton from "./ExitGameButton/ExitGameButton";
+import ConfirmModal from "./ConfirmModal/ConfirmModal";
+import CountdownTimer from "./CountdownTimer/CountdownTimer";
+import Modal from "@components/common/Modal/Modal";
 
 function GameRoom() {
-    const { timeLeft, setTimeLeft, gameState, loading, handleExitGame, notification } = useGameRoom();
-
+    const {
+        timeLeft,
+        setTimeLeft,
+        gameState,
+        loading,
+        handleExitGame,
+        notification,
+    } = useGameRoom();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     if (loading) return <Spinner />;
@@ -28,55 +35,81 @@ function GameRoom() {
     return (
         <div className={styles.room}>
             {!gameState.isKeeper && !gameState.isWordChosen && (
-                <div className={styles.waitOverlay}>
-                    <div className={styles.waitMessage}>Waiting for the keeper to choose a word...</div>
-                </div>
+                <Modal>Waiting for the keeper to choose a word...</Modal>
             )}
-
             {gameState.isKeeper && !gameState.isWordChosen && (
-                <div className={styles.waitOverlay}>
-                    <div className={styles.popupWrapper}>
-                        <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />
-                    </div>
-                </div>
+                <KeeperWordPopup
+                    showConfirmModal={() => setShowConfirmModal(true)}
+                />
             )}
 
             {gameState.cluetact && <CluetactPopup />}
-
             {gameState.winners?.length > 0 && <GameOverPopup />}
 
-            <div className={styles.content}>
-                <PlayersTable players={gameState.players} />
+            {gameState.isWordChosen && (
+                <div className={styles.wordDisplay}>
+                    <WordDisplay />
+                </div>
+            )}
 
-                {notification.message && <NotificationBox />}
-
-                {gameState.isWordChosen && (
-                    <div className={styles.wordDisplay}>
-                        <WordDisplay />
+            <div className={styles.sidebar}>
+                {/* Timer */}
+                {timeLeft > 0 && (
+                    <div className={styles.timerContainer}>
+                        <CountdownTimer
+                            timeLeft={timeLeft}
+                            setTimeLeft={setTimeLeft}
+                        />
                     </div>
                 )}
 
-                <>
-                    <PlayerMainMessageHeader></PlayerMainMessageHeader>
-                </>
-
-                {!gameState.isKeeper && gameState.isWordChosen && gameState.isSubmittingClue && !gameState.activeClue && (
-                    <div className={styles.clueSubmitWrapper}>
-                        <SubmitClue />
-                    </div>
-                )}
-
-                <div className={styles.cluesSection}>{gameState.isKeeper ? <KeeperCluePanel /> : <SeekerCluePanel />}</div>
-
-                {gameState.isKeeper && <BlockedCluesSection maxVisibleItems={5} />}
-                <FloatingLetters />
+                {/* Players Table */}
+                <PlayersList players={gameState.players} />
             </div>
 
-            {timeLeft > 0 && <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />}
+            {/* Main Game Panel */}
+            <div className={styles.main}>
+                {/* Header Message */}
+                <PlayerMainMessageHeader />
+
+                {/* Clue Submit */}
+                {!gameState.isKeeper &&
+                    gameState.isWordChosen &&
+                    gameState.isSubmittingClue &&
+                    !gameState.activeClue && (
+                        <div className={styles.clueSubmitWrapper}>
+                            <SubmitClue />
+                        </div>
+                    )}
+
+                {/* Clues Section */}
+                <div className={styles.cluesSection}>
+                    {gameState.isKeeper ? (
+                        <KeeperCluePanel />
+                    ) : (
+                        <SeekerCluePanel />
+                    )}
+                </div>
+
+                {/* Blocked Clues for Keeper */}
+
+                <div className={styles.blockedCluesContainer}>
+                    <BlockedCluesSection maxVisibleItems={5} />
+                </div>
+            </div>
 
             <ExitGameButton onExit={() => setShowConfirmModal(true)} />
 
-            {showConfirmModal && <ConfimModal handleCloseModal={() => setShowConfirmModal(false)} handleConfirmExit={handleExitGame} />}
+            {showConfirmModal && (
+                <ConfirmModal
+                    handleCloseModal={() => setShowConfirmModal(false)}
+                    handleConfirmExit={handleExitGame}
+                />
+            )}
+            {/* Notification */}
+            {notification.message && <NotificationBox />}
+
+            <FloatingLetters />
         </div>
     );
 }

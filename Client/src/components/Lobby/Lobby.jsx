@@ -1,6 +1,6 @@
 import axios from "axios";
 import { baseUrl } from "@config/baseUrl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useUser } from "@contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useGlobalNotification } from "@contexts/GlobalNotificationContext";
@@ -13,6 +13,8 @@ import PlayCard from "./PlayCard";
 import generateRoomCode from "../../utils/generateRoomCode";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import Modal from "@common/Modal/Modal";
+import bgMusic from "../../assets/audio/lobby-music.mp3";
+import InfoSection from "./InfoSection";
 
 function Lobby() {
     const { user, setUser, loading } = useUser();
@@ -23,6 +25,14 @@ function Lobby() {
     const [playMenuOpen, setPlayMenuOpen] = useState(false);
     const [inQueue, setInQueue] = useState(false);
     const { setGlobalNotification } = useGlobalNotification();
+    const audioRef = useRef(null);
+
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.volume = 0.4;
+            audioRef.current.play().catch((err) => console.log("Autoplay blocked:", err));
+        }
+    }, []);
 
     if (!user && !loading) {
         console.log("No user found in Lobby.jsx, skipping render.");
@@ -60,7 +70,6 @@ function Lobby() {
         };
     }, [navigate]);
 
-    // Close any open dropdown when the other opens
     const handlePlayMenuToggle = () => {
         setPlayMenuOpen((prev) => !prev);
         if (profileMenuOpen) setProfileMenuOpen(false);
@@ -71,7 +80,6 @@ function Lobby() {
         if (playMenuOpen) setPlayMenuOpen(false);
     };
 
-    // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (!event.target.closest(`.${styles.card}`)) {
@@ -86,7 +94,10 @@ function Lobby() {
 
     const findGame = () => {
         if (!user) return;
-        socket.emit(SOCKET_EVENTS.CLIENT_FIND_GAME, { userId: user._id, username: user.username });
+        socket.emit(SOCKET_EVENTS.CLIENT_FIND_GAME, {
+            userId: user._id,
+            username: user.username,
+        });
         setPlayMenuOpen(false);
     };
 
@@ -177,6 +188,7 @@ function Lobby() {
 
     return (
         <div className={styles.container}>
+            <audio ref={audioRef} src={bgMusic} autoPlay loop />
             <LobbyHeader username={user.username} />
 
             {inQueue && (
@@ -200,6 +212,8 @@ function Lobby() {
             </main>
 
             {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
+
+            <InfoSection />
         </div>
     );
 }
