@@ -14,6 +14,7 @@ import generateRoomCode from "../../utils/generateRoomCode";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import Modal from "@common/Modal/Modal";
 import bgMusic from "../../assets/audio/lobby-music.mp3";
+import InfoSection from "./InfoSection";
 
 function Lobby() {
     const { user, setUser, loading } = useUser();
@@ -29,9 +30,7 @@ function Lobby() {
     useEffect(() => {
         if (audioRef.current) {
             audioRef.current.volume = 0.4;
-            audioRef.current
-                .play()
-                .catch((err) => console.log("Autoplay blocked:", err));
+            audioRef.current.play().catch((err) => console.log("Autoplay blocked:", err));
         }
     }, []);
 
@@ -133,9 +132,7 @@ function Lobby() {
             socket.disconnect();
             console.log("Socket.disconnect() called");
         } else {
-            console.log(
-                "Socket is not connected, skipping socket.disconnect()."
-            );
+            console.log("Socket is not connected, skipping socket.disconnect().");
         }
 
         console.log("Navigating to home page BEFORE clearing user state...");
@@ -163,8 +160,7 @@ function Lobby() {
         navigate(`/waiting/${newCode}`, { state: { isCreator: true } });
 
         setGlobalNotification({
-            message:
-                "Waiting room created — invite friends! You can start once 3 or more players join.",
+            message: "Waiting room created — invite friends! You can start once 3 or more players join.",
             type: "info",
         });
     };
@@ -210,64 +206,14 @@ function Lobby() {
 
             <main className={styles.main}>
                 <div className={styles.sectionGroup}>
-                    <PlayCard
-                        playMenuOpen={playMenuOpen}
-                        setPlayMenuOpen={handlePlayMenuToggle}
-                        findGame={findGame}
-                        setShowJoinModal={handleShowJoinModal}
-                        handleCreateRoom={handleCreateRoom}
-                    />
-                    <ProfileCard
-                        profileMenuOpen={profileMenuOpen}
-                        setProfileMenuOpen={handleProfileMenuToggle}
-                        navigate={navigate}
-                        disconnect={disconnect}
-                        onNavigateToStats={handleNavigateToStats}
-                        onNavigateToProfile={handleNavigateToProfile}
-                    />
+                    <PlayCard playMenuOpen={playMenuOpen} setPlayMenuOpen={handlePlayMenuToggle} findGame={findGame} setShowJoinModal={handleShowJoinModal} handleCreateRoom={handleCreateRoom} />
+                    <ProfileCard profileMenuOpen={profileMenuOpen} setProfileMenuOpen={handleProfileMenuToggle} navigate={navigate} disconnect={disconnect} onNavigateToStats={handleNavigateToStats} onNavigateToProfile={handleNavigateToProfile} />
                 </div>
             </main>
 
-            {showJoinModal && (
-                <JoinRoomModal
-                    roomCodeInput={roomCodeInput}
-                    setRoomCodeInput={setRoomCodeInput}
-                    handleJoinRoom={handleJoinRoom}
-                    closeModal={() => setShowJoinModal(false)}
-                />
-            )}
+            {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
 
-            <div className={styles.infoSection}>
-                <div className={styles.infoColumn}>
-                    <h3>About</h3>
-                    <p>
-                        Cluetact is a fast-paced word game where players try to
-                        guess a secret word by racing to define related words.
-                        Each round is packed with deduction, logic, and surprise
-                        twists.
-                    </p>
-                </div>
-                <div className={styles.infoColumn}>
-                    <h3>News</h3>
-                    <p>
-                        🆕 New feature: You can now select custom avatars!
-                        <br />✨ Improved game flow and new mystery-themed
-                        design!
-                        <br />
-                        🐞 Bug fixes for mobile responsiveness.
-                    </p>
-                </div>
-                <div className={styles.infoColumn}>
-                    <h3>How to Play</h3>
-                    <p>
-                        The Keeper picks a secret word and reveals only the
-                        first letter. Seekers submit clues (definitions) for
-                        different words starting with that letter. Everyone
-                        races to guess the clue — but beware, the Keeper guesses
-                        too!
-                    </p>
-                </div>
-            </div>
+            <InfoSection />
         </div>
     );
 }
