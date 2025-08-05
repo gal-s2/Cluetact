@@ -1,6 +1,8 @@
 const messageEmitter = require("./MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 
+const MATCHMAKER_INTERVAL = 5;
+
 function startMatchmaker(gameManager) {
     setInterval(() => {
         const queue = gameManager.queue;
@@ -23,7 +25,7 @@ function startMatchmaker(gameManager) {
             },
             room.roomId
         );
-    }, 15000); // Runs every 15 seconds
+    }, MATCHMAKER_INTERVAL * 1000); // Runs every 15 seconds
 }
 
 module.exports = { startMatchmaker };

@@ -1,29 +1,24 @@
 const Player = require("./Player");
 const GameRound = require("./GameRound");
 const ROLES = require("../constants/roles");
+const POINTS = require("../constants/points");
 const { isValidEnglishWord } = require("../../utils/wordUtils");
 const Logger = require("../Logger");
 const User = require("../../models/User");
 const CountdownTimer = require("../entities/CountdownTimer");
-const { set } = require("mongoose");
-
-const BASE_POINTS = 15;
-const CLUE_BONUS = 5;
-const RACE_TIMEOUT_BONUS = 2;
-const TURN_INTERVAL = 40;
 
 class Room {
+    #roomId;
+
     constructor(roomId, keeper, seekers) {
-        this.roomId = roomId;
+        this.#roomId = roomId;
         this.status = "PRE-ROUND"; //options: "PRE-ROUND","MID-ROUND","END";
         this.keeperUsername = keeper.username;
         this.setPlayersData(keeper, seekers);
         this.currentRound = new GameRound();
         this.roundsHistory = [];
         this.turnQueue = seekers.map((user) => user.username).slice();
-        this.seekersUsernames = this.playersArrayToUsernamesOfSeekers(
-            this.players
-        );
+        this.seekersUsernames = this.players.filter((player) => player.role === ROLES.SEEKER).map((player) => player.username);
         this.indexOfSeekerOfCurrentTurn = 0;
         this.wordsGuessedSuccesfully = new Set();
         this.winners = [];
@@ -34,14 +29,13 @@ class Room {
         this.keepersWordsHistory = new Set();
     }
 
-    playersArrayToUsernamesOfSeekers(players) {
-        return players
-            .filter((player) => player.role === ROLES.SEEKER)
-            .map((player) => player.username);
+    get roomId() {
+        return this.#roomId;
     }
 
     setPlayersData(keeper, seekers) {
-        console.log("keeper", keeper);
+        console.log(keeper);
+        console.log(seekers);
         this.players = [];
         const keeperPlayer = new Player(keeper.username, keeper.avatar);
         keeperPlayer.setRole(ROLES.KEEPER);
@@ -55,9 +49,7 @@ class Room {
     }
 
     removePlayer(username) {
-        this.players = this.players.filter(
-            (player) => player.username !== username
-        );
+        this.players = this.players.filter((player) => player.username !== username);
     }
 
     getWinners() {
@@ -86,14 +78,8 @@ class Room {
      */
     getRevealedLetters() {
         const revaledLettersCurrentRound = this.currentRound.revealedLetters;
-        if (
-            revaledLettersCurrentRound === "" &&
-            this.roundsHistory.length > 0
-        ) {
-            return (
-                this.roundsHistory[this.roundsHistory.length - 1]
-                    ?.revealedLetters || ""
-            );
+        if (revaledLettersCurrentRound === "" && this.roundsHistory.length > 0) {
+            return this.roundsHistory[this.roundsHistory.length - 1]?.revealedLetters || "";
         } else return revaledLettersCurrentRound;
     }
 
@@ -111,10 +97,7 @@ class Room {
     }
 
     tryBlockClue(wordGuess, keeperUsername) {
-        const result = this.currentRound.tryBlockClue(
-            wordGuess,
-            keeperUsername
-        );
+        const result = this.currentRound.tryBlockClue(wordGuess, keeperUsername);
         if (result.success) {
             this.wordsGuessedSuccesfully.add(wordGuess.toLowerCase());
             this.advanceToNextSeeker();
@@ -122,12 +105,7 @@ class Room {
         return result;
     }
 
-    async startNewClueRound(
-        clueGiverUsername,
-        clueWord,
-        clueDefinition,
-        onRaceTimeout
-    ) {
+    async startNewClueRound(clueGiverUsername, clueWord, clueDefinition, onRaceTimeout) {
         const valid = await isValidEnglishWord(clueWord);
         if (!valid) {
             Logger.logInvalidSeekerWord(this.roomId, clueWord);
@@ -149,19 +127,12 @@ class Room {
             return [false, `Word should start with ${revealedPrefix}`];
         }
 
-        if (
-            this.currentRound.clues.find(
-                (clue) => clue.toLowerCase() === clueWord.toLowerCase()
-            )
-        ) {
+        if (this.currentRound.clues.find((clue) => clue.toLowerCase() === clueWord.toLowerCase())) {
             Logger.logClueWordAlreadyUsed(this.roomId, clueWord);
             return [false, "Invalid guess, this clue has already been given"];
         }
         if (clueDefinition.toLowerCase().includes(clueWord.toLowerCase())) {
-            return [
-                false,
-                "Invalid guess, definition containing the word cannot be used.",
-            ];
+            return [false, "Invalid guess, definition containing the word cannot be used."];
         }
 
         this.currentRound.addClue(clueGiverUsername, clueWord, clueDefinition);
@@ -237,18 +208,12 @@ class Room {
                 result.revealed = true;
                 result.isWordComplete = this.isWordFullyRevealed;
             }
-            if (
-                guessLower === session.keeperWord?.toLowerCase() ||
-                this.isWordFullyRevealed
-            ) {
+            if (guessLower === session.keeperWord?.toLowerCase() || this.isWordFullyRevealed) {
                 result.isWordComplete = true;
                 result.keeperWord = session.keeperWord;
                 this.handleWordFullyGuessed();
-                this.addPointsToPlayerByUsername(guesserUsername, CLUE_BONUS);
-                this.addPointsToPlayerByUsername(
-                    this.keeperUsername,
-                    CLUE_BONUS
-                );
+                this.addPointsToPlayerByUsername(guesserUsername, POINTS.CLUE_BONUS);
+                this.addPointsToPlayerByUsername(this.keeperUsername, POINTS.CLUE_BONUS);
             }
             result.isGameEnded = this.isGameOver();
         }
@@ -261,17 +226,14 @@ class Room {
 
         const clue = session.getActiveClue();
         if (!clue) {
-            Logger.logError(
-                this.roomId,
-                "No active clue found for correct guess"
-            );
+            Logger.logError(this.roomId, "No active clue found for correct guess");
             return;
         }
 
         const clueGiverusername = clue.from;
 
-        this.addPointsToPlayerByUsername(guesserUsername, CLUE_BONUS);
-        this.addPointsToPlayerByUsername(clueGiverusername, CLUE_BONUS);
+        this.addPointsToPlayerByUsername(guesserUsername, POINTS.CLUE_BONUS);
+        this.addPointsToPlayerByUsername(clueGiverusername, POINTS.CLUE_BONUS);
         clue.blocked = true;
         this.advanceToNextSeeker();
         this.isWordFullyRevealed = session.revealNextLetter();
@@ -283,14 +245,10 @@ class Room {
         this.pastKeepers.add(currentKeeper);
         this.seekersUsernames.push(currentKeeper);
         const nextKeeper = this.getNextKeeper();
-        this.seekersUsernames = this.seekersUsernames.filter(
-            (seekerUsername) => seekerUsername !== nextKeeper
-        );
+        this.seekersUsernames = this.seekersUsernames.filter((seekerUsername) => seekerUsername !== nextKeeper);
         this.keeperUsername = nextKeeper;
 
-        this.players
-            .find((player) => player.username === nextKeeper)
-            .setRole(ROLES.KEEPER);
+        this.players.find((player) => player.username === nextKeeper).setRole(ROLES.KEEPER);
 
         this.players.forEach((player) => {
             if (player.username !== nextKeeper) player.setRole(ROLES.SEEKER);
@@ -311,9 +269,7 @@ class Room {
     handleCorrectBlockByKeeper(keeperUsername) {
         const session = this.currentRound;
         Logger.logKeeperGuessedClue(this.roomId, keeperUsername);
-        this.players
-            .find((player) => player.username === keeperUsername)
-            .addScore(2);
+        this.players.find((player) => player.username === keeperUsername).addScore(2);
 
         session.status = "waiting";
     }
@@ -325,9 +281,7 @@ class Room {
     }
 
     advanceToNextSeeker() {
-        const nextIndex =
-            (this.indexOfSeekerOfCurrentTurn + 1) %
-            this.seekersUsernames.length;
+        const nextIndex = (this.indexOfSeekerOfCurrentTurn + 1) % this.seekersUsernames.length;
         this.indexOfSeekerOfCurrentTurn = nextIndex;
         return this.seekersUsernames[nextIndex];
     }
@@ -337,9 +291,7 @@ class Room {
     }
 
     addPointsToPlayerByUsername(username, points) {
-        this.players
-            .find((player) => player.username === username)
-            .addScore(points);
+        this.players.find((player) => player.username === username).addScore(points);
     }
 
     async endGame() {
@@ -367,35 +319,22 @@ class Room {
                     [`statistics.${isWinner ? "Wins" : "Losses"}`]: 1,
                 };
 
-                const user = await User.findOneAndUpdate(
-                    { username: player.username },
-                    { $inc: increment },
-                    { new: true }
-                );
+                const user = await User.findOneAndUpdate({ username: player.username }, { $inc: increment }, { new: true });
 
                 if (user) {
                     const { Wins, totalGames } = user.statistics;
                     const newWinRate = ((Wins / totalGames) * 100).toFixed(2);
-                    await User.updateOne(
-                        { username: player.username },
-                        { $set: { "statistics.winRate": newWinRate } }
-                    );
+                    await User.updateOne({ username: player.username }, { $set: { "statistics.winRate": newWinRate } });
                 }
             } catch (err) {
-                console.error(
-                    `Failed to update stats for ${player.username}:`,
-                    err
-                );
+                console.error(`Failed to update stats for ${player.username}:`, err);
             }
         }
     }
 
     async setKeeperWordWithValidation(word) {
         if (this.keepersWordsHistory.has(word)) {
-            return [
-                false,
-                "Previous keeper has already chose this word, Please enter another word",
-            ];
+            return [false, "Previous keeper has already chose this word, Please enter another word"];
         }
         const valid = await isValidEnglishWord(word);
         if (!valid) {

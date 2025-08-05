@@ -93,6 +93,7 @@ class GameManager {
     removePlayerFromRoom(roomId, username) {
         this.playerToRoomId.delete(username);
         const room = this.getRoom(roomId);
+
         if (room) {
             room.removePlayer(username);
             //if (room.players.length < 3) { right now we delete the room if a player exits
