@@ -15,6 +15,7 @@ export default function useGameRoomSocket(roomId) {
 
     const [gameState, setGameState] = useState({
         players: [],
+        status: "",
         revealedWord: "",
         keeperWord: "",
         wordLength: 0,
@@ -29,6 +30,7 @@ export default function useGameRoomSocket(roomId) {
         winners: [],
         activeClue: null,
         isWordComplete: false,
+        keeperTime: 0,
         // timeOptions: keeper choosing word / seeker submitting clue / race
     });
 
@@ -59,6 +61,7 @@ export default function useGameRoomSocket(roomId) {
             setGameState((prev) => ({
                 ...prev,
                 players: data.players,
+                status: data.status,
                 keeperWord: data.keeperWord,
                 revealedWord: data.revealedWord,
                 wordLength: data.wordLength,
@@ -69,6 +72,7 @@ export default function useGameRoomSocket(roomId) {
                 guesses: data.guesses,
                 isSubmittingClue: data.clueGiverUsername === user?.username,
                 clueGiverUsername: data.clueGiverUsername,
+                keeperTime: data.keeperTime,
             }));
             setLoading(false);
         });
@@ -78,6 +82,7 @@ export default function useGameRoomSocket(roomId) {
                 setIsKeeperWordRejected(false);
                 setGameState((prev) => ({
                     ...prev,
+                    status: data.status,
                     wordLength: data.length,
                     revealedWord: data.revealedWord,
                     keeperWord: data.word,
@@ -93,43 +98,29 @@ export default function useGameRoomSocket(roomId) {
             }
         });
 
-        socket.on(
-            SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS,
-            ({
-                guesser,
-                clues,
-                word,
-                revealed,
-                isWordComplete,
-                keeper,
-                players,
-                winners,
-                clueGiverUsername,
-                keeperWord,
-            }) => {
-                if (isWordComplete) {
-                    setGameState((prev) => ({
-                        ...prev,
-                        winners,
-                        isKeeper: keeper === user.username,
-                        isWordChosen: false,
-                    }));
-                }
+        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players, winners, clueGiverUsername, keeperWord }) => {
+            if (isWordComplete) {
                 setGameState((prev) => ({
                     ...prev,
-                    cluetact: { guesser, word },
-                    players,
-                    clues,
-                    isSubmittingClue: clueGiverUsername === user.username,
-                    clueGiverUsername,
-                    activeClue: null,
-                    revealedWord: revealed,
-                    isWordComplete,
-                    guesses: [],
-                    keeperWord,
+                    winners,
+                    isKeeper: keeper === user.username,
+                    isWordChosen: false,
                 }));
             }
-        );
+            setGameState((prev) => ({
+                ...prev,
+                cluetact: { guesser, word },
+                players,
+                clues,
+                isSubmittingClue: clueGiverUsername === user.username,
+                clueGiverUsername,
+                activeClue: null,
+                revealedWord: revealed,
+                isWordComplete,
+                guesses: [],
+                keeperWord,
+            }));
+        });
 
         socket.on(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, (data) => {
             setGameState((prev) => ({
@@ -162,50 +153,46 @@ export default function useGameRoomSocket(roomId) {
             setTimeLeft(timeLeft);
         });
 
-        socket.on(
-            SOCKET_EVENTS.SERVER_CLUE_BLOCKED,
-            ({ clue, clueGiverUsername }) => {
-                setGameState((prev) => ({
-                    ...prev,
-                    clues: prev.clues.map((c) =>
-                        c.id === clue.id
-                            ? { ...c, blocked: true, word: clue.word }
-                            : c
-                    ),
-                    isSubmittingClue: clueGiverUsername === user.username,
-                    clueGiverUsername,
-                    activeClue: null,
-                    guesses: [],
-                }));
-                setNotification({
-                    message: gameState.isKeeper
-                        ? `You blocked "${clue.from}" by guessing the word "${clue.word}"`
-                        : `The keeper blocked "${clue.from}" by guessing the word "${clue.word}"`,
-                    type: gameState.isKeeper ? "success" : "notification",
-                });
-            }
-        );
+        socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ clue, clueGiverUsername }) => {
+            setGameState((prev) => ({
+                ...prev,
+                clues: prev.clues.map((c) => (c.id === clue.id ? { ...c, blocked: true, word: clue.word } : c)),
+                isSubmittingClue: clueGiverUsername === user.username,
+                clueGiverUsername,
+                activeClue: null,
+                guesses: [],
+            }));
+            setNotification({
+                message: gameState.isKeeper ? `You blocked "${clue.from}" by guessing the word "${clue.word}"` : `The keeper blocked "${clue.from}" by guessing the word "${clue.word}"`,
+                type: gameState.isKeeper ? "success" : "notification",
+            });
+        });
 
-        socket.on(
-            SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK,
-            ({ clues, timeLeft }) => {
-                const clue = clues[clues.length - 1];
-                setGameState((prev) => ({
-                    ...prev,
-                    logMessage: `A clue was submitted by ${clue.from}. You may block it.`,
-                    clues,
-                    activeClue: clue,
-                }));
-                setTimeLeft(timeLeft);
-                setNotification({
-                    message: `new clue definition by ${clue.from}: "${clue.definition}"`,
-                    type: "notification",
-                });
-            }
-        );
+        socket.on(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, ({ clues, timeLeft }) => {
+            const clue = clues[clues.length - 1];
+            setGameState((prev) => ({
+                ...prev,
+                logMessage: `A clue was submitted by ${clue.from}. You may block it.`,
+                clues,
+                activeClue: clue,
+            }));
+            setTimeLeft(timeLeft);
+            setNotification({
+                message: `new clue definition by ${clue.from}: "${clue.definition}"`,
+                type: "notification",
+            });
+        });
 
         socket.on(SOCKET_EVENTS.SERVER_GUESS_FAILED, (guesses) => {
             setGameState((prev) => ({ ...prev, guesses }));
+        });
+
+        socket.on(SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT, (data) => {
+            setGameState((prev) => ({ ...prev, ...data }));
+        });
+
+        socket.on(SOCKET_EVENTS.SERVER_GAME_ENDED, (data) => {
+            setGameState((prev) => ({ ...prev, ...data }));
         });
 
         return () => {
@@ -216,6 +203,8 @@ export default function useGameRoomSocket(roomId) {
             socket.off(SOCKET_EVENTS.SERVER_CLUE_BLOCKED);
             socket.off(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK);
             socket.off(SOCKET_EVENTS.SERVER_GUESS_FAILED);
+            socket.off(SOCKET_EVENTS.SERVER_KEEPER_CHOOSING_WORD);
+            socket.off(SOCKET_EVENTS.SERVER_GAME_ENDED);
         };
     }, [user?.username, gameState.isKeeper]);
 

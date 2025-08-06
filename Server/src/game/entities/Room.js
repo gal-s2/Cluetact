@@ -23,16 +23,16 @@ class Room {
         this.callbacks = callbacks;
 
         // Players
-        this.keepers = null;
+        this.keeper = null;
         this.seekers = [];
         this.players = [];
         this.keeperUsername = keeper.username; // remove in the future, should use keeper.username
         this.setPlayersData(keeper, seekers);
+        this.seekersUsernames = this.players.filter((player) => player.role === ROLES.SEEKER).map((player) => player.username);
 
         this.currentRound = new GameRound();
         this.roundsHistory = [];
         this.turnQueue = seekers.map((user) => user.username).slice();
-        this.seekersUsernames = this.players.filter((player) => player.role === ROLES.SEEKER).map((player) => player.username);
         this.indexOfSeekerOfCurrentTurn = 0;
         this.wordsGuessedSuccesfully = new Set();
         this.winners = [];
@@ -49,25 +49,34 @@ class Room {
         return this.#roomId;
     }
 
+    get currentTime() {
+        return this.timer?.getTimeLeft();
+    }
+
     setStatus(newStatus) {
         if (!newStatus) return;
 
         console.log(`changing to ${newStatus} status`);
-        console.log(this.callbacks);
 
         switch (newStatus) {
             case GAME_STAGES.KEEPER_CHOOSING_WORD:
-                this.keeperChoosingWordTimer = new CountdownTimer(10, () => {
-                    this.setStatus(GAME_STAGES.MID_ROUND);
-                    this.callbacks?.onKeeperWordTimeout?.(this);
-                });
-
+                this.keeperChoosingWordTimer = new CountdownTimer(10, this.onKeeperWordTimeout.bind(this));
                 this.keeperChoosingWordTimer.start();
+                break;
+
+            case GAME_STAGES.END:
                 break;
 
             default:
                 return;
         }
+
+        this.status = newStatus;
+    }
+
+    onKeeperWordTimeout() {
+        this.setNextRound();
+        this.callbacks?.onKeeperWordTimeout?.(this);
     }
 
     setPlayersData(keeper, seekers) {
@@ -252,7 +261,7 @@ class Room {
             if (guessLower === session.keeperWord?.toLowerCase() || this.isWordFullyRevealed) {
                 result.isWordComplete = true;
                 result.keeperWord = session.keeperWord;
-                this.handleWordFullyGuessed();
+                this.setNextRound();
                 this.addPointsToPlayerByUsername(guesserUsername, POINTS.CLUE_BONUS);
                 this.addPointsToPlayerByUsername(this.keeperUsername, POINTS.CLUE_BONUS);
             }
@@ -281,7 +290,11 @@ class Room {
         session.resetCluesHistory();
     }
 
-    handleWordFullyGuessed() {
+    /**
+     * Setting next round / end game if completed.
+     * New keeper and seekers update, changing status
+     */
+    setNextRound() {
         const currentKeeper = this.keeperUsername;
         this.pastKeepers.add(currentKeeper);
         this.seekersUsernames.push(currentKeeper);
@@ -297,13 +310,13 @@ class Room {
 
         this.roundsHistory.push(this.currentRound);
 
-        this.currentRound = new GameRound();
-        this.currentRound.roundNum = this.roundsHistory.length + 1;
-        this.status = "PRE-ROUND";
-        Logger.logNextKeeper(this.roomId, nextKeeper);
-
         if (this.isGameOver()) {
             this.endGame();
+        } else {
+            this.currentRound = new GameRound();
+            this.currentRound.roundNum = this.roundsHistory.length + 1;
+            this.setStatus(GAME_STAGES.KEEPER_CHOOSING_WORD);
+            Logger.logNextKeeper(this.roomId, nextKeeper);
         }
     }
 
@@ -336,7 +349,7 @@ class Room {
     }
 
     async endGame() {
-        this.status = "ended";
+        this.setStatus(GAME_STAGES.END);
 
         let maxScore = -Infinity;
 

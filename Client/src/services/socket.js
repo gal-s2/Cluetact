@@ -20,7 +20,8 @@ window.socket = socket;
 
 // Log every message received from server
 socket.onAny((event, ...args) => {
-    console.log(`[Client] Received event: ${event} | Data:`, args);
+    if (args[0] && args[0] != {}) console.log(`[Client] Received event: ${event} | Data:`, args);
+    else console.log(`[Client] Received event: ${event}`);
 });
 
 socket.on(SOCKET_EVENTS.CONNECT, () => {

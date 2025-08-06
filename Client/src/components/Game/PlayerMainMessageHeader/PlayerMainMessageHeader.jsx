@@ -7,16 +7,6 @@ function PlayerMainMessageHeader() {
     const { gameState } = useGameRoom();
     const { user } = useUser();
 
-    // Debug logging to see when state changes
-    useEffect(() => {
-        console.log("PlayerMainMessageHeader - gameState updated:", {
-            isKeeper: gameState.isKeeper,
-            activeClue: gameState.activeClue,
-            clueGiverUsername: gameState.clueGiverUsername,
-            myUsername: user.username,
-        });
-    }, [gameState.isKeeper, gameState.activeClue, gameState.clueGiverUsername, user.username]);
-
     const getStatusMessage = () => {
         const isMyTurn = gameState.clueGiverUsername === user.username;
 

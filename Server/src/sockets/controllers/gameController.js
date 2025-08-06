@@ -20,16 +20,8 @@ const handleRaceTimeout = (roomId) => {
         keeperWord: null,
     };
     const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
-    messageEmitter.emitToSeekers(
-        SOCKET_EVENTS.SERVER_RACE_TIMEOUT,
-        dataToSeekers,
-        room.roomId
-    );
-    messageEmitter.emitToKeeper(
-        SOCKET_EVENTS.SERVER_RACE_TIMEOUT,
-        dataToKeeper,
-        room.roomId
-    );
+    messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
+    messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
 };
 
 const gameController = {
@@ -46,11 +38,7 @@ const gameController = {
 
         const added = gameManager.addUserToQueue(user);
         if (added) {
-            messageEmitter.emitToSocket(
-                SOCKET_EVENTS.SERVER_ENTERED_QUEUE,
-                null,
-                socket
-            );
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ENTERED_QUEUE, null, socket);
         } else {
             // send something to the user if he couldnt enter the queue
         }
@@ -79,20 +67,15 @@ const gameController = {
         // should send something?
     },
 
-    handleJoinRoom: async (socket, args) => {
+    handleJoinRoom: async (socket) => {
         const room = gameManager.getRoomBySocket(socket);
         if (!room) {
-            messageEmitter.emitToSocket(
-                SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY,
-                null,
-                socket
-            );
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
             return;
         }
 
         const username = socket.user.username;
-        const keeperWordOrNull =
-            username === room.keeperUsername ? room.getKeeperWord() : null;
+        const keeperWordOrNull = username === room.keeperUsername ? room.getKeeperWord() : null;
         const guesses = room.getGuesses();
         const clueGiverUsername = room.getCurrentClueGiverUsername();
 
@@ -100,6 +83,7 @@ const gameController = {
             SOCKET_EVENTS.SERVER_GAME_JOIN,
             {
                 players: room.players,
+                status: room.status,
                 keeperWord: keeperWordOrNull,
                 revealedWord: room.getRevealedLetters(),
                 wordLength: room.getKeeperWord()?.length || 0,
@@ -108,6 +92,7 @@ const gameController = {
                 isWordChosen: !!room.getKeeperWord(),
                 guesses: guesses,
                 clueGiverUsername: clueGiverUsername,
+                keeperTime: room.currentTime,
             },
             socket
         );
@@ -118,15 +103,12 @@ const gameController = {
         const room = gameManager.getRoomBySocket(socket);
         if (!room) return;
 
-        const result = await room.setKeeperWordWithValidation(
-            word.toLowerCase()
-        );
+        const result = await room.setKeeperWordWithValidation(word.toLowerCase());
 
         if (result[0]) {
             word = room.getKeeperWord();
             room.keepersWordsHistory.add(word.toLowerCase());
-            const clueGiverUsername =
-                room.seekersUsernames[room.indexOfSeekerOfCurrentTurn];
+            const clueGiverUsername = room.seekersUsernames[room.indexOfSeekerOfCurrentTurn];
             // send all players in room a word chosen
             for (const player of room.players) {
                 const data = {
@@ -137,11 +119,7 @@ const gameController = {
                     clueGiverUsername,
                 };
 
-                messageEmitter.emitToPlayer(
-                    SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN,
-                    data,
-                    player.username
-                );
+                messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN, data, player.username);
             }
             room.status = "MID-ROUND";
         } else {
@@ -161,38 +139,21 @@ const gameController = {
         if (!room) return;
 
         const username = socket.user.username;
-        const result = await room.startNewClueRound(
-            username,
-            word,
-            definition,
-            () => {
-                handleRaceTimeout(room.roomId);
-            }
-        );
+        const result = await room.startNewClueRound(username, word, definition, () => {
+            handleRaceTimeout(room.roomId);
+        });
         const timeLeft = room.getTimeLeft();
 
         if (result[0]) {
-            messageEmitter.emitToKeeper(
-                SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK,
-                { clues: room.currentRound.getClues(), timeLeft },
-                room.roomId
-            );
+            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, { clues: room.currentRound.getClues(), timeLeft }, room.roomId);
 
             for (const player of room.players) {
                 if (player.role === ROLES.SEEKER) {
-                    messageEmitter.emitToPlayer(
-                        SOCKET_EVENTS.SERVER_CLUE_REVEALED,
-                        { clues: room.currentRound.getClues(), timeLeft },
-                        player.username
-                    );
+                    messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_CLUE_REVEALED, { clues: room.currentRound.getClues(), timeLeft }, player.username);
                 }
             }
         } else {
-            messageEmitter.emitToSocket(
-                SOCKET_EVENTS.SERVER_ERROR_MESSAGE,
-                result[1],
-                socket
-            );
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, result[1], socket);
         }
     },
 
@@ -224,28 +185,12 @@ const gameController = {
             if (result.isGameEnded) {
                 dataToSeekers.winners = room.getWinners();
             }
-            messageEmitter.emitToSeekers(
-                SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS,
-                dataToSeekers,
-                room.roomId
-            );
-            messageEmitter.emitToKeeper(
-                SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS,
-                dataToKeeper,
-                room.roomId
-            );
+            messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToSeekers, room.roomId);
+            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToKeeper, room.roomId);
         } else {
             const guesses = room.getGuesses();
-            messageEmitter.broadcastToRoom(
-                SOCKET_EVENTS.SERVER_GUESS_FAILED,
-                guesses,
-                room.roomId
-            );
-            messageEmitter.emitToSocket(
-                SOCKET_EVENTS.SERVER_ERROR_MESSAGE,
-                result.message,
-                socket
-            );
+            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_GUESS_FAILED, guesses, room.roomId);
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, result.message, socket);
         }
     },
 
@@ -272,16 +217,8 @@ const gameController = {
             );
         } else {
             const guesses = room.getGuesses();
-            messageEmitter.emitToSocket(
-                SOCKET_EVENTS.SERVER_ERROR_MESSAGE,
-                "Block failed",
-                socket
-            );
-            messageEmitter.broadcastToRoom(
-                SOCKET_EVENTS.SERVER_GUESS_FAILED,
-                guesses,
-                room.roomId
-            );
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Block failed", socket);
+            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_GUESS_FAILED, guesses, room.roomId);
         }
     },
 
@@ -290,49 +227,30 @@ const gameController = {
         const roomId = gameManager.getRoomIdByUsername(socket.user.username);
         const room = gameManager.getRoom(roomId);
         if (!room) {
-            messageEmitter.emitToSocket(
-                SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY,
-                null,
-                socket
-            );
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
             return;
         }
-        const otherUsernames = room.players
-            .filter((player) => player.username !== socket.user.username)
-            .map((player) => player.username);
+        const otherUsernames = room.players.filter((player) => player.username !== socket.user.username).map((player) => player.username);
 
         gameManager.removePlayerFromRoom(roomId, socket.user.username);
 
-        messageEmitter.emitToSocket(
-            SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY,
-            null,
-            socket
-        );
+        messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
         if (!gameManager.getRoom(roomId)) {
             // if room is empty, send to the other players
             for (const player of otherUsernames) {
-                messageEmitter.emitToPlayer(
-                    SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY,
-                    null,
-                    player
-                );
+                messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, player);
             }
         }
     },
 
     disconnect: (socket, reason) => {
-        const waitingRooms = WaitingRoomManager.removeUserFromItsWaitingRooms(
-            socket.id
-        );
+        const waitingRooms = WaitingRoomManager.removeUserFromItsWaitingRooms(socket.id);
         waitingRooms.forEach((waitingRoomId) => {
             messageEmitter.broadcastToWaitingRoom(
                 SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
                 {
-                    users: WaitingRoomManager.getWaitingRoomUsers(
-                        waitingRoomId
-                    ),
-                    host: WaitingRoomManager.getWaitingRoom(waitingRoomId)
-                        ?.host,
+                    users: WaitingRoomManager.getWaitingRoomUsers(waitingRoomId),
+                    host: WaitingRoomManager.getWaitingRoom(waitingRoomId)?.host,
                 },
                 waitingRoomId
             );

@@ -1,12 +1,49 @@
-const GameManager = require("../../game/managers/GameManager");
-const MessageEmitter = require("../MessageEmitter");
+const GAME_STAGES = require("../../game/constants/gameStages");
+const messageEmitter = require("../MessageEmitter");
+const SOCKET_EVENTS = require("@shared/socketEvents.json");
 
 const roomSideEffects = {
     onKeeperWordTimeout: (room) => {
         if (!room) return;
-        MessageEmitter.broadcastToRoom("server keeper timer timeout", { message: "Keeper didn't choose a word in time." }, room.roomId);
+        console.log("room.status", room.status);
 
-        //        MessageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT, { message: "Keeper didn't choose a word in time." }, room.roomId);
+        if (room.status === GAME_STAGES.KEEPER_CHOOSING_WORD) {
+            const data = {
+                players: room.players,
+                status: room.status,
+                keeperTime: room.currentTime,
+            };
+
+            messageEmitter.emitToKeeper(
+                SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT,
+                {
+                    ...data,
+                    isKeeper: true,
+                },
+                room.roomId
+            );
+
+            messageEmitter.emitToSeekers(
+                SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT,
+                {
+                    ...data,
+                    isKeeper: false,
+                },
+                room.roomId
+            );
+        } else if (room.status === GAME_STAGES.END) {
+            messageEmitter.broadcastToRoom(
+                SOCKET_EVENTS.SERVER_GAME_ENDED,
+                {
+                    players: room.players,
+                    winners: room.winners,
+                    status: room.status,
+                },
+                room.roomId
+            );
+        }
+
+        // MessageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT, { message: "Keeper didn't choose a word in time." }, room.roomId);
     },
 };
 
