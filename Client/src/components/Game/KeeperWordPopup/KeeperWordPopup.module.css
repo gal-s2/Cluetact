@@ -64,6 +64,68 @@
     font-weight: 400;
 }
 
+/* Expired state styling */
+.container input[type="text"]:disabled {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Timer wrapper styling */
+.timerWrapper {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.timerLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.timerDisplay {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: #007bff;
+    background: #ffffff;
+    border: 1px solid #007bff;
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: inline-block;
+    min-width: 70px;
+    transition: all 0.2s ease;
+}
+
+/* Warning state when time is low */
+.timerDisplay[data-warning="true"] {
+    color: #fd7e14;
+    border-color: #fd7e14;
+    background: #fff8f0;
+}
+
+/* Critical state when time is very low */
+.timerDisplay[data-critical="true"] {
+    color: #dc3545;
+    border-color: #dc3545;
+    background: #fdf2f2;
+    animation: subtlePulse 1s infinite;
+}
+
+@keyframes subtlePulse {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
 /* Responsive design */
 @media (max-width: 480px) {
     .container {
@@ -80,44 +142,23 @@
         padding: 14px 20px;
     }
 
-    .timerWrapper :global(.countdownTimer) {
+    .timerWrapper {
+        margin-bottom: 16px;
+    }
+
+    .timerDisplay {
         font-size: 16px;
-        padding: 8px 12px;
+        padding: 6px 10px;
+        min-width: 60px;
+    }
+
+    .timerLabel {
+        font-size: 11px;
+        margin-bottom: 4px;
     }
 
     .timerLabel {
         font-size: 13px;
+        margin-bottom: 8px;
     }
-}
-
-/* Timer wrapper styling */
-.timerWrapper {
-    margin-bottom: 24px;
-    text-align: center;
-}
-
-.timerLabel {
-    font-size: 14px;
-    font-weight: 600;
-    color: #6c757d;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Override timer styles for this context */
-.timerWrapper :global(.countdownTimer) {
-    border-radius: 8px;
-    font-size: 18px;
-    padding: 10px 16px;
-    display: inline-block;
-    min-width: 80px;
-}
-
-/* Expired state styling */
-.container input[type="text"]:disabled {
-    background-color: #f8f9fa;
-    color: #6c757d;
-    cursor: not-allowed;
-    opacity: 0.6;
 }

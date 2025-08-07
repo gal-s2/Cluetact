@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import styles from "./KeeperWordPopup.module.css";
 import socket from "@services/socket";
@@ -6,12 +6,15 @@ import SOCKET_EVENTS from "@shared/socketEvents.json";
 import Modal from "@common/Modal/Modal";
 import Button from "@common/Button/Button";
 import Spinner from "@components/common/Spinner/Spinner";
-import CountdownTimer from "../CountdownTimer/CountdownTimer";
 
 function KeeperWordPopup({ showConfirmModal }) {
     const { gameState, setKeeperWord, isKeeperWordRejected, setIsKeeperWordRejected } = useGameRoom();
     const [loading, setLoading] = useState(false);
     const [keeperTimeLeft, setKeeperTimeLeft] = useState(gameState.keeperTime || 0);
+
+    // Timer refs
+    const endTimeRef = useRef(null);
+    const intervalRef = useRef(null);
 
     const keeperWord = gameState.keeperWord || "";
     const logMessage = gameState.logMessage;
@@ -24,9 +27,41 @@ function KeeperWordPopup({ showConfirmModal }) {
         }
     }, [isKeeperWordRejected]);
 
+    // Timer logic
     useEffect(() => {
-        setKeeperTimeLeft(gameState.keeperTime ?? 0);
+        const newTimeLeft = gameState.keeperTime ?? 0;
+        setKeeperTimeLeft(newTimeLeft);
+
+        if (newTimeLeft === null) return;
+
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+        }
+
+        endTimeRef.current = Date.now() + newTimeLeft * 1000;
+        intervalRef.current = setInterval(() => {
+            const secondsLeft = Math.max(0, Math.round((endTimeRef.current - Date.now()) / 1000));
+            setKeeperTimeLeft(secondsLeft);
+
+            if (secondsLeft === 0) {
+                clearInterval(intervalRef.current);
+            }
+        }, 1000);
+
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
     }, [gameState.keeperTime]);
+
+    const formatTime = (seconds) => {
+        const m = Math.floor(seconds / 60)
+            .toString()
+            .padStart(2, "0");
+        const s = (seconds % 60).toString().padStart(2, "0");
+        return `${m}:${s}`;
+    };
 
     const onSubmit = (e) => {
         // on form submit, emit the event to the server
@@ -36,12 +71,6 @@ function KeeperWordPopup({ showConfirmModal }) {
         socket.emit(SOCKET_EVENTS.CLIENT_KEEPER_WORD_SUBMISSION, { word: keeperWord });
     };
 
-    const handleTimerComplete = () => {
-        // Timer completed - the server should handle this case
-        // You might want to show a message or disable the form
-        console.log("Keeper word selection time expired");
-    };
-
     return (
         <Modal onClose={() => showConfirmModal()} showCloseButton={true}>
             <div className={styles.container}>
@@ -49,7 +78,7 @@ function KeeperWordPopup({ showConfirmModal }) {
                 {keeperTimeLeft !== null && (
                     <div className={styles.timerWrapper}>
                         <div className={styles.timerLabel}>Time to choose word:</div>
-                        <CountdownTimer timeLeft={keeperTimeLeft} setTimeLeft={setKeeperTimeLeft} onComplete={handleTimerComplete} />
+                        <div className={styles.timerDisplay}>{formatTime(keeperTimeLeft ?? 0)}</div>
                     </div>
                 )}
 

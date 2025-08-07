@@ -174,6 +174,7 @@ const gameController = {
 
         if (result.correct) {
             const dataToSeekers = {
+                status: room.status,
                 guesser: guesserUsername,
                 word: guess,
                 clues: room.currentRound.getClues(),

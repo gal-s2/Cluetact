@@ -35,11 +35,9 @@ function GameRoom() {
             {/* remove the winners part here*/}
             {gameState.status === "END" && <GameOverPopup />}
 
-            {gameState.isWordChosen && (
-                <div className={styles.wordDisplay}>
-                    <WordDisplay />
-                </div>
-            )}
+            <div className={styles.wordDisplay}>
+                <WordDisplay />
+            </div>
 
             <div className={styles.sidebar}>
                 {/* Timer */}
