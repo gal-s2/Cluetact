@@ -9,6 +9,7 @@ const CountdownTimer = require("../entities/CountdownTimer");
 const ROLES = require("../constants/roles");
 const POINTS = require("../constants/points");
 const GAME_STAGES = require("../constants/gameStages");
+const TIMES = require("../constants/times");
 
 /**
  * Game Room Class
@@ -49,8 +50,8 @@ class Room {
         return this.#roomId;
     }
 
-    get currentTime() {
-        return this.timer?.getTimeLeft();
+    get keeperChoosingWordTime() {
+        return this.keeperChoosingWordTimer?.getTimeLeft();
     }
 
     setStatus(newStatus) {
@@ -60,7 +61,7 @@ class Room {
 
         switch (newStatus) {
             case GAME_STAGES.KEEPER_CHOOSING_WORD:
-                this.keeperChoosingWordTimer = new CountdownTimer(10, this.onKeeperWordTimeout.bind(this));
+                this.keeperChoosingWordTimer = new CountdownTimer(TIMES.KEEPER_CHOOSING_WORD, this.onKeeperWordTimeout.bind(this));
                 this.keeperChoosingWordTimer.start();
                 break;
 

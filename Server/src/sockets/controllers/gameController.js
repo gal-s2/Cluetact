@@ -4,6 +4,7 @@ const WaitingRoomManager = require("../../game/managers/WaitingRoomManager");
 const messageEmitter = require("../MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const ROLES = require("../../game/constants/roles");
+const { KEEPER_CHOOSING_WORD } = require("../../game/constants/gameStages");
 
 const handleRaceTimeout = (roomId) => {
     const room = gameManager.getRoom(roomId);
@@ -79,6 +80,8 @@ const gameController = {
         const guesses = room.getGuesses();
         const clueGiverUsername = room.getCurrentClueGiverUsername();
 
+        console.log("room.keeperChoosingWordTime", room.keeperChoosingWordTime);
+
         messageEmitter.emitToSocket(
             SOCKET_EVENTS.SERVER_GAME_JOIN,
             {
@@ -92,7 +95,7 @@ const gameController = {
                 isWordChosen: !!room.getKeeperWord(),
                 guesses: guesses,
                 clueGiverUsername: clueGiverUsername,
-                keeperTime: room.currentTime,
+                keeperTime: room.keeperChoosingWordTime,
             },
             socket
         );
@@ -101,7 +104,10 @@ const gameController = {
     handleKeeperWordSubmission: async (socket, args) => {
         let { word } = args;
         const room = gameManager.getRoomBySocket(socket);
+
         if (!room) return;
+        if (socket.user.username !== room.keeperUsername) return;
+        if (room.status != KEEPER_CHOOSING_WORD) return;
 
         const result = await room.setKeeperWordWithValidation(word.toLowerCase());
 

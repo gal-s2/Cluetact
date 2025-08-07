@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import socket from "@services/socket";
 import { useUser } from "@contexts/UserContext";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
@@ -6,10 +6,7 @@ import SOCKET_EVENTS from "@shared/socketEvents.json";
 export default function useGameRoomSocket(roomId) {
     const { user } = useUser();
     const [loading, setLoading] = useState(true);
-    const [notification, setNotification] = useState({
-        message: "",
-        type: "notification",
-    });
+    const [notification, setNotification] = useState({ message: "", type: "notification" });
     const [timeLeft, setTimeLeft] = useState(0);
     const [isKeeperWordRejected, setIsKeeperWordRejected] = useState(false);
 
@@ -31,8 +28,13 @@ export default function useGameRoomSocket(roomId) {
         activeClue: null,
         isWordComplete: false,
         keeperTime: 0,
-        // timeOptions: keeper choosing word / seeker submitting clue / race
     });
+
+    // Creating a ref for gameState, making sure it getting updated in every state update
+    const gameStateRef = useRef(gameState);
+    useEffect(() => {
+        gameStateRef.current = gameState;
+    }, [gameState]);
 
     const setKeeperWord = (word) => {
         setGameState((prev) => ({ ...prev, keeperWord: word }));
@@ -187,14 +189,6 @@ export default function useGameRoomSocket(roomId) {
             setGameState((prev) => ({ ...prev, guesses }));
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT, (data) => {
-            setGameState((prev) => ({ ...prev, ...data }));
-        });
-
-        socket.on(SOCKET_EVENTS.SERVER_GAME_ENDED, (data) => {
-            setGameState((prev) => ({ ...prev, ...data }));
-        });
-
         return () => {
             socket.off(SOCKET_EVENTS.SERVER_GAME_JOIN);
             socket.off(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN);
@@ -203,10 +197,36 @@ export default function useGameRoomSocket(roomId) {
             socket.off(SOCKET_EVENTS.SERVER_CLUE_BLOCKED);
             socket.off(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK);
             socket.off(SOCKET_EVENTS.SERVER_GUESS_FAILED);
-            socket.off(SOCKET_EVENTS.SERVER_KEEPER_CHOOSING_WORD);
-            socket.off(SOCKET_EVENTS.SERVER_GAME_ENDED);
         };
     }, [user?.username, gameState.isKeeper]);
+
+    useEffect(() => {
+        socket.on(SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT, (data) => {
+            const keeper = gameStateRef.current.players.find((player) => player.role === "keeper");
+            setNotification({
+                message: `Choosing word timeout! Keeper ${keeper.username} didn't submit a word on time! Moving to the next keeper`,
+                type: "notification",
+            });
+            setGameState((prev) => ({ ...prev, ...data }));
+        });
+
+        socket.on(SOCKET_EVENTS.SERVER_GAME_ENDED, (data) => {
+            if (data.reason === "keeper word timeout") {
+                const keeper = gameStateRef.current.players.find((player) => player.role === "keeper");
+                setNotification({
+                    message: `Choosing word timeout! Keeper ${keeper.username} didn't submit a word on time! Moving to the next keeper`,
+                    type: "notification",
+                });
+            }
+
+            setGameState((prev) => ({ ...prev, ...data }));
+        });
+
+        return () => {
+            socket.off(SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT);
+            socket.off(SOCKET_EVENTS.SERVER_GAME_ENDED);
+        };
+    }, []);
 
     useEffect(() => {
         socket.on(SOCKET_EVENTS.SERVER_READY_FOR_EVENTS, () => {

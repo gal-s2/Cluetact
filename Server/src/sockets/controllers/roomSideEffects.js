@@ -5,13 +5,12 @@ const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const roomSideEffects = {
     onKeeperWordTimeout: (room) => {
         if (!room) return;
-        console.log("room.status", room.status);
 
         if (room.status === GAME_STAGES.KEEPER_CHOOSING_WORD) {
             const data = {
                 players: room.players,
                 status: room.status,
-                keeperTime: room.currentTime,
+                keeperTime: room.keeperChoosingWordTime,
             };
 
             messageEmitter.emitToKeeper(
@@ -38,6 +37,7 @@ const roomSideEffects = {
                     players: room.players,
                     winners: room.winners,
                     status: room.status,
+                    reason: "keeper word timeout",
                 },
                 room.roomId
             );
