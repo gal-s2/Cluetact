@@ -9,6 +9,7 @@ const { KEEPER_CHOOSING_WORD } = require("../../game/constants/gameStages");
 const handleRaceTimeout = (roomId) => {
     const room = gameManager.getRoom(roomId);
     if (!room) return;
+    const preClueGiverUsername = room.getCurrentClueGiverUsername();
     room.handleRaceTimeout();
     const clueGiverUsername = room.getCurrentClueGiverUsername();
     const dataToSeekers = {
@@ -18,6 +19,7 @@ const handleRaceTimeout = (roomId) => {
         keeper: room.keeperUsername,
         players: room.players,
         clueGiverUsername,
+        preClueGiverUsername,
         keeperWord: null,
     };
     const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
@@ -26,7 +28,7 @@ const handleRaceTimeout = (roomId) => {
 };
 
 const gameController = {
-    handleJoinQueue: async (socket, args) => {
+    handleJoinQueue: async (socket) => {
         let room;
         const user = await socketManager.getUserBySocketId(socket.id);
 
@@ -79,8 +81,6 @@ const gameController = {
         const keeperWordOrNull = username === room.keeperUsername ? room.getKeeperWord() : null;
         const guesses = room.getGuesses();
         const clueGiverUsername = room.getCurrentClueGiverUsername();
-
-        console.log("room.keeperChoosingWordTime", room.keeperChoosingWordTime);
 
         messageEmitter.emitToSocket(
             SOCKET_EVENTS.SERVER_GAME_JOIN,

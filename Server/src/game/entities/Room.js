@@ -162,6 +162,7 @@ class Room {
             Logger.logInvalidSeekerWord(this.roomId, clueWord);
             return [false, "Invalid guess, please guess valid English word"];
         }
+
         if (!this.currentRound.keeperWord) {
             Logger.logCannotClueWithoutKeeperWord(this.roomId);
             return [false, "Early guess"];
@@ -189,13 +190,12 @@ class Room {
         this.currentRound.addClue(clueGiverUsername, clueWord, clueDefinition);
         Logger.logClueSet(this.roomId, clueGiverUsername, clueDefinition);
 
-        //this.timer = new CountdownTimer(TURN_INTERVAL, onRaceTimeout);
-        //this.timer.start();
+        this.timer = new CountdownTimer(TIMES.TURN_INTERVAL, onRaceTimeout);
+        this.timer.start();
 
         return [true];
     }
 
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     handleRaceTimeout() {
         const session = this.currentRound;
         const clue = session.getActiveClue();

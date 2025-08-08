@@ -139,6 +139,11 @@ export default function useGameRoomSocket(roomId) {
                 guesses: [],
                 keeperWord: data.keeperWord,
             }));
+
+            setNotification({
+                message: `guesser failed to guess ${data.prevClueGiverUsername} clue, turn moves to ${data.clueGiverUsername}`,
+                type: "notification",
+            });
         });
 
         socket.on(SOCKET_EVENTS.SERVER_CLUE_REVEALED, ({ clues, timeLeft }) => {

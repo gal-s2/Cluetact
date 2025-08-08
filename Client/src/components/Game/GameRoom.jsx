@@ -67,7 +67,6 @@ function GameRoom() {
                 <div className={styles.cluesSection}>{gameState.isKeeper ? <KeeperCluePanel /> : <SeekerCluePanel />}</div>
 
                 {/* Blocked Clues for Keeper */}
-
                 <div className={styles.blockedCluesContainer}>
                     <BlockedCluesSection maxVisibleItems={5} />
                 </div>
