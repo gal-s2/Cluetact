@@ -52,8 +52,6 @@ export default function useGameRoomSocket(roomId) {
         });
     };
 
-    const handleNextRound = () => {};
-
     const handleExitGame = () => {
         socket.emit(SOCKET_EVENTS.CLIENT_EXIT_ROOM, { roomId });
     };
@@ -225,7 +223,6 @@ export default function useGameRoomSocket(roomId) {
                     type: "notification",
                 });
             }
-
             setGameState((prev) => ({ ...prev, ...data }));
         });
 
@@ -252,7 +249,6 @@ export default function useGameRoomSocket(roomId) {
         loading,
         setCluetact,
         handleGuessSubmit,
-        handleNextRound,
         handleExitGame,
         notification,
         setNotification,

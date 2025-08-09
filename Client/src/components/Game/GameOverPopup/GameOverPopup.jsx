@@ -6,7 +6,7 @@ import Button from "@components/common/Button/Button";
 
 function GameOverPopup() {
     const { user } = useUser();
-    const { gameState, handleNextRound, handleExitGame } = useGameRoom();
+    const { gameState, handleExitGame } = useGameRoom();
     const winners = gameState.winners || [];
     const isWinner = winners.includes(user.username);
 
@@ -24,9 +24,6 @@ function GameOverPopup() {
             </div>
 
             <div className={styles.buttons}>
-                <Button color="light-green" onClick={handleNextRound}>
-                    Next Round
-                </Button>
                 <Button color="danger" onClick={handleExitGame}>
                     Exit
                 </Button>

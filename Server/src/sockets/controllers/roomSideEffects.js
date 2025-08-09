@@ -42,8 +42,6 @@ const roomSideEffects = {
                 room.roomId
             );
         }
-
-        // MessageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT, { message: "Keeper didn't choose a word in time." }, room.roomId);
     },
 };
 
