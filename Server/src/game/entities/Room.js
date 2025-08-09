@@ -10,6 +10,8 @@ const ROLES = require("../constants/roles");
 const POINTS = require("../constants/points");
 const GAME_STAGES = require("../constants/gameStages");
 const TIMES = require("../constants/times");
+const Guess = require("./Guess");
+const Clue = require("./Clue");
 
 /**
  * Game Room Class
@@ -143,17 +145,47 @@ class Room {
         return this.players.find((player) => player.username === username);
     }
 
+    revealNextLetter() {
+        const currentLength = this.currentRound.revealedLetters.length;
+        if (this.currentRound.keeperWord && currentLength < this.currentRound.keeperWord.length) {
+            this.currentRound.revealedLetters += this.currentRound.keeperWord[currentLength];
+
+            // Return true if this was the last letter
+            return this.currentRound.revealedLetters.length === this.currentRound.keeperWord.length;
+        }
+
+        return false; // Already fully revealed
+    }
+
     updateStatus(status) {
         this.status = status;
     }
 
     tryBlockClue(wordGuess, keeperUsername) {
-        const result = this.currentRound.tryBlockClue(wordGuess, keeperUsername);
+        const result = this.validateClueBlocking(wordGuess, keeperUsername);
+
         if (result.success) {
             this.wordsGuessedSuccesfully.add(wordGuess.toLowerCase());
             this.advanceToNextSeeker();
         }
         return result;
+    }
+
+    validateClueBlocking(wordGuess, keeperUsername) {
+        const lowerGuess = wordGuess.toLowerCase();
+        const activeClue = this.currentRound.getActiveClue();
+
+        if (!activeClue.blocked && activeClue.word === lowerGuess) {
+            activeClue.blocked = true;
+            activeClue.active = false;
+            this.currentRound.guesses = [];
+            return {
+                success: true,
+                blockedClue: activeClue,
+            };
+        } else this.currentRound.guesses.push(new Guess(keeperUsername, lowerGuess));
+
+        return { success: false };
     }
 
     async startNewClueRound(clueGiverUsername, clueWord, clueDefinition, onRaceTimeout) {
@@ -179,7 +211,7 @@ class Room {
             return [false, `Word should start with ${revealedPrefix}`];
         }
 
-        if (this.currentRound.clues.find((clue) => clue.toLowerCase() === clueWord.toLowerCase())) {
+        if (this.currentRound.clues.find((clue) => clue.word.toLowerCase() === clueWord.toLowerCase())) {
             Logger.logClueWordAlreadyUsed(this.roomId, clueWord);
             return [false, "Invalid guess, this clue has already been given"];
         }
@@ -187,7 +219,8 @@ class Room {
             return [false, "Invalid guess, definition containing the word cannot be used."];
         }
 
-        this.currentRound.addClue(clueGiverUsername, clueWord, clueDefinition);
+        const clue = new Clue(clueGiverUsername, clueWord, clueDefinition);
+        this.currentRound.clues.push(clue);
         Logger.logClueSet(this.roomId, clueGiverUsername, clueDefinition);
 
         this.timer = new CountdownTimer(TIMES.TURN_INTERVAL, onRaceTimeout);
@@ -197,8 +230,7 @@ class Room {
     }
 
     handleRaceTimeout() {
-        const session = this.currentRound;
-        const clue = session.getActiveClue();
+        const clue = this.currentRound.getActiveClue();
 
         // Block the clue without assigning points
         clue.blocked = true;
@@ -208,16 +240,15 @@ class Room {
         this.advanceToNextSeeker();
 
         // Reveal next letter
-        this.isWordFullyRevealed = session.revealNextLetter();
+        this.isWordFullyRevealed = this.revealNextLetter();
 
         // Reset clue history and guesses
-        session.resetCluesHistory();
-        session.resetGuessesHistory();
+        this.currentRound.resetCluesHistory();
+        this.currentRound.resetGuessesHistory();
     }
 
     async submitGuess(guesserUsername, guessWord, clueId) {
-        const session = this.currentRound;
-        const revealed = session.revealedLetters;
+        const revealed = this.currentRound.revealedLetters;
         const revealedPrefix = revealed.toLowerCase();
         const guessLower = guessWord.toLowerCase();
         const result = { correct: false, isGameEnded: false, message: "" };
@@ -228,7 +259,7 @@ class Room {
             return result;
         }
 
-        if (session.guesses.find((g) => g.word.toLowerCase() === guessLower)) {
+        if (this.currentRound.guesses.find((g) => g.word.toLowerCase() === guessLower)) {
             Logger.logDuplicateGuess(this.roomId, guessWord);
             result.message = "Guess has already been submitted";
             return result;
@@ -241,10 +272,10 @@ class Room {
             return result;
         }
 
-        session.addGuess(guesserUsername, guessWord);
+        this.currentRound.guesses.push(new Guess(guesserUsername, guessWord.toLowerCase()));
 
         // 🧠 Look up the clue by clueId
-        const clue = session.getActiveClue();
+        const clue = this.currentRound.getActiveClue();
 
         if (clue && clue.word === guessLower) {
             clue.active = false;
@@ -259,9 +290,9 @@ class Room {
                 result.revealed = true;
                 result.isWordComplete = this.isWordFullyRevealed;
             }
-            if (guessLower === session.keeperWord?.toLowerCase() || this.isWordFullyRevealed) {
+            if (guessLower === this.currentRound.keeperWord?.toLowerCase() || this.isWordFullyRevealed) {
                 result.isWordComplete = true;
-                result.keeperWord = session.keeperWord;
+                result.keeperWord = this.currentRound.keeperWord;
                 this.setNextRound();
                 this.addPointsToPlayerByUsername(guesserUsername, POINTS.CLUE_BONUS);
                 this.addPointsToPlayerByUsername(this.keeperUsername, POINTS.CLUE_BONUS);
@@ -273,9 +304,7 @@ class Room {
     }
 
     handleCorrectGuessBySeeker(guesserUsername, clueId) {
-        const session = this.currentRound;
-
-        const clue = session.getActiveClue();
+        const clue = this.currentRound.getActiveClue();
         if (!clue) {
             Logger.logError(this.roomId, "No active clue found for correct guess");
             return;
@@ -287,8 +316,8 @@ class Room {
         this.addPointsToPlayerByUsername(clueGiverusername, POINTS.CLUE_BONUS);
         clue.blocked = true;
         this.advanceToNextSeeker();
-        this.isWordFullyRevealed = session.revealNextLetter();
-        session.resetCluesHistory();
+        this.isWordFullyRevealed = this.revealNextLetter();
+        this.currentRound.resetCluesHistory();
     }
 
     /**
@@ -322,11 +351,10 @@ class Room {
     }
 
     handleCorrectBlockByKeeper(keeperUsername) {
-        const session = this.currentRound;
         Logger.logKeeperGuessedClue(this.roomId, keeperUsername);
         this.players.find((player) => player.username === keeperUsername).addScore(2);
 
-        session.status = "waiting";
+        this.currentRound.status = "waiting";
     }
 
     getNextKeeper() {
