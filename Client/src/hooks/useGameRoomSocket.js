@@ -99,36 +99,20 @@ export default function useGameRoomSocket(roomId) {
             }
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players, winners, clueGiverUsername, keeperWord, status, timeLeft }) => {
-            if (isWordComplete) {
+        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, (data) => {
+            if (data.isWordComplete) {
                 setGameState((prev) => ({
                     ...prev,
-                    status: status,
-                    winners,
-                    isKeeper: keeper === user.username,
+                    status: data.status,
+                    winners: data.winners,
+                    isKeeper: data.keeper === user.username,
                     isWordChosen: false,
                 }));
             }
             setGameState((prev) => ({
                 ...prev,
-                status: status,
-                cluetact: { guesser, word },
-                players,
-                clues,
-                isSubmittingClue: clueGiverUsername === user.username,
-                clueGiverUsername,
-                activeClue: null,
-                revealedWord: revealed,
-                isWordComplete,
-                guesses: [],
-                keeperWord,
-            }));
-            setTimeLeft(timeLeft);
-        });
-
-        socket.on(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, (data) => {
-            setGameState((prev) => ({
-                ...prev,
+                status: data.status,
+                cluetact: { guesser: data.guesser, word: data.word },
                 players: data.players,
                 clues: data.clues,
                 isSubmittingClue: data.clueGiverUsername === user.username,
@@ -139,7 +123,24 @@ export default function useGameRoomSocket(roomId) {
                 guesses: [],
                 keeperWord: data.keeperWord,
             }));
+            setTimeLeft(data.timeLeft);
+        });
 
+        socket.on(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, (data) => {
+            setGameState((prev) => ({
+                ...prev,
+                status: data.status,
+                players: data.players,
+                clues: data.clues,
+                isSubmittingClue: data.clueGiverUsername === user.username,
+                clueGiverUsername: data.clueGiverUsername,
+                activeClue: null,
+                revealedWord: data.revealed,
+                isWordComplete: data.isWordComplete,
+                guesses: [],
+                keeperWord: data.keeperWord,
+            }));
+            setTimeLeft(data.timeLeft);
             setNotification({
                 message: `guesser failed to guess ${data.prevClueGiverUsername}'s clue, turn moves to ${data.clueGiverUsername}`,
                 type: "notification",
@@ -161,48 +162,52 @@ export default function useGameRoomSocket(roomId) {
                 type: "notification",
             });
         });
-        socket.on(SOCKET_EVENTS.SERVER_CLUE_REVEALED, ({ clues, timeLeft }) => {
-            const lastClue = clues[clues.length - 1];
+
+        socket.on(SOCKET_EVENTS.SERVER_CLUE_REVEALED, (data) => {
+            const lastClue = data.clues[data.clues.length - 1];
             setGameState((prev) => ({
                 ...prev,
-                clues,
+                status: data.status,
+                clues: data.clues,
                 activeClue: lastClue || null,
             }));
+
             if (lastClue?.from !== user.username) {
                 setNotification({
                     message: `new clue definition by ${lastClue.from}: "${lastClue.definition}"`,
                     type: "notification",
                 });
             }
-            setTimeLeft(timeLeft);
+            setTimeLeft(data.timeLeft);
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ clue, clueGiverUsername, timeLeft, players }) => {
+        socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, (data) => {
             setGameState((prev) => ({
                 ...prev,
-                players,
-                clues: prev.clues.map((c) => (c.id === clue.id ? { ...c, blocked: true, word: clue.word } : c)),
-                isSubmittingClue: clueGiverUsername === user.username,
-                clueGiverUsername,
+                players: data.players,
+                clues: prev.clues.map((c) => (c.id === data.clue.id ? { ...c, blocked: true, word: data.clue.word } : c)),
+                isSubmittingClue: data.clueGiverUsername === user.username,
+                clueGiverUsername: data.clueGiverUsername,
                 activeClue: null,
                 guesses: [],
             }));
-            setTimeLeft(timeLeft);
+            setTimeLeft(data.timeLeft);
             setNotification({
-                message: gameState.isKeeper ? `You blocked "${clue.from}" by guessing the word "${clue.word}"` : `The keeper blocked "${clue.from}" by guessing the word "${clue.word}"`,
+                message: gameState.isKeeper ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"` : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
                 type: gameState.isKeeper ? "success" : "notification",
             });
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, ({ clues, timeLeft }) => {
-            const clue = clues[clues.length - 1];
+        socket.on(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, (data) => {
+            const clue = data.clues[data.clues.length - 1];
             setGameState((prev) => ({
                 ...prev,
+                status: data.status,
                 logMessage: `A clue was submitted by ${clue.from}. You may block it.`,
-                clues,
+                clues: data.clues,
                 activeClue: clue,
             }));
-            setTimeLeft(timeLeft);
+            setTimeLeft(data.timeLeft);
             setNotification({
                 message: `new clue definition by ${clue.from}: "${clue.definition}"`,
                 type: "notification",

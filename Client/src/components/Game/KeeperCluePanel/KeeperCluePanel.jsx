@@ -12,7 +12,6 @@ function KeeperCluePanel({ maxVisibleItems = 4 }) {
     const { user } = useUser();
     const [guess, setGuess] = useState("");
     const unblockedClues = clues.filter((clue) => !clue.blocked);
-    const blockedClues = clues.filter((clue) => clue.blocked);
 
     const unblockedListRef = useRef(null);
     const blockedListRef = useRef(null);

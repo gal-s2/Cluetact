@@ -1,9 +1,14 @@
 import { useEffect, useRef } from "react";
+import { useGameRoom } from "@contexts/GameRoomContext";
 import styles from "./CountdownTimer.module.css";
 
 function CountdownTimer({ timeLeft, setTimeLeft, onComplete }) {
+    const { gameState } = useGameRoom();
     const endTimeRef = useRef(null);
     const intervalRef = useRef(null);
+
+    // Fixed: Use bracket notation for CSS module classes with hyphens
+    const colorClass = gameState.status === "CLUE_SUBMISSION" ? styles["clue-submission-color"] : styles["race-color"];
 
     useEffect(() => {
         if (timeLeft === null) return;
@@ -31,7 +36,7 @@ function CountdownTimer({ timeLeft, setTimeLeft, onComplete }) {
         return `${m}:${s}`;
     };
 
-    return <div className={styles.countdownTimer}>{formatTime(timeLeft ?? 0)}</div>;
+    return <div className={`${styles.countdownTimer} ${colorClass}`}>{formatTime(timeLeft ?? 0)}</div>;
 }
 
 export default CountdownTimer;

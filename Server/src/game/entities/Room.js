@@ -43,9 +43,11 @@ class Room {
         this.pastKeepers.add(this.keeperUsername);
         this.isWordFullyRevealed = false;
         this.keepersWordsHistory = new Set();
+
         this.raceTimer = null;
         this.keeperChoosingWordTimer = null;
         this.clueSubmissionTimer = null;
+
         this.setStatus(GAME_STAGES.KEEPER_CHOOSING_WORD);
     }
 
@@ -77,6 +79,11 @@ class Room {
 
             case GAME_STAGES.CLUE_SUBMISSION:
                 this.clueSubmissionTimer = new CountdownTimer(TIMES.CLUE_SUBMISSION, this.onClueSubmissionTimeout.bind(this));
+                this.clueSubmissionTimer.start();
+                break;
+
+            case GAME_STAGES.CLUE_SUBMISSION_POST_CLUETACT:
+                this.clueSubmissionTimer = new CountdownTimer(TIMES.CLUE_SUBMISSION_POST_CLUETACT, this.onClueSubmissionTimeout.bind(this));
                 this.clueSubmissionTimer.start();
                 break;
 
@@ -250,6 +257,7 @@ class Room {
     handleRaceTimeout() {
         const result = { isAdvancingToNextLetter: false };
         const clue = this.currentRound.getActiveClue();
+
         // Block the clue without assigning points
         clue.blocked = true;
         clue.active = false;
@@ -265,6 +273,8 @@ class Room {
         // Reset clue history and guesses
         this.currentRound.resetCluesHistory();
         this.currentRound.resetGuessesHistory();
+
+        this.setStatus(GAME_STAGES.CLUE_SUBMISSION);
 
         return result;
     }
@@ -326,6 +336,10 @@ class Room {
             this.addPointsToPlayerByUsername(guesserUsername, pointsToGive);
             this.addPointsToPlayerByUsername(clue.from, pointsToGive);
             result.isGameEnded = this.isGameOver();
+
+            this.raceTimer?.stop();
+            if (result.isGameEnded) this.setStatus(GAME_STAGES.END);
+            else this.setStatus(GAME_STAGES.CLUE_SUBMISSION_POST_CLUETACT);
         }
 
         return result;

@@ -23,6 +23,7 @@ const handleRaceTimeout = (roomId) => {
         clueGiverUsername,
         prevClueGiverUsername,
         keeperWord: null,
+        timeLeft: room.clueSubmissionTimer?.getTimeLeft(),
     };
     const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
     messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
@@ -154,11 +155,11 @@ const gameController = {
         const timeLeft = room.getTimeLeft();
 
         if (result[0]) {
-            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, { clues: room.currentRound.getClues(), timeLeft }, room.roomId);
+            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, { status: room.status, clues: room.currentRound.getClues(), timeLeft }, room.roomId);
 
             for (const player of room.players) {
                 if (player.role === ROLES.SEEKER) {
-                    messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_CLUE_REVEALED, { clues: room.currentRound.getClues(), timeLeft }, player.username);
+                    messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_CLUE_REVEALED, { status: room.status, clues: room.currentRound.getClues(), timeLeft }, player.username);
                 }
             }
         } else {
@@ -171,7 +172,6 @@ const gameController = {
         if (!room) return;
 
         const guesserUsername = socket.user.username;
-
         const result = await room.submitGuess(guesserUsername, guess, clueId);
         const clueGiverUsername = room.getCurrentClueGiverUsername();
 
@@ -189,13 +189,16 @@ const gameController = {
                 keeperWord: result.isWordComplete ? result.keeperWord : null,
                 timeLeft: room.clueSubmissionTimer?.getTimeLeft() || 0,
             };
+
             const dataToKeeper = {
                 ...dataToSeekers,
                 keeperWord: room.getKeeperWord(),
             };
+
             if (result.isGameEnded) {
                 dataToSeekers.winners = room.getWinners();
             }
+
             messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToSeekers, room.roomId);
             messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToKeeper, room.roomId);
         } else {
