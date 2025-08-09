@@ -149,7 +149,7 @@ class Room {
         const currentLength = this.currentRound.revealedLetters.length;
         if (this.currentRound.keeperWord && currentLength < this.currentRound.keeperWord.length) {
             this.currentRound.revealedLetters += this.currentRound.keeperWord[currentLength];
-
+            this.currentRound.countOfClueSubmittersInPrefix = 0;
             // Return true if this was the last letter
             return this.currentRound.revealedLetters.length === this.currentRound.keeperWord.length;
         }
@@ -219,6 +219,7 @@ class Room {
             return [false, "Invalid guess, definition containing the word cannot be used."];
         }
 
+        this.currentRound.countOfClueSubmittersInPrefix++;
         const clue = new Clue(clueGiverUsername, clueWord, clueDefinition);
         this.currentRound.clues.push(clue);
         Logger.logClueSet(this.roomId, clueGiverUsername, clueDefinition);
@@ -230,8 +231,9 @@ class Room {
     }
 
     handleRaceTimeout() {
+        const result = { isAdvancingToNextLetter: false };
         const clue = this.currentRound.getActiveClue();
-
+        console.log("activve clue is ", clue);
         // Block the clue without assigning points
         clue.blocked = true;
         clue.active = false;
@@ -239,12 +241,16 @@ class Room {
         // Advance to next seeker
         this.advanceToNextSeeker();
 
-        // Reveal next letter
-        this.isWordFullyRevealed = this.revealNextLetter();
+        if (this.currentRound.countOfClueSubmittersInPrefix === this.seekersUsernames.length) {
+            result.isAdvancingToNextLetter = true;
+            this.isWordFullyRevealed = this.revealNextLetter();
+        }
 
         // Reset clue history and guesses
         this.currentRound.resetCluesHistory();
         this.currentRound.resetGuessesHistory();
+
+        return result;
     }
 
     async submitGuess(guesserUsername, guessWord, clueId) {

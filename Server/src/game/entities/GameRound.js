@@ -9,6 +9,7 @@ class GameRound {
         this.clues = [];
         this.guesses = [];
         this.status = "waiting";
+        this.countOfClueSubmittersInPrefix = 0;
     }
 
     setKeeperWord(word) {

@@ -9,8 +9,10 @@ const { KEEPER_CHOOSING_WORD } = require("../../game/constants/gameStages");
 const handleRaceTimeout = (roomId) => {
     const room = gameManager.getRoom(roomId);
     if (!room) return;
-    const preClueGiverUsername = room.getCurrentClueGiverUsername();
-    room.handleRaceTimeout();
+    const prevClueGiverUsername = room.getCurrentClueGiverUsername();
+    const result = room.handleRaceTimeout();
+    if (!result) return;
+    // if (result.isAdvancingToNextLetter) {
     const clueGiverUsername = room.getCurrentClueGiverUsername();
     const dataToSeekers = {
         clues: room.currentRound.getClues(),
@@ -19,12 +21,28 @@ const handleRaceTimeout = (roomId) => {
         keeper: room.keeperUsername,
         players: room.players,
         clueGiverUsername,
-        preClueGiverUsername,
+        prevClueGiverUsername,
         keeperWord: null,
     };
     const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
     messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
     messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
+    // } else {
+    //     const clueGiverUsername = room.getCurrentClueGiverUsername();
+    //     const dataToSeekers = {
+    //         clues: room.currentRound.getClues(),
+    //         revealed: room.getRevealedLetters(),
+    //         isWordComplete: room.isWordFullyRevealed,
+    //         keeper: room.keeperUsername,
+    //         players: room.players,
+    //         clueGiverUsername,
+    //         preClueGiverUsername,
+    //         keeperWord: null,
+    //     };
+    //     const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
+    //     messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
+    //     messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
+    // }
 };
 
 const gameController = {

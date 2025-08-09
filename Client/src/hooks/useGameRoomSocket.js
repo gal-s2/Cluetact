@@ -139,7 +139,7 @@ export default function useGameRoomSocket(roomId) {
             }));
 
             setNotification({
-                message: `guesser failed to guess ${data.prevClueGiverUsername} clue, turn moves to ${data.clueGiverUsername}`,
+                message: `guesser failed to guess ${data.prevClueGiverUsername}'s clue, turn moves to ${data.clueGiverUsername}`,
                 type: "notification",
             });
         });
