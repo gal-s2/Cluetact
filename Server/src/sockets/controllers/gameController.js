@@ -5,6 +5,7 @@ const messageEmitter = require("../MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const ROLES = require("../../game/constants/roles");
 const { KEEPER_CHOOSING_WORD } = require("../../game/constants/gameStages");
+const GAME_STAGES = require("../../game/constants/gameStages");
 
 const handleRaceTimeout = (roomId) => {
     const room = gameManager.getRoom(roomId);
@@ -133,6 +134,7 @@ const gameController = {
             word = room.getKeeperWord();
             room.keepersWordsHistory.add(word.toLowerCase());
             const clueGiverUsername = room.seekersUsernames[room.indexOfSeekerOfCurrentTurn];
+            room.setStatus(GAME_STAGES.CLUE_SUBMISSION);
             // send all players in room a word chosen
             for (const player of room.players) {
                 const data = {
@@ -141,11 +143,11 @@ const gameController = {
                     revealedWord: room.getRevealedLetters(),
                     length: word.length,
                     clueGiverUsername,
+                    timeLeft: room.clueSubmissionTimer?.getTimeLeft() || 0,
                 };
 
                 messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN, data, player.username);
             }
-            room.status = "MID-ROUND";
         } else {
             messageEmitter.emitToSocket(
                 SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN,
@@ -202,6 +204,7 @@ const gameController = {
                 players: room.players,
                 clueGiverUsername: clueGiverUsername,
                 keeperWord: result.isWordComplete ? result.keeperWord : null,
+                timeLeft: room.clueSubmissionTimer?.getTimeLeft() || 0,
             };
             const dataToKeeper = {
                 ...dataToSeekers,

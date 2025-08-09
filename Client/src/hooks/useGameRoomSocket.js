@@ -66,7 +66,7 @@ export default function useGameRoomSocket(roomId) {
                 revealedWord: data.revealedWord,
                 wordLength: data.wordLength,
                 clues: data.clues,
-                activeClue: data.clues[data.clues.length - 1]?.active || null,
+                activeClue: data.clues[data.clues.length - 1]?.active,
                 isKeeper: data.isKeeper,
                 isWordChosen: data.isWordChosen,
                 guesses: data.guesses,
@@ -92,13 +92,14 @@ export default function useGameRoomSocket(roomId) {
                     clueGiverUsername: data.clueGiverUsername,
                     isWordComplete: false,
                 }));
+                setTimeLeft(data.timeLeft);
             } else {
                 setIsKeeperWordRejected(true);
                 setNotification({ message: data.message, type: "error" });
             }
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players, winners, clueGiverUsername, keeperWord, status }) => {
+        socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, ({ guesser, clues, word, revealed, isWordComplete, keeper, players, winners, clueGiverUsername, keeperWord, status, timeLeft }) => {
             if (isWordComplete) {
                 setGameState((prev) => ({
                     ...prev,
@@ -122,6 +123,7 @@ export default function useGameRoomSocket(roomId) {
                 guesses: [],
                 keeperWord,
             }));
+            setTimeLeft(timeLeft);
         });
 
         socket.on(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, (data) => {
@@ -144,6 +146,21 @@ export default function useGameRoomSocket(roomId) {
             });
         });
 
+        socket.on(SOCKET_EVENTS.SERVER_CLUE_SUBMISSION_TIMEOUT, (data) => {
+            setGameState((prev) => ({
+                ...prev,
+                players: data.players,
+                status: data.status,
+                clueGiverUsername: data.clueGiverUsername,
+                isSubmittingClue: data.clueGiverUsername === user.username,
+                activeClue: null,
+            }));
+            setTimeLeft(data.timeLeft);
+            setNotification({
+                message: "Clue submission time is over! Moving to the next seeker",
+                type: "notification",
+            });
+        });
         socket.on(SOCKET_EVENTS.SERVER_CLUE_REVEALED, ({ clues, timeLeft }) => {
             const lastClue = clues[clues.length - 1];
             setGameState((prev) => ({
@@ -202,6 +219,8 @@ export default function useGameRoomSocket(roomId) {
             socket.off(SOCKET_EVENTS.SERVER_CLUE_BLOCKED);
             socket.off(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK);
             socket.off(SOCKET_EVENTS.SERVER_GUESS_FAILED);
+            socket.off(SOCKET_EVENTS.SERVER_CLUE_SUBMISSION_TIMEOUT);
+            socket.off(SOCKET_EVENTS.SERVER_RACE_TIMEOUT);
         };
     }, [user?.username, gameState.isKeeper]);
 

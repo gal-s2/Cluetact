@@ -43,6 +43,22 @@ const roomSideEffects = {
             );
         }
     },
+    onClueSubmissionTimeout: (room) => {
+        if (!room) return;
+
+        if (room.status === GAME_STAGES.CLUE_SUBMISSION) {
+            messageEmitter.broadcastToRoom(
+                SOCKET_EVENTS.SERVER_CLUE_SUBMISSION_TIMEOUT,
+                {
+                    players: room.players,
+                    status: room.status,
+                    timeLeft: room.clueSubmissionTimer?.getTimeLeft() || 0,
+                    clueGiverUsername: room.getCurrentClueGiverUsername(),
+                },
+                room.roomId
+            );
+        }
+    },
 };
 
 module.exports = roomSideEffects;

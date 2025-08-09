@@ -105,8 +105,8 @@ class GameManager {
             for (const player of room.players) {
                 this.playerToRoomId.delete(player.username);
             }
+            room.destroy();
             delete this.rooms[roomId];
-            //}
         }
     }
 }

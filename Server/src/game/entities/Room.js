@@ -42,10 +42,18 @@ class Room {
         this.pastKeepers = new Set();
         this.pastKeepers.add(this.keeperUsername);
         this.isWordFullyRevealed = false;
-        this.timer = null;
         this.keepersWordsHistory = new Set();
-
+        this.raceTimer = null;
+        this.keeperChoosingWordTimer = null;
+        this.clueSubmissionTimer = null;
         this.setStatus(GAME_STAGES.KEEPER_CHOOSING_WORD);
+    }
+
+    destroy() {
+        this.keeperChoosingWordTimer?.stop();
+        this.clueSubmissionTimer?.stop();
+        this.raceTimer?.stop();
+        this.callbacks = null;
     }
 
     get roomId() {
@@ -65,6 +73,11 @@ class Room {
             case GAME_STAGES.KEEPER_CHOOSING_WORD:
                 this.keeperChoosingWordTimer = new CountdownTimer(TIMES.KEEPER_CHOOSING_WORD, this.onKeeperWordTimeout.bind(this));
                 this.keeperChoosingWordTimer.start();
+                break;
+
+            case GAME_STAGES.CLUE_SUBMISSION:
+                this.clueSubmissionTimer = new CountdownTimer(TIMES.CLUE_SUBMISSION, this.onClueSubmissionTimeout.bind(this));
+                this.clueSubmissionTimer.start();
                 break;
 
             case GAME_STAGES.END:
@@ -122,7 +135,7 @@ class Room {
     }
 
     getTimeLeft() {
-        return this.timer ? this.timer.getTimeLeft() : 0;
+        return this.raceTimer ? this.raceTimer.getTimeLeft() : 0;
     }
 
     /**
@@ -219,13 +232,14 @@ class Room {
             return [false, "Invalid guess, definition containing the word cannot be used."];
         }
 
+        this.clueSubmissionTimer?.stop();
         this.currentRound.countOfClueSubmittersInPrefix++;
         const clue = new Clue(clueGiverUsername, clueWord, clueDefinition);
         this.currentRound.clues.push(clue);
         Logger.logClueSet(this.roomId, clueGiverUsername, clueDefinition);
 
-        this.timer = new CountdownTimer(TIMES.TURN_INTERVAL, onRaceTimeout);
-        this.timer.start();
+        this.raceTimer = new CountdownTimer(TIMES.TURN_INTERVAL, onRaceTimeout);
+        this.raceTimer.start();
 
         return [true];
     }
@@ -233,7 +247,6 @@ class Room {
     handleRaceTimeout() {
         const result = { isAdvancingToNextLetter: false };
         const clue = this.currentRound.getActiveClue();
-        console.log("activve clue is ", clue);
         // Block the clue without assigning points
         clue.blocked = true;
         clue.active = false;
@@ -251,6 +264,12 @@ class Room {
         this.currentRound.resetGuessesHistory();
 
         return result;
+    }
+
+    onClueSubmissionTimeout() {
+        this.advanceToNextSeeker();
+        this.setStatus(GAME_STAGES.CLUE_SUBMISSION);
+        this.callbacks?.onClueSubmissionTimeout?.(this);
     }
 
     async submitGuess(guesserUsername, guessWord, clueId) {
