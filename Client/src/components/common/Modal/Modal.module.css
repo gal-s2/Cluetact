@@ -19,14 +19,7 @@
 .modal {
     position: relative;
     background: white;
-    border-radius: 1rem;
-    padding: 2rem;
-    text-align: center;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    border: 2px solid #e8f5e8;
-    animation: modalSlideIn 0.3s ease-out;
-    position: relative;
-    background: white;
+    color: #333;
     border-radius: 1rem;
     padding: 2rem;
     text-align: center;
@@ -62,6 +55,38 @@
 
 .closeButton:active {
     transform: scale(0.95);
+}
+
+.closeButton:focus {
+    outline: 2px solid #666;
+    outline-offset: 2px;
+}
+
+/* Dark mode styles using system preference */
+@media (prefers-color-scheme: dark) {
+    .overlay {
+        background: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal {
+        background: #1a1a1a;
+        color: #e5e5e5;
+        border: 2px solid #2d4a2d;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .closeButton {
+        color: #888;
+    }
+
+    .closeButton:hover {
+        background: #333;
+        color: #ccc;
+    }
+
+    .closeButton:focus {
+        outline-color: #ccc;
+    }
 }
 
 @keyframes modalFadeIn {
@@ -148,6 +173,10 @@
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
     .modal {
+        animation: none;
+    }
+
+    .overlay {
         animation: none;
     }
 
