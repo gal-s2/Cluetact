@@ -105,3 +105,83 @@
         transform: rotate(360deg);
     }
 }
+
+/* Add these dark mode styles to your existing SubmitClue.module.css */
+
+/* Dark mode support */
+[data-theme="dark"] .container {
+    background: #2d3748;
+    border-color: rgba(104, 211, 145, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .input {
+    background: #4a5568;
+    border-color: #718096;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .input:focus {
+    border-color: #68d391;
+    box-shadow: 0 0 0 3px rgba(104, 211, 145, 0.15);
+}
+
+[data-theme="dark"] .input::placeholder {
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .charCount {
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .charCount.warning {
+    color: #fbb043;
+}
+
+[data-theme="dark"] .charCount.danger {
+    color: #fc8181;
+}
+
+[data-theme="dark"] .submitButton:disabled {
+    background: #4a5568;
+}
+
+/* Automatic dark mode */
+@media (prefers-color-scheme: dark) {
+    .container {
+        background: #2d3748;
+        border-color: rgba(104, 211, 145, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .input {
+        background: #4a5568;
+        border-color: #718096;
+        color: #e2e8f0;
+    }
+
+    .input:focus {
+        border-color: #68d391;
+        box-shadow: 0 0 0 3px rgba(104, 211, 145, 0.15);
+    }
+
+    .input::placeholder {
+        color: #a0aec0;
+    }
+
+    .charCount {
+        color: #a0aec0;
+    }
+
+    .charCount.warning {
+        color: #fbb043;
+    }
+
+    .charCount.danger {
+        color: #fc8181;
+    }
+
+    .submitButton:disabled {
+        background: #4a5568;
+    }
+}

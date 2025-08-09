@@ -298,3 +298,170 @@
         transition: none;
     }
 }
+
+/* Add these dark mode styles to your existing SeekerCluePanel.module.css */
+
+/* Dark mode support */
+[data-theme="dark"] .heading {
+    color: #e2e8f0;
+    border-bottom-color: #4a5568;
+}
+
+[data-theme="dark"] .activeClueWrapper {
+    background: #2d3748;
+    border-color: rgba(104, 211, 145, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .emptyMessage {
+    background: #2d3748;
+    color: #718096;
+    border-color: #4a5568;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .scrollableHistoryList {
+    background: #2d3748;
+    border-color: rgba(113, 128, 150, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    scrollbar-color: #718096 #4a5568;
+}
+
+[data-theme="dark"] .scrollableHistoryList::-webkit-scrollbar-track {
+    background: #4a5568;
+}
+
+[data-theme="dark"] .scrollableHistoryList::-webkit-scrollbar-thumb {
+    background: #718096;
+}
+
+[data-theme="dark"] .scrollableHistoryList::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+[data-theme="dark"] .liveGuessesWrapper {
+    background: #2d3748;
+    border-color: rgba(251, 176, 67, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .guessActionWrapper {
+    background: #2d3748;
+    border-color: rgba(66, 153, 225, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .sectionDivider {
+    background: linear-gradient(90deg, transparent, #4a5568, transparent);
+}
+
+[data-theme="dark"] .loadingState {
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .loadingSpinner {
+    border-color: #4a5568;
+    border-top-color: #667eea;
+}
+
+[data-theme="dark"] .activeClueWrapper {
+    animation: subtlePulseDark 3s infinite;
+}
+
+@keyframes subtlePulseDark {
+    0%,
+    100% {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 2px 12px rgba(104, 211, 145, 0.3);
+    }
+}
+
+/* Automatic dark mode */
+@media (prefers-color-scheme: dark) {
+    .heading {
+        color: #e2e8f0;
+        border-bottom-color: #4a5568;
+    }
+
+    .activeClueWrapper {
+        background: #2d3748;
+        border-color: rgba(104, 211, 145, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .emptyMessage {
+        background: #2d3748;
+        color: #718096;
+        border-color: #4a5568;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .scrollableHistoryList {
+        background: #2d3748;
+        border-color: rgba(113, 128, 150, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        scrollbar-color: #718096 #4a5568;
+    }
+
+    .scrollableHistoryList::-webkit-scrollbar-track {
+        background: #4a5568;
+    }
+
+    .scrollableHistoryList::-webkit-scrollbar-thumb {
+        background: #718096;
+    }
+
+    .scrollableHistoryList::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+    }
+
+    .liveGuessesWrapper {
+        background: #2d3748;
+        border-color: rgba(251, 176, 67, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .guessActionWrapper {
+        background: #2d3748;
+        border-color: rgba(66, 153, 225, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .sectionDivider {
+        background: linear-gradient(90deg, transparent, #4a5568, transparent);
+    }
+
+    .loadingState {
+        color: #a0aec0;
+    }
+
+    .loadingSpinner {
+        border-color: #4a5568;
+        border-top-color: #667eea;
+    }
+
+    .activeClueWrapper {
+        animation: subtlePulseDark 3s infinite;
+    }
+}
+
+/* High contrast dark mode support */
+@media (prefers-contrast: high) and (prefers-color-scheme: dark) {
+    [data-theme="dark"] .heading {
+        color: #fff;
+    }
+
+    [data-theme="dark"] .activeClueWrapper,
+    [data-theme="dark"] .scrollableHistoryList,
+    [data-theme="dark"] .liveGuessesWrapper,
+    [data-theme="dark"] .guessActionWrapper {
+        border-color: #fff;
+    }
+
+    [data-theme="dark"] .emptyMessage {
+        border-color: #a0aec0;
+        color: #a0aec0;
+    }
+}
