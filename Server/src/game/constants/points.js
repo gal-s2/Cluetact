@@ -1,7 +1,8 @@
 const POINTS = Object.freeze({
-    BASE_POINTS: 15,
-    CLUE_BONUS: 5,
-    RACE_TIMEOUT_BONUS: 2,
+    CLUE_BONUS: 50,
+    RACE_TIMEOUT_BONUS: 2, //need to think where to put
+    KEEPER_BLOCK_BONUS: 25,
+    PERFECT_GUESS_BONUS: 50,
 });
 
 module.exports = POINTS;

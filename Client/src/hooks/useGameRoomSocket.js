@@ -177,15 +177,17 @@ export default function useGameRoomSocket(roomId) {
             setTimeLeft(timeLeft);
         });
 
-        socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ clue, clueGiverUsername }) => {
+        socket.on(SOCKET_EVENTS.SERVER_CLUE_BLOCKED, ({ clue, clueGiverUsername, timeLeft, players }) => {
             setGameState((prev) => ({
                 ...prev,
+                players,
                 clues: prev.clues.map((c) => (c.id === clue.id ? { ...c, blocked: true, word: clue.word } : c)),
                 isSubmittingClue: clueGiverUsername === user.username,
                 clueGiverUsername,
                 activeClue: null,
                 guesses: [],
             }));
+            setTimeLeft(timeLeft);
             setNotification({
                 message: gameState.isKeeper ? `You blocked "${clue.from}" by guessing the word "${clue.word}"` : `The keeper blocked "${clue.from}" by guessing the word "${clue.word}"`,
                 type: gameState.isKeeper ? "success" : "notification",

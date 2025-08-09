@@ -180,6 +180,8 @@ class Room {
         if (result.success) {
             this.wordsGuessedSuccesfully.add(wordGuess.toLowerCase());
             this.advanceToNextSeeker();
+            this.addPointsToPlayerByUsername(keeperUsername, POINTS.KEEPER_BLOCK_BONUS);
+            this.setStatus(GAME_STAGES.CLUE_SUBMISSION);
         }
         return result;
     }
@@ -189,6 +191,7 @@ class Room {
         const activeClue = this.currentRound.getActiveClue();
 
         if (!activeClue.blocked && activeClue.word === lowerGuess) {
+            this.raceTimer?.stop();
             activeClue.blocked = true;
             activeClue.active = false;
             this.currentRound.guesses = [];
@@ -306,22 +309,22 @@ class Room {
             clue.active = false;
             result.correct = true;
             this.currentRound.resetGuessesHistory();
-            if (guesserUsername === this.keeperUsername) {
-                this.handleCorrectBlockByKeeper(guesserUsername);
-                result.revealed = false;
-            } else {
-                this.wordsGuessedSuccesfully.add(guessLower);
-                this.handleCorrectGuessBySeeker(guesserUsername, clueId);
-                result.revealed = true;
-                result.isWordComplete = this.isWordFullyRevealed;
-            }
+            let pointsToGive = POINTS.CLUE_BONUS;
+
+            this.wordsGuessedSuccesfully.add(guessLower);
+            this.handleCorrectGuessBySeeker(guesserUsername, clueId);
+            result.revealed = true;
+            result.isWordComplete = this.isWordFullyRevealed;
+
             if (guessLower === this.currentRound.keeperWord?.toLowerCase() || this.isWordFullyRevealed) {
                 result.isWordComplete = true;
                 result.keeperWord = this.currentRound.keeperWord;
                 this.setNextRound();
-                this.addPointsToPlayerByUsername(guesserUsername, POINTS.CLUE_BONUS);
-                this.addPointsToPlayerByUsername(this.keeperUsername, POINTS.CLUE_BONUS);
+                pointsToGive += POINTS.PERFECT_GUESS_BONUS;
             }
+
+            this.addPointsToPlayerByUsername(guesserUsername, pointsToGive);
+            this.addPointsToPlayerByUsername(clue.from, pointsToGive);
             result.isGameEnded = this.isGameOver();
         }
 
@@ -337,8 +340,6 @@ class Room {
 
         const clueGiverusername = clue.from;
 
-        this.addPointsToPlayerByUsername(guesserUsername, POINTS.CLUE_BONUS);
-        this.addPointsToPlayerByUsername(clueGiverusername, POINTS.CLUE_BONUS);
         clue.blocked = true;
         this.advanceToNextSeeker();
         this.isWordFullyRevealed = this.revealNextLetter();
@@ -373,13 +374,6 @@ class Room {
             this.setStatus(GAME_STAGES.KEEPER_CHOOSING_WORD);
             Logger.logNextKeeper(this.roomId, nextKeeper);
         }
-    }
-
-    handleCorrectBlockByKeeper(keeperUsername) {
-        Logger.logKeeperGuessedClue(this.roomId, keeperUsername);
-        this.players.find((player) => player.username === keeperUsername).addScore(2);
-
-        this.currentRound.status = "waiting";
     }
 
     getNextKeeper() {

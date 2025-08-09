@@ -13,7 +13,6 @@ const handleRaceTimeout = (roomId) => {
     const prevClueGiverUsername = room.getCurrentClueGiverUsername();
     const result = room.handleRaceTimeout();
     if (!result) return;
-    // if (result.isAdvancingToNextLetter) {
     const clueGiverUsername = room.getCurrentClueGiverUsername();
     const dataToSeekers = {
         clues: room.currentRound.getClues(),
@@ -28,22 +27,6 @@ const handleRaceTimeout = (roomId) => {
     const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
     messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
     messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
-    // } else {
-    //     const clueGiverUsername = room.getCurrentClueGiverUsername();
-    //     const dataToSeekers = {
-    //         clues: room.currentRound.getClues(),
-    //         revealed: room.getRevealedLetters(),
-    //         isWordComplete: room.isWordFullyRevealed,
-    //         keeper: room.keeperUsername,
-    //         players: room.players,
-    //         clueGiverUsername,
-    //         preClueGiverUsername,
-    //         keeperWord: null,
-    //     };
-    //     const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
-    //     messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
-    //     messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
-    // }
 };
 
 const gameController = {
@@ -235,11 +218,14 @@ const gameController = {
 
         if (result.success) {
             const clueGiverUsername = room.getCurrentClueGiverUsername();
+
             messageEmitter.broadcastToRoom(
                 SOCKET_EVENTS.SERVER_CLUE_BLOCKED,
                 {
+                    players: room.players,
                     clue: result.blockedClue,
                     clueGiverUsername: clueGiverUsername,
+                    timeLeft: room.clueSubmissionTimer?.getTimeLeft() || 0,
                 },
                 room.roomId
             );

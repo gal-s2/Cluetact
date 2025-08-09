@@ -1,6 +1,3 @@
-const Clue = require("./Clue");
-const Guess = require("./Guess");
-
 class GameRound {
     constructor() {
         this.roundNum = 1;
