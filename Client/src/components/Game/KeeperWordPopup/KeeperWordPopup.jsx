@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import styles from "./KeeperWordPopup.module.css";
 import socket from "@services/socket";
@@ -10,6 +10,12 @@ import Spinner from "@components/common/Spinner/Spinner";
 function KeeperWordPopup({ showConfirmModal }) {
     const { gameState, setKeeperWord, isKeeperWordRejected, setIsKeeperWordRejected } = useGameRoom();
     const [loading, setLoading] = useState(false);
+    const [keeperTimeLeft, setKeeperTimeLeft] = useState(gameState.keeperTime || 0);
+
+    // Timer refs
+    const endTimeRef = useRef(null);
+    const intervalRef = useRef(null);
+
     const keeperWord = gameState.keeperWord || "";
     const logMessage = gameState.logMessage;
 
@@ -20,6 +26,42 @@ function KeeperWordPopup({ showConfirmModal }) {
             setIsKeeperWordRejected(false);
         }
     }, [isKeeperWordRejected]);
+
+    // Timer logic
+    useEffect(() => {
+        const newTimeLeft = gameState.keeperTime ?? 0;
+        setKeeperTimeLeft(newTimeLeft);
+
+        if (newTimeLeft === null) return;
+
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+        }
+
+        endTimeRef.current = Date.now() + newTimeLeft * 1000;
+        intervalRef.current = setInterval(() => {
+            const secondsLeft = Math.max(0, Math.round((endTimeRef.current - Date.now()) / 1000));
+            setKeeperTimeLeft(secondsLeft);
+
+            if (secondsLeft === 0) {
+                clearInterval(intervalRef.current);
+            }
+        }, 1000);
+
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
+    }, [gameState.keeperTime]);
+
+    const formatTime = (seconds) => {
+        const m = Math.floor(seconds / 60)
+            .toString()
+            .padStart(2, "0");
+        const s = (seconds % 60).toString().padStart(2, "0");
+        return `${m}:${s}`;
+    };
 
     const onSubmit = (e) => {
         // on form submit, emit the event to the server
@@ -32,6 +74,14 @@ function KeeperWordPopup({ showConfirmModal }) {
     return (
         <Modal onClose={() => showConfirmModal()} showCloseButton={true}>
             <div className={styles.container}>
+                {/* Timer Display */}
+                {keeperTimeLeft !== null && (
+                    <div className={styles.timerWrapper}>
+                        <div className={styles.timerLabel}>Time to choose word:</div>
+                        <div className={styles.timerDisplay}>{formatTime(keeperTimeLeft ?? 0)}</div>
+                    </div>
+                )}
+
                 <form onSubmit={onSubmit}>
                     {loading ? (
                         <>
@@ -41,11 +91,17 @@ function KeeperWordPopup({ showConfirmModal }) {
                     ) : (
                         <>
                             <p>{logMessage}</p>
-                            <input type="text" value={keeperWord} onChange={(e) => setKeeperWord(e.target.value)} placeholder="Enter your secret word" />
+                            <input
+                                type="text"
+                                value={keeperWord}
+                                onChange={(e) => setKeeperWord(e.target.value)}
+                                placeholder="Enter your secret word"
+                                disabled={keeperTimeLeft === 0} // Disable input when time is up
+                            />
                         </>
                     )}
 
-                    <Button type="submit" color="accept" disabled={loading || !keeperWord || keeperWord.trim() === ""}>
+                    <Button type="submit" color="accept" disabled={loading || !keeperWord || keeperWord.trim() === "" || keeperTimeLeft === 0}>
                         Submit
                     </Button>
                 </form>

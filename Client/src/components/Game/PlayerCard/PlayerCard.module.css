@@ -276,6 +276,116 @@
     }
 }
 
+/* Status indicators for online/offline */
+.statusIndicator {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.statusIndicator.online {
+    background: #48bb78;
+}
+
+.statusIndicator.offline {
+    background: #a0aec0;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .card {
+        background: #2d3748;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        border-left: 4px solid #4a5568;
+    }
+
+    .card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .card.expanded {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .card.me {
+        background: linear-gradient(135deg, #1a2e1a, #2d3748);
+    }
+
+    .card.activeClueGiver {
+        background: linear-gradient(135deg, #2a1f15, #2d3748);
+        box-shadow: 0 2px 8px rgba(237, 137, 54, 0.3);
+    }
+
+    .card.me.activeClueGiver {
+        background: linear-gradient(135deg, #1a2e1a, #2a1f15);
+    }
+
+    .playerImage {
+        border-color: #4a5568;
+    }
+
+    .turnIndicator {
+        border-color: #2d3748;
+    }
+
+    .playerDataContainer h3 {
+        color: #e2e8f0;
+    }
+
+    .playerDataContainer p {
+        color: #a0aec0;
+    }
+
+    .chevron {
+        color: #718096;
+    }
+
+    .profileDropdown {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+
+    .countryRow {
+        color: #cbd5e0;
+    }
+
+    .stat {
+        background: #1a202c;
+    }
+
+    .statLabel {
+        color: #a0aec0;
+    }
+
+    .statValue {
+        color: #e2e8f0;
+    }
+
+    .statusIndicator {
+        border-color: #2d3748;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .card {
+        border: 2px solid #000;
+    }
+
+    .playerImage {
+        border-color: #000;
+    }
+
+    .playerDataContainer h3 {
+        color: #000;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .card {
@@ -407,41 +517,6 @@
 
     .statValue {
         font-size: 11px;
-    }
-}
-
-/* Status indicators for online/offline */
-.statusIndicator {
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.statusIndicator.online {
-    background: #48bb78;
-}
-
-.statusIndicator.offline {
-    background: #a0aec0;
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-    .card {
-        border: 2px solid #000;
-    }
-
-    .playerImage {
-        border-color: #000;
-    }
-
-    .playerDataContainer h3 {
-        color: #000;
     }
 }
 

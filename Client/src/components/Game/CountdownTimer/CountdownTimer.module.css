@@ -1,5 +1,3 @@
-/* CountdownTimer.module.css */
-
 .countdownTimer {
     background: linear-gradient(135deg, #ff6b6b, #ee5a24);
     color: white;
@@ -27,18 +25,34 @@
     animation: shimmer 2s infinite;
 }
 
-@keyframes shimmer {
-    0% {
-        left: -100%;
-    }
-    100% {
-        left: 100%;
-    }
+/* Green theme for clue submission - higher specificity */
+.countdownTimer.clue-submission-color {
+    background: linear-gradient(135deg, #2ed573, #1e90ff);
+}
+
+.countdownTimer.clue-submission-color.warning {
+    background: linear-gradient(135deg, #26d0ce, #1abc9c);
+}
+
+.countdownTimer.clue-submission-color.critical {
+    background: linear-gradient(135deg, #00b894, #00a085);
+}
+
+/* Orange theme for race */
+.countdownTimer.race-color {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+}
+
+.countdownTimer.race-color.warning {
+    background: linear-gradient(135deg, #ff4757, #ff3742);
+}
+
+.countdownTimer.race-color.critical {
+    background: linear-gradient(135deg, #ff3742, #ff2f3a);
 }
 
 /* Warning state when time is low */
 .countdownTimer.warning {
-    background: linear-gradient(135deg, #ff4757, #ff3742);
     animation: pulse 1s infinite;
 }
 
@@ -54,7 +68,6 @@
 
 /* Critical state when time is very low */
 .countdownTimer.critical {
-    background: linear-gradient(135deg, #ff3742, #ff2f3a);
     animation: urgentPulse 0.5s infinite;
 }
 
@@ -67,6 +80,15 @@
     50% {
         transform: scale(1.05);
         box-shadow: 0 4px 15px rgba(255, 55, 66, 0.4);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
     }
 }
 

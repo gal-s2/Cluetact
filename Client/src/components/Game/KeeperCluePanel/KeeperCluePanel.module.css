@@ -277,3 +277,189 @@
         font-size: 13px;
     }
 }
+
+/* Dark mode support */
+[data-theme="dark"] .incomingSection {
+    background: #2d3748;
+    border-color: rgba(252, 129, 129, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .blockedSection {
+    background: #2d3748;
+    border-color: rgba(113, 128, 150, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .heading {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .subHeading {
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .emptyMessage {
+    color: #718096;
+}
+
+[data-theme="dark"] .scrollableClueList {
+    scrollbar-color: #718096 #4a5568;
+}
+
+[data-theme="dark"] .scrollableClueList::-webkit-scrollbar-track {
+    background: #4a5568;
+}
+
+[data-theme="dark"] .scrollableClueList::-webkit-scrollbar-thumb {
+    background: #718096;
+}
+
+[data-theme="dark"] .scrollableClueList::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+[data-theme="dark"] .clueItem {
+    background: #4a5568;
+    border-left-color: #718096;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .clueItem:hover {
+    background: #718096;
+    border-left-color: #a0aec0;
+}
+
+[data-theme="dark"] .clueItem strong {
+    color: #f7fafc;
+}
+
+[data-theme="dark"] .blockedClueItem {
+    background: #744646;
+    border-left-color: #fc8181;
+}
+
+[data-theme="dark"] .blockedClueItem:hover {
+    background: #9c4646;
+}
+
+[data-theme="dark"] .blockedWord {
+    color: #fc8181;
+}
+
+[data-theme="dark"] .blockedDefinition {
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .guessInput {
+    background: #4a5568;
+    border-color: #718096;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .guessInput:focus {
+    border-color: #fc8181;
+    box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.15);
+}
+
+[data-theme="dark"] .guessInput::placeholder {
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .blockButton:disabled {
+    background: #4a5568;
+}
+
+/* Automatic dark mode */
+@media (prefers-color-scheme: dark) {
+    .incomingSection {
+        background: #2d3748;
+        border-color: rgba(252, 129, 129, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .blockedSection {
+        background: #2d3748;
+        border-color: rgba(113, 128, 150, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .heading {
+        color: #e2e8f0;
+    }
+
+    .subHeading {
+        color: #a0aec0;
+    }
+
+    .emptyMessage {
+        color: #718096;
+    }
+
+    .scrollableClueList {
+        scrollbar-color: #718096 #4a5568;
+    }
+
+    .scrollableClueList::-webkit-scrollbar-track {
+        background: #4a5568;
+    }
+
+    .scrollableClueList::-webkit-scrollbar-thumb {
+        background: #718096;
+    }
+
+    .scrollableClueList::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+    }
+
+    .clueItem {
+        background: #4a5568;
+        border-left-color: #718096;
+        color: #e2e8f0;
+    }
+
+    .clueItem:hover {
+        background: #718096;
+        border-left-color: #a0aec0;
+    }
+
+    .clueItem strong {
+        color: #f7fafc;
+    }
+
+    .blockedClueItem {
+        background: #744646;
+        border-left-color: #fc8181;
+    }
+
+    .blockedClueItem:hover {
+        background: #9c4646;
+    }
+
+    .blockedWord {
+        color: #fc8181;
+    }
+
+    .blockedDefinition {
+        color: #a0aec0;
+    }
+
+    .guessInput {
+        background: #4a5568;
+        border-color: #718096;
+        color: #e2e8f0;
+    }
+
+    .guessInput:focus {
+        border-color: #fc8181;
+        box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.15);
+    }
+
+    .guessInput::placeholder {
+        color: #a0aec0;
+    }
+
+    .blockButton:disabled {
+        background: #4a5568;
+    }
+}

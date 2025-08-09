@@ -1,3 +1,5 @@
+const DEBUG = true;
+
 class CountdownTimer {
     constructor(durationSeconds, onComplete) {
         this.duration = durationSeconds;
@@ -7,6 +9,8 @@ class CountdownTimer {
     }
 
     start() {
+        if (DEBUG) console.log("[Countdown Timer - starting coundtown of", this.duration, "seconds");
+
         this.endTime = Date.now() + this.duration * 1000;
 
         this.interval = setInterval(() => {
@@ -26,6 +30,8 @@ class CountdownTimer {
     }
 
     stop() {
+        if (DEBUG) console.log("[Countdown Timer - stopping coundtown");
+
         if (this.interval) {
             clearInterval(this.interval);
             this.interval = null;

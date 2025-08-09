@@ -221,3 +221,137 @@
         font-size: 13px;
     }
 }
+
+/* Dark mode support */
+[data-theme="dark"] .blockedSection {
+    background: #2d3748;
+    border-color: rgba(113, 128, 150, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .blockedHeader {
+    background: #4a5568;
+    border-bottom-color: #718096;
+}
+
+[data-theme="dark"] .blockedHeader:hover {
+    background: #718096;
+}
+
+[data-theme="dark"] .blockedHeader[aria-expanded="true"] {
+    background: #2d3748;
+}
+
+[data-theme="dark"] .subHeading {
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .toggleIcon {
+    color: #cbd5e0;
+}
+
+[data-theme="dark"] .scrollableClueList {
+    scrollbar-color: #718096 #4a5568;
+}
+
+[data-theme="dark"] .scrollableClueList::-webkit-scrollbar-track {
+    background: #4a5568;
+}
+
+[data-theme="dark"] .scrollableClueList::-webkit-scrollbar-thumb {
+    background: #718096;
+}
+
+[data-theme="dark"] .scrollableClueList::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+[data-theme="dark"] .clueItem {
+    background: #744646;
+    border-left-color: #fc8181;
+}
+
+[data-theme="dark"] .clueItem:hover {
+    background: #9c4646;
+    box-shadow: 0 4px 8px rgba(252, 129, 129, 0.3);
+}
+
+[data-theme="dark"] .clueWord {
+    color: #fc8181;
+}
+
+[data-theme="dark"] .clueDefinition {
+    color: #cbd5e0;
+}
+
+[data-theme="dark"] .emptyState {
+    color: #718096;
+}
+
+/* Automatic dark mode */
+@media (prefers-color-scheme: dark) {
+    .blockedSection {
+        background: #2d3748;
+        border-color: rgba(113, 128, 150, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .blockedHeader {
+        background: #4a5568;
+        border-bottom-color: #718096;
+    }
+
+    .blockedHeader:hover {
+        background: #718096;
+    }
+
+    .blockedHeader[aria-expanded="true"] {
+        background: #2d3748;
+    }
+
+    .subHeading {
+        color: #a0aec0;
+    }
+
+    .toggleIcon {
+        color: #cbd5e0;
+    }
+
+    .scrollableClueList {
+        scrollbar-color: #718096 #4a5568;
+    }
+
+    .scrollableClueList::-webkit-scrollbar-track {
+        background: #4a5568;
+    }
+
+    .scrollableClueList::-webkit-scrollbar-thumb {
+        background: #718096;
+    }
+
+    .scrollableClueList::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+    }
+
+    .clueItem {
+        background: #744646;
+        border-left-color: #fc8181;
+    }
+
+    .clueItem:hover {
+        background: #9c4646;
+        box-shadow: 0 4px 8px rgba(252, 129, 129, 0.3);
+    }
+
+    .clueWord {
+        color: #fc8181;
+    }
+
+    .clueDefinition {
+        color: #cbd5e0;
+    }
+
+    .emptyState {
+        color: #718096;
+    }
+}

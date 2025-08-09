@@ -10,7 +10,7 @@ function SeekerCluePanel() {
     const { gameState } = useGameRoom();
     const { user } = useUser();
 
-    const { clues, guesses, activeClue, isSubmittingClue, clueGiverUsername } = gameState;
+    const { clues, guesses, clueGiverUsername } = gameState;
     const lastClue = clues[clues.length - 1];
     const validActiveClue = lastClue?.active && !lastClue.blocked ? lastClue : null;
     const historyClues = validActiveClue ? clues.slice(0, -1) : clues;
@@ -44,17 +44,6 @@ function SeekerCluePanel() {
                     <GuessStream guesses={guesses} />
                 </>
             )}
-
-            {/* <h3 className={styles.heading}>Blocked Clues</h3>
-            {historyClues.length === 0 ? (
-                <p className={styles.emptyMessage}>No history yet.</p>
-            ) : (
-                <div ref={historyListRef} className={styles.scrollableHistoryList} data-clue-count={historyClues.length}>
-                    {historyClues.map((clue) => (
-                        <ClueBubble key={clue.id} from={clue.from} definition={clue.definition} blocked={clue.blocked} invalid={clue.invalid} word={clue.word} />
-                    ))}
-                </div>
-            )} */}
         </div>
     );
 }

@@ -3,8 +3,13 @@ const { socketLogger } = require("../../utils/logger");
 const gameController = require("../controllers/gameController");
 const messageEmitter = require("../MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
-const GameManager = require("../../game/managers/GameManager");
 const User = require("../../models/User");
+
+// GameManager initialization (injecting side effects)
+const GameManager = require("../../game/managers/GameManager");
+const roomSideEffects = require("../controllers/roomSideEffects");
+GameManager.setCallbacks(roomSideEffects);
+
 const bindOverWatchEvents = require("./overwatchHandlers");
 const bindGameEvents = require("./gameHandlers");
 const bindWaitingRoomEvents = require("./waitingRoomHandlers");

@@ -49,3 +49,51 @@
         letter-spacing: 0.5px;
     }
 }
+
+/* Dark mode support */
+[data-theme="dark"] .word {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .revealed {
+    color: #68d391;
+    text-shadow: 0 2px 4px rgba(104, 211, 145, 0.4);
+}
+
+[data-theme="dark"] .hidden {
+    color: #4a5568;
+    text-shadow: 0 2px 4px rgba(74, 85, 104, 0.4);
+}
+
+/* Dark mode animation */
+@media (prefers-color-scheme: dark) {
+    .word {
+        color: #e2e8f0;
+    }
+
+    .revealed {
+        color: #68d391;
+        text-shadow: 0 2px 4px rgba(104, 211, 145, 0.4);
+    }
+
+    .hidden {
+        color: #4a5568;
+        text-shadow: 0 2px 4px rgba(74, 85, 104, 0.4);
+    }
+}
+
+/* Update keyframe animation for dark mode */
+[data-theme="dark"] .revealed {
+    animation: letterRevealDark 0.5s ease-out;
+}
+
+@keyframes letterRevealDark {
+    from {
+        color: #4a5568;
+        transform: scale(0.8);
+    }
+    to {
+        color: #68d391;
+        transform: scale(1);
+    }
+}

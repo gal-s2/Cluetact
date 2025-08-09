@@ -1,3 +1,5 @@
+const DEBUG = false;
+
 /**
  * GameQueue class manages the queue of users waiting to join a game.
  */
@@ -15,7 +17,7 @@ class GameQueue {
      * @returns {[boolean, string[]]} - Returns an object with roomCreationPossible flag and chosenUsers array.
      */
     addUser(user) {
-        console.log("[GameQueue] Adding user to queue:", user.username);
+        if (DEBUG) console.log("[GameQueue] Adding user to queue:", user.username);
 
         // if user already in queue, he cannot enter again
         if (this.awaitingUsers.find((awaitingUser) => user.username === awaitingUser.username)) {
@@ -32,7 +34,8 @@ class GameQueue {
      * @param {string} username - The username of the user to remove.
      */
     removeUser(username) {
-        console.log("[GameQueue] Removing user from queue:", username);
+        if (DEBUG) console.log("[GameQueue] Removing user from queue:", username);
+
         const index = this.awaitingUsers.findIndex((awaitingUser) => awaitingUser.username === username);
         if (index !== -1) {
             this.awaitingUsers.splice(index, 1);

@@ -1,5 +1,3 @@
-/* PlayerMainMessageHeader.module.css */
-
 .headerContainer {
     padding: 15px;
     background: rgba(67, 56, 202, 0.1);
@@ -74,6 +72,51 @@
     }
 }
 
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .headerContainer {
+        background: rgba(67, 56, 202, 0.15);
+        border-bottom: 1px solid rgba(67, 56, 202, 0.3);
+    }
+
+    .messageBox {
+        background: #2d3748;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        border-left: 4px solid #667eea;
+    }
+
+    .statusMessage {
+        color: #e2e8f0;
+    }
+
+    /* Dark mode message types */
+    .messageBox.waiting {
+        background: #2a1f15;
+        border-left-color: #ed8936;
+    }
+
+    .messageBox.active {
+        background: #1a2e1a;
+        border-left-color: #48bb78;
+    }
+
+    .messageBox.urgent {
+        background: #2d1b1b;
+        border-left-color: #f56565;
+    }
+
+    /* Dark mode glow animation */
+    @keyframes subtleGlow {
+        0%,
+        100% {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        50% {
+            box-shadow: 0 2px 8px rgba(245, 101, 101, 0.4);
+        }
+    }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .headerContainer {
@@ -100,5 +143,12 @@
 
     .statusMessage {
         font-size: 12px;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    .messageBox.urgent {
+        animation: none;
     }
 }

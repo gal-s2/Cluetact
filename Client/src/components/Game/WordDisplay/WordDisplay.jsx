@@ -8,7 +8,7 @@ function WordDisplay() {
     const revealedWord = gameState.revealedWord || "";
     let currentDisplay = "";
 
-    if (isKeeper) {
+    if (isKeeper && gameState.isWordChosen > 0) {
         currentDisplay = word.split("").map((char, index) => {
             const isRevealed = index < revealedWord.length;
             return (
@@ -17,7 +17,7 @@ function WordDisplay() {
                 </b>
             );
         });
-    } else {
+    } else if (revealedWord) {
         currentDisplay = <b>{revealedWord + "..."}</b>;
     }
 

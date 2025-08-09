@@ -25,6 +25,7 @@ function Lobby() {
     const [playMenuOpen, setPlayMenuOpen] = useState(false);
     const [inQueue, setInQueue] = useState(false);
     const { setGlobalNotification } = useGlobalNotification();
+
     const audioRef = useRef(null);
 
     useEffect(() => {
@@ -188,7 +189,7 @@ function Lobby() {
 
     return (
         <div className={styles.container}>
-            <audio ref={audioRef} src={bgMusic} autoPlay loop />
+            {/*<audio ref={audioRef} src={bgMusic} autoPlay loop />*/}
             <LobbyHeader username={user.username} />
 
             {inQueue && (
@@ -211,9 +212,9 @@ function Lobby() {
                 </div>
             </main>
 
-            {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
-
             <InfoSection />
+
+            {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
         </div>
     );
 }
