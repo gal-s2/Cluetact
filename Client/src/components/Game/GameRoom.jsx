@@ -31,44 +31,11 @@ function GameRoom() {
         notification,
     } = useGameRoom();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
-    const [isMusicOn, setIsMusicOn] = useState(true);
-    const audioRef = useRef(null);
-
-    // Initialize audio
-    useEffect(() => {
-        if (audioRef.current) {
-            audioRef.current.volume = 0.3;
-            audioRef.current.loop = true;
-
-            if (isMusicOn) {
-                audioRef.current
-                    .play()
-                    .catch((err) => console.log("Autoplay blocked:", err));
-            }
-        }
-    }, []);
-
-    // Handle music toggle
-    const handleMusicToggle = () => {
-        if (audioRef.current) {
-            if (isMusicOn) {
-                audioRef.current.pause();
-            } else {
-                audioRef.current
-                    .play()
-                    .catch((err) => console.log("Audio play failed:", err));
-            }
-        }
-        setIsMusicOn(!isMusicOn);
-    };
 
     if (loading) return <Spinner />;
 
     return (
         <div className={styles.room}>
-            {/* Audio element */}
-            <audio ref={audioRef} src={bgMusic} />
-
             {/* WHEN KEEPER CHOOSING WORD */}
             {gameState.status === "KEEPER_CHOOSING_WORD" &&
                 !gameState.isKeeper && (
@@ -134,10 +101,7 @@ function GameRoom() {
                 </div>
             </div>
 
-            <MusicToggleButton
-                isMusicOn={isMusicOn}
-                onToggle={handleMusicToggle}
-            />
+            <MusicToggleButton />
             <ExitGameButton onExit={() => setShowConfirmModal(true)} />
 
             {showConfirmModal && (
