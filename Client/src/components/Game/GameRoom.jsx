@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
+import { useMusic } from "../Music/MusicContext.jsx";
 import WordDisplay from "./WordDisplay/WordDisplay";
 import Spinner from "@common/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
@@ -19,7 +20,6 @@ import ConfirmModal from "./ConfirmModal/ConfirmModal";
 import CountdownTimer from "./CountdownTimer/CountdownTimer";
 import Modal from "@components/common/Modal/Modal";
 import MusicToggleButton from "../General/MusicToggleButton/MusicToggleButton.jsx";
-import bgMusic from "../../assets/audio/lobby-music.mp3";
 
 function GameRoom() {
     const {
@@ -30,7 +30,14 @@ function GameRoom() {
         handleExitGame,
         notification,
     } = useGameRoom();
+    const { changeTrack } = useMusic();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+    // Switch to game room music when component mounts
+    useEffect(() => {
+        console.log("GameRoom mounted, switching to gameRoom music");
+        changeTrack("gameRoom");
+    }, [changeTrack]);
 
     if (loading) return <Spinner />;
 
