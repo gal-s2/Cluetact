@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useUser } from "@contexts/UserContext";
 import PrivateRoute from "@components/Routes/PrivateRoute/PrivateRoute";
@@ -16,6 +17,7 @@ import GlobalNotificationBox from "@components/General/GlobalNotificationBox/Glo
 import AdminRoute from "@components/Routes/AdminRoute/AdminRoute";
 import Footer from "@components/General/Footer/Footer";
 import SocketPageWrapper from "@components/Routes/SocketPageWrapper/SocketPageWrapper";
+import { MusicProvider } from "./components/Music/MusicContext.jsx";
 
 function App() {
     const { user } = useUser();
@@ -23,8 +25,10 @@ function App() {
     return (
         <div className="appContainer">
             <Router>
-                <AppRoutesWithSocketNavigation user={user} />
-                <GlobalNotificationBox />
+                <MusicProvider>
+                    <AppRoutesWithSocketNavigation user={user} />
+                    <GlobalNotificationBox />
+                </MusicProvider>
             </Router>
             {/*<Footer />*/}
         </div>

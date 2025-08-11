@@ -1,8 +1,8 @@
 .musicButton {
     position: fixed;
     top: 20px;
-    left: 20px;
-    background: rgba(219, 112, 219, 0.9); /* orchid pinkish */
+    right: 80px; /* Position it to the left of exit button (80px = 50px button width + 20px gap + 10px margin) */
+    background: rgba(245, 101, 101, 0.9); /* Same red color as exit button */
     color: white;
     border: none;
     border-radius: 50%;
@@ -11,7 +11,7 @@
     font-size: 20px;
     cursor: pointer;
     backdrop-filter: blur(10px);
-    box-shadow: 0 4px 12px rgba(219, 112, 219, 0.3);
+    box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3); /* Same shadow as exit button */
     z-index: 100;
     transition: all 0.2s ease;
     display: flex;
@@ -22,9 +22,9 @@
 }
 
 .musicButton:hover {
-    background: rgba(199, 21, 133, 0.95); /* deep pink */
+    background: rgba(229, 62, 62, 0.95); /* Same hover color as exit button */
     transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(199, 21, 133, 0.4);
+    box-shadow: 0 6px 20px rgba(245, 101, 101, 0.4); /* Same hover shadow as exit button */
 }
 
 .musicButton:active {
@@ -35,7 +35,7 @@
 .musicButton::before {
     content: attr(title);
     position: absolute;
-    left: 60px;
+    right: 60px; /* Same positioning as exit button tooltip */
     top: 50%;
     transform: translateY(-50%);
     background: rgba(0, 0, 0, 0.8);
@@ -54,33 +54,39 @@
     opacity: 1;
 }
 
-/* Pulse animation when music is on */
+/* Pulse animation when music is on - keeping the musical theme but with exit button colors */
 .musicButton.on {
     animation: pulseMusic 3s infinite;
 }
 
 @keyframes pulseMusic {
     0%,
+    90%,
     100% {
-        background: rgba(219, 112, 219, 0.9);
+        background: rgba(245, 101, 101, 0.9);
     }
-    50% {
-        background: rgba(186, 85, 211, 0.95); /* medium orchid */
+    95% {
+        background: rgba(
+            255,
+            140,
+            0,
+            0.9
+        ); /* Same orange accent as exit button warning */
     }
 }
 
-/* Responsive */
+/* Responsive adjustments - matching exit button breakpoints */
 @media (max-width: 768px) {
     .musicButton {
         top: 15px;
-        left: 15px;
+        right: 70px; /* Adjust for smaller exit button */
         width: 45px;
         height: 45px;
         font-size: 18px;
     }
 
     .musicButton::before {
-        left: 55px;
+        right: 55px;
         font-size: 11px;
         padding: 5px 8px;
     }
@@ -89,27 +95,27 @@
 @media (max-width: 480px) {
     .musicButton {
         top: 10px;
-        left: 10px;
+        right: 60px; /* Adjust for smaller exit button */
         width: 40px;
         height: 40px;
         font-size: 16px;
     }
 
     .musicButton::before {
-        left: 50px;
+        right: 50px;
         font-size: 10px;
         padding: 4px 6px;
     }
 }
 
-/* High contrast mode */
+/* High contrast mode - matching exit button */
 @media (prefers-contrast: high) {
     .musicButton {
-        background: #9c27b0;
+        background: #d32f2f;
         border: 2px solid white;
     }
 
     .musicButton:hover {
-        background: #7b1fa2;
+        background: #b71c1c;
     }
 }

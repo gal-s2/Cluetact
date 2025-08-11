@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
+import { useMusic } from "../Music/MusicContext.jsx";
 import WordDisplay from "./WordDisplay/WordDisplay";
 import Spinner from "@common/Spinner/Spinner";
 import styles from "./GameRoom.module.css";
@@ -18,18 +19,41 @@ import ExitGameButton from "./ExitGameButton/ExitGameButton";
 import ConfirmModal from "./ConfirmModal/ConfirmModal";
 import CountdownTimer from "./CountdownTimer/CountdownTimer";
 import Modal from "@components/common/Modal/Modal";
+import MusicToggleButton from "../General/MusicToggleButton/MusicToggleButton.jsx";
 
 function GameRoom() {
-    const { timeLeft, setTimeLeft, gameState, loading, handleExitGame, notification } = useGameRoom();
+    const {
+        timeLeft,
+        setTimeLeft,
+        gameState,
+        loading,
+        handleExitGame,
+        notification,
+    } = useGameRoom();
+    const { changeTrack } = useMusic();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+    // Switch to game room music when component mounts
+    useEffect(() => {
+        console.log("GameRoom mounted, switching to gameRoom music");
+        changeTrack("gameRoom");
+    }, [changeTrack]);
 
     if (loading) return <Spinner />;
 
     return (
         <div className={styles.room}>
             {/* WHEN KEEPER CHOOSING WORD */}
-            {gameState.status === "KEEPER_CHOOSING_WORD" && !gameState.isKeeper && <Modal>Waiting for the keeper to choose a word...</Modal>}
-            {gameState.status === "KEEPER_CHOOSING_WORD" && gameState.isKeeper && <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />}
+            {gameState.status === "KEEPER_CHOOSING_WORD" &&
+                !gameState.isKeeper && (
+                    <Modal>Waiting for the keeper to choose a word...</Modal>
+                )}
+            {gameState.status === "KEEPER_CHOOSING_WORD" &&
+                gameState.isKeeper && (
+                    <KeeperWordPopup
+                        showConfirmModal={() => setShowConfirmModal(true)}
+                    />
+                )}
 
             {gameState.cluetact && <CluetactPopup />}
             {/* remove the winners part here*/}
@@ -43,7 +67,10 @@ function GameRoom() {
                 {/* Timer */}
                 {timeLeft > 0 && (
                     <div className={styles.timerContainer}>
-                        <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />
+                        <CountdownTimer
+                            timeLeft={timeLeft}
+                            setTimeLeft={setTimeLeft}
+                        />
                     </div>
                 )}
 
@@ -57,14 +84,23 @@ function GameRoom() {
                 <PlayerMainMessageHeader />
 
                 {/* Clue Submit */}
-                {!gameState.isKeeper && gameState.isWordChosen && gameState.isSubmittingClue && !gameState.activeClue && (
-                    <div className={styles.clueSubmitWrapper}>
-                        <SubmitClue />
-                    </div>
-                )}
+                {!gameState.isKeeper &&
+                    gameState.isWordChosen &&
+                    gameState.isSubmittingClue &&
+                    !gameState.activeClue && (
+                        <div className={styles.clueSubmitWrapper}>
+                            <SubmitClue />
+                        </div>
+                    )}
 
                 {/* Clues Section */}
-                <div className={styles.cluesSection}>{gameState.isKeeper ? <KeeperCluePanel /> : <SeekerCluePanel />}</div>
+                <div className={styles.cluesSection}>
+                    {gameState.isKeeper ? (
+                        <KeeperCluePanel />
+                    ) : (
+                        <SeekerCluePanel />
+                    )}
+                </div>
 
                 {/* Blocked Clues for Keeper */}
                 <div className={styles.blockedCluesContainer}>
@@ -72,9 +108,15 @@ function GameRoom() {
                 </div>
             </div>
 
+            <MusicToggleButton />
             <ExitGameButton onExit={() => setShowConfirmModal(true)} />
 
-            {showConfirmModal && <ConfirmModal handleCloseModal={() => setShowConfirmModal(false)} handleConfirmExit={handleExitGame} />}
+            {showConfirmModal && (
+                <ConfirmModal
+                    handleCloseModal={() => setShowConfirmModal(false)}
+                    handleConfirmExit={handleExitGame}
+                />
+            )}
             {/* Notification */}
             {notification.message && <NotificationBox />}
 

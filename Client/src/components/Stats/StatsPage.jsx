@@ -5,6 +5,7 @@ import { baseUrl } from "@config/baseUrl";
 import styles from "./StatsPage.module.css";
 import BackToLobbyButton from "../General/BackToLobbyButton/BackToLobbyButton";
 import { avatarList } from "@utils/loadAvatars";
+import MusicToggleButton from "../General/MusicToggleButton/MusicToggleButton.jsx";
 
 function StatsPage() {
     const { user } = useUser();
@@ -16,7 +17,9 @@ function StatsPage() {
         const fetchStats = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${baseUrl}/stats/${user._id}`);
+                const response = await axios.get(
+                    `${baseUrl}/stats/${user._id}`
+                );
                 setStats(response.data.statistics);
                 setError(null);
             } catch (err) {
@@ -39,6 +42,7 @@ function StatsPage() {
                     <div className={styles.spinner}></div>
                     <p>Loading your stats...</p>
                 </div>
+                <MusicToggleButton />
             </div>
         );
     }
@@ -51,6 +55,7 @@ function StatsPage() {
                     <p>{error}</p>
                 </div>
                 <BackToLobbyButton />
+                <MusicToggleButton />
             </div>
         );
     }
@@ -58,7 +63,11 @@ function StatsPage() {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <img src={avatarList[user.avatar || 0]} alt="Avatar" className={styles.avatar} />
+                <img
+                    src={avatarList[user.avatar || 0]}
+                    alt="Avatar"
+                    className={styles.avatar}
+                />
 
                 <h2>{user.username}'s Stats</h2>
             </div>
@@ -91,10 +100,14 @@ function StatsPage() {
                 <div className={styles.progressCard}>
                     <h3>Performance Overview</h3>
                     <div className={styles.progressBar}>
-                        <div className={styles.progressFill} style={{ width: `${stats.winRate}%` }}></div>
+                        <div
+                            className={styles.progressFill}
+                            style={{ width: `${stats.winRate}%` }}
+                        ></div>
                     </div>
                     <div className={styles.progressText}>
-                        Win Rate: {stats.winRate}% ({stats.Wins} wins out of {stats.totalGames} games)
+                        Win Rate: {stats.winRate}% ({stats.Wins} wins out of{" "}
+                        {stats.totalGames} games)
                     </div>
                 </div>
             ) : (
@@ -105,6 +118,7 @@ function StatsPage() {
                 </div>
             )}
             <BackToLobbyButton />
+            <MusicToggleButton />
         </div>
     );
 }
