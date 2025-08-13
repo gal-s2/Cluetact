@@ -30,12 +30,12 @@ function GameRoom() {
         handleExitGame,
         notification,
     } = useGameRoom();
+
     const { changeTrack } = useMusic();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     // Switch to game room music when component mounts
     useEffect(() => {
-        console.log("GameRoom mounted, switching to gameRoom music");
         changeTrack("gameRoom");
     }, [changeTrack]);
 
@@ -56,7 +56,6 @@ function GameRoom() {
                 )}
 
             {gameState.cluetact && <CluetactPopup />}
-            {/* remove the winners part here*/}
             {gameState.status === "END" && <GameOverPopup />}
 
             <div className={styles.wordDisplay}>
@@ -117,6 +116,7 @@ function GameRoom() {
                     handleConfirmExit={handleExitGame}
                 />
             )}
+
             {/* Notification */}
             {notification.message && <NotificationBox />}
 
