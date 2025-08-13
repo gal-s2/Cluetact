@@ -262,12 +262,16 @@ export const MusicProvider = ({ children }) => {
             if (audioRef.current.src.endsWith(newSrc)) return;
 
             console.log("Changing track to:", currentTrack);
+            console.log("Current music state (isMusicOn):", isMusicOn);
             setIsTransitioning(true);
 
-            const wasPlaying = !audioRef.current.paused;
+            // Check if music should be playing based on user preference AND current state
+            const shouldPlay =
+                isMusicOn && hasInteracted && !audioRef.current.paused;
 
             try {
-                if (wasPlaying) {
+                // Always pause during track change
+                if (!audioRef.current.paused) {
                     audioRef.current.pause();
                 }
 
@@ -298,7 +302,11 @@ export const MusicProvider = ({ children }) => {
                     audioRef.current.addEventListener("error", onError);
                 });
 
-                if (wasPlaying && isMusicOn && hasInteracted) {
+                // Only play the new track if music was on AND should be playing
+                if (shouldPlay && isMusicOn) {
+                    console.log(
+                        "Resuming music with new track because music is ON"
+                    );
                     await audioRef.current.play();
                     // Verify the play actually worked
                     setTimeout(() => {
@@ -311,6 +319,14 @@ export const MusicProvider = ({ children }) => {
                             setIsMusicOn(false);
                         }
                     }, 100);
+                } else {
+                    console.log(
+                        "Not playing new track because music is OFF or no interaction yet"
+                    );
+                    // Make sure audio stays paused if music is off
+                    if (audioRef.current && !audioRef.current.paused) {
+                        audioRef.current.pause();
+                    }
                 }
             } catch (err) {
                 console.error("Track change failed:", err);
@@ -322,7 +338,7 @@ export const MusicProvider = ({ children }) => {
         if (isInitialized) {
             changeTrack();
         }
-    }, [currentTrack, isInitialized]);
+    }, [currentTrack, isInitialized, isMusicOn, hasInteracted]);
 
     const toggleMusic = async () => {
         if (!audioRef.current || isTransitioning) return;
