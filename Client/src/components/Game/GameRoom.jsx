@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import { useMusic } from "../Music/MusicContext.jsx";
 import WordDisplay from "./WordDisplay/WordDisplay";
@@ -31,11 +31,13 @@ function GameRoom() {
         notification,
     } = useGameRoom();
 
-    const { changeTrack } = useMusic();
+    const { changeTrack, currentTrack } = useMusic();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const trackChangedRef = useRef(false);
 
-    // Switch to game room music when component mounts
+    // Replace the existing useEffect with this:
     useEffect(() => {
+        console.log("GameRoom: Requesting gameRoom track");
         changeTrack("gameRoom");
     }, [changeTrack]);
 

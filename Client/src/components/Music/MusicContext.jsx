@@ -12,48 +12,56 @@ export const useMusic = () => {
     return context;
 };
 
-const MUSIC_ON_KEY = "cluetact_music_on";
-
 export const MusicProvider = ({ children }) => {
     const audioRef = useRef(null);
     const retryTimeoutRef = useRef(null);
     const stateCheckIntervalRef = useRef(null);
-
-    // Persisted ON/OFF (default ON if nothing saved)
-    const [isMusicOn, setIsMusicOn] = useState(() => {
-        const saved = localStorage.getItem(MUSIC_ON_KEY);
-        return saved === null ? true : saved === "true";
-    });
-
+    const [isMusicOn, setIsMusicOn] = useState(true);
     const [isInitialized, setIsInitialized] = useState(false);
     const [hasInteracted, setHasInteracted] = useState(false);
     const [currentTrack, setCurrentTrack] = useState("lobby");
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [autoplayAttempts, setAutoplayAttempts] = useState(0);
 
+    // Add a flag to prevent autoplay when music is intentionally off
+    const shouldAutoplayRef = useRef(true);
+
     const tracks = {
         lobby: lobbyMusic,
         gameRoom: gameRoomMusic,
     };
 
-    // Aggressive autoplay initialization
+    // Initialize audio system
     useEffect(() => {
         const initializeAudio = async () => {
+            console.log("Initializing audio system...");
+
             if (!audioRef.current) {
                 audioRef.current = new Audio();
                 audioRef.current.loop = true;
                 audioRef.current.volume = 0.3;
                 audioRef.current.preload = "auto";
                 audioRef.current.muted = false;
+
+                // Set source
                 audioRef.current.src = tracks[currentTrack];
 
+                // Add event listeners
                 audioRef.current.addEventListener("loadeddata", () => {
+                    console.log("Audio data loaded");
                     setIsInitialized(true);
-                    attemptAutoplay();
+                    // Only attempt autoplay if music should be on
+                    if (shouldAutoplayRef.current && isMusicOn) {
+                        attemptAutoplay();
+                    }
                 });
 
                 audioRef.current.addEventListener("canplaythrough", () => {
-                    attemptAutoplay();
+                    console.log("Audio can play through");
+                    // Only attempt autoplay if music should be on
+                    if (shouldAutoplayRef.current && isMusicOn) {
+                        attemptAutoplay();
+                    }
                 });
 
                 audioRef.current.addEventListener("error", (e) => {
@@ -61,12 +69,16 @@ export const MusicProvider = ({ children }) => {
                 });
 
                 audioRef.current.addEventListener("play", () => {
+                    console.log("Audio started playing");
                     setHasInteracted(true);
-                    setIsMusicOn(true); // Sync state when audio starts
                 });
 
                 audioRef.current.addEventListener("pause", () => {
-                    if (!isTransitioning) setIsMusicOn(false);
+                    console.log("Audio paused");
+                });
+
+                audioRef.current.addEventListener("ended", () => {
+                    console.log("Audio ended");
                 });
 
                 // Start loading
@@ -76,131 +88,103 @@ export const MusicProvider = ({ children }) => {
 
         initializeAudio();
 
-        // Periodic state synchronization
+        // Set up periodic state synchronization (less frequent and more careful)
         stateCheckIntervalRef.current = setInterval(() => {
             syncMusicState();
-        }, 1000);
+        }, 2000); // Check every 2 seconds instead of 1
 
         return () => {
-            if (retryTimeoutRef.current) clearTimeout(retryTimeoutRef.current);
-            if (stateCheckIntervalRef.current)
+            if (stateCheckIntervalRef.current) {
                 clearInterval(stateCheckIntervalRef.current);
-            if (audioRef.current) {
-                audioRef.current.pause();
-                audioRef.current = null;
             }
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Persist ON/OFF and enforce pause/play accordingly
-    useEffect(() => {
-        localStorage.setItem(MUSIC_ON_KEY, String(isMusicOn));
-        if (!audioRef.current) return;
-
-        if (isMusicOn) {
-            if (hasInteracted) {
-                audioRef.current.play().catch(() => {
-                    /* Silent fail → periodic sync will reconcile */
-                });
-            }
-        } else {
-            if (!audioRef.current.paused) audioRef.current.pause();
-        }
-    }, [isMusicOn, hasInteracted]);
-
-    // Sync UI state with actual audio state
+    // More careful state synchronization
     const syncMusicState = () => {
         if (audioRef.current && !isTransitioning) {
             const isActuallyPlaying =
                 !audioRef.current.paused && !audioRef.current.ended;
+
+            // Only sync if there's a significant discrepancy and we're not in a transition
             if (isActuallyPlaying !== isMusicOn) {
-                setIsMusicOn(isActuallyPlaying);
+                // Don't auto-correct if we just toggled music recently
+                const timeSinceLastToggle =
+                    Date.now() - (window.lastMusicToggle || 0);
+                if (timeSinceLastToggle > 3000) {
+                    // Wait 3 seconds before auto-correcting
+                    console.log(
+                        `Music state out of sync. UI: ${isMusicOn}, Actual: ${isActuallyPlaying}`
+                    );
+                    setIsMusicOn(isActuallyPlaying);
+                }
             }
         }
     };
 
     const attemptAutoplay = async () => {
+        // Don't attempt autoplay if music is intentionally off
         if (
             !audioRef.current ||
             !isMusicOn ||
+            !shouldAutoplayRef.current ||
             hasInteracted ||
             autoplayAttempts >= 5
-        )
+        ) {
             return;
+        }
 
         setAutoplayAttempts((prev) => prev + 1);
+        console.log(`Autoplay attempt #${autoplayAttempts + 1}`);
 
         try {
-            const strategies = [
-                () => audioRef.current.play(),
-                async () => {
-                    audioRef.current.muted = true;
-                    await audioRef.current.play();
-                    setTimeout(() => {
-                        if (audioRef.current) audioRef.current.muted = false;
-                    }, 100);
-                },
-                async () => {
-                    const originalVolume = audioRef.current.volume;
-                    audioRef.current.volume = 0.01;
-                    await audioRef.current.play();
-                    setTimeout(() => {
-                        if (audioRef.current)
-                            audioRef.current.volume = originalVolume;
-                    }, 100);
-                },
-            ];
-
-            const strategy = strategies[autoplayAttempts % strategies.length];
-            await strategy();
-
+            await audioRef.current.play();
+            console.log("Autoplay successful!");
             setHasInteracted(true);
-            setIsMusicOn(true);
         } catch (error) {
+            console.log(
+                `Autoplay attempt ${autoplayAttempts + 1} failed:`,
+                error
+            );
+
+            // Schedule retry
             if (autoplayAttempts < 4) {
                 retryTimeoutRef.current = setTimeout(() => {
                     attemptAutoplay();
                 }, 1000 + autoplayAttempts * 500);
             } else {
+                console.log(
+                    "All autoplay attempts failed, setting up interaction listeners"
+                );
                 setupInteractionListeners();
             }
         }
     };
 
     const setupInteractionListeners = () => {
-        const handleInteraction = async () => {
-            if (audioRef.current && isMusicOn && !hasInteracted) {
+        const handleInteraction = async (event) => {
+            console.log("User interaction detected:", event.type);
+
+            if (
+                audioRef.current &&
+                isMusicOn &&
+                shouldAutoplayRef.current &&
+                !hasInteracted
+            ) {
                 try {
                     await audioRef.current.play();
                     setHasInteracted(true);
-                    setIsMusicOn(true);
+                    console.log("Music started after interaction!");
                 } catch (err) {
                     console.error(
                         "Failed to start music after interaction:",
                         err
                     );
-                    setIsMusicOn(false);
                 }
             }
         };
 
-        const events = [
-            "click",
-            "touchstart",
-            "touchend",
-            "mousedown",
-            "mouseup",
-            "mousemove",
-            "keydown",
-            "keyup",
-            "scroll",
-            "wheel",
-            "focus",
-            "blur",
-            "resize",
-        ];
-
+        const events = ["click", "touchstart", "keydown", "mousedown"];
         events.forEach((event) => {
             document.addEventListener(event, handleInteraction, {
                 once: true,
@@ -208,45 +192,45 @@ export const MusicProvider = ({ children }) => {
                 capture: true,
             });
         });
-
-        window.addEventListener("focus", handleInteraction, { once: true });
-
-        document.addEventListener(
-            "visibilitychange",
-            () => {
-                if (!document.hidden && !hasInteracted) handleInteraction();
-            },
-            { once: true }
-        );
-
-        setTimeout(() => {
-            if (!hasInteracted) attemptAutoplay();
-        }, 1000);
-        setTimeout(() => {
-            if (!hasInteracted) attemptAutoplay();
-        }, 3000);
     };
 
-    // Track changes (respect saved ON/OFF)
+    // Handle track changes
     useEffect(() => {
         const changeTrack = async () => {
             if (!audioRef.current || !tracks[currentTrack] || isTransitioning)
                 return;
 
             const newSrc = tracks[currentTrack];
-            if (audioRef.current.src.endsWith(newSrc)) return;
+            const currentSrc = audioRef.current.src;
 
+            // Check if we actually need to change tracks
+            const isCorrectTrack =
+                (currentTrack === "lobby" &&
+                    currentSrc.includes("lobby-music.mp3")) ||
+                (currentTrack === "gameRoom" &&
+                    currentSrc.includes("game-room-music.mp3"));
+
+            if (isCorrectTrack) return;
+
+            console.log("Changing track to:", currentTrack);
+            console.log("Current src:", currentSrc);
+            console.log("New src:", newSrc);
+            console.log("Current music state (isMusicOn):", isMusicOn);
             setIsTransitioning(true);
 
-            // If user wants music and has interacted, we should play after swap
-            const shouldPlay = isMusicOn && hasInteracted;
+            // Remember if music was playing before the change
+            const wasPlaying = !audioRef.current.paused && isMusicOn;
 
             try {
-                if (!audioRef.current.paused) audioRef.current.pause();
+                // Always pause during track change
+                if (!audioRef.current.paused) {
+                    audioRef.current.pause();
+                }
 
                 audioRef.current.src = newSrc;
                 audioRef.current.load();
 
+                // Wait for the new track to load
                 await new Promise((resolve, reject) => {
                     const timeout = setTimeout(
                         () => reject(new Error("Load timeout")),
@@ -271,21 +255,14 @@ export const MusicProvider = ({ children }) => {
                     audioRef.current.addEventListener("error", onError);
                 });
 
-                if (shouldPlay) {
+                // Only resume playing if music was on and was playing before
+                if (wasPlaying && isMusicOn && hasInteracted) {
+                    console.log("Resuming music with new track");
                     await audioRef.current.play();
-                    // Verify it really started
-                    setTimeout(() => {
-                        if (
-                            audioRef.current &&
-                            audioRef.current.paused &&
-                            isMusicOn
-                        ) {
-                            setIsMusicOn(false);
-                        }
-                    }, 100);
                 } else {
-                    if (audioRef.current && !audioRef.current.paused)
-                        audioRef.current.pause();
+                    console.log(
+                        "Not resuming music - either music is off or no interaction yet"
+                    );
                 }
             } catch (err) {
                 console.error("Track change failed:", err);
@@ -294,34 +271,38 @@ export const MusicProvider = ({ children }) => {
             }
         };
 
-        if (isInitialized) changeTrack();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentTrack, isInitialized, isMusicOn, hasInteracted]);
+        if (isInitialized) {
+            changeTrack();
+        }
+    }, [currentTrack, isInitialized]);
 
     const toggleMusic = async () => {
         if (!audioRef.current || isTransitioning) return;
 
-        // Use *actual* state to avoid drift
-        const isActuallyPlaying =
-            !audioRef.current.paused && !audioRef.current.ended;
-        const newState = !isActuallyPlaying;
+        // Mark the time of this toggle to prevent auto-correction
+        window.lastMusicToggle = Date.now();
+
+        console.log("Toggle music requested. Current state:", isMusicOn);
+
+        const newState = !isMusicOn;
+        shouldAutoplayRef.current = newState;
 
         try {
             if (newState) {
                 await audioRef.current.play();
                 setHasInteracted(true);
                 setIsMusicOn(true);
-                setTimeout(() => {
-                    if (audioRef.current && audioRef.current.paused)
-                        setIsMusicOn(false);
-                }, 100);
+                console.log("Music turned ON");
             } else {
                 audioRef.current.pause();
                 setIsMusicOn(false);
+                console.log("Music turned OFF");
             }
         } catch (err) {
             console.error("Toggle failed:", err);
-            setIsMusicOn(!newState); // revert
+            // Revert state on failure
+            setIsMusicOn(!newState);
+            shouldAutoplayRef.current = !newState;
         }
     };
 
@@ -341,9 +322,21 @@ export const MusicProvider = ({ children }) => {
         }
     };
 
-    const forceSyncState = () => {
-        syncMusicState();
-    };
+    // Cleanup
+    useEffect(() => {
+        return () => {
+            if (retryTimeoutRef.current) {
+                clearTimeout(retryTimeoutRef.current);
+            }
+            if (stateCheckIntervalRef.current) {
+                clearInterval(stateCheckIntervalRef.current);
+            }
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+        };
+    }, []);
 
     const value = {
         isMusicOn,
@@ -353,7 +346,6 @@ export const MusicProvider = ({ children }) => {
         hasInteracted,
         currentTrack,
         changeTrack,
-        forceSyncState,
     };
 
     return (

@@ -27,21 +27,15 @@ function Lobby() {
     const [playMenuOpen, setPlayMenuOpen] = useState(false);
     const [inQueue, setInQueue] = useState(false);
     const { setGlobalNotification } = useGlobalNotification();
-    const { changeTrack } = useMusic();
+    const { changeTrack, currentTrack } = useMusic();
+    const trackChangedRef = useRef(false);
+
     useEffect(() => {
+        console.log("Lobby: Requesting lobby track");
         changeTrack("lobby");
     }, [changeTrack]);
 
     const audioRef = useRef(null);
-
-    useEffect(() => {
-        if (audioRef.current) {
-            audioRef.current.volume = 0.4;
-            audioRef.current
-                .play()
-                .catch((err) => console.log("Autoplay blocked:", err));
-        }
-    }, []);
 
     if (!user && !loading) {
         console.log("No user found in Lobby.jsx, skipping render.");
