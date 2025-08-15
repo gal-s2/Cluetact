@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import { useMusic } from "../Music/MusicContext.jsx";
 import WordDisplay from "./WordDisplay/WordDisplay";
@@ -30,12 +30,14 @@ function GameRoom() {
         handleExitGame,
         notification,
     } = useGameRoom();
-    const { changeTrack } = useMusic();
-    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-    // Switch to game room music when component mounts
+    const { changeTrack, currentTrack } = useMusic();
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const trackChangedRef = useRef(false);
+
+    // Replace the existing useEffect with this:
     useEffect(() => {
-        console.log("GameRoom mounted, switching to gameRoom music");
+        console.log("GameRoom: Requesting gameRoom track");
         changeTrack("gameRoom");
     }, [changeTrack]);
 
@@ -56,7 +58,6 @@ function GameRoom() {
                 )}
 
             {gameState.cluetact && <CluetactPopup />}
-            {/* remove the winners part here*/}
             {gameState.status === "END" && <GameOverPopup />}
 
             <div className={styles.wordDisplay}>
@@ -117,6 +118,7 @@ function GameRoom() {
                     handleConfirmExit={handleExitGame}
                 />
             )}
+
             {/* Notification */}
             {notification.message && <NotificationBox />}
 
