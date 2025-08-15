@@ -23,6 +23,7 @@ export default function Leaderboard() {
             })
             .then((res) => {
                 setData(res.data);
+                console.log(res.data);
                 setLoading(false);
             })
             .catch((err) => {
@@ -56,7 +57,7 @@ export default function Leaderboard() {
                         <tbody>
                             {data.topPlayers.map((p, idx) => (
                                 <tr key={p.username} className={p.username === user?.username ? styles.highlight : ""}>
-                                    <td>{idx + 1}</td>
+                                    <td>{p.rank}</td>
                                     <td className={styles.playerCell}>
                                         <img src={avatarList[p.avatar] || avatarList[0]} alt="avatar" className={styles.avatar} />
                                         {p.username}

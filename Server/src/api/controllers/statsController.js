@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const User = require("../../models/User");
 
 const LEADERBOARD_SIZE = 100;
@@ -18,7 +17,7 @@ async function getUserStatsById(req, res) {
 }
 async function getLeaderboard(req, res) {
     try {
-        const topPlayers = await User.aggregate([
+        const topPlayersRaw = await User.aggregate([
             {
                 $project: {
                     username: 1,
@@ -28,29 +27,26 @@ async function getLeaderboard(req, res) {
                     winRate: { $ifNull: ["$statistics.winRate", 0] },
                 },
             },
-            { $sort: { wins: -1, winRate: -1, username: 1 } }, // tie-breakers optional
+            { $sort: { wins: -1, winRate: -1, username: 1 } },
             { $limit: LEADERBOARD_SIZE },
         ]);
 
-        let currentPlayer = null;
+        const topPlayers = topPlayersRaw.map((player, index) => ({
+            ...player,
+            rank: index + 1,
+        }));
 
-        // 2) If logged-in user exists, fetch fresh data from DB
-        if (req.user && mongoose.Types.ObjectId.isValid(String(req.user._id))) {
-            const userData = await User.findById(req.user._id, { username: 1, country: 1, avatar: 1, "statistics.Wins": 1, "statistics.winRate": 1 }).lean();
+        if (req.user && req.user.username) {
+            const userData = await User.findOne({ username: req.user.username }, { username: 1, country: 1, avatar: 1, "statistics.Wins": 1, "statistics.winRate": 1 }).lean();
 
             if (userData) {
                 const wins = userData.statistics?.Wins ?? 0;
                 const winRate = userData.statistics?.winRate ?? 0;
-
-                // Is the user already in the top list?
                 const isInTop = topPlayers.some((p) => String(p._id) === String(userData._id));
 
                 if (!isInTop) {
-                    // 3) Compute rank (by Wins; add tie-breakers if you want)
-                    const playerRank = (await User.countDocuments({ "statistics.Wins": { $gt: wins } })) + 1;
-
-                    currentPlayer = {
-                        rank: playerRank,
+                    let currentPlayer = {
+                        rank: `${LEADERBOARD_SIZE}+`,
                         _id: userData._id,
                         username: userData.username,
                         country: userData.country,
@@ -59,7 +55,6 @@ async function getLeaderboard(req, res) {
                         winRate,
                     };
 
-                    // 4) Append the current player to the returned list (so client always gets them)
                     topPlayers.push(currentPlayer);
                 }
             }
@@ -67,7 +62,6 @@ async function getLeaderboard(req, res) {
 
         return res.json({
             topPlayers, // may contain LEADERBOARD_SIZE + 1 when appended
-            currentPlayer, // null if already in top or not logged in
             leaderboardSize: LEADERBOARD_SIZE,
         });
     } catch (err) {
