@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./AuthForm.module.css";
-import { baseUrl } from "@config/baseUrl";
+import baseUrl from "@config/baseUrl";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useUser } from "@contexts/UserContext";
 import Logo from "@components/General/Logo/Logo";

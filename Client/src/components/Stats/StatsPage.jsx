@@ -1,11 +1,11 @@
+import axios from "axios";
 import { useUser } from "@contexts/UserContext";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { baseUrl } from "@config/baseUrl";
-import styles from "./StatsPage.module.css";
+import baseUrl from "@config/baseUrl";
+import avatarList from "@utils/loadAvatars";
 import BackToLobbyButton from "../General/BackToLobbyButton/BackToLobbyButton";
-import { avatarList } from "@utils/loadAvatars";
 import MusicToggleButton from "../General/MusicToggleButton/MusicToggleButton.jsx";
+import styles from "./StatsPage.module.css";
 
 function StatsPage() {
     const { user } = useUser();

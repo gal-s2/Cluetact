@@ -1,8 +1,0 @@
-- Design (App pages, focus on desktop and mobile friendly, 
-    advice: use claude but not too many files as input)
-
-- Handle timers during game
-
-- Deploy
-
-- QA

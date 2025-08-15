@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { baseUrl } from "@config/baseUrl";
+import baseUrl from "@config/baseUrl";
 import { useUser } from "@contexts/UserContext";
 import styles from "./Leaderboard.module.css";
-import { avatarList } from "@utils/loadAvatars";
+import avatarList from "@utils/loadAvatars";
 import LobbyHeader from "@components/Lobby/LobbyHeader";
 import BackToLobbyButton from "@components/General/BackToLobbyButton/BackToLobbyButton";
 import Spinner from "@components/common/Spinner/Spinner";

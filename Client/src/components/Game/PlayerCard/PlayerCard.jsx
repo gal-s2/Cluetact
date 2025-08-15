@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import styles from "./PlayerCard.module.css";
-import { avatarList } from "@utils/loadAvatars";
+import avatarList from "@utils/loadAvatars";
 import Flag from "@components/common/Flag/Flag";
 
 const PlayerCard = ({ player, me, isActiveClueGiver, selectedPlayer, setSelectedPlayer }) => {
