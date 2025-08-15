@@ -1,6 +1,6 @@
 const User = require("../../models/User");
 
-const LEADERBOARD_SIZE = 3;
+const LEADERBOARD_SIZE = 100;
 
 async function getUserStatsById(req, res) {
     try {

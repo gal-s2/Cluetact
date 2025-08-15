@@ -66,11 +66,6 @@
     background-color: rgba(76, 175, 80, 0.1);
 }
 
-.loading {
-    text-align: center;
-    padding: 2rem;
-}
-
 /* Mobile responsive styles */
 @media (max-width: 768px) {
     .container {
