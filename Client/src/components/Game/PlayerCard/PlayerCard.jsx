@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import styles from "./PlayerCard.module.css";
 import { avatarList } from "@utils/loadAvatars";
+import Flag from "@components/common/Flag/Flag";
 
 const PlayerCard = ({ player, me, isActiveClueGiver, selectedPlayer, setSelectedPlayer }) => {
     const avatarSrc = avatarList[player.avatar] || avatarList[0];
@@ -54,7 +55,7 @@ const PlayerCard = ({ player, me, isActiveClueGiver, selectedPlayer, setSelected
                 <div className={styles.profileDropdown}>
                     <div className={styles.compactProfile}>
                         <div className={styles.countryRow}>
-                            <img src="https://flagcdn.com/w20/us.png" width="20" alt="us-flag" />
+                            <Flag country={player.country} />
                             <span>US</span>
                         </div>
                         <div className={styles.statsGrid}>

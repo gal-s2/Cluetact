@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { baseUrl } from "@config/baseUrl";
 import { useUser } from "@contexts/UserContext";
 import styles from "./Leaderboard.module.css";
-import LobbyHeader from "@components/Lobby/LobbyHeader";
 import { avatarList } from "@utils/loadAvatars";
+import LobbyHeader from "@components/Lobby/LobbyHeader";
 import BackToLobbyButton from "@components/General/BackToLobbyButton/BackToLobbyButton";
 import Spinner from "@components/common/Spinner/Spinner";
+import Flag from "@components/common/Flag/Flag";
 
 export default function Leaderboard() {
     const { user } = useUser();
@@ -63,7 +64,7 @@ export default function Leaderboard() {
                                         {p.username}
                                     </td>
                                     <td>
-                                        <img src="https://flagcdn.com/w20/us.png" width="20" alt="us-flag" />
+                                        <Flag country={p.country} />
                                     </td>
                                     <td>{p.statistics?.Wins ?? p.wins}</td>
                                     <td>{(p.statistics?.winRate ?? p.winRate).toFixed(1)}%</td>
