@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const User = require("../../models/User");
 
 const LEADERBOARD_SIZE = 100;
@@ -17,7 +18,6 @@ async function getUserStatsById(req, res) {
 }
 async function getLeaderboard(req, res) {
     try {
-        // 1) Top N players (flatten wins/winRate so sorting is reliable)
         const topPlayers = await User.aggregate([
             {
                 $project: {

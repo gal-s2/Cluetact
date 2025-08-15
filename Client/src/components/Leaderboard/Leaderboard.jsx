@@ -15,7 +15,12 @@ export default function Leaderboard() {
 
     useEffect(() => {
         axios
-            .get(`${baseUrl}/stats/leaderboard`, { withCredentials: true })
+            .get(`${baseUrl}/stats/leaderboard`, {
+                withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            })
             .then((res) => {
                 setData(res.data);
                 setLoading(false);

@@ -37,17 +37,11 @@ function ProfileDetails() {
         if (Object.keys(updateData).length === 0) return;
 
         try {
-            const res = await axios.patch(
-                `${baseUrl}/user/update-profile`,
-                updateData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem(
-                            "token"
-                        )}`,
-                    },
-                }
-            );
+            const res = await axios.patch(`${baseUrl}/user/update-profile`, updateData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
 
             setUser({
                 user: res.data.user,
@@ -77,9 +71,7 @@ function ProfileDetails() {
     };
 
     // Check if update button should be enabled
-    const isUpdateEnabled =
-        (selectedAvatar && selectedAvatar !== user.avatar) ||
-        password.length >= 6;
+    const isUpdateEnabled = (selectedAvatar && selectedAvatar !== user.avatar) || password.length >= 6;
 
     return (
         <div className={styles.container}>
@@ -90,15 +82,8 @@ function ProfileDetails() {
 
             <div className={styles.profileContent}>
                 <div className={styles.avatarSection}>
-                    <img
-                        src={avatarList[selectedAvatar]}
-                        alt="Avatar"
-                        className={styles.avatar}
-                    />
-                    <button
-                        className={styles.changeAvatarButton}
-                        onClick={showAvatarPicker}
-                    >
+                    <img src={avatarList[selectedAvatar]} alt="Avatar" className={styles.avatar} />
+                    <button className={styles.changeAvatarButton} onClick={showAvatarPicker}>
                         Change Avatar
                     </button>
                 </div>
@@ -106,27 +91,12 @@ function ProfileDetails() {
                 {user.authProvider === LOCAL_USER && (
                     <div className={styles.field}>
                         <label>New Password (optional):</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter new password (min 6 characters)"
-                        />
-                        {password.length > 0 && password.length < 6 && (
-                            <span className={styles.error}>
-                                Password must be at least 6 characters
-                            </span>
-                        )}
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter new password (min 6 characters)" />
+                        {password.length > 0 && password.length < 6 && <span className={styles.error}>Password must be at least 6 characters</span>}
                     </div>
                 )}
 
-                <button
-                    className={`${styles.updateButton} ${
-                        isUpdateEnabled ? styles.enabled : styles.disabled
-                    }`}
-                    onClick={handleUpdate}
-                    disabled={!isUpdateEnabled}
-                >
+                <button className={`${styles.updateButton} ${isUpdateEnabled ? styles.enabled : styles.disabled}`} onClick={handleUpdate} disabled={!isUpdateEnabled}>
                     Update Profile
                 </button>
             </div>
@@ -137,10 +107,7 @@ function ProfileDetails() {
                     <div className={styles.modal}>
                         <h3>Choose Your Avatar</h3>
                         <AvatarPicker onAvatarSelect={handleAvatarSelect} />
-                        <button
-                            className={styles.cancelButton}
-                            onClick={() => setAvatarPickerShown(false)}
-                        >
+                        <button className={styles.cancelButton} onClick={() => setAvatarPickerShown(false)}>
                             Cancel
                         </button>
                     </div>
