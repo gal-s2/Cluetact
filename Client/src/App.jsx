@@ -18,6 +18,7 @@ import AdminRoute from "@components/Routes/AdminRoute/AdminRoute";
 import Footer from "@components/General/Footer/Footer";
 import SocketPageWrapper from "@components/Routes/SocketPageWrapper/SocketPageWrapper";
 import { MusicProvider } from "./components/Music/MusicContext.jsx";
+import Leaderboard from "@components/Leaderboard/Leaderboard.jsx";
 
 function App() {
     const { user } = useUser();
@@ -103,6 +104,15 @@ function AppRoutesWithSocketNavigation({ user }) {
                 element={
                     <PrivateRoute>
                         <StatsPage />
+                    </PrivateRoute>
+                }
+            />
+
+            <Route
+                path="/leaderboard"
+                element={
+                    <PrivateRoute>
+                        <Leaderboard />
                     </PrivateRoute>
                 }
             />
