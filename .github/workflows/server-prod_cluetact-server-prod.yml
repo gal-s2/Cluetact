@@ -61,5 +61,6 @@ jobs:
         with:
           app-name: 'cluetact-server-prod'
           slot-name: 'Production'
-          package: .
+          package: ./Server
+
           
