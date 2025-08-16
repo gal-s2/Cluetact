@@ -17,7 +17,7 @@ process.on("unhandledRejection", (reason, promise) => {
     console.error("💥 Unhandled Rejection:", reason);
 });
 
-//app.use(helmet());
+app.use(helmet());
 app.use(
     cors({
         origin: [
