@@ -23,6 +23,7 @@ app.use(
         origin: [
             "https://cluetact.onrender.com", //#client-url
             "https://thankful-field-0e225591e.2.azurestaticapps.net",
+            "https://mango-wave-0c0f9fd03.2.azurestaticapps.net",
             "http://localhost", // port 80
             "http://localhost:5173",
         ],
