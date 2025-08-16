@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
-import { baseUrl } from "../config/baseUrl";
+import baseUrl from "../config/baseUrl";
 
 const token = localStorage.getItem("token");
 const socket = io(baseUrl, {

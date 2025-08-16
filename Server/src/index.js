@@ -1,10 +1,11 @@
 const express = require("express");
 require("dotenv").config();
 require("./config/mongo");
-require("./jobs/deleteOldGuests");
+//require("./jobs/deleteOldGuests"); // Were removing this for production for now
 
 const PORT = process.env.PORT || 8000;
 const app = express();
+const helmet = require("helmet");
 const cors = require("cors");
 const { requestLogger } = require("./utils/logger.js");
 
@@ -16,6 +17,7 @@ process.on("unhandledRejection", (reason, promise) => {
     console.error("💥 Unhandled Rejection:", reason);
 });
 
+app.use(helmet());
 app.use(
     cors({
         origin: [

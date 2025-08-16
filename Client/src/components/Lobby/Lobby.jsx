@@ -1,6 +1,6 @@
 import axios from "axios";
-import { baseUrl } from "@config/baseUrl";
-import { useRef, useState } from "react";
+import baseUrl from "@config/baseUrl";
+import { useState } from "react";
 import { useUser } from "@contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useGlobalNotification } from "@contexts/GlobalNotificationContext";
@@ -13,7 +13,6 @@ import PlayCard from "./PlayCard";
 import generateRoomCode from "../../utils/generateRoomCode";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import Modal from "@common/Modal/Modal";
-import bgMusic from "../../assets/audio/lobby-music.mp3";
 import InfoSection from "./InfoSection";
 import { useEffect } from "react";
 import { useMusic } from "@components/Music/MusicContext.jsx";
@@ -28,14 +27,11 @@ function Lobby() {
     const [inQueue, setInQueue] = useState(false);
     const { setGlobalNotification } = useGlobalNotification();
     const { changeTrack, currentTrack } = useMusic();
-    const trackChangedRef = useRef(false);
 
     useEffect(() => {
         console.log("Lobby: Requesting lobby track");
         changeTrack("lobby");
     }, [changeTrack]);
-
-    const audioRef = useRef(null);
 
     if (!user && !loading) {
         console.log("No user found in Lobby.jsx, skipping render.");
@@ -135,9 +131,7 @@ function Lobby() {
             socket.disconnect();
             console.log("Socket.disconnect() called");
         } else {
-            console.log(
-                "Socket is not connected, skipping socket.disconnect()."
-            );
+            console.log("Socket is not connected, skipping socket.disconnect().");
         }
 
         console.log("Navigating to home page BEFORE clearing user state...");
@@ -165,8 +159,7 @@ function Lobby() {
         navigate(`/waiting/${newCode}`, { state: { isCreator: true } });
 
         setGlobalNotification({
-            message:
-                "Waiting room created — invite friends! You can start once 3 or more players join.",
+            message: "Waiting room created — invite friends! You can start once 3 or more players join.",
             type: "info",
         });
     };
@@ -182,19 +175,8 @@ function Lobby() {
         setPlayMenuOpen(false);
     };
 
-    const handleNavigateToStats = () => {
-        navigate("/stats");
-        setProfileMenuOpen(false);
-    };
-
-    const handleNavigateToProfile = () => {
-        navigate("/profile");
-        setProfileMenuOpen(false);
-    };
-
     return (
         <div className={styles.container}>
-            {/*<audio ref={audioRef} src={bgMusic} autoPlay loop />*/}
             <LobbyHeader username={user.username} />
 
             {inQueue && (
@@ -212,34 +194,14 @@ function Lobby() {
 
             <main className={styles.main}>
                 <div className={styles.sectionGroup}>
-                    <PlayCard
-                        playMenuOpen={playMenuOpen}
-                        setPlayMenuOpen={handlePlayMenuToggle}
-                        findGame={findGame}
-                        setShowJoinModal={handleShowJoinModal}
-                        handleCreateRoom={handleCreateRoom}
-                    />
-                    <ProfileCard
-                        profileMenuOpen={profileMenuOpen}
-                        setProfileMenuOpen={handleProfileMenuToggle}
-                        navigate={navigate}
-                        disconnect={disconnect}
-                        onNavigateToStats={handleNavigateToStats}
-                        onNavigateToProfile={handleNavigateToProfile}
-                    />
+                    <PlayCard playMenuOpen={playMenuOpen} setPlayMenuOpen={handlePlayMenuToggle} findGame={findGame} setShowJoinModal={handleShowJoinModal} handleCreateRoom={handleCreateRoom} />
+                    <ProfileCard profileMenuOpen={profileMenuOpen} setProfileMenuOpen={handleProfileMenuToggle} navigate={navigate} disconnect={disconnect} />
                 </div>
             </main>
 
             <InfoSection />
 
-            {showJoinModal && (
-                <JoinRoomModal
-                    roomCodeInput={roomCodeInput}
-                    setRoomCodeInput={setRoomCodeInput}
-                    handleJoinRoom={handleJoinRoom}
-                    closeModal={() => setShowJoinModal(false)}
-                />
-            )}
+            {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
         </div>
     );
 }

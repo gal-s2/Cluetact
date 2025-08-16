@@ -1,6 +1,6 @@
 import { useState } from "react";
+import avatarList from "@utils/loadAvatars";
 import styles from "./AvatarPicker.module.css";
-import { avatarList } from "@utils/loadAvatars";
 
 export default function AvatarPicker({ onAvatarSelect }) {
     const [selected, setSelected] = useState(null);

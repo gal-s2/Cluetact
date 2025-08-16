@@ -1,0 +1,201 @@
+.container {
+    composes: container from "../Lobby/Lobby.module.css";
+    padding-top: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2e7d32, #4caf50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header p {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    color: #666;
+}
+
+.table {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.table th,
+.table td {
+    padding: 1rem;
+    text-align: left;
+}
+
+.table thead {
+    background: linear-gradient(135deg, #81c784, #66bb6a);
+    color: white;
+}
+
+.playerCell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e2e8f0;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.highlight {
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+    .container {
+        padding-top: 1rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .header p {
+        font-size: 0.9rem;
+    }
+
+    .table {
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.75rem 0.5rem;
+    }
+
+    /* Hide country column on mobile */
+    .table th:nth-child(3),
+    .table td:nth-child(3) {
+        display: none;
+    }
+
+    .playerCell {
+        gap: 0.5rem;
+    }
+
+    .avatar {
+        width: 32px;
+        height: 32px;
+        border-width: 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
+
+    .header h1 {
+        font-size: 1.25rem;
+    }
+
+    .table {
+        font-size: 0.8rem;
+        border-radius: 6px;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.5rem 0.25rem;
+    }
+
+    /* Further compress on very small screens */
+    .table th:first-child,
+    .table td:first-child {
+        width: 15%;
+    }
+
+    .table th:nth-child(2),
+    .table td:nth-child(2) {
+        width: 45%;
+    }
+
+    .table th:nth-child(4),
+    .table td:nth-child(4) {
+        width: 20%;
+    }
+
+    .table th:nth-child(5),
+    .table td:nth-child(5) {
+        width: 20%;
+    }
+
+    .playerCell {
+        gap: 0.375rem;
+        font-size: 0.8rem;
+    }
+
+    .avatar {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* Very small screens - stack layout */
+@media (max-width: 360px) {
+    .header h1 {
+        font-size: 1.1rem;
+    }
+
+    .table {
+        font-size: 0.75rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.4rem 0.2rem;
+    }
+
+    .avatar {
+        width: 24px;
+        height: 24px;
+    }
+
+    .playerCell {
+        gap: 0.25rem;
+        font-size: 0.75rem;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .container {
+        --bg-primary: #1f2937;
+        --text-primary: #f9fafb;
+        --text-secondary: #9ca3af;
+        --border-color: rgba(75, 85, 99, 0.3);
+        --shadow: rgba(0, 0, 0, 0.3);
+        --avatar-border: #4b5563;
+        --hover-bg: rgba(255, 255, 255, 0.05);
+        --highlight-bg: rgba(76, 175, 80, 0.2);
+    }
+}

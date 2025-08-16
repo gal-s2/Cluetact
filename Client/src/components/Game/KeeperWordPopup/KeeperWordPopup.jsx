@@ -6,6 +6,7 @@ import SOCKET_EVENTS from "@shared/socketEvents.json";
 import Modal from "@common/Modal/Modal";
 import Button from "@common/Button/Button";
 import Spinner from "@components/common/Spinner/Spinner";
+import formatTime from "@utils/formatTime";
 
 function KeeperWordPopup({ showConfirmModal }) {
     const { gameState, setKeeperWord, isKeeperWordRejected, setIsKeeperWordRejected } = useGameRoom();
@@ -54,14 +55,6 @@ function KeeperWordPopup({ showConfirmModal }) {
             }
         };
     }, [gameState.keeperTime]);
-
-    const formatTime = (seconds) => {
-        const m = Math.floor(seconds / 60)
-            .toString()
-            .padStart(2, "0");
-        const s = (seconds % 60).toString().padStart(2, "0");
-        return `${m}:${s}`;
-    };
 
     const onSubmit = (e) => {
         // on form submit, emit the event to the server

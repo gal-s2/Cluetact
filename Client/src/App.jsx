@@ -15,9 +15,9 @@ import useSocketNavigation from "@hooks/useSocketNavigation";
 import Overwatch from "@components/Overwatch/Overwatch";
 import GlobalNotificationBox from "@components/General/GlobalNotificationBox/GlobalNotificationBox";
 import AdminRoute from "@components/Routes/AdminRoute/AdminRoute";
-import Footer from "@components/General/Footer/Footer";
 import SocketPageWrapper from "@components/Routes/SocketPageWrapper/SocketPageWrapper";
 import { MusicProvider } from "./components/Music/MusicContext.jsx";
+import Leaderboard from "@components/Leaderboard/Leaderboard.jsx";
 
 function App() {
     const { user } = useUser();
@@ -30,7 +30,6 @@ function App() {
                     <GlobalNotificationBox />
                 </MusicProvider>
             </Router>
-            {/*<Footer />*/}
         </div>
     );
 }
@@ -103,6 +102,15 @@ function AppRoutesWithSocketNavigation({ user }) {
                 element={
                     <PrivateRoute>
                         <StatsPage />
+                    </PrivateRoute>
+                }
+            />
+
+            <Route
+                path="/leaderboard"
+                element={
+                    <PrivateRoute>
+                        <Leaderboard />
                     </PrivateRoute>
                 }
             />

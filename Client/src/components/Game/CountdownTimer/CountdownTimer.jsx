@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import styles from "./CountdownTimer.module.css";
+import formatTime from "@utils/formatTime";
 
 function CountdownTimer({ timeLeft, setTimeLeft, onComplete }) {
     const { gameState } = useGameRoom();
@@ -27,14 +28,6 @@ function CountdownTimer({ timeLeft, setTimeLeft, onComplete }) {
 
         return () => clearInterval(intervalRef.current);
     }, [timeLeft, onComplete]);
-
-    const formatTime = (seconds) => {
-        const m = Math.floor(seconds / 60)
-            .toString()
-            .padStart(2, "0");
-        const s = (seconds % 60).toString().padStart(2, "0");
-        return `${m}:${s}`;
-    };
 
     return <div className={`${styles.countdownTimer} ${colorClass}`}>{formatTime(timeLeft ?? 0)}</div>;
 }
