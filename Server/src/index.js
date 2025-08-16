@@ -22,7 +22,7 @@ app.use(
     cors({
         origin: [
             "https://cluetact.onrender.com", //#client-url
-            "https://thankful-field-0e225591e.2.azurestaticapps.net/",
+            "https://thankful-field-0e225591e.2.azurestaticapps.net",
             "http://localhost", // port 80
             "http://localhost:5173",
         ],
