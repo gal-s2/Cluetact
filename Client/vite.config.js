@@ -5,7 +5,7 @@ import path from "path";
 export default defineConfig({
     plugins: [react()],
     server: {
-        allowedHosts: ["cluetact.onrender.com", "localhost:5173", "https://mango-wave-0c0f9fd03.2.azurestaticapps.net"], //#client-url
+        allowedHosts: ["cluetact.onrender.com", "localhost:5173", "mango-wave-0c0f9fd03.2.azurestaticapps.net"], //#client-url
     },
     resolve: {
         alias: {
