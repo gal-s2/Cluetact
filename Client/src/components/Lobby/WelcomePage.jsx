@@ -17,6 +17,8 @@ export default function WelcomePage() {
 
     const playAsGuestClick = async () => {
         try {
+            console.log("this is baseurl:", baseUrl);
+
             const response = await axios.post(`${baseUrl}/auth/guest`);
             console.log("Guest login response:", response.data);
             if (response.status === 200) {
