@@ -41,6 +41,8 @@ function AuthForm({ type }) {
 
         if (!validateForm()) return;
 
+        console.log("this is baseurl:", baseUrl);
+
         let url;
         if (type === "login") {
             url = `${baseUrl}/auth/login`;
