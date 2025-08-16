@@ -4,6 +4,9 @@ import path from "path";
 
 export default defineConfig({
     plugins: [react()],
+    define: {
+        "process.env": process.env,
+    },
     server: {
         allowedHosts: ["cluetact.onrender.com", "localhost:5173", "mango-wave-0c0f9fd03.2.azurestaticapps.net"], //#client-url
     },
