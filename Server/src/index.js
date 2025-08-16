@@ -18,16 +18,15 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 
 app.use(helmet());
+let corsOrigins = [];
+try {
+    corsOrigins = process.env.CORS_ORIGINS ? JSON.parse(process.env.CORS_ORIGINS) : [];
+} catch (err) {
+    console.error("Invalid JSON in CORS_ORIGINS env variable:", err);
+}
 app.use(
     cors({
-        origin: [
-            "https://cluetact.onrender.com", //#client-url
-            "https://thankful-field-0e225591e.2.azurestaticapps.net",
-            "https://mango-wave-0c0f9fd03.2.azurestaticapps.net",
-            "https://gentle-field-0419fda03.1.azurestaticapps.net",
-            "http://localhost", // port 80
-            "http://localhost:5173",
-        ],
+        origin: corsOrigins,
         methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
         credentials: true,
     })
