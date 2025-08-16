@@ -2,6 +2,7 @@ import axios from "axios";
 import { useUser } from "@contexts/UserContext";
 import { useEffect, useState } from "react";
 import baseUrl from "@config/baseUrl";
+
 import avatarList from "@utils/loadAvatars";
 import BackToLobbyButton from "../General/BackToLobbyButton/BackToLobbyButton";
 import MusicToggleButton from "../General/MusicToggleButton/MusicToggleButton.jsx";
