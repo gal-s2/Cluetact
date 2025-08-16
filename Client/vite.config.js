@@ -5,7 +5,7 @@ import path from "path";
 export default defineConfig({
     plugins: [react()],
     server: {
-        allowedHosts: ["cluetact.onrender.com", "localhost:5173"], //#client-url
+        allowedHosts: ["cluetact.onrender.com", "localhost:5173", "gentle-field-0419fda03.1.azurestaticapps.net"], //#client-url
     },
     resolve: {
         alias: {
