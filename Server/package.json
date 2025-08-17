@@ -7,7 +7,7 @@
         "test": "jest",
         "start": "node -r module-alias/register ./src/index.js",
         "dev": "copyfiles ../shared/* shared && nodemon --require module-alias/register ./src/index.js",
-        "prepared:shared": "copyfiles ../shared/* shared"
+        "prepare:shared": "copyfiles ../shared/* shared"
     },
     "author": "",
     "license": "ISC",
