@@ -4,7 +4,6 @@
     "description": "CS Final Project",
     "main": "index.js",
     "scripts": {
-        "test": "jest",
         "start": "node -r module-alias/register ./src/index.js",
         "dev": "copyfiles ../shared/* shared && nodemon --require module-alias/register ./src/index.js",
         "prepare:shared": "copyfiles ../shared/* shared"
