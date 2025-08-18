@@ -494,8 +494,10 @@ class Room {
             this.raceTimer?.stop();
             result.isGameEnded = this.isGameOver();
 
-            if (result.isGameEnded) this.setStatus(GAME_STAGES.END);
-            else this.setStatus(GAME_STAGES.CLUE_SUBMISSION_POST_CLUETACT);
+            if (result.isGameEnded) {
+                this.setStatus(GAME_STAGES.END);
+                console.log("Status changed to END");
+            } else this.setStatus(GAME_STAGES.CLUE_SUBMISSION_POST_CLUETACT);
 
             return result;
         }
