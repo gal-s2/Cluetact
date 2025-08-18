@@ -568,7 +568,6 @@ class Room {
 
             // Start seeker cycle from the beginning each round
             this.indexOfSeekerOfCurrentTurn = 0;
-
             this.setStatus(GAME_STAGES.KEEPER_CHOOSING_WORD);
             Logger.logNextKeeper(this.roomId, nextKeeper);
         }
@@ -598,6 +597,7 @@ class Room {
     }
 
     async endGame() {
+        console.log("Changing (end game) to End");
         this.setStatus(GAME_STAGES.END);
 
         let maxScore = -Infinity;
