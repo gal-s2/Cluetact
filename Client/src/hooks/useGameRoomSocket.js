@@ -172,8 +172,7 @@ export default function useGameRoomSocket(roomId) {
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
-                message:
-                    "Clue submission time is over! Moving to the next seeker",
+                message: "Clue submission time is over! Moving to the next seeker",
                 type: "notification",
             });
         });
@@ -200,11 +199,7 @@ export default function useGameRoomSocket(roomId) {
             setGameState((prev) => ({
                 ...prev,
                 players: data.players,
-                clues: prev.clues.map((c) =>
-                    c.id === data.clue.id
-                        ? { ...c, blocked: true, word: data.clue.word }
-                        : c
-                ),
+                clues: prev.clues.map((c) => (c.id === data.clue.id ? { ...c, blocked: true, word: data.clue.word } : c)),
                 isSubmittingClue: data.clueGiverUsername === user.username,
                 clueGiverUsername: data.clueGiverUsername,
                 activeClue: null,
@@ -212,9 +207,7 @@ export default function useGameRoomSocket(roomId) {
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
-                message: gameState.isKeeper
-                    ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`
-                    : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
+                message: gameState.isKeeper ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"` : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
                 type: gameState.isKeeper ? "success" : "notification",
             });
         });
@@ -253,10 +246,29 @@ export default function useGameRoomSocket(roomId) {
     }, [user?.username, gameState.isKeeper]);
 
     useEffect(() => {
+        socket.on(SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM, (data) => {
+            const { username, players, winners, status, message } = data;
+            setGameState((prev) => ({
+                ...prev,
+                players,
+                winners,
+                status,
+                logMessage: message,
+            }));
+            setNotification({
+                message: `${username} has left the game`,
+                type: "notification",
+            });
+        });
+
+        return () => {
+            socket.off(SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM);
+        };
+    }, []);
+
+    useEffect(() => {
         socket.on(SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT, (data) => {
-            const keeper = gameStateRef.current.players.find(
-                (player) => player.role === "keeper"
-            );
+            const keeper = gameStateRef.current.players.find((player) => player.role === "keeper");
             setNotification({
                 message: `Choosing word timeout! Keeper ${keeper.username} didn't submit a word on time! Moving to the next keeper`,
                 type: "notification",
@@ -266,9 +278,7 @@ export default function useGameRoomSocket(roomId) {
 
         socket.on(SOCKET_EVENTS.SERVER_GAME_ENDED, (data) => {
             if (data.reason === "keeper word timeout") {
-                const keeper = gameStateRef.current.players.find(
-                    (player) => player.role === "keeper"
-                );
+                const keeper = gameStateRef.current.players.find((player) => player.role === "keeper");
                 setNotification({
                     message: `Choosing word timeout! Keeper ${keeper.username} didn't submit a word on time! Moving to the next keeper`,
                     type: "notification",

@@ -42,6 +42,7 @@
     "SERVER_GAME_JOIN": "server_game_join",
     "SERVER_ERROR_MESSAGE": "server_error_message",
     "SERVER_GAME_ENDED": "server_game_ended",
+    "SERVER_PLAYER_EXITED_ROOM": "server_player_exited_room",
     "SERVER_POST_ONLINE_ROOMS": "server_post_online_rooms",
     "SERVER_POST_ONLINE_WAITING_ROOMS": "server_post_online_waiting_rooms",
     "SERVER_POST_ALL_USERS": "server_post_all_users",

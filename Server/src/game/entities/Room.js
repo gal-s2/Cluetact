@@ -31,9 +31,7 @@ class Room {
         this.players = [];
         this.keeperUsername = keeper.username; // TODO: in future use this.keeper.username directly
         this.setPlayersData(keeper, seekers);
-        this.seekersUsernames = this.players
-            .filter((player) => player.role === ROLES.SEEKER)
-            .map((player) => player.username);
+        this.seekersUsernames = this.players.filter((player) => player.role === ROLES.SEEKER).map((player) => player.username);
 
         this.currentRound = new GameRound();
         this.roundsHistory = [];
@@ -58,6 +56,8 @@ class Room {
         this.keeperChoosingWordTimer?.stop();
         this.clueSubmissionTimer?.stop();
         this.raceTimer?.stop();
+        this.setWinners();
+        this.setStatus(GAME_STAGES.END);
         this.callbacks = null;
     }
 
@@ -82,10 +82,7 @@ class Room {
             this.keeperChoosingWordTimer?.stop();
             this.keeperChoosingWordTimer = null;
         }
-        if (
-            newStatus !== GAME_STAGES.CLUE_SUBMISSION &&
-            newStatus !== GAME_STAGES.CLUE_SUBMISSION_POST_CLUETACT
-        ) {
+        if (newStatus !== GAME_STAGES.CLUE_SUBMISSION && newStatus !== GAME_STAGES.CLUE_SUBMISSION_POST_CLUETACT) {
             this.clueSubmissionTimer?.stop();
             this.clueSubmissionTimer = null;
         }
@@ -100,30 +97,21 @@ class Room {
             case GAME_STAGES.KEEPER_CHOOSING_WORD: {
                 // Extra safety: ensure no previous keeper timer is running
                 this.keeperChoosingWordTimer?.stop();
-                this.keeperChoosingWordTimer = new CountdownTimer(
-                    TIMES.KEEPER_CHOOSING_WORD,
-                    this.onKeeperWordTimeout.bind(this)
-                );
+                this.keeperChoosingWordTimer = new CountdownTimer(TIMES.KEEPER_CHOOSING_WORD, this.onKeeperWordTimeout.bind(this));
                 this.keeperChoosingWordTimer.start();
                 break;
             }
 
             case GAME_STAGES.CLUE_SUBMISSION: {
                 this.clueSubmissionTimer?.stop();
-                this.clueSubmissionTimer = new CountdownTimer(
-                    TIMES.CLUE_SUBMISSION,
-                    this.onClueSubmissionTimeout.bind(this)
-                );
+                this.clueSubmissionTimer = new CountdownTimer(TIMES.CLUE_SUBMISSION, this.onClueSubmissionTimeout.bind(this));
                 this.clueSubmissionTimer.start();
                 break;
             }
 
             case GAME_STAGES.CLUE_SUBMISSION_POST_CLUETACT: {
                 this.clueSubmissionTimer?.stop();
-                this.clueSubmissionTimer = new CountdownTimer(
-                    TIMES.CLUE_SUBMISSION_POST_CLUETACT,
-                    this.onClueSubmissionTimeout.bind(this)
-                );
+                this.clueSubmissionTimer = new CountdownTimer(TIMES.CLUE_SUBMISSION_POST_CLUETACT, this.onClueSubmissionTimeout.bind(this));
                 this.clueSubmissionTimer.start();
                 break;
             }
@@ -133,10 +121,7 @@ class Room {
                 this.keeperChoosingWordTimer?.stop();
                 this.clueSubmissionTimer?.stop();
                 this.raceTimer?.stop();
-                this.keeperChoosingWordTimer =
-                    this.clueSubmissionTimer =
-                    this.raceTimer =
-                        null;
+                this.keeperChoosingWordTimer = this.clueSubmissionTimer = this.raceTimer = null;
                 break;
             }
 
@@ -175,9 +160,7 @@ class Room {
      * @param {string} username
      */
     removePlayerByUsername(username) {
-        this.players = this.players.filter(
-            (player) => player.username !== username
-        );
+        this.players = this.players.filter((player) => player.username !== username);
     }
 
     getWinners() {
@@ -209,14 +192,8 @@ class Room {
         if (this.status === GAME_STAGES.KEEPER_CHOOSING_WORD) return "";
 
         const revaledLettersCurrentRound = this.currentRound.revealedLetters;
-        if (
-            revaledLettersCurrentRound === "" &&
-            this.roundsHistory.length > 0
-        ) {
-            return (
-                this.roundsHistory[this.roundsHistory.length - 1]
-                    ?.revealedLetters || ""
-            );
+        if (revaledLettersCurrentRound === "" && this.roundsHistory.length > 0) {
+            return this.roundsHistory[this.roundsHistory.length - 1]?.revealedLetters || "";
         } else return revaledLettersCurrentRound;
     }
 
@@ -231,18 +208,11 @@ class Room {
 
     revealNextLetter() {
         const currentLength = this.currentRound.revealedLetters.length;
-        if (
-            this.currentRound.keeperWord &&
-            currentLength < this.currentRound.keeperWord.length
-        ) {
-            this.currentRound.revealedLetters +=
-                this.currentRound.keeperWord[currentLength];
+        if (this.currentRound.keeperWord && currentLength < this.currentRound.keeperWord.length) {
+            this.currentRound.revealedLetters += this.currentRound.keeperWord[currentLength];
             this.currentRound.countOfClueSubmittersInPrefix = 0;
             // Return true if this was the last letter
-            return (
-                this.currentRound.revealedLetters.length ===
-                this.currentRound.keeperWord.length
-            );
+            return this.currentRound.revealedLetters.length === this.currentRound.keeperWord.length;
         }
 
         return false; // Already fully revealed
@@ -258,10 +228,7 @@ class Room {
         if (result.success) {
             this.wordsGuessedSuccesfully.add(wordGuess.toLowerCase());
             this.advanceToNextSeeker();
-            this.addPointsToPlayerByUsername(
-                keeperUsername,
-                POINTS.KEEPER_BLOCK_BONUS
-            );
+            this.addPointsToPlayerByUsername(keeperUsername, POINTS.KEEPER_BLOCK_BONUS);
             this.setStatus(GAME_STAGES.CLUE_SUBMISSION);
         }
         return result;
@@ -280,20 +247,12 @@ class Room {
                 success: true,
                 blockedClue: activeClue,
             };
-        } else
-            this.currentRound.guesses.push(
-                new Guess(keeperUsername, lowerGuess)
-            );
+        } else this.currentRound.guesses.push(new Guess(keeperUsername, lowerGuess));
 
         return { success: false };
     }
 
-    async startNewClueRound(
-        clueGiverUsername,
-        clueWord,
-        clueDefinition,
-        onRaceTimeout
-    ) {
+    async startNewClueRound(clueGiverUsername, clueWord, clueDefinition, onRaceTimeout) {
         const valid = await isValidEnglishWord(clueWord);
         if (!valid) {
             Logger.logInvalidSeekerWord(this.roomId, clueWord);
@@ -316,19 +275,12 @@ class Room {
             return [false, `Word should start with ${revealedPrefix}`];
         }
 
-        if (
-            this.currentRound.clues.find(
-                (clue) => clue.word.toLowerCase() === clueWord.toLowerCase()
-            )
-        ) {
+        if (this.currentRound.clues.find((clue) => clue.word.toLowerCase() === clueWord.toLowerCase())) {
             Logger.logClueWordAlreadyUsed(this.roomId, clueWord);
             return [false, "Invalid guess, this clue has already been given"];
         }
         if (clueDefinition.toLowerCase().includes(clueWord.toLowerCase())) {
-            return [
-                false,
-                "Invalid guess, definition containing the word cannot be used.",
-            ];
+            return [false, "Invalid guess, definition containing the word cannot be used."];
         }
 
         this.clueSubmissionTimer?.stop();
@@ -354,10 +306,7 @@ class Room {
         // Advance to next seeker
         this.advanceToNextSeeker();
 
-        if (
-            this.currentRound.countOfClueSubmittersInPrefix ===
-            this.seekersUsernames.length
-        ) {
+        if (this.currentRound.countOfClueSubmittersInPrefix === this.seekersUsernames.length) {
             result.isAdvancingToNextLetter = true;
             this.isWordFullyRevealed = this.revealNextLetter();
         }
@@ -399,11 +348,7 @@ class Room {
         }
 
         // De-dup
-        if (
-            this.currentRound.guesses.find(
-                (g) => g.word.toLowerCase() === guessLower
-            )
-        ) {
+        if (this.currentRound.guesses.find((g) => g.word.toLowerCase() === guessLower)) {
             Logger.logDuplicateGuess(this.roomId, guessWord);
             result.message = "Guess has already been submitted";
             return result;
@@ -432,15 +377,9 @@ class Room {
 
             // Award a lot of points to the guesser (+ optional assist to the active clue giver)
             const activeClue = this.currentRound.getActiveClue();
-            this.addPointsToPlayerByUsername(
-                guesserUsername,
-                POINTS.PERFECT_GUESS_BONUS + POINTS.CLUE_BONUS
-            );
+            this.addPointsToPlayerByUsername(guesserUsername, POINTS.PERFECT_GUESS_BONUS + POINTS.CLUE_BONUS);
             if (activeClue) {
-                this.addPointsToPlayerByUsername(
-                    activeClue.from,
-                    POINTS.CLUE_BONUS
-                );
+                this.addPointsToPlayerByUsername(activeClue.from, POINTS.CLUE_BONUS);
                 activeClue.active = false;
                 activeClue.blocked = true;
             }
@@ -510,10 +449,7 @@ class Room {
     handleCorrectGuessBySeeker(guesserUsername, clueId) {
         const clue = this.currentRound.getActiveClue();
         if (!clue) {
-            Logger.logError(
-                this.roomId,
-                "No active clue found for correct guess"
-            );
+            Logger.logError(this.roomId, "No active clue found for correct guess");
             return;
         }
 
@@ -535,24 +471,17 @@ class Room {
         this.keeperChoosingWordTimer?.stop();
         this.clueSubmissionTimer?.stop();
         this.raceTimer?.stop();
-        this.keeperChoosingWordTimer =
-            this.clueSubmissionTimer =
-            this.raceTimer =
-                null;
+        this.keeperChoosingWordTimer = this.clueSubmissionTimer = this.raceTimer = null;
 
         const currentKeeper = this.keeperUsername;
         this.pastKeepers.add(currentKeeper);
         this.seekersUsernames.push(currentKeeper);
 
         const nextKeeper = this.getNextKeeper();
-        this.seekersUsernames = this.seekersUsernames.filter(
-            (seekerUsername) => seekerUsername !== nextKeeper
-        );
+        this.seekersUsernames = this.seekersUsernames.filter((seekerUsername) => seekerUsername !== nextKeeper);
         this.keeperUsername = nextKeeper;
 
-        this.players
-            .find((player) => player.username === nextKeeper)
-            .setRole(ROLES.KEEPER);
+        this.players.find((player) => player.username === nextKeeper).setRole(ROLES.KEEPER);
 
         this.players.forEach((player) => {
             if (player.username !== nextKeeper) player.setRole(ROLES.SEEKER);
@@ -580,9 +509,7 @@ class Room {
     }
 
     advanceToNextSeeker() {
-        const nextIndex =
-            (this.indexOfSeekerOfCurrentTurn + 1) %
-            this.seekersUsernames.length;
+        const nextIndex = (this.indexOfSeekerOfCurrentTurn + 1) % this.seekersUsernames.length;
         this.indexOfSeekerOfCurrentTurn = nextIndex;
         return this.seekersUsernames[nextIndex];
     }
@@ -596,10 +523,7 @@ class Room {
         if (p) p.addScore(points);
     }
 
-    async endGame() {
-        console.log("Changing (end game) to End");
-        this.setStatus(GAME_STAGES.END);
-
+    setWinners() {
         let maxScore = -Infinity;
 
         for (const player of this.players) {
@@ -610,6 +534,12 @@ class Room {
                 this.winners.push(player.username);
             }
         }
+    }
+
+    async endGame() {
+        console.log("Changing (end game) to End");
+        this.setStatus(GAME_STAGES.END);
+        this.setWinners();
 
         Logger.logGameOver(this.roomId, this.winners);
 
@@ -622,25 +552,15 @@ class Room {
                     [`statistics.${isWinner ? "Wins" : "Losses"}`]: 1,
                 };
 
-                const user = await User.findOneAndUpdate(
-                    { username: player.username },
-                    { $inc: increment },
-                    { new: true }
-                );
+                const user = await User.findOneAndUpdate({ username: player.username }, { $inc: increment }, { new: true });
 
                 if (user) {
                     const { Wins, totalGames } = user.statistics;
                     const newWinRate = ((Wins / totalGames) * 100).toFixed(2);
-                    await User.updateOne(
-                        { username: player.username },
-                        { $set: { "statistics.winRate": newWinRate } }
-                    );
+                    await User.updateOne({ username: player.username }, { $set: { "statistics.winRate": newWinRate } });
                 }
             } catch (err) {
-                console.error(
-                    `Failed to update stats for ${player.username}:`,
-                    err
-                );
+                console.error(`Failed to update stats for ${player.username}:`, err);
             }
         }
     }
@@ -652,10 +572,7 @@ class Room {
      */
     async setKeeperWordWithValidation(word) {
         if (this.keepersWordsHistory.has(word)) {
-            return [
-                false,
-                "Previous keeper has already chose this word, Please enter another word",
-            ];
+            return [false, "Previous keeper has already chose this word, Please enter another word"];
         }
 
         const valid = await isValidEnglishWord(word);

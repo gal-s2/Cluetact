@@ -14,6 +14,8 @@ function GameOverPopup() {
         <Modal>
             <h2 className={isWinner ? styles.winText : styles.loseText}>{isWinner ? "🎉 You Win!" : "😢 You Lost"}</h2>
 
+            {gameState.logMessage && gameState.logMessage.length > 0 && <p>{gameState.logMessage}</p>}
+
             <div className={styles.winnersSection}>
                 <h3>🏆 Winner{winners.length > 1 ? "s" : ""}</h3>
                 <ul>
