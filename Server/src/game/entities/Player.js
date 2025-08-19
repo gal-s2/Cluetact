@@ -4,6 +4,8 @@ class Player {
         this.gameScore = 0;
         this.role = null;
         this.avatar = avatar;
+        this.wasKeeper = false;
+        this.numOfTurnsToSubmitAClueInARoundAsSeeker = 0;
     }
 
     setRole(role) {

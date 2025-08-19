@@ -102,6 +102,7 @@ class GameManager {
         if (room) {
             room.removePlayerByUsername(username);
 
+            //handle the case when the room has less than 3 players and therefore should be destroyed
             if (room.players.length < 3) {
                 for (const player of room.players) {
                     this.playerToRoomId.delete(player.username);
@@ -122,13 +123,13 @@ class GameManager {
             } else {
                 // room still alive
                 room.handlePlayerExit(username);
+                console.log("daniel_debug ", room.players);
 
                 return {
-                    message: `Player ${username} has been removed from the room`,
-                    winners: room.getWinners(),
+                    message: `Player ${username} has left the room`,
+                    clueGiverUsername: room.getCurrentClueGiverUsername(),
                     players: room.players,
                     status: room.status,
-                    isKeeper: room.keeperUsername === socket.user.username,
                 };
             }
         }

@@ -207,7 +207,9 @@ export default function useGameRoomSocket(roomId) {
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
-                message: gameState.isKeeper ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"` : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
+                message: gameState.isKeeper
+                    ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`
+                    : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
                 type: gameState.isKeeper ? "success" : "notification",
             });
         });
@@ -247,16 +249,16 @@ export default function useGameRoomSocket(roomId) {
 
     useEffect(() => {
         socket.on(SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM, (data) => {
-            const { username, players, winners, status, message } = data;
             setGameState((prev) => ({
                 ...prev,
-                players,
-                winners,
-                status,
-                logMessage: message,
+                players: data.players,
+                isSubmittingClue: data.clueGiverUsername === user?.username,
+                clueGiverUsername: data.clueGiverUsername,
+                status: data.status,
+                logMessage: data.message,
             }));
             setNotification({
-                message: `${username} has left the game`,
+                message: `${data.username} has left the game`,
                 type: "notification",
             });
         });

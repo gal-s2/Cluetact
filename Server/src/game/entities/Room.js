@@ -31,16 +31,14 @@ class Room {
         this.players = [];
         this.keeperUsername = keeper.username; // TODO: in future use this.keeper.username directly
         this.setPlayersData(keeper, seekers);
-        this.seekersUsernames = this.players.filter((player) => player.role === ROLES.SEEKER).map((player) => player.username);
 
         this.currentRound = new GameRound();
         this.roundsHistory = [];
-        this.turnQueue = seekers.map((user) => user.username).slice();
-        this.indexOfSeekerOfCurrentTurn = 0;
+        this.currentClueGiverUsername;
+        this.advanceToNextSeeker();
+
         this.wordsGuessedSuccesfully = new Set();
         this.winners = [];
-        this.pastKeepers = new Set();
-        this.pastKeepers.add(this.keeperUsername);
         this.isWordFullyRevealed = false;
         this.keepersWordsHistory = new Set();
 
@@ -69,6 +67,14 @@ class Room {
         }
 
         return false; // Room still exists
+    }
+
+    get seekersUsernames() {
+        return this.players.filter((player) => player.role === ROLES.SEEKER).map((player) => player.username);
+    }
+
+    get seekersAsPlayers() {
+        return this.players.filter((player) => player.role === ROLES.SEEKER);
     }
 
     get roomId() {
@@ -182,7 +188,7 @@ class Room {
     }
 
     getCurrentClueGiverUsername() {
-        return this.seekersUsernames[this.indexOfSeekerOfCurrentTurn];
+        return this.currentClueGiverUsername;
     }
 
     getGuesses() {
@@ -483,57 +489,54 @@ class Room {
         this.raceTimer?.stop();
         this.keeperChoosingWordTimer = this.clueSubmissionTimer = this.raceTimer = null;
 
-        // might be replaced
-        const currentKeeper = this.keeperUsername;
-        this.pastKeepers.add(currentKeeper);
-        this.seekersUsernames.push(currentKeeper);
-
-        /*if (isKeeperLeft) {
-            this.pastKeepers.add(currentKeeper);
-        }
-        if (!isKeeperLeft) {
-            this.seekersUsernames.push(currentKeeper); // If keeper left, add them back to seekers
-        }*/
-
-        const nextKeeper = this.getNextKeeper();
-        this.seekersUsernames = this.seekersUsernames.filter((seekerUsername) => seekerUsername !== nextKeeper);
-        this.keeperUsername = nextKeeper;
-
-        this.players.find((player) => player.username === nextKeeper).setRole(ROLES.KEEPER);
-
-        this.players.forEach((player) => {
-            if (player.username !== nextKeeper) player.setRole(ROLES.SEEKER);
-        });
-
         this.roundsHistory.push(this.currentRound);
 
         if (this.isGameOver()) {
             this.endGame();
         } else {
+            const nextKeeperUsername = this.getNextKeeper();
+            this.keeperUsername = nextKeeperUsername;
+            this.players.find((player) => player.username === nextKeeperUsername).setRole(ROLES.KEEPER);
+            this.players.forEach((player) => {
+                if (player.username !== nextKeeperUsername) player.setRole(ROLES.SEEKER);
+            });
+
             this.currentRound = new GameRound();
             this.currentRound.roundNum = this.roundsHistory.length + 1;
 
             // Start seeker cycle from the beginning each round
-            this.indexOfSeekerOfCurrentTurn = 0;
             this.setStatus(GAME_STAGES.KEEPER_CHOOSING_WORD);
-            Logger.logNextKeeper(this.roomId, nextKeeper);
+            Logger.logNextKeeper(this.roomId, nextKeeperUsername);
         }
     }
 
     getNextKeeper() {
-        const currentIndex = this.turnQueue.indexOf(this.keeperUsername);
-        const nextIndex = (currentIndex + 1) % this.turnQueue.length;
-        return this.turnQueue[nextIndex];
+        for (const player of this.players) {
+            if (player.username !== this.keeperUsername && !player.wasKeeper) {
+                player.wasKeeper = true;
+                return player.username;
+            }
+        }
+        return null;
     }
 
+    //looking for the seeker with the least number of turns to submit a clue in a round
     advanceToNextSeeker() {
-        const nextIndex = (this.indexOfSeekerOfCurrentTurn + 1) % this.seekersUsernames.length;
-        this.indexOfSeekerOfCurrentTurn = nextIndex;
-        return this.seekersUsernames[nextIndex];
+        let nextSeeker = this.seekersAsPlayers[0] ?? null;
+        let currentMin = nextSeeker.numOfTurnsToSubmitAClueInARoundAsSeeker;
+        for (const player of this.seekersAsPlayers) {
+            if (player.numOfTurnsToSubmitAClueInARoundAsSeeker < currentMin) {
+                nextSeeker = player;
+                currentMin = player.numOfTurnsToSubmitAClueInARoundAsSeeker;
+            }
+        }
+        nextSeeker.numOfTurnsToSubmitAClueInARoundAsSeeker++;
+        this.currentClueGiverUsername = nextSeeker.username;
+        return nextSeeker.username;
     }
 
     isGameOver() {
-        return this.pastKeepers.size >= this.players.length;
+        return this.players.every((player) => player.wasKeeper);
     }
 
     addPointsToPlayerByUsername(username, points) {

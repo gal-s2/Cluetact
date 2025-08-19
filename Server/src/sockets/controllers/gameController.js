@@ -117,7 +117,7 @@ const gameController = {
         if (result[0]) {
             word = room.getKeeperWord();
             room.keepersWordsHistory.add(word.toLowerCase());
-            const clueGiverUsername = room.seekersUsernames[room.indexOfSeekerOfCurrentTurn];
+            const clueGiverUsername = room.getCurrentClueGiverUsername();
             room.setStatus(GAME_STAGES.CLUE_SUBMISSION);
             // send all players in room a word chosen
             for (const player of room.players) {
