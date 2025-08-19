@@ -119,6 +119,17 @@ class GameManager {
                     players,
                     status: room.status,
                 };
+            } else {
+                // room still alive
+                room.handlePlayerExit(username);
+
+                return {
+                    message: `Player ${username} has been removed from the room`,
+                    winners: room.getWinners(),
+                    players: room.players,
+                    status: room.status,
+                    isKeeper: room.keeperUsername === socket.user.username,
+                };
             }
         }
     }

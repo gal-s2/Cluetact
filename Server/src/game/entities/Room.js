@@ -61,6 +61,16 @@ class Room {
         this.callbacks = null;
     }
 
+    handlePlayerExit(username) {
+        // If the keeper left, set a new keeper
+        if (this.keeperUsername === username) {
+            this.setNextRound(true); // true means the keeper left
+            return true; // Room was successfully updated
+        }
+
+        return false; // Room still exists
+    }
+
     get roomId() {
         return this.#roomId;
     }
@@ -466,16 +476,24 @@ class Room {
      * Setting next round / end game if completed.
      * New keeper and seekers update, changing status
      */
-    setNextRound() {
+    setNextRound(isKeeperLeft = false) {
         // Stop all timers from previous round to avoid stale/double fire
         this.keeperChoosingWordTimer?.stop();
         this.clueSubmissionTimer?.stop();
         this.raceTimer?.stop();
         this.keeperChoosingWordTimer = this.clueSubmissionTimer = this.raceTimer = null;
 
+        // might be replaced
         const currentKeeper = this.keeperUsername;
         this.pastKeepers.add(currentKeeper);
         this.seekersUsernames.push(currentKeeper);
+
+        /*if (isKeeperLeft) {
+            this.pastKeepers.add(currentKeeper);
+        }
+        if (!isKeeperLeft) {
+            this.seekersUsernames.push(currentKeeper); // If keeper left, add them back to seekers
+        }*/
 
         const nextKeeper = this.getNextKeeper();
         this.seekersUsernames = this.seekersUsernames.filter((seekerUsername) => seekerUsername !== nextKeeper);

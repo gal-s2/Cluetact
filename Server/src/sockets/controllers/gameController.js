@@ -270,21 +270,19 @@ const gameController = {
         const otherUsernames = room.players.filter((player) => player.username !== socket.user.username).map((player) => player.username);
 
         const result = gameManager.removePlayerFromRoom(roomId, socket.user.username);
-        console.log(result);
-        if (result) {
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
 
-            // if room is empty, send to the other players
-            for (const player of otherUsernames) {
-                messageEmitter.emitToPlayer(
-                    SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM,
-                    {
-                        ...result,
-                        username: socket.user.username,
-                    },
-                    player
-                );
-            }
+        messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
+
+        // if room is empty, send to the other players
+        for (const player of otherUsernames) {
+            messageEmitter.emitToPlayer(
+                SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM,
+                {
+                    ...result,
+                    username: socket.user.username,
+                },
+                player
+            );
         }
     },
 
