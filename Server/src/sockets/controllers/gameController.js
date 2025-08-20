@@ -117,7 +117,7 @@ const gameController = {
         if (result[0]) {
             word = room.getKeeperWord();
             room.keepersWordsHistory.add(word.toLowerCase());
-            const clueGiverUsername = room.seekersUsernames[room.indexOfSeekerOfCurrentTurn];
+            const clueGiverUsername = room.getCurrentClueGiverUsername();
             room.setStatus(GAME_STAGES.CLUE_SUBMISSION);
             // send all players in room a word chosen
             for (const player of room.players) {
@@ -155,11 +155,27 @@ const gameController = {
         const timeLeft = room.getTimeLeft();
 
         if (result[0]) {
-            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK, { status: room.status, clues: room.currentRound.getClues(), timeLeft }, room.roomId);
+            messageEmitter.emitToKeeper(
+                SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK,
+                {
+                    status: room.status,
+                    clues: room.currentRound.getClues(),
+                    timeLeft,
+                },
+                room.roomId
+            );
 
             for (const player of room.players) {
                 if (player.role === ROLES.SEEKER) {
-                    messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_CLUE_REVEALED, { status: room.status, clues: room.currentRound.getClues(), timeLeft }, player.username);
+                    messageEmitter.emitToPlayer(
+                        SOCKET_EVENTS.SERVER_CLUE_REVEALED,
+                        {
+                            status: room.status,
+                            clues: room.currentRound.getClues(),
+                            timeLeft,
+                        },
+                        player.username
+                    );
                 }
             }
         } else {
@@ -188,11 +204,12 @@ const gameController = {
                 clueGiverUsername: clueGiverUsername,
                 keeperWord: result.isWordComplete ? result.keeperWord : null,
                 timeLeft: room.clueSubmissionTimer?.getTimeLeft() || 0,
+                winners: room.winners,
             };
 
             const dataToKeeper = {
                 ...dataToSeekers,
-                keeperWord: room.getKeeperWord(),
+                keeperWord: result.keeperWord,
             };
 
             if (result.isGameEnded) {
@@ -241,22 +258,31 @@ const gameController = {
 
     handleExitRoom: (socket) => {
         if (!socket.user) return;
+
         const roomId = gameManager.getRoomIdByUsername(socket.user.username);
         const room = gameManager.getRoom(roomId);
+
         if (!room) {
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
             return;
         }
+
         const otherUsernames = room.players.filter((player) => player.username !== socket.user.username).map((player) => player.username);
 
-        gameManager.removePlayerFromRoom(roomId, socket.user.username);
+        const result = gameManager.removePlayerFromRoom(roomId, socket.user.username);
 
         messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
-        if (!gameManager.getRoom(roomId)) {
-            // if room is empty, send to the other players
-            for (const player of otherUsernames) {
-                messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, player);
-            }
+
+        // if room is empty, send to the other players
+        for (const player of otherUsernames) {
+            messageEmitter.emitToPlayer(
+                SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM,
+                {
+                    ...result,
+                    leavingUsername: socket.user.username,
+                },
+                player
+            );
         }
     },
 
