@@ -34,8 +34,6 @@ export const MusicProvider = ({ children }) => {
     // Initialize audio system
     useEffect(() => {
         const initializeAudio = async () => {
-            console.log("Initializing audio system...");
-
             if (!audioRef.current) {
                 audioRef.current = new Audio();
                 audioRef.current.loop = true;
@@ -48,7 +46,6 @@ export const MusicProvider = ({ children }) => {
 
                 // Add event listeners
                 audioRef.current.addEventListener("loadeddata", () => {
-                    console.log("Audio data loaded");
                     setIsInitialized(true);
                     // Only attempt autoplay if music should be on
                     if (shouldAutoplayRef.current && isMusicOn) {
@@ -57,7 +54,6 @@ export const MusicProvider = ({ children }) => {
                 });
 
                 audioRef.current.addEventListener("canplaythrough", () => {
-                    console.log("Audio can play through");
                     // Only attempt autoplay if music should be on
                     if (shouldAutoplayRef.current && isMusicOn) {
                         attemptAutoplay();
@@ -69,17 +65,12 @@ export const MusicProvider = ({ children }) => {
                 });
 
                 audioRef.current.addEventListener("play", () => {
-                    console.log("Audio started playing");
                     setHasInteracted(true);
                 });
 
-                audioRef.current.addEventListener("pause", () => {
-                    console.log("Audio paused");
-                });
+                audioRef.current.addEventListener("pause", () => {});
 
-                audioRef.current.addEventListener("ended", () => {
-                    console.log("Audio ended");
-                });
+                audioRef.current.addEventListener("ended", () => {});
 
                 // Start loading
                 audioRef.current.load();
@@ -112,10 +103,6 @@ export const MusicProvider = ({ children }) => {
                 const timeSinceLastToggle =
                     Date.now() - (window.lastMusicToggle || 0);
                 if (timeSinceLastToggle > 3000) {
-                    // Wait 3 seconds before auto-correcting
-                    console.log(
-                        `Music state out of sync. UI: ${isMusicOn}, Actual: ${isActuallyPlaying}`
-                    );
                     setIsMusicOn(isActuallyPlaying);
                 }
             }
@@ -135,27 +122,17 @@ export const MusicProvider = ({ children }) => {
         }
 
         setAutoplayAttempts((prev) => prev + 1);
-        console.log(`Autoplay attempt #${autoplayAttempts + 1}`);
 
         try {
             await audioRef.current.play();
-            console.log("Autoplay successful!");
+
             setHasInteracted(true);
         } catch (error) {
-            console.log(
-                `Autoplay attempt ${autoplayAttempts + 1} failed:`,
-                error
-            );
-
-            // Schedule retry
             if (autoplayAttempts < 4) {
                 retryTimeoutRef.current = setTimeout(() => {
                     attemptAutoplay();
                 }, 1000 + autoplayAttempts * 500);
             } else {
-                console.log(
-                    "All autoplay attempts failed, setting up interaction listeners"
-                );
                 setupInteractionListeners();
             }
         }
@@ -163,8 +140,6 @@ export const MusicProvider = ({ children }) => {
 
     const setupInteractionListeners = () => {
         const handleInteraction = async (event) => {
-            console.log("User interaction detected:", event.type);
-
             if (
                 audioRef.current &&
                 isMusicOn &&
@@ -174,7 +149,6 @@ export const MusicProvider = ({ children }) => {
                 try {
                     await audioRef.current.play();
                     setHasInteracted(true);
-                    console.log("Music started after interaction!");
                 } catch (err) {
                     console.error(
                         "Failed to start music after interaction:",
@@ -211,11 +185,6 @@ export const MusicProvider = ({ children }) => {
                     currentSrc.includes("game-room-music.mp3"));
 
             if (isCorrectTrack) return;
-
-            console.log("Changing track to:", currentTrack);
-            console.log("Current src:", currentSrc);
-            console.log("New src:", newSrc);
-            console.log("Current music state (isMusicOn):", isMusicOn);
             setIsTransitioning(true);
 
             // Remember if music was playing before the change
@@ -257,12 +226,7 @@ export const MusicProvider = ({ children }) => {
 
                 // Only resume playing if music was on and was playing before
                 if (wasPlaying && isMusicOn && hasInteracted) {
-                    console.log("Resuming music with new track");
                     await audioRef.current.play();
-                } else {
-                    console.log(
-                        "Not resuming music - either music is off or no interaction yet"
-                    );
                 }
             } catch (err) {
                 console.error("Track change failed:", err);
@@ -282,8 +246,6 @@ export const MusicProvider = ({ children }) => {
         // Mark the time of this toggle to prevent auto-correction
         window.lastMusicToggle = Date.now();
 
-        console.log("Toggle music requested. Current state:", isMusicOn);
-
         const newState = !isMusicOn;
         shouldAutoplayRef.current = newState;
 
@@ -292,11 +254,9 @@ export const MusicProvider = ({ children }) => {
                 await audioRef.current.play();
                 setHasInteracted(true);
                 setIsMusicOn(true);
-                console.log("Music turned ON");
             } else {
                 audioRef.current.pause();
                 setIsMusicOn(false);
-                console.log("Music turned OFF");
             }
         } catch (err) {
             console.error("Toggle failed:", err);

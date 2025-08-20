@@ -101,12 +101,38 @@ class GameManager {
 
         if (room) {
             room.removePlayerByUsername(username);
-            //if (room.players.length < 3) { right now we delete the room if a player exits
-            for (const player of room.players) {
-                this.playerToRoomId.delete(player.username);
+
+            //handle the case when the room has less than 3 players and therefore should be destroyed
+            if (room.players.length < 3) {
+                for (const player of room.players) {
+                    this.playerToRoomId.delete(player.username);
+                }
+
+                room.destroy();
+                const winners = room.getWinners();
+                const players = [...room.players];
+
+                delete this.rooms[roomId];
+
+                return {
+                    message: `Room has been destroyed due to insufficient players`,
+                    winners,
+                    players,
+                    status: room.status,
+                };
+            } else {
+                // room still alive
+                room.handlePlayerExit(username);
+                console.log("daniel_debug ", room.players);
+
+                return {
+                    message: `Player ${username} has left the room`,
+                    clueGiverUsername: room.getCurrentClueGiverUsername(),
+                    players: room.players,
+                    status: room.status,
+                    keeperUsername: room.keeperUsername,
+                };
             }
-            room.destroy();
-            delete this.rooms[roomId];
         }
     }
 }
