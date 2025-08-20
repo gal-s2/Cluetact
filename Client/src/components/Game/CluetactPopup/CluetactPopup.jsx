@@ -15,9 +15,7 @@ function CluetactPopup() {
     const isWordFullyRevealed = gameState.isWordComplete;
 
     // Check if the guessed word is actually the keeper word (more impressive!)
-    const isDirectWordGuess =
-        isWordFullyRevealed &&
-        word.toLowerCase() === gameState.keeperWord?.toLowerCase();
+    const isDirectWordGuess = isWordFullyRevealed && word.toLowerCase() === gameState.keeperWord?.toLowerCase();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -37,8 +35,7 @@ function CluetactPopup() {
 
     // Determine popup style and content based on the case
     const getPopupClass = () => {
-        if (isDirectWordGuess)
-            return `${styles.popup} ${styles.directWordGuess}`;
+        if (isDirectWordGuess) return `${styles.popup} ${styles.directWordGuess}`;
         if (isWordFullyRevealed) return `${styles.popup} ${styles.finalReveal}`;
         return styles.popup;
     };
@@ -53,15 +50,13 @@ function CluetactPopup() {
         if (isDirectWordGuess) {
             return (
                 <p>
-                    <strong>{guesser}</strong> guessed the entire word{" "}
-                    <strong>{word}</strong> directly!
+                    <strong>{guesser}</strong> guessed the entire word <strong>{word}</strong> directly!
                 </p>
             );
         }
         return (
             <p>
-                <strong>{guesser}</strong> guessed the word{" "}
-                <strong>{word}</strong>!
+                <strong>{guesser}</strong> guessed the word <strong>{word}</strong>!
             </p>
         );
     };
@@ -76,18 +71,11 @@ function CluetactPopup() {
                     {isWordFullyRevealed ? (
                         <div className={styles.finalRevealSection}>
                             <p className={styles.finalWordDisplay}>
-                                {isDirectWordGuess
-                                    ? "Amazing guess! The word was:"
-                                    : "The complete word is:"}
-                                <span className={styles.finalWord}>
-                                    {gameState.cluetact.word.toUpperCase()}
-                                </span>
+                                {isDirectWordGuess ? "Amazing guess! The word was:" : "The complete word is:"}
+                                <span className={styles.finalWord}>{gameState.keeperWord}</span>
                             </p>
                             <p className={styles.gameEndMessage}>
-                                {isDirectWordGuess
-                                    ? "🚀 Incredible! Round Complete!"
-                                    : "🏆 Round Complete!"}{" "}
-                                ({secondsLeft})
+                                {isDirectWordGuess ? "🚀 Incredible! Round Complete!" : "🏆 Round Complete!"} ({secondsLeft})
                             </p>
                         </div>
                     ) : (

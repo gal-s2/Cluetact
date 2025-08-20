@@ -32,16 +32,12 @@ function GameRoom() {
 
     // Replace the existing useEffect with this:
     useEffect(() => {
-        console.log("GameRoom: Requesting gameRoom track");
         changeTrack("gameRoom");
     }, [changeTrack]);
 
     if (loading) return <Spinner />;
 
-    console.log(user);
     const isKeeper = gameState.players.find((p) => p.username === user.username)?.role === "keeper";
-
-    console.log(gameState.players);
 
     return (
         <div className={styles.room}>

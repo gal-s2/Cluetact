@@ -209,7 +209,7 @@ const gameController = {
 
             const dataToKeeper = {
                 ...dataToSeekers,
-                keeperWord: room.getKeeperWord(),
+                keeperWord: result.keeperWord,
             };
 
             if (result.isGameEnded) {
@@ -279,7 +279,7 @@ const gameController = {
                 SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM,
                 {
                     ...result,
-                    username: socket.user.username,
+                    leavingUsername: socket.user.username,
                 },
                 player
             );

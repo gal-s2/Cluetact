@@ -8,6 +8,8 @@ class Player {
         this.numOfTurnsToSubmitAClueInARoundAsSeeker = 0;
     }
 
+    //[ido,true]  [gal,false] [mosh, false]
+
     setRole(role) {
         this.role = role;
     }

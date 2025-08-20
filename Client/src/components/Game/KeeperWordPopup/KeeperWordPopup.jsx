@@ -12,6 +12,7 @@ function KeeperWordPopup({ showConfirmModal }) {
     const { gameState, setKeeperWord, isKeeperWordRejected, setIsKeeperWordRejected } = useGameRoom();
     const [loading, setLoading] = useState(false);
     const [keeperTimeLeft, setKeeperTimeLeft] = useState(gameState.keeperTime || 0);
+    const [innerKeeperWord, setInnerKeeperWord] = useState("");
 
     // Timer refs
     const endTimeRef = useRef(null);
@@ -59,9 +60,9 @@ function KeeperWordPopup({ showConfirmModal }) {
     const onSubmit = (e) => {
         // on form submit, emit the event to the server
         e.preventDefault();
-        if (!keeperWord || keeperWord.trim() === "") return;
+        if (!innerKeeperWord || innerKeeperWord.trim() === "") return;
         setLoading(true);
-        socket.emit(SOCKET_EVENTS.CLIENT_KEEPER_WORD_SUBMISSION, { word: keeperWord });
+        socket.emit(SOCKET_EVENTS.CLIENT_KEEPER_WORD_SUBMISSION, { word: innerKeeperWord });
     };
 
     return (
@@ -86,15 +87,15 @@ function KeeperWordPopup({ showConfirmModal }) {
                             <p>{logMessage}</p>
                             <input
                                 type="text"
-                                value={keeperWord}
-                                onChange={(e) => setKeeperWord(e.target.value)}
+                                value={innerKeeperWord}
+                                onChange={(e) => setInnerKeeperWord(e.target.value)}
                                 placeholder="Enter your secret word"
                                 disabled={keeperTimeLeft === 0} // Disable input when time is up
                             />
                         </>
                     )}
 
-                    <Button type="submit" color="accept" disabled={loading || !keeperWord || keeperWord.trim() === "" || keeperTimeLeft === 0}>
+                    <Button type="submit" color="accept" disabled={loading || !innerKeeperWord || innerKeeperWord.trim() === "" || keeperTimeLeft === 0}>
                         Submit
                     </Button>
                 </form>

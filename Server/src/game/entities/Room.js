@@ -26,10 +26,7 @@ class Room {
         this.callbacks = callbacks;
 
         // Players
-        this.keeper = null;
-        this.seekers = [];
         this.players = [];
-        this.keeperUsername = keeper.username; // TODO: in future use this.keeper.username directly
         this.setPlayersData(keeper, seekers);
 
         this.currentRound = new GameRound();
@@ -60,13 +57,19 @@ class Room {
     }
 
     handlePlayerExit(username) {
-        // If the keeper left, set a new keeper
-        if (this.keeperUsername === username) {
-            this.setNextRound(true); // true means the keeper left
-            return true; // Room was successfully updated
+        if (this.isKeeperInRoom()) {
+            this.advanceToNextSeeker();
+        } else {
+            this.setNextRound(true);
         }
+    }
 
-        return false; // Room still exists
+    get keeper() {
+        return this.players.find((player) => player.role === ROLES.KEEPER) || null;
+    }
+
+    get keeperUsername() {
+        return this.keeper?.username || null;
     }
 
     get seekersUsernames() {
@@ -83,6 +86,10 @@ class Room {
 
     get keeperChoosingWordTime() {
         return this.keeperChoosingWordTimer?.getTimeLeft();
+    }
+
+    isKeeperInRoom() {
+        return this.players.some((player) => player.role === ROLES.KEEPER);
     }
 
     /**
@@ -161,11 +168,9 @@ class Room {
         const keeperPlayer = new Player(keeper.username, keeper.avatar);
         keeperPlayer.setRole(ROLES.KEEPER);
         this.players.push(keeperPlayer);
-        this.keeper = keeperPlayer;
 
         seekers.forEach((seeker) => {
             const seekerPlayer = new Player(seeker.username, seeker.avatar);
-            this.seekers.push(seekerPlayer);
             seekerPlayer.setRole(ROLES.SEEKER);
             this.players.push(seekerPlayer);
         });
@@ -495,12 +500,15 @@ class Room {
             this.endGame();
         } else {
             const nextKeeperUsername = this.getNextKeeper();
-            this.keeperUsername = nextKeeperUsername;
             this.players.find((player) => player.username === nextKeeperUsername).setRole(ROLES.KEEPER);
             this.players.forEach((player) => {
                 if (player.username !== nextKeeperUsername) player.setRole(ROLES.SEEKER);
             });
 
+            this.players.forEach((player) => {
+                player.numOfTurnsToSubmitAClueInARoundAsSeeker = 0;
+            });
+            this.advanceToNextSeeker();
             this.currentRound = new GameRound();
             this.currentRound.roundNum = this.roundsHistory.length + 1;
 

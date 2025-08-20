@@ -130,6 +130,7 @@ class GameManager {
                     clueGiverUsername: room.getCurrentClueGiverUsername(),
                     players: room.players,
                     status: room.status,
+                    keeperUsername: room.keeperUsername,
                 };
             }
         }

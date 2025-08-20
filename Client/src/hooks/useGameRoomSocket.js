@@ -256,9 +256,11 @@ export default function useGameRoomSocket(roomId) {
                 clueGiverUsername: data.clueGiverUsername,
                 status: data.status,
                 logMessage: data.message,
+                isKeeper: data.keeperUsername === user.username,
+                winners: data.winners || [],
             }));
             setNotification({
-                message: `${data.username} has left the game`,
+                message: `${data.leavingUsername} has left the game`,
                 type: "notification",
             });
         });

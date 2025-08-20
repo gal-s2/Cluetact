@@ -1,7 +1,7 @@
 const messageEmitter = require("./MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 
-const MATCHMAKER_INTERVAL = 5;
+const MATCHMAKER_INTERVAL = 15;
 
 function startMatchmaker(gameManager) {
     setInterval(() => {
