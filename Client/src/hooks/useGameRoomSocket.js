@@ -103,14 +103,7 @@ export default function useGameRoomSocket(roomId) {
         });
 
         socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, (data) => {
-            if (data.isWordComplete) {
-                setGameState((prev) => ({
-                    ...prev,
-                    winners: data.winners,
-                    isKeeper: data.keeper === user.username,
-                    isWordChosen: false,
-                }));
-            }
+            console.log("iswordcomplete: ", data.isWordComplete);
             setGameState((prev) => ({
                 ...prev,
                 cluetact: { guesser: data.guesser, word: data.word },
@@ -123,6 +116,9 @@ export default function useGameRoomSocket(roomId) {
                 isWordComplete: data.isWordComplete,
                 guesses: [],
                 keeperWord: data.keeperWord,
+                winners: data.winners,
+                isKeeper: data.keeper === user.username,
+                isWordChosen: data.isWordComplete ? false : true,
             }));
             setTimeLeft(data.timeLeft);
             if (data.status === "END") {
@@ -245,7 +241,7 @@ export default function useGameRoomSocket(roomId) {
             socket.off(SOCKET_EVENTS.SERVER_CLUE_SUBMISSION_TIMEOUT);
             socket.off(SOCKET_EVENTS.SERVER_RACE_TIMEOUT);
         };
-    }, [user?.username, gameState.isKeeper]);
+    }, [user?.username, gameState]);
 
     useEffect(() => {
         socket.on(SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM, (data) => {
@@ -277,7 +273,14 @@ export default function useGameRoomSocket(roomId) {
                 message: `Choosing word timeout! Keeper ${keeper.username} didn't submit a word on time! Moving to the next keeper`,
                 type: "notification",
             });
-            setGameState((prev) => ({ ...prev, ...data }));
+            console.log(data.players.find((p) => p.username === user.username)?.role === "keeper");
+            setGameState((prev) => ({
+                ...prev,
+                keeperTime: data.keeperTime,
+                status: data.status,
+                players: data.players,
+                isKeeper: data.players.find((p) => p.username === user.username)?.role === "keeper",
+            }));
         });
 
         socket.on(SOCKET_EVENTS.SERVER_GAME_ENDED, (data) => {

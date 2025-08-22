@@ -17,6 +17,11 @@ export default function DisconnectedModal() {
                 <div className={styles.tips}>
                     <small>Check your internet connection if this continues</small>
                 </div>
+                <div className={styles.refresh}>
+                    <button onClick={() => window.location.reload()} className={styles.refreshButton}>
+                        Refresh Page
+                    </button>
+                </div>
             </div>
         </Modal>
     );

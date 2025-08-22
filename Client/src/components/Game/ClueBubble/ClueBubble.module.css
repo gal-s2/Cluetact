@@ -1,4 +1,3 @@
-/* ClueBubble - Individual clue display */
 .bubble {
     background: white;
     border: 2px solid #e8f5e8;
@@ -10,7 +9,8 @@
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
     position: relative;
     line-height: 1.5;
-    font-size: 0.95rem;
+    font-size: 0.9375rem;
+    word-wrap: break-word;
 }
 
 .bubble:hover {
@@ -31,7 +31,6 @@
     margin-right: 0.5rem;
 }
 
-/* My clue bubble styling */
 .myClue {
     background: linear-gradient(135deg, #fff8e1, #ffecb3);
     border-color: #ffb74d;
@@ -50,7 +49,6 @@
     font-style: italic;
 }
 
-/* Selected bubble styling */
 .selected {
     background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
     border-color: #2196f3;
@@ -68,7 +66,6 @@
     color: #1976d2;
 }
 
-/* My clue when selected */
 .myClue.selected {
     background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
     border-color: #4caf50;
@@ -85,7 +82,6 @@
     color: #2e7d32;
 }
 
-/* Selected icon */
 .selectedIcon {
     position: absolute;
     top: -8px;
@@ -104,13 +100,11 @@
     z-index: 1;
 }
 
-/* My clue selected icon */
 .myClue.selected .selectedIcon {
     background: #4caf50;
     box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
 }
 
-/* Blocked bubble styling */
 .blocked {
     background: linear-gradient(135deg, #ffebee, #fce4ec);
     border-color: #ef5350;
@@ -129,7 +123,6 @@
     color: #c62828;
 }
 
-/* My clue when blocked */
 .myClue.blocked {
     background: linear-gradient(135deg, #fce4ec, #f8bbd9);
     border-color: #e91e63;
@@ -145,7 +138,6 @@
     color: #ad1457;
 }
 
-/* Block icon */
 .blockIcon {
     position: absolute;
     top: -8px;
@@ -163,7 +155,6 @@
     z-index: 1;
 }
 
-/* Blocked content layout */
 .blockedContent {
     display: flex;
     flex-direction: column;
@@ -178,13 +169,12 @@
     background: rgba(198, 40, 40, 0.1);
     padding: 0.25rem 0.5rem;
     border-radius: 6px;
-    font-size: 0.85rem;
+    font-size: 0.8125rem;
     letter-spacing: 0.1em;
     align-self: flex-start;
     border: 1px solid rgba(198, 40, 40, 0.2);
 }
 
-/* My clue blocked word */
 .myClue .blockedWord {
     color: #ad1457;
     background: rgba(173, 20, 87, 0.1);
@@ -202,10 +192,10 @@
 }
 
 /* Mobile adjustments */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .bubble {
         padding: 0.875rem 1rem;
-        font-size: 0.9rem;
+        font-size: 0.875rem;
         border-radius: 14px;
         margin-bottom: 0.6rem;
     }
@@ -230,73 +220,12 @@
     }
 
     .blockedWord {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         padding: 0.2rem 0.4rem;
-    }
-}
-
-/* Small mobile screens */
-@media (max-width: 360px) {
-    .bubble {
-        padding: 0.75rem 0.875rem;
-        font-size: 0.85rem;
     }
 
     .blockedContent {
         gap: 0.4rem;
-    }
-}
-
-/* Tablet adjustments */
-@media (min-width: 481px) and (max-width: 768px) {
-    .bubble {
-        padding: 1.125rem 1.375rem;
-        font-size: 1rem;
-        border-radius: 18px;
-    }
-
-    .blockIcon,
-    .selectedIcon {
-        width: 26px;
-        height: 26px;
-        font-size: 0.75rem;
-        top: -10px;
-        right: -10px;
-    }
-
-    .selectedIcon {
-        font-size: 0.85rem;
-    }
-}
-
-/* Desktop adjustments */
-@media (min-width: 769px) {
-    .bubble {
-        padding: 1.25rem 1.5rem;
-        font-size: 1.05rem;
-        margin-bottom: 1rem;
-    }
-
-    .blockedContent {
-        gap: 0.75rem;
-    }
-
-    .blockedWord {
-        font-size: 0.9rem;
-        padding: 0.3rem 0.6rem;
-    }
-}
-
-/* Mobile landscape optimization */
-@media (max-height: 600px) and (orientation: landscape) {
-    .bubble {
-        padding: 0.6rem 1rem;
-        margin-bottom: 0.5rem;
-        font-size: 0.9rem;
-    }
-
-    .blockedContent {
-        gap: 0.3rem;
     }
 }
 
@@ -317,7 +246,6 @@
         color: #66bb6a;
     }
 
-    /* Dark mode for my clue */
     .myClue {
         background: linear-gradient(135deg, #2d2500, #3d3300);
         border-color: #ff8f00;
@@ -348,7 +276,6 @@
         color: #64b5f6;
     }
 
-    /* Dark mode for my clue when selected */
     .myClue.selected {
         background: linear-gradient(135deg, #1a2e1a, #2a3e2a);
         border-color: #66bb6a;
@@ -385,7 +312,6 @@
         color: #ef5350;
     }
 
-    /* Dark mode for my clue when blocked */
     .myClue.blocked {
         background: linear-gradient(135deg, #2e1a2e, #3e1a3e);
         border-color: #e91e63;
@@ -423,101 +349,4 @@
     .blocked .definition {
         color: #ce93d8;
     }
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-    .bubble {
-        transition: none;
-    }
-
-    .bubble:hover {
-        transform: none;
-    }
-
-    .bubble:active {
-        transform: none;
-    }
-
-    .selected {
-        transform: none;
-    }
-
-    .selected:hover {
-        transform: none;
-    }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-    .bubble {
-        border-width: 3px;
-        border-color: #000;
-    }
-
-    .bubble:hover {
-        border-color: #4caf50;
-    }
-
-    .myClue {
-        border-color: #ff9800;
-    }
-
-    .myClue:hover {
-        border-color: #f57c00;
-    }
-
-    .selected {
-        border-color: #0066cc;
-    }
-
-    .selected:hover {
-        border-color: #0052a3;
-    }
-
-    .myClue.selected {
-        border-color: #4caf50;
-    }
-
-    .blocked {
-        border-color: #f44336;
-    }
-
-    .bubble strong {
-        color: #000;
-    }
-
-    .myClue strong {
-        color: #ff9800;
-    }
-
-    .selected strong {
-        color: #0066cc;
-    }
-
-    .myClue.selected strong {
-        color: #4caf50;
-    }
-
-    .blocked strong {
-        color: #f44336;
-    }
-}
-
-/* Focus indicators for keyboard navigation */
-.bubble:focus-visible {
-    outline: 3px solid #4caf50;
-    outline-offset: 2px;
-}
-
-.myClue:focus-visible {
-    outline-color: #ff9800;
-}
-
-.selected:focus-visible {
-    outline-color: #2196f3;
-}
-
-.myClue.selected:focus-visible {
-    outline-color: #4caf50;
 }

@@ -1,56 +1,60 @@
-/* KeeperCluePanel.module.css */
-
 .keeperContainer {
     height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 1rem;
+    min-height: 0;
 }
 
 .incomingSection {
     flex: 1;
     background: white;
     border-radius: 12px;
-    padding: 15px;
+    padding: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border: 2px solid rgba(245, 101, 101, 0.2);
     display: flex;
     flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .blockedSection {
     background: white;
     border-radius: 12px;
-    padding: 15px;
+    padding: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border: 2px solid rgba(160, 174, 192, 0.2);
     max-height: 200px;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .heading {
-    font-size: 16px;
+    font-size: 1rem;
     color: #2d3748;
-    margin-bottom: 12px;
+    margin-bottom: 0.75rem;
     text-align: center;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    flex-shrink: 0;
 }
 
 .subHeading {
-    font-size: 14px;
+    font-size: 0.875rem;
     color: #4a5568;
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
     font-weight: 600;
+    flex-shrink: 0;
 }
 
 .emptyMessage {
     text-align: center;
     color: #a0aec0;
     font-style: italic;
-    padding: 30px 20px;
-    font-size: 14px;
+    padding: 2rem 1.25rem;
+    font-size: 0.875rem;
     flex: 1;
     display: flex;
     align-items: center;
@@ -58,13 +62,14 @@
 }
 
 .scrollableClueList {
-    --max-visible-items: 4;
-    max-height: calc(var(--max-visible-items) * 60px);
+    flex: 1;
+    max-height: calc(4 * 60px);
     overflow-y: auto;
-    margin-bottom: 12px;
+    overflow-x: hidden;
+    margin-bottom: 0.75rem;
     scrollbar-width: thin;
     scrollbar-color: #cbd5e0 #f7fafc;
-    flex: 1;
+    min-height: 0;
 }
 
 .scrollableClueList::-webkit-scrollbar {
@@ -88,12 +93,12 @@
 .clueItem {
     background: #f7fafc;
     border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 8px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
     border-left: 3px solid #e2e8f0;
     transition: all 0.2s ease;
     animation: slideIn 0.3s ease-out;
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 1.4;
 }
 
@@ -123,32 +128,34 @@
 .blockedWord {
     font-weight: 600;
     color: #e53e3e;
-    font-size: 14px;
-    margin-bottom: 4px;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
 }
 
 .blockedDefinition {
-    font-size: 12px;
+    font-size: 0.75rem;
     color: #4a5568;
     line-height: 1.3;
 }
 
-/* Input row for blocking */
 .inputRow {
     display: flex;
-    gap: 10px;
+    gap: 0.625rem;
     align-items: stretch;
     margin-top: auto;
+    flex-shrink: 0;
 }
 
 .guessInput {
     flex: 1;
-    padding: 10px 12px;
+    padding: 0.625rem 0.75rem;
     border: 2px solid #e2e8f0;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 0.875rem;
     transition: all 0.2s ease;
     background: white;
+    min-height: 44px;
+    box-sizing: border-box;
 }
 
 .guessInput:focus {
@@ -165,7 +172,7 @@
     background: linear-gradient(135deg, #f56565, #e53e3e);
     color: white;
     border: none;
-    padding: 10px 16px;
+    padding: 0.625rem 1rem;
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
@@ -173,7 +180,9 @@
     transition: all 0.2s ease;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    font-size: 13px;
+    font-size: 0.8125rem;
+    min-height: 44px;
+    box-sizing: border-box;
 }
 
 .blockButton:hover:not(:disabled) {
@@ -199,178 +208,53 @@
     }
 }
 
-/* Responsive adjustments */
+/* Mobile adjustments */
 @media (max-width: 768px) {
     .keeperContainer {
-        gap: 12px;
+        gap: 0.75rem;
     }
 
     .incomingSection,
     .blockedSection {
-        padding: 12px;
+        padding: 0.75rem;
     }
 
     .heading {
-        font-size: 15px;
-        margin-bottom: 10px;
+        font-size: 0.875rem;
+        margin-bottom: 0.625rem;
     }
 
     .subHeading {
-        font-size: 13px;
+        font-size: 0.8125rem;
     }
 
     .clueItem {
-        padding: 10px;
-        font-size: 13px;
+        padding: 0.625rem;
+        font-size: 0.8125rem;
     }
 
     .scrollableClueList {
-        max-height: calc(var(--max-visible-items) * 55px);
+        max-height: calc(4 * 55px);
     }
 
     .guessInput,
     .blockButton {
-        padding: 8px 10px;
-        font-size: 13px;
-    }
-}
-
-@media (max-width: 480px) {
-    .keeperContainer {
-        gap: 10px;
-    }
-
-    .incomingSection,
-    .blockedSection {
-        padding: 10px;
-    }
-
-    .heading {
-        font-size: 14px;
-    }
-
-    .clueItem {
-        padding: 8px;
-        font-size: 12px;
-    }
-
-    .scrollableClueList {
-        max-height: calc(var(--max-visible-items) * 50px);
+        padding: 0.5rem 0.625rem;
+        font-size: 0.8125rem;
+        min-height: 40px;
     }
 
     .inputRow {
-        gap: 8px;
-    }
-
-    .guessInput {
-        padding: 8px;
-        font-size: 12px;
-    }
-
-    .blockButton {
-        padding: 8px 12px;
-        font-size: 12px;
+        gap: 0.5rem;
     }
 
     .emptyMessage {
-        padding: 20px 15px;
-        font-size: 13px;
+        padding: 1.25rem 1rem;
+        font-size: 0.8125rem;
     }
 }
 
-/* Dark mode support */
-[data-theme="dark"] .incomingSection {
-    background: #2d3748;
-    border-color: rgba(252, 129, 129, 0.3);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] .blockedSection {
-    background: #2d3748;
-    border-color: rgba(113, 128, 150, 0.3);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] .heading {
-    color: #e2e8f0;
-}
-
-[data-theme="dark"] .subHeading {
-    color: #a0aec0;
-}
-
-[data-theme="dark"] .emptyMessage {
-    color: #718096;
-}
-
-[data-theme="dark"] .scrollableClueList {
-    scrollbar-color: #718096 #4a5568;
-}
-
-[data-theme="dark"] .scrollableClueList::-webkit-scrollbar-track {
-    background: #4a5568;
-}
-
-[data-theme="dark"] .scrollableClueList::-webkit-scrollbar-thumb {
-    background: #718096;
-}
-
-[data-theme="dark"] .scrollableClueList::-webkit-scrollbar-thumb:hover {
-    background: #a0aec0;
-}
-
-[data-theme="dark"] .clueItem {
-    background: #4a5568;
-    border-left-color: #718096;
-    color: #e2e8f0;
-}
-
-[data-theme="dark"] .clueItem:hover {
-    background: #718096;
-    border-left-color: #a0aec0;
-}
-
-[data-theme="dark"] .clueItem strong {
-    color: #f7fafc;
-}
-
-[data-theme="dark"] .blockedClueItem {
-    background: #744646;
-    border-left-color: #fc8181;
-}
-
-[data-theme="dark"] .blockedClueItem:hover {
-    background: #9c4646;
-}
-
-[data-theme="dark"] .blockedWord {
-    color: #fc8181;
-}
-
-[data-theme="dark"] .blockedDefinition {
-    color: #a0aec0;
-}
-
-[data-theme="dark"] .guessInput {
-    background: #4a5568;
-    border-color: #718096;
-    color: #e2e8f0;
-}
-
-[data-theme="dark"] .guessInput:focus {
-    border-color: #fc8181;
-    box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.15);
-}
-
-[data-theme="dark"] .guessInput::placeholder {
-    color: #a0aec0;
-}
-
-[data-theme="dark"] .blockButton:disabled {
-    background: #4a5568;
-}
-
-/* Automatic dark mode */
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
     .incomingSection {
         background: #2d3748;

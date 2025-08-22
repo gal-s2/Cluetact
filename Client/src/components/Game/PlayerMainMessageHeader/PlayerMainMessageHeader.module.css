@@ -1,5 +1,5 @@
 .headerContainer {
-    padding: 15px;
+    padding: 1rem;
     background: rgba(67, 56, 202, 0.1);
     border-bottom: 1px solid rgba(67, 56, 202, 0.2);
     flex-shrink: 0;
@@ -8,7 +8,7 @@
 .messageBox {
     background: white;
     border-radius: 8px;
-    padding: 12px;
+    padding: 0.75rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-left: 4px solid #667eea;
     position: relative;
@@ -26,14 +26,15 @@
 }
 
 .statusMessage {
-    font-size: 14px;
+    font-size: 0.875rem;
     color: #2d3748;
     margin: 0;
     font-weight: 500;
     line-height: 1.4;
+    word-wrap: break-word;
 }
 
-/* Different message types */
+/* Message types */
 .messageBox.waiting {
     border-left-color: #ed8936;
     background: #fffaf0;
@@ -72,7 +73,22 @@
     }
 }
 
-/* Dark mode styles */
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .headerContainer {
+        padding: 0.75rem;
+    }
+
+    .messageBox {
+        padding: 0.625rem;
+    }
+
+    .statusMessage {
+        font-size: 0.8125rem;
+    }
+}
+
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
     .headerContainer {
         background: rgba(67, 56, 202, 0.15);
@@ -89,7 +105,6 @@
         color: #e2e8f0;
     }
 
-    /* Dark mode message types */
     .messageBox.waiting {
         background: #2a1f15;
         border-left-color: #ed8936;
@@ -105,7 +120,6 @@
         border-left-color: #f56565;
     }
 
-    /* Dark mode glow animation */
     @keyframes subtleGlow {
         0%,
         100% {
@@ -114,41 +128,5 @@
         50% {
             box-shadow: 0 2px 8px rgba(245, 101, 101, 0.4);
         }
-    }
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .headerContainer {
-        padding: 12px;
-    }
-
-    .messageBox {
-        padding: 10px;
-    }
-
-    .statusMessage {
-        font-size: 13px;
-    }
-}
-
-@media (max-width: 480px) {
-    .headerContainer {
-        padding: 10px;
-    }
-
-    .messageBox {
-        padding: 8px;
-    }
-
-    .statusMessage {
-        font-size: 12px;
-    }
-}
-
-/* Accessibility improvements */
-@media (prefers-reduced-motion: reduce) {
-    .messageBox.urgent {
-        animation: none;
     }
 }
