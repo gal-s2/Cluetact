@@ -1,43 +1,44 @@
 .room {
-    height: 100vh;
-    display: grid;
-    grid-template-areas:
-        "sidebar word"
-        "sidebar main";
-    grid-template-columns: 280px 1fr;
-    grid-template-rows: auto 1fr;
-    gap: 0;
-    position: relative;
+    min-height: 100vh; /* Changed from height: 100vh */
+    display: flex;
+    flex-direction: column;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #333;
-    overflow: hidden;
+    /* Removed overflow: hidden */
 }
 
-/* Word Display - Top Right */
+/* Word Display - Top Section */
 .wordDisplay {
-    grid-area: word;
     display: flex;
     justify-content: center;
     align-items: center;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-    padding: 15px;
+    padding: 1rem;
     min-height: 80px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
 }
 
-/* Sidebar - Full Height Left Side */
+/* Main Content Area */
+.mainContent {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    gap: 0;
+}
+
+/* Sidebar */
 .sidebar {
-    grid-area: sidebar;
-    grid-row: 1 / -1;
+    width: 280px;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     border-right: 2px solid rgba(255, 255, 255, 0.2);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    height: 100vh;
+    flex-shrink: 0;
 }
 
 .timerContainer {
@@ -46,17 +47,18 @@
 
 /* Main Game Panel */
 .main {
-    grid-area: main;
+    flex: 1;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-width: 0;
 }
 
 /* Clue Submit */
 .clueSubmitWrapper {
-    padding: 15px;
+    padding: 1rem;
     background: rgba(72, 187, 120, 0.1);
     border-bottom: 1px solid rgba(72, 187, 120, 0.2);
     flex-shrink: 0;
@@ -65,15 +67,17 @@
 /* Clues Section */
 .cluesSection {
     flex: 1;
-    padding: 15px;
+    padding: 1rem;
     overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 1rem;
+    min-height: 0;
 }
 
 .blockedCluesContainer {
-    padding: 0 15px 15px;
+    padding: 0 1rem 1rem;
     flex-shrink: 0;
 }
 
@@ -94,25 +98,71 @@
 
 .waitMessage {
     background: white;
-    padding: 30px;
+    padding: 2rem;
     border-radius: 12px;
     text-align: center;
-    font-size: 18px;
+    font-size: 1.125rem;
     color: #2d3748;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 90vw;
 }
 
 .popupWrapper {
     background: white;
     border-radius: 12px;
-    padding: 20px;
+    padding: 1.25rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     max-width: 90vw;
     max-height: 90vh;
     overflow: auto;
 }
 
-/* Dark mode styles */
+/* Mobile Layout */
+@media (max-width: 768px) {
+    .room {
+        flex-direction: column;
+        min-height: 100vh; /* Ensure minimum height on mobile too */
+    }
+
+    .mainContent {
+        flex-direction: column;
+        gap: 0;
+        flex: 1; /* Allow it to grow */
+    }
+
+    .sidebar {
+        width: 100%;
+        max-height: none; /* Remove max-height restriction */
+        min-height: auto; /* Allow natural height */
+        border-right: none;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        overflow-y: auto;
+    }
+
+    .cluesSection {
+        padding: 0.75rem;
+    }
+
+    .clueSubmitWrapper {
+        padding: 0.75rem;
+    }
+
+    .blockedCluesContainer {
+        padding: 0 0.75rem 0.75rem;
+    }
+
+    .waitMessage {
+        padding: 1.5rem;
+        font-size: 1rem;
+    }
+
+    .popupWrapper {
+        padding: 1rem;
+        margin: 1rem;
+    }
+}
+
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
     .room {
         background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
@@ -156,50 +206,8 @@
     }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .room {
-        grid-template-areas:
-            "word"
-            "sidebar"
-            "main";
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto 1fr;
-    }
-
-    .sidebar {
-        grid-row: auto;
-        height: auto;
-        max-height: 35vh;
-        border-right: none;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .clueSubmitWrapper,
-    .cluesSection {
-        padding: 10px;
-    }
-}
-
-/* Dark mode responsive adjustments */
 @media (max-width: 768px) and (prefers-color-scheme: dark) {
     .sidebar {
         border-bottom: 2px solid rgba(45, 55, 72, 0.2);
-    }
-}
-
-@media (max-width: 480px) {
-    .clueSubmitWrapper,
-    .cluesSection {
-        padding: 8px;
-    }
-
-    .waitMessage {
-        padding: 20px;
-        font-size: 16px;
-    }
-
-    .popupWrapper {
-        padding: 15px;
     }
 }

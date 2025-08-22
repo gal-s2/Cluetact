@@ -13,23 +13,7 @@ const roomSideEffects = {
                 keeperTime: room.keeperChoosingWordTime,
             };
 
-            messageEmitter.emitToKeeper(
-                SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT,
-                {
-                    ...data,
-                    isKeeper: true,
-                },
-                room.roomId
-            );
-
-            messageEmitter.emitToSeekers(
-                SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT,
-                {
-                    ...data,
-                    isKeeper: false,
-                },
-                room.roomId
-            );
+            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT, data, room.roomId);
         } else if (room.status === GAME_STAGES.END) {
             messageEmitter.broadcastToRoom(
                 SOCKET_EVENTS.SERVER_GAME_ENDED,

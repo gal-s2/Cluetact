@@ -1,13 +1,14 @@
+/* PlayerCard.module.css */
 .cardWrapper {
     position: relative;
 }
 
 .card {
     background: white;
-    border-radius: 12px;
-    padding: 12px;
+    border-radius: 8px; /* Reduced from 12px */
+    padding: 0.5rem; /* Reduced from 0.75rem */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-left: 4px solid #e2e8f0;
+    border-left: 3px solid #e2e8f0; /* Reduced from 4px */
     transition: all 0.2s ease;
     cursor: pointer;
     position: relative;
@@ -15,12 +16,12 @@
 }
 
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px); /* Reduced from -2px */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* Reduced shadow */
 }
 
 .card.expanded {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* Reduced shadow */
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
@@ -49,62 +50,59 @@
     border-top: 2px solid rgba(66, 153, 225, 0.3);
 }
 
-/* Inner container */
 .inner {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.5rem; /* Reduced from 0.75rem */
 }
 
-/* Player Image Container */
 .playerImageContainer {
     position: relative;
     flex-shrink: 0;
 }
 
 .playerImage {
-    width: 50px;
-    height: 50px;
+    width: 36px; /* Reduced from 50px */
+    height: 36px; /* Reduced from 50px */
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #e2e8f0;
+    border: 2px solid #e2e8f0; /* Reduced from 3px */
     transition: all 0.2s ease;
 }
 
 .card.me .playerImage {
     border-color: #48bb78;
-    box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.2);
+    box-shadow: 0 0 0 1px rgba(72, 187, 120, 0.2); /* Reduced from 2px */
 }
 
 .card.activeClueGiver .playerImage {
     border-color: #ed8936;
-    box-shadow: 0 0 0 2px rgba(237, 137, 54, 0.2);
+    box-shadow: 0 0 0 1px rgba(237, 137, 54, 0.2); /* Reduced from 2px */
 }
 
 .card.me.activeClueGiver .playerImage {
     border-color: #f6ad55;
-    box-shadow: 0 0 0 2px rgba(246, 173, 85, 0.2);
+    box-shadow: 0 0 0 1px rgba(246, 173, 85, 0.2); /* Reduced from 2px */
 }
 
-/* Turn Indicator */
 .turnIndicator {
     position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 16px;
-    height: 16px;
+    top: -1px; /* Reduced from -2px */
+    right: -1px; /* Reduced from -2px */
+    width: 12px; /* Reduced from 16px */
+    height: 12px; /* Reduced from 16px */
     background: #ed8936;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid white; /* Reduced from 2px */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Reduced shadow */
 }
 
 .turnDot {
-    width: 6px;
-    height: 6px;
+    width: 4px; /* Reduced from 6px */
+    height: 4px; /* Reduced from 6px */
     background: white;
     border-radius: 50%;
     animation: pulse 1.5s infinite;
@@ -122,15 +120,14 @@
     }
 }
 
-/* Player Data Container */
 .playerDataContainer {
     flex: 1;
     min-width: 0;
 }
 
 .playerDataContainer h3 {
-    margin: 0 0 4px 0;
-    font-size: 14px;
+    margin: 0 0 0.125rem 0; /* Reduced margin */
+    font-size: 0.8125rem; /* Reduced from 0.875rem */
     font-weight: 600;
     color: #2d3748;
     white-space: nowrap;
@@ -139,25 +136,24 @@
 }
 
 .playerDataContainer p {
-    margin: 0 0 8px 0;
-    font-size: 12px;
+    margin: 0 0 0.25rem 0; /* Reduced margin */
+    font-size: 0.6875rem; /* Reduced from 0.75rem */
     color: #718096;
     font-weight: 500;
 }
 
-/* Badge Container */
 .badgeContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: 0.125rem; /* Reduced from 0.25rem */
     align-items: center;
 }
 
 .youTag {
-    font-size: 9px;
+    font-size: 0.5rem; /* Reduced from 0.5625rem */
     font-weight: 700;
-    padding: 2px 5px;
-    border-radius: 10px;
+    padding: 0.0625rem 0.25rem; /* Reduced padding */
+    border-radius: 8px; /* Reduced from 10px */
     background: linear-gradient(135deg, #48bb78, #38a169);
     color: white;
     text-transform: uppercase;
@@ -165,10 +161,10 @@
 }
 
 .turnTag {
-    font-size: 9px;
+    font-size: 0.5rem; /* Reduced from 0.5625rem */
     font-weight: 700;
-    padding: 2px 5px;
-    border-radius: 10px;
+    padding: 0.0625rem 0.25rem; /* Reduced padding */
+    border-radius: 8px; /* Reduced from 10px */
     background: linear-gradient(135deg, #ed8936, #dd6b20);
     color: white;
     text-transform: uppercase;
@@ -179,21 +175,20 @@
 @keyframes glow {
     0%,
     100% {
-        box-shadow: 0 0 5px rgba(237, 137, 54, 0.3);
+        box-shadow: 0 0 3px rgba(237, 137, 54, 0.3); /* Reduced from 5px */
     }
     50% {
-        box-shadow: 0 0 15px rgba(237, 137, 54, 0.6);
+        box-shadow: 0 0 8px rgba(237, 137, 54, 0.6); /* Reduced from 15px */
     }
 }
 
-/* Expand Icon */
 .expandIcon {
     flex-shrink: 0;
     margin-left: auto;
 }
 
 .chevron {
-    font-size: 12px;
+    font-size: 0.6875rem; /* Reduced from 0.75rem */
     color: #a0aec0;
     transition: transform 0.2s ease;
     display: inline-block;
@@ -203,7 +198,6 @@
     transform: rotate(180deg);
 }
 
-/* Profile Dropdown */
 .profileDropdown {
     position: absolute;
     top: 100%;
@@ -212,23 +206,23 @@
     background: white;
     border: 1px solid #e2e8f0;
     border-top: none;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-bottom-left-radius: 8px; /* Reduced from 12px */
+    border-bottom-right-radius: 8px; /* Reduced from 12px */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* Reduced shadow */
     z-index: 10;
     animation: slideDown 0.2s ease-out;
 }
 
 .compactProfile {
-    padding: 12px;
+    padding: 0.5rem; /* Reduced from 0.75rem */
 }
 
 .countryRow {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 8px;
-    font-size: 12px;
+    gap: 0.25rem; /* Reduced from 0.375rem */
+    margin-bottom: 0.375rem; /* Reduced from 0.5rem */
+    font-size: 0.6875rem; /* Reduced from 0.75rem */
     color: #4a5568;
     font-weight: 500;
 }
@@ -240,27 +234,27 @@
 .statsGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 0.375rem; /* Reduced from 0.5rem */
 }
 
 .stat {
     background: #f7fafc;
-    padding: 6px 8px;
-    border-radius: 6px;
+    padding: 0.25rem 0.375rem; /* Reduced from 0.375rem 0.5rem */
+    border-radius: 4px; /* Reduced from 6px */
     text-align: center;
 }
 
 .statLabel {
     display: block;
-    font-size: 10px;
+    font-size: 0.5625rem; /* Reduced from 0.625rem */
     color: #718096;
     font-weight: 500;
-    margin-bottom: 2px;
+    margin-bottom: 0.0625rem; /* Reduced from 0.125rem */
 }
 
 .statValue {
     display: block;
-    font-size: 14px;
+    font-size: 0.75rem; /* Reduced from 0.875rem */
     font-weight: 600;
     color: #2d3748;
 }
@@ -276,16 +270,15 @@
     }
 }
 
-/* Status indicators for online/offline */
 .statusIndicator {
     position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 10px;
-    height: 10px;
+    bottom: 1px; /* Reduced from 2px */
+    right: 1px; /* Reduced from 2px */
+    width: 8px; /* Reduced from 10px */
+    height: 8px; /* Reduced from 10px */
     border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    border: 1px solid white; /* Reduced from 2px */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Reduced shadow */
 }
 
 .statusIndicator.online {
@@ -296,20 +289,86 @@
     background: #a0aec0;
 }
 
-/* Dark mode styles */
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .card {
+        padding: 0.375rem; /* Reduced from 0.625rem */
+    }
+
+    .inner {
+        gap: 0.375rem; /* Reduced from 0.625rem */
+    }
+
+    .playerImage {
+        width: 32px; /* Reduced from 45px */
+        height: 32px; /* Reduced from 45px */
+        border-width: 1px; /* Reduced from 2px */
+    }
+
+    .turnIndicator {
+        width: 10px; /* Reduced from 14px */
+        height: 10px; /* Reduced from 14px */
+    }
+
+    .turnDot {
+        width: 3px; /* Reduced from 5px */
+        height: 3px; /* Reduced from 5px */
+    }
+
+    .playerDataContainer h3 {
+        font-size: 0.75rem; /* Reduced from 0.8125rem */
+    }
+
+    .playerDataContainer p {
+        font-size: 0.625rem; /* Reduced from 0.6875rem */
+    }
+
+    .youTag,
+    .turnTag {
+        font-size: 0.4375rem; /* Reduced from 0.5rem */
+        padding: 0.0625rem 0.1875rem; /* Reduced from 0.0625rem 0.25rem */
+    }
+
+    .compactProfile {
+        padding: 0.375rem; /* Reduced from 0.625rem */
+    }
+
+    .countryRow {
+        font-size: 0.625rem; /* Reduced from 0.6875rem */
+        margin-bottom: 0.25rem; /* Reduced from 0.375rem */
+    }
+
+    .statsGrid {
+        gap: 0.25rem; /* Reduced from 0.375rem */
+    }
+
+    .stat {
+        padding: 0.1875rem 0.25rem; /* Reduced from 0.25rem 0.375rem */
+    }
+
+    .statLabel {
+        font-size: 0.5rem; /* Reduced from 0.5625rem */
+    }
+
+    .statValue {
+        font-size: 0.6875rem; /* Reduced from 0.75rem */
+    }
+}
+
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
     .card {
         background: #2d3748;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        border-left: 4px solid #4a5568;
+        border-left: 3px solid #4a5568; /* Reduced from 4px */
     }
 
     .card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4); /* Reduced shadow */
     }
 
     .card.expanded {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4); /* Reduced shadow */
     }
 
     .card.me {
@@ -368,171 +427,5 @@
 
     .statusIndicator {
         border-color: #2d3748;
-    }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-    .card {
-        border: 2px solid #000;
-    }
-
-    .playerImage {
-        border-color: #000;
-    }
-
-    .playerDataContainer h3 {
-        color: #000;
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .card {
-        padding: 10px;
-    }
-
-    .inner {
-        gap: 10px;
-    }
-
-    .playerImage {
-        width: 45px;
-        height: 45px;
-        border-width: 2px;
-    }
-
-    .turnIndicator {
-        width: 14px;
-        height: 14px;
-    }
-
-    .turnDot {
-        width: 5px;
-        height: 5px;
-    }
-
-    .playerDataContainer h3 {
-        font-size: 13px;
-    }
-
-    .playerDataContainer p {
-        font-size: 11px;
-    }
-
-    .youTag,
-    .turnTag {
-        font-size: 8px;
-        padding: 1px 4px;
-    }
-
-    .compactProfile {
-        padding: 10px;
-    }
-
-    .countryRow {
-        font-size: 11px;
-        margin-bottom: 6px;
-    }
-
-    .statsGrid {
-        gap: 6px;
-    }
-
-    .stat {
-        padding: 4px 6px;
-    }
-
-    .statLabel {
-        font-size: 9px;
-    }
-
-    .statValue {
-        font-size: 12px;
-    }
-}
-
-@media (max-width: 480px) {
-    .card {
-        padding: 8px;
-    }
-
-    .inner {
-        gap: 8px;
-    }
-
-    .playerImage {
-        width: 40px;
-        height: 40px;
-    }
-
-    .turnIndicator {
-        width: 12px;
-        height: 12px;
-    }
-
-    .turnDot {
-        width: 4px;
-        height: 4px;
-    }
-
-    .playerDataContainer h3 {
-        font-size: 12px;
-    }
-
-    .playerDataContainer p {
-        font-size: 10px;
-    }
-
-    .badgeContainer {
-        gap: 3px;
-    }
-
-    .youTag,
-    .turnTag {
-        font-size: 7px;
-        padding: 1px 3px;
-    }
-
-    .compactProfile {
-        padding: 8px;
-    }
-
-    .countryRow {
-        font-size: 10px;
-        margin-bottom: 4px;
-    }
-
-    .statsGrid {
-        gap: 4px;
-    }
-
-    .stat {
-        padding: 3px 4px;
-    }
-
-    .statLabel {
-        font-size: 8px;
-    }
-
-    .statValue {
-        font-size: 11px;
-    }
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-    .card,
-    .playerImage,
-    .turnDot,
-    .turnTag,
-    .chevron,
-    .profileDropdown {
-        animation: none;
-        transition: none;
-    }
-
-    .card:hover {
-        transform: none;
     }
 }

@@ -1,23 +1,22 @@
-/* SubmitClue.module.css */
-
 .container {
     background: white;
     border-radius: 12px;
-    padding: 15px;
+    padding: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border: 2px solid rgba(72, 187, 120, 0.2);
 }
 
 .input {
-    width: 95%;
-    padding: 10px 10px;
+    width: 100%;
+    padding: 0.75rem;
     border: 2px solid #e2e8f0;
     border-radius: 6px;
-    font-size: 14px;
-    margin-bottom: 8px;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
     transition: all 0.2s ease;
     font-family: inherit;
     background: white;
+    box-sizing: border-box;
 }
 
 .input:focus {
@@ -31,11 +30,11 @@
 }
 
 .charCount {
-    font-size: 12px;
+    font-size: 0.75rem;
     color: #718096;
     text-align: right;
-    margin-bottom: 10px;
-    margin-top: -4px;
+    margin-bottom: 0.75rem;
+    margin-top: -0.25rem;
 }
 
 .charCount.warning {
@@ -47,24 +46,25 @@
     font-weight: 600;
 }
 
-/* Submit Button */
 .submitButton {
     background: linear-gradient(135deg, #48bb78, #38a169);
     color: white;
     border: none;
-    padding: 12px 24px;
+    padding: 0.75rem 1.5rem;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 0.875rem;
     cursor: pointer;
     transition: all 0.2s ease;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    min-height: 48px;
+    box-sizing: border-box;
 }
 
 .submitButton:hover:not(:disabled) {
@@ -83,7 +83,6 @@
     background: #a0aec0;
 }
 
-/* Loading state */
 .submitButton.loading {
     position: relative;
     color: transparent;
@@ -106,47 +105,24 @@
     }
 }
 
-/* Add these dark mode styles to your existing SubmitClue.module.css */
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 0.75rem;
+    }
 
-/* Dark mode support */
-[data-theme="dark"] .container {
-    background: #2d3748;
-    border-color: rgba(104, 211, 145, 0.3);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    .input {
+        padding: 0.625rem;
+        font-size: 1rem; /* Prevents zoom on iOS */
+    }
+
+    .submitButton {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
 }
 
-[data-theme="dark"] .input {
-    background: #4a5568;
-    border-color: #718096;
-    color: #e2e8f0;
-}
-
-[data-theme="dark"] .input:focus {
-    border-color: #68d391;
-    box-shadow: 0 0 0 3px rgba(104, 211, 145, 0.15);
-}
-
-[data-theme="dark"] .input::placeholder {
-    color: #a0aec0;
-}
-
-[data-theme="dark"] .charCount {
-    color: #a0aec0;
-}
-
-[data-theme="dark"] .charCount.warning {
-    color: #fbb043;
-}
-
-[data-theme="dark"] .charCount.danger {
-    color: #fc8181;
-}
-
-[data-theme="dark"] .submitButton:disabled {
-    background: #4a5568;
-}
-
-/* Automatic dark mode */
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
     .container {
         background: #2d3748;

@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import { useMusic } from "../Music/MusicContext.jsx";
+import { useUser } from "@contexts/UserContext.jsx";
 import WordDisplay from "./WordDisplay/WordDisplay";
 import Spinner from "@common/Spinner/Spinner";
-import styles from "./GameRoom.module.css";
 import KeeperWordPopup from "./KeeperWordPopup/KeeperWordPopup";
 import SubmitClue from "./SubmitClue/SubmitClue";
 import CluetactPopup from "./CluetactPopup/CluetactPopup";
@@ -18,32 +18,26 @@ import KeeperCluePanel from "@components/Game/KeeperCluePanel/KeeperCluePanel";
 import ExitGameButton from "./ExitGameButton/ExitGameButton";
 import ConfirmModal from "./ConfirmModal/ConfirmModal";
 import CountdownTimer from "./CountdownTimer/CountdownTimer";
-import Modal from "@components/common/Modal/Modal";
 import MusicToggleButton from "../General/MusicToggleButton/MusicToggleButton.jsx";
-import { useUser } from "@contexts/UserContext.jsx";
+import styles from "./GameRoom.module.css";
 
 function GameRoom() {
     const { timeLeft, setTimeLeft, gameState, loading, handleExitGame, notification } = useGameRoom();
     const { user } = useUser();
-
     const { changeTrack, currentTrack } = useMusic();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const trackChangedRef = useRef(false);
 
-    // Replace the existing useEffect with this:
     useEffect(() => {
         changeTrack("gameRoom");
     }, [changeTrack]);
 
     if (loading) return <Spinner />;
 
-    const isKeeper = gameState.players.find((p) => p.username === user.username)?.role === "keeper";
-
     return (
         <div className={styles.room}>
             {/* WHEN KEEPER CHOOSING WORD */}
-            {gameState.status === "KEEPER_CHOOSING_WORD" && !isKeeper && <Modal>Waiting for the keeper to choose a word...</Modal>}
-            {gameState.status === "KEEPER_CHOOSING_WORD" && isKeeper && <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />}
+            {gameState.status === "KEEPER_CHOOSING_WORD" && <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />}
 
             {gameState.cluetact && <CluetactPopup />}
             {gameState.status === "END" && <GameOverPopup />}
@@ -52,47 +46,61 @@ function GameRoom() {
                 <WordDisplay />
             </div>
 
-            <div className={styles.sidebar}>
-                {/* Timer */}
-                {timeLeft > 0 && (
-                    <div className={styles.timerContainer}>
-                        <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />
+            {/* MAIN CONTENT AREA */}
+            <div className={styles.mainContent}>
+                {/* SIDEBAR */}
+                <div className={styles.sidebar}>
+                    {/* Timer Section */}
+                    {timeLeft > 0 && (
+                        <div className={styles.timerContainer}>
+                            <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />
+                        </div>
+                    )}
+
+                    {/* Players List */}
+                    <div className={styles.playersContainer}>
+                        <PlayersList players={gameState.players} />
                     </div>
-                )}
+                </div>
 
-                {/* Players Table */}
-                <PlayersList players={gameState.players} />
-            </div>
-
-            {/* Main Game Panel */}
-            <div className={styles.main}>
-                {/* Header Message */}
-                <PlayerMainMessageHeader />
-
-                {/* Clue Submit */}
-                {!gameState.isKeeper && gameState.isWordChosen && gameState.isSubmittingClue && !gameState.activeClue && (
-                    <div className={styles.clueSubmitWrapper}>
-                        <SubmitClue />
+                {/* MAIN GAME PANEL */}
+                <div className={styles.main}>
+                    {/* Header Message */}
+                    <div className={styles.headerSection}>
+                        <PlayerMainMessageHeader />
                     </div>
-                )}
 
-                {/* Clues Section */}
-                <div className={styles.cluesSection}>{gameState.isKeeper ? <KeeperCluePanel /> : <SeekerCluePanel />}</div>
+                    {/* Clue Submit Section */}
+                    {!gameState.isKeeper && gameState.isWordChosen && gameState.isSubmittingClue && !gameState.activeClue && (
+                        <div className={styles.clueSubmitWrapper}>
+                            <SubmitClue />
+                        </div>
+                    )}
 
-                {/* Blocked Clues for Keeper */}
-                <div className={styles.blockedCluesContainer}>
-                    <BlockedCluesSection maxVisibleItems={5} />
+                    {/* Main Clues Section */}
+                    <div className={styles.cluesSection}>{gameState.isKeeper ? <KeeperCluePanel /> : <SeekerCluePanel />}</div>
+
+                    {/* Blocked Clues for Keeper */}
+                    {gameState.isKeeper && (
+                        <div className={styles.blockedCluesContainer}>
+                            <BlockedCluesSection maxVisibleItems={5} />
+                        </div>
+                    )}
                 </div>
             </div>
 
-            <MusicToggleButton />
-            <ExitGameButton onExit={() => setShowConfirmModal(true)} />
+            {/* FLOATING UI ELEMENTS */}
+            <div className={styles.floatingElements}>
+                <MusicToggleButton />
+                <ExitGameButton onExit={() => setShowConfirmModal(true)} />
+            </div>
 
+            {/* MODALS & NOTIFICATIONS */}
             {showConfirmModal && <ConfirmModal handleCloseModal={() => setShowConfirmModal(false)} handleConfirmExit={handleExitGame} />}
 
-            {/* Notification */}
             {notification.message && <NotificationBox />}
 
+            {/* BACKGROUND ANIMATIONS */}
             <FloatingLetters />
         </div>
     );

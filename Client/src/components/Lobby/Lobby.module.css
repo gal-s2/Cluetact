@@ -10,6 +10,15 @@
     width: 100%;
     overflow-x: hidden;
     font-family: "Poppins", "Inter", sans-serif;
+    box-sizing: border-box;
+    margin: 0 auto;
+    position: relative;
+    left: 0;
+    right: 0;
+}
+
+.container * {
+    box-sizing: border-box;
 }
 
 /* Header Section - Enhanced to match welcome style */
@@ -77,6 +86,11 @@
     justify-content: center;
     flex: 1;
     margin-bottom: 2rem;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* Lobby-specific section group */
@@ -89,6 +103,9 @@
     align-items: center;
     min-height: 300px;
     padding-bottom: 3rem;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Welcome page specific action cards */
