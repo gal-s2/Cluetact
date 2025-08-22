@@ -387,7 +387,7 @@ class Room {
         this.currentRound.guesses.push(new Guess(guesserUsername, guessLower));
 
         const keeperWordLower = this.currentRound.keeperWord?.toLowerCase();
-
+        result.keeperWord = this.currentRound.keeperWord;
         // 1) Secret word guessed directly -> immediate round end
         if (keeperWordLower && guessLower === keeperWordLower) {
             this.raceTimer?.stop();
@@ -395,7 +395,6 @@ class Room {
 
             result.correct = true;
             result.isWordComplete = true;
-            result.keeperWord = this.currentRound.keeperWord;
 
             // Award a lot of points to the guesser (+ optional assist to the active clue giver)
             const activeClue = this.currentRound.getActiveClue();
