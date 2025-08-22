@@ -166,7 +166,7 @@ function Lobby() {
 
     const handleJoinRoom = () => {
         if (!user) return;
-        navigate(`/waiting/${roomCodeInput}`);
+        navigate(`/waiting/${roomCodeInput.toUpperCase()}`);
         setPlayMenuOpen(false);
     };
 

@@ -212,10 +212,6 @@ const gameController = {
                 keeperWord: result.keeperWord,
             };
 
-            if (result.isGameEnded) {
-                dataToSeekers.winners = room.getWinners();
-            }
-
             messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToSeekers, room.roomId);
             messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToKeeper, room.roomId);
         } else {

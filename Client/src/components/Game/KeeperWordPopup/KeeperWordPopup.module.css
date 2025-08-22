@@ -1,10 +1,10 @@
 .closeButton {
     position: absolute;
-    top: 12px;
-    right: 16px;
+    top: 0.75rem;
+    right: 1rem;
     background: none;
     border: none;
-    font-size: 28px;
+    font-size: 1.75rem;
     color: #6c757d;
     cursor: pointer;
     width: 32px;
@@ -14,7 +14,7 @@
     justify-content: center;
     border-radius: 50%;
     transition: all 0.2s ease;
-    z-index: 10; /* ensures it appears above other modal content */
+    z-index: 10;
 }
 
 .closeButton:hover {
@@ -27,28 +27,26 @@
     transform: scale(0.95);
 }
 
-/* Text styling */
 .container p {
-    margin: 0 0 24px 0;
-    font-size: 18px;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.125rem;
     font-weight: 600;
     color: #343a40;
     text-align: center;
     line-height: 1.5;
 }
 
-/* Input field */
 .container input[type="text"] {
     width: 100%;
     box-sizing: border-box;
-    padding: 16px 20px;
+    padding: 1rem 1.25rem;
     border: 2px solid #dee2e6;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 500;
     color: #495057;
     background: #ffffff;
-    margin-bottom: 24px;
+    margin-bottom: 1.5rem;
     transition: all 0.2s ease;
     outline: none;
 }
@@ -64,7 +62,6 @@
     font-weight: 400;
 }
 
-/* Expired state styling */
 .container input[type="text"]:disabled {
     background-color: #f8f9fa;
     color: #6c757d;
@@ -72,43 +69,40 @@
     opacity: 0.6;
 }
 
-/* Timer wrapper styling */
 .timerWrapper {
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
     text-align: center;
 }
 
 .timerLabel {
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 600;
     color: #6c757d;
-    margin-bottom: 6px;
+    margin-bottom: 0.375rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .timerDisplay {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", monospace;
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 600;
     color: #007bff;
     background: #ffffff;
     border: 1px solid #007bff;
     border-radius: 6px;
-    padding: 8px 12px;
+    padding: 0.5rem 0.75rem;
     display: inline-block;
     min-width: 70px;
     transition: all 0.2s ease;
 }
 
-/* Warning state when time is low */
 .timerDisplay[data-warning="true"] {
     color: #fd7e14;
     border-color: #fd7e14;
     background: #fff8f0;
 }
 
-/* Critical state when time is very low */
 .timerDisplay[data-critical="true"] {
     color: #dc3545;
     border-color: #dc3545;
@@ -126,39 +120,94 @@
     }
 }
 
-/* Responsive design */
-@media (max-width: 480px) {
+/* Mobile adjustments */
+@media (max-width: 768px) {
     .container {
-        margin: 20px;
-        padding: 24px;
+        margin: 1.25rem;
+        padding: 1.5rem;
         min-width: unset;
     }
 
     .container input[type="text"] {
-        padding: 14px 16px;
-    }
-
-    .container button:not(.closeButton) {
-        padding: 14px 20px;
+        padding: 0.875rem 1rem;
+        font-size: 1rem; /* Prevents zoom on iOS */
     }
 
     .timerWrapper {
-        margin-bottom: 16px;
+        margin-bottom: 1rem;
     }
 
     .timerDisplay {
-        font-size: 16px;
-        padding: 6px 10px;
+        font-size: 1rem;
+        padding: 0.375rem 0.625rem;
         min-width: 60px;
     }
 
     .timerLabel {
-        font-size: 11px;
-        margin-bottom: 4px;
+        font-size: 0.6875rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .container p {
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .closeButton {
+        color: #a0aec0;
+    }
+
+    .closeButton:hover {
+        background: #4a5568;
+        color: #fc8181;
+    }
+
+    .container p {
+        color: #e2e8f0;
+    }
+
+    .container input[type="text"] {
+        background: #4a5568;
+        border-color: #718096;
+        color: #e2e8f0;
+    }
+
+    .container input[type="text"]:focus {
+        border-color: #64b5f6;
+        box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.1);
+    }
+
+    .container input[type="text"]::placeholder {
+        color: #a0aec0;
+    }
+
+    .container input[type="text"]:disabled {
+        background-color: #2d3748;
+        color: #718096;
     }
 
     .timerLabel {
-        font-size: 13px;
-        margin-bottom: 8px;
+        color: #a0aec0;
+    }
+
+    .timerDisplay {
+        color: #64b5f6;
+        background: #2d3748;
+        border-color: #64b5f6;
+    }
+
+    .timerDisplay[data-warning="true"] {
+        color: #fbb043;
+        border-color: #fbb043;
+        background: #2d2200;
+    }
+
+    .timerDisplay[data-critical="true"] {
+        color: #fc8181;
+        border-color: #fc8181;
+        background: #2d1b1b;
     }
 }
