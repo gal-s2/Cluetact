@@ -167,6 +167,7 @@ class Room {
         this.players = [];
         const keeperPlayer = new Player(keeper.username, keeper.avatar);
         keeperPlayer.setRole(ROLES.KEEPER);
+        keeperPlayer.wasKeeper = true;
         this.players.push(keeperPlayer);
 
         seekers.forEach((seeker) => {

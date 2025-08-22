@@ -37,13 +37,10 @@ function GameRoom() {
 
     if (loading) return <Spinner />;
 
-    const isKeeper = gameState.players.find((p) => p.username === user.username)?.role === "keeper";
-
     return (
         <div className={styles.room}>
             {/* WHEN KEEPER CHOOSING WORD */}
-            {gameState.status === "KEEPER_CHOOSING_WORD" && !isKeeper && <Modal>Waiting for the keeper to choose a word...</Modal>}
-            {gameState.status === "KEEPER_CHOOSING_WORD" && isKeeper && <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />}
+            {gameState.status === "KEEPER_CHOOSING_WORD" && <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />}
 
             {gameState.cluetact && <CluetactPopup />}
             {gameState.status === "END" && <GameOverPopup />}

@@ -91,6 +91,23 @@
     margin-top: 8px;
 }
 
+.refreshButton {
+    margin-top: 16px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.refreshButton:hover {
+    background-color: #0056b3;
+}
+
 /* Responsive design */
 @media (max-width: 480px) {
     .container {

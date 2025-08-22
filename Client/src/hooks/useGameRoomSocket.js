@@ -277,7 +277,14 @@ export default function useGameRoomSocket(roomId) {
                 message: `Choosing word timeout! Keeper ${keeper.username} didn't submit a word on time! Moving to the next keeper`,
                 type: "notification",
             });
-            setGameState((prev) => ({ ...prev, ...data }));
+            console.log(data.players.find((p) => p.username === user.username)?.role === "keeper");
+            setGameState((prev) => ({
+                ...prev,
+                keeperTime: data.keeperTime,
+                status: data.status,
+                players: data.players,
+                isKeeper: data.players.find((p) => p.username === user.username)?.role === "keeper",
+            }));
         });
 
         socket.on(SOCKET_EVENTS.SERVER_GAME_ENDED, (data) => {
