@@ -1,52 +1,56 @@
+/* PlayersList.module.css */
 .playersTable {
     flex: 1;
-    padding: 15px;
+    padding: 0.75rem; /* Reduced from 1rem */
     overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 0.75rem; /* Reduced from 1rem */
+    min-height: 0;
 }
 
 .keeperSection,
 .seekersSection {
     background: rgba(255, 255, 255, 0.8);
-    border-radius: 12px;
-    padding: 12px;
+    border-radius: 8px; /* Reduced from 12px */
+    padding: 0.5rem; /* Reduced from 0.75rem */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
 }
 
 .sectionHeader {
-    margin-bottom: 10px;
+    margin-bottom: 0.5rem; /* Reduced from 0.625rem */
     text-align: center;
 }
 
 .keeperTitle,
 .seekersTitle {
-    font-size: 16px;
-    margin-bottom: 4px;
+    font-size: 0.875rem; /* Reduced from 1rem */
+    margin-bottom: 0.125rem; /* Reduced from 0.25rem */
     color: #2d3748;
     font-weight: 600;
 }
 
 .keeperSubtitle,
 .seekersSubtitle {
-    font-size: 12px;
+    font-size: 0.6875rem; /* Reduced from 0.75rem */
     color: #718096;
     display: block;
 }
 
 .divider {
     text-align: center;
-    padding: 8px 0;
+    padding: 0.25rem 0; /* Reduced from 0.5rem 0 */
     flex-shrink: 0;
 }
 
 .vsText {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
-    padding: 4px 12px;
+    padding: 0.125rem 0.5rem; /* Reduced from 0.25rem 0.75rem */
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 0.75rem; /* Reduced from 0.875rem */
     font-weight: bold;
 }
 
@@ -54,10 +58,80 @@
 .seekersContainer {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.375rem; /* Reduced from 0.5rem */
 }
 
-/* Dark mode styles */
+.seekersContainer {
+    max-height: 150px; /* Reduced from 200px */
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+.seekersContainer::-webkit-scrollbar {
+    width: 4px;
+}
+
+.seekersContainer::-webkit-scrollbar-track {
+    background: #f7fafc;
+    border-radius: 2px;
+}
+
+.seekersContainer::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 2px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .playersTable {
+        flex-direction: row;
+        gap: 0.5rem; /* Reduced from 0.625rem */
+        padding: 0.5rem; /* Reduced from 0.625rem */
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .keeperSection,
+    .seekersSection {
+        flex: 1;
+        min-width: 0;
+        padding: 0.375rem; /* Reduced from 0.5rem */
+    }
+
+    .divider {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        align-self: center;
+        padding: 0 0.25rem; /* Reduced from 0 0.5rem */
+    }
+
+    .seekersContainer {
+        max-height: 100px; /* Reduced from 120px */
+    }
+
+    .sectionHeader {
+        margin-bottom: 0.375rem; /* Reduced from 0.5rem */
+    }
+
+    .keeperTitle,
+    .seekersTitle {
+        font-size: 0.75rem; /* Reduced from 0.875rem */
+    }
+
+    .keeperSubtitle,
+    .seekersSubtitle {
+        font-size: 0.625rem; /* Reduced from 0.6875rem */
+    }
+
+    .vsText {
+        font-size: 0.6875rem; /* Reduced from 0.75rem */
+        padding: 0.125rem 0.375rem; /* Reduced from 0.2rem 0.5rem */
+    }
+}
+
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
     .keeperSection,
     .seekersSection {
@@ -78,58 +152,16 @@
     .vsText {
         background: linear-gradient(135deg, #4c51bf, #553c9a);
     }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .playersTable {
-        flex-direction: row;
-        gap: 10px;
-        padding: 10px;
-        overflow-x: auto;
-    }
-
-    .keeperSection,
-    .seekersSection {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .divider {
-        writing-mode: vertical-rl;
-        text-orientation: mixed;
-        align-self: center;
-        padding: 0 8px;
-    }
 
     .seekersContainer {
-        max-height: 120px;
-        overflow-y: auto;
+        scrollbar-color: #718096 #4a5568;
     }
 
-    .sectionHeader {
-        margin-bottom: 8px;
+    .seekersContainer::-webkit-scrollbar-track {
+        background: #4a5568;
     }
 
-    .keeperTitle,
-    .seekersTitle {
-        font-size: 14px;
-    }
-
-    .keeperSubtitle,
-    .seekersSubtitle {
-        font-size: 11px;
-    }
-}
-
-@media (max-width: 480px) {
-    .playersTable {
-        padding: 8px;
-        gap: 8px;
-    }
-
-    .keeperSection,
-    .seekersSection {
-        padding: 8px;
+    .seekersContainer::-webkit-scrollbar-thumb {
+        background: #718096;
     }
 }

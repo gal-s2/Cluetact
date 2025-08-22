@@ -1,4 +1,3 @@
-/* GuessActionLine - Inline guess submission for ClueSection */
 .actionLine {
     width: 100%;
     padding: 1rem;
@@ -73,6 +72,7 @@
     min-height: 44px;
     min-width: 120px;
     box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+    box-sizing: border-box;
 }
 
 .guessButton:hover:not(:disabled) {
@@ -92,16 +92,16 @@
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Tablet styles */
-@media (min-width: 480px) {
+/* Mobile adjustments */
+@media (max-width: 768px) {
     .actionLine {
-        padding: 1.25rem;
+        padding: 0.75rem;
     }
 
     .form {
         flex-direction: row;
         align-items: flex-end;
-        gap: 1.25rem;
+        gap: 0.75rem;
     }
 
     .inputSection {
@@ -113,67 +113,20 @@
     }
 
     .input {
-        font-size: 1.05rem;
-    }
-
-    .guessButton {
-        font-size: 1.05rem;
-        padding: 0.875rem 2.25rem;
-    }
-}
-
-/* Desktop styles */
-@media (min-width: 768px) {
-    .actionLine {
-        padding: 1.5rem;
-    }
-
-    .form {
-        gap: 1.5rem;
-    }
-
-    .input {
-        font-size: 1.1rem;
-        padding: 1rem 1.25rem;
-        min-height: 48px;
-    }
-
-    .guessButton {
-        font-size: 1.1rem;
-        padding: 1rem 2.5rem;
-        min-width: 140px;
-        min-height: 48px;
-    }
-}
-
-/* Mobile landscape optimization */
-@media (max-height: 600px) and (orientation: landscape) {
-    .actionLine {
+        font-size: 1rem; /* Prevents zoom on iOS */
         padding: 0.75rem;
-    }
-
-    .container {
-        gap: 0.5rem;
-    }
-
-    .form {
-        gap: 0.75rem;
-    }
-
-    .input {
-        padding: 0.6rem 0.875rem;
         min-height: 40px;
-        font-size: 0.95rem;
     }
 
     .guessButton {
-        padding: 0.6rem 1.5rem;
+        font-size: 0.875rem;
+        padding: 0.75rem 1.5rem;
+        min-width: 100px;
         min-height: 40px;
-        font-size: 0.95rem;
     }
 }
 
-/* Dark mode support */
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
     .actionLine {
         background: linear-gradient(135deg, #1a2332 0%, #2e1a2e 100%);
@@ -213,54 +166,102 @@
     }
 }
 
-/* Accessibility improvements */
-@media (prefers-reduced-motion: reduce) {
-    .input,
-    .guessButton {
-        transition: none;
-    }
+/* ==================== CountdownTimer.module.css ==================== */
 
-    .guessButton:hover:not(:disabled) {
-        transform: none;
-    }
+.countdownTimer {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    text-align: center;
+    padding: 0.75rem;
+    font-size: clamp(1rem, 3vw, 1.25rem);
+    font-weight: bold;
+    font-family: "Courier New", monospace;
+    letter-spacing: 1px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
 
-    .guessButton:active:not(:disabled) {
-        transform: none;
+.countdownTimer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 2s infinite;
+}
+
+.countdownTimer.clue-submission-color {
+    background: linear-gradient(135deg, #2ed573, #1e90ff);
+}
+
+.countdownTimer.clue-submission-color.warning {
+    background: linear-gradient(135deg, #26d0ce, #1abc9c);
+}
+
+.countdownTimer.clue-submission-color.critical {
+    background: linear-gradient(135deg, #00b894, #00a085);
+}
+
+.countdownTimer.race-color {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+}
+
+.countdownTimer.race-color.warning {
+    background: linear-gradient(135deg, #ff4757, #ff3742);
+}
+
+.countdownTimer.race-color.critical {
+    background: linear-gradient(135deg, #ff3742, #ff2f3a);
+}
+
+.countdownTimer.warning {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
     }
 }
 
-/* High contrast mode */
-@media (prefers-contrast: high) {
-    .actionLine {
-        border-width: 3px;
-        border-color: #000;
-    }
+.countdownTimer.critical {
+    animation: urgentPulse 0.5s infinite;
+}
 
-    .input {
-        border-width: 3px;
-        border-color: #000;
+@keyframes urgentPulse {
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
-
-    .input:focus {
-        border-color: #0066cc;
-    }
-
-    .guessButton {
-        background: #2196f3;
-        border: 3px solid #000;
-    }
-
-    .guessButton:disabled {
-        background: #ccc;
-        border-color: #666;
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(255, 55, 66, 0.4);
     }
 }
 
-/* Focus indicators for keyboard navigation */
-.input:focus-visible,
-.guessButton:focus-visible {
-    outline: 3px solid #2196f3;
-    outline-offset: 2px;
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
 }
 
-/**/
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .countdownTimer {
+        padding: 0.625rem;
+        font-size: clamp(0.875rem, 3vw, 1rem);
+    }
+}
