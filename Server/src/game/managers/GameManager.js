@@ -121,9 +121,8 @@ class GameManager {
                     status: room.status,
                 };
             } else {
-                // room still alive
-                room.handlePlayerExit(username);
-                console.log("daniel_debug ", room.players);
+                // room still exists
+                room.resumeGameAfterPlayerExited();
 
                 return {
                     message: `Player ${username} has left the room`,

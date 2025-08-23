@@ -4,6 +4,8 @@ const SOCKET_EVENTS = require("@shared/socketEvents.json");
 
 const roomSideEffects = {
     onKeeperWordTimeout: (room) => {
+        console.log("roomSideEffects onKeeperWordTimeout", room.roomId, room.status);
+
         if (!room) return;
 
         if (room.status === GAME_STAGES.KEEPER_CHOOSING_WORD) {
@@ -28,6 +30,7 @@ const roomSideEffects = {
         }
     },
     onClueSubmissionTimeout: (room) => {
+        console.log("roomSideEffects onClueSubmissionTimeout", room.roomId, room.status);
         if (!room) return;
 
         if (room.status === GAME_STAGES.CLUE_SUBMISSION) {

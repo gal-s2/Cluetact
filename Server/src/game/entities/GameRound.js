@@ -31,6 +31,10 @@ class GameRound {
         return this.clues;
     }
 
+    getClueByClueId(clueId) {
+        return this.clues.find((clue) => clue.id === clueId);
+    }
+
     getClueGiverUsernameByClueId(clueId) {
         return this.clues.find((clue) => clue.id === clueId)?.from;
     }

@@ -4,11 +4,12 @@ import { useGameRoom } from "@contexts/GameRoomContext";
 import Confetti from "@components/Animations/Confetti/Confetti";
 
 function CluetactPopup() {
-    const [secondsLeft, setSecondsLeft] = useState(5);
+    const [secondsLeft, setSecondsLeft] = useState(10);
     const { gameState, setCluetact } = useGameRoom();
     const { setKeeperWord } = useGameRoom();
     const word = gameState.cluetact?.word || "";
     const guesser = gameState.cluetact?.guesser || "";
+    const definitionFromApi = gameState.cluetact?.definitionFromApi || "";
     const isKeeper = gameState.isKeeper;
 
     // Check if the word will be fully revealed after this cluetact
@@ -25,7 +26,7 @@ function CluetactPopup() {
         const timeout = setTimeout(() => {
             setCluetact(null);
             if (!isKeeper) setKeeperWord("");
-        }, 5000);
+        }, 10000);
 
         return () => {
             clearInterval(interval);
@@ -67,6 +68,17 @@ function CluetactPopup() {
                 <div className={getPopupClass()}>
                     <h2>{getTitle()}</h2>
                     {getMainMessage()}
+
+                    {/* Dictionary Definition Bubble */}
+                    {definitionFromApi && (
+                        <div className={styles.definitionBubble}>
+                            <div className={styles.dictionaryIcon}>📖</div>
+                            <div className={styles.definitionContent}>
+                                <span className={styles.definitionWord}>{word}</span>
+                                <span className={styles.definitionText}>{definitionFromApi}</span>
+                            </div>
+                        </div>
+                    )}
 
                     {isWordFullyRevealed ? (
                         <div className={styles.finalRevealSection}>
