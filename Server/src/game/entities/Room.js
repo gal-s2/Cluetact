@@ -60,7 +60,7 @@ class Room {
         if (this.isKeeperInRoom()) {
             this.advanceToNextSeeker();
         } else {
-            this.setNextRound(true);
+            this.setNextRound();
         }
     }
 
@@ -86,6 +86,20 @@ class Room {
 
     get keeperChoosingWordTime() {
         return this.keeperChoosingWordTimer?.getTimeLeft();
+    }
+
+    get isLastKeeper() {
+        const playersThatWereNotKeepersAndAreNotCurrentKeeper = this.players.filter((player) => player.wasKeeper === false || player.role === ROLES.KEEPER);
+
+        return playersThatWereNotKeepersAndAreNotCurrentKeeper.length === 1;
+    }
+
+    get pastKeepers() {
+        return this.players.every((player) => player.wasKeeper === true);
+    }
+
+    get isActiveKeeper() {
+        return this.players.find((player) => player.wasKeeper === false && player.role === ROLES.KEEPER);
     }
 
     isKeeperInRoom() {
@@ -167,7 +181,6 @@ class Room {
         this.players = [];
         const keeperPlayer = new Player(keeper.username, keeper.avatar);
         keeperPlayer.setRole(ROLES.KEEPER);
-        keeperPlayer.wasKeeper = true;
         this.players.push(keeperPlayer);
 
         seekers.forEach((seeker) => {
@@ -349,13 +362,6 @@ class Room {
         this.callbacks?.onClueSubmissionTimeout?.(this);
     }
 
-    /**
-     * Main guess handler.
-     * Fixes:
-     *  - Direct secret word guesses end the round immediately (early return, no status override).
-     *  - If a clue guess reveals the final letter, we setNextRound() and return early.
-     *  - Avoid double timers / stale timeouts.
-     */
     async submitGuess(guesserUsername, guessWord, clueId) {
         const revealed = this.currentRound.revealedLetters;
         const revealedPrefix = revealed.toLowerCase();
@@ -487,14 +493,14 @@ class Room {
      * Setting next round / end game if completed.
      * New keeper and seekers update, changing status
      */
-    setNextRound(isKeeperLeft = false) {
+    setNextRound() {
         // Stop all timers from previous round to avoid stale/double fire
         this.keeperChoosingWordTimer?.stop();
         this.clueSubmissionTimer?.stop();
         this.raceTimer?.stop();
         this.keeperChoosingWordTimer = this.clueSubmissionTimer = this.raceTimer = null;
-
         this.roundsHistory.push(this.currentRound);
+        if (this.keeper && this.isLastKeeper) this.keeper.wasKeeper = true;
 
         if (this.isGameOver()) {
             this.endGame();
@@ -519,9 +525,10 @@ class Room {
     }
 
     getNextKeeper() {
+        const currentKeeper = this.keeper;
+        if (currentKeeper) currentKeeper.wasKeeper = true;
         for (const player of this.players) {
             if (player.username !== this.keeperUsername && !player.wasKeeper) {
-                player.wasKeeper = true;
                 return player.username;
             }
         }
