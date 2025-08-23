@@ -5,14 +5,23 @@ const DATAMUSE_API_URL = "https://api.datamuse.com/words";
 const DEFAULT_WORD_COUNT = 5;
 
 async function isValidEnglishWord(word) {
-    const url = `https://api.datamuse.com/words?sp=${word.toLowerCase()}&max=1`;
+    const url = `https://api.datamuse.com/words?sp=${word.toLowerCase()}&md=d&max=1`;
     try {
         const res = await fetch(url);
         const data = await res.json();
-        return data.length > 0 && data[0].word.toLowerCase() === word.toLowerCase();
+
+        if (data.length > 0 && data[0].word.toLowerCase() === word.toLowerCase()) {
+            const defs = data[0].defs || [];
+            if (defs.length > 0) {
+                // defs are like "n\tdefinition", so split by tab
+                const firstDef = defs[0].split("\t")[1];
+                return { isValid: true, definitionFromApi: firstDef };
+            }
+        }
+        return { isValid: false };
     } catch (err) {
         console.error("Datamuse API error:", err);
-        return false;
+        return { isValid: false };
     }
 }
 

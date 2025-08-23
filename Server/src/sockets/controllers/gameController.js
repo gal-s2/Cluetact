@@ -205,6 +205,7 @@ const gameController = {
                 keeperWord: result.isWordComplete ? result.keeperWord : null,
                 timeLeft: room.clueSubmissionTimer?.getTimeLeft() || 0,
                 winners: room.winners,
+                definitionFromApi: result.definitionFromApi,
             };
 
             const dataToKeeper = {
@@ -247,7 +248,8 @@ const gameController = {
             );
         } else {
             const guesses = room.getGuesses();
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Block failed", socket);
+            const message = result.message ? result.message : "Block attempt failed";
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, message, socket);
             messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_GUESS_FAILED, guesses, room.roomId);
         }
     },

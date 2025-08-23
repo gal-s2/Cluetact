@@ -12,7 +12,7 @@ function PlayerMainMessageHeader() {
         // If I'm the keeper
         if (gameState.isKeeper) {
             if (!gameState.activeClue) {
-                return "Waiting for seekers to drop their clues... stay sharp! 🎯";
+                return `Waiting for ${gameState.clueGiverUsername} to drop a clue... stay sharp! 🎯`;
             } else {
                 return "Hot clue incoming! Block it before it's too late ⚡";
             }
@@ -28,7 +28,7 @@ function PlayerMainMessageHeader() {
                 }
             } else {
                 if (isMyTurn) {
-                    return "Your clue is live! Will the keeper block it? 🔥";
+                    return "Your clue is live! Who’s going to guess it first? 🔥";
                 } else {
                     return `${gameState.clueGiverUsername}'s clue is in play... 👀 Time to guess!`;
                 }
