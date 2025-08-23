@@ -3,6 +3,25 @@ const { generateToken } = require("../../utils/jwt");
 const { OAuth2Client } = require("google-auth-library");
 const axios = require("axios");
 
+async function getUserCountry(req) {
+    function getClientIP(req) {
+        // Helper function to get client IP
+        return req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.headers["x-real-ip"] || req.connection.remoteAddress || req.socket.remoteAddress || (req.connection.socket ? req.connection.socket.remoteAddress : null) || req.ip;
+    }
+
+    try {
+        const ip = getClientIP(req);
+        if (!ip) throw new Error(`IP address ${ip} not found`);
+        const response = await axios.get(`https://ipapi.co/${ip}/country/`);
+        if (!response.data || response.data) throw new Error("Invalid country code");
+        console.log("Detected country:", response.data);
+        return response.data;
+    } catch (error) {
+        console.log("Error detecting country:", error.message);
+        return "us";
+    }
+}
+
 const client = new OAuth2Client({
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -11,7 +30,8 @@ const client = new OAuth2Client({
 
 async function guest(req, res) {
     try {
-        const user = await User.createGuest();
+        const country = await getUserCountry(req);
+        const user = await User.createGuest(country);
         const token = generateToken(user);
         res.status(200).json({ user, token });
     } catch (err) {
@@ -20,38 +40,11 @@ async function guest(req, res) {
     }
 }
 
-async function getCountryFromIP(ip) {
-    try {
-        const response = await axios.get(`https://ipapi.co/${ip}/country/`);
-        return response.data;
-    } catch (error) {
-        console.log("Error detecting country:", error.message);
-        return "Unknown"; // fallback
-    }
-}
-
-// Helper function to get client IP
-function getClientIP(req) {
-    return (
-        req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
-        req.headers["x-real-ip"] ||
-        req.connection.remoteAddress ||
-        req.socket.remoteAddress ||
-        (req.connection.socket ? req.connection.socket.remoteAddress : null) ||
-        req.ip
-    );
-}
-
 async function register(req, res) {
     const userData = req.body;
 
     try {
-        const clientIP = getClientIP(req);
-        console.log(clientIP);
-        if (!userData.country) {
-            userData.country = await getCountryFromIP(clientIP);
-            console.log(userData.country);
-        }
+        userData.country = await getUserCountry(req);
         const user = await User.register(userData);
         const token = generateToken(user);
         res.status(200).json({ user, token });
@@ -86,16 +79,14 @@ async function google(req, res) {
         const payload = ticket.getPayload();
         const { sub: googleId, email } = payload;
 
-        const user = await User.loginWithGoogle(googleId, email);
+        const country = await getUserCountry(req);
+        const user = await User.loginWithGoogle(googleId, email, country);
 
         const jwt = generateToken(user);
 
         res.status(200).json({ user, token: jwt });
     } catch (err) {
-        console.error(
-            "Google login error (full):",
-            err.response?.data || err.message || err
-        );
+        console.error("Google login error (full):", err.response?.data || err.message || err);
         res.status(401).json({ error: "Google authentication failed" });
     }
 }
