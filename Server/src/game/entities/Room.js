@@ -585,6 +585,12 @@ class Room {
      * @returns {Array} [is word valid, reason for when word is not valid]
      */
     async setKeeperWordWithValidation(word) {
+        const regex = /^[A-Za-z]+$/;
+
+        if (!regex.test(word)) {
+            return [false, "Word must contain only letters A-Z"];
+        }
+
         if (this.keepersWordsHistory.has(word)) {
             return [false, "Previous keeper has already chose this word, Please enter another word"];
         }

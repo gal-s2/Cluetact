@@ -4,10 +4,10 @@ const WaitingRoomManager = require("../../game/managers/WaitingRoomManager");
 const messageEmitter = require("../MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const ROLES = require("../../game/constants/roles");
-const { KEEPER_CHOOSING_WORD } = require("../../game/constants/gameStages");
 const GAME_STAGES = require("../../game/constants/gameStages");
 
 const handleRaceTimeout = (roomId) => {
+    console.log("handleRaceTimeout", roomId);
     const room = gameManager.getRoom(roomId);
     if (!room) return;
     const prevClueGiverUsername = room.getCurrentClueGiverUsername();
@@ -110,8 +110,7 @@ const gameController = {
 
         if (!room) return;
         if (socket.user.username !== room.keeperUsername) return;
-        if (room.status != KEEPER_CHOOSING_WORD) return;
-
+        if (room.status !== GAME_STAGES.KEEPER_CHOOSING_WORD || room.keeperChoosingWordTime < 1) return;
         const result = await room.setKeeperWordWithValidation(word.toLowerCase());
 
         if (result[0]) {
