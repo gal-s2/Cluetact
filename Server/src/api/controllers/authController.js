@@ -18,7 +18,7 @@ async function getUserCountry(req) {
         return response.data;
     } catch (error) {
         console.log("Error detecting country:", error.message);
-        return "us";
+        return "il";
     }
 }
 
