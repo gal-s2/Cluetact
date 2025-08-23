@@ -528,6 +528,22 @@
     }
 }
 
+.tutorialModal {
+    max-width: 95vw !important; /* Take almost full width on mobile */
+    max-height: 85vh !important; /* Take most of screen height */
+    padding: 1rem !important; /* Smaller padding on mobile */
+    width: 95vw !important; /* Force width on mobile */
+}
+
+.tutorialImage {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0.5rem; /* Smaller border radius on mobile */
+    max-height: 70vh; /* Prevent image from being too tall */
+    object-fit: contain; /* Maintain aspect ratio */
+}
+
 /* Responsive Design */
 @media (min-width: 480px) {
     .container {
@@ -606,6 +622,18 @@
     .modalActions {
         flex-direction: row;
     }
+
+    .tutorialModal {
+        max-width: 600px !important;
+        max-height: none !important;
+        padding: 2rem !important;
+        width: auto !important;
+    }
+
+    .tutorialImage {
+        border-radius: 1rem;
+        max-height: none;
+    }
 }
 
 @media (min-width: 1024px) {
@@ -626,6 +654,11 @@
     .card {
         max-width: 350px;
         padding: 2.5rem;
+    }
+
+    .tutorialModal {
+        max-width: 700px !important;
+        padding: 3rem !important;
     }
 }
 
@@ -653,6 +686,14 @@
 
     .header h1 {
         font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 430px) {
+    .tutorialModal {
+        margin: 0.5rem !important;
+        max-width: calc(100vw - 1rem) !important;
+        width: calc(100vw - 1rem) !important;
     }
 }
 
@@ -690,6 +731,15 @@
     .infoSection {
         margin-top: 2rem;
         padding: 1.5rem 1rem;
+    }
+
+    .tutorialModal {
+        max-height: 90vh !important;
+        padding: 0.5rem !important;
+    }
+
+    .tutorialImage {
+        max-height: 75vh;
     }
 }
 
