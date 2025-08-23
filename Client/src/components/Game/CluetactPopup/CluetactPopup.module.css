@@ -82,6 +82,86 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+/* Definition Bubble Styles */
+.definitionBubble {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: #2c3e50;
+    padding: 1rem;
+    border-radius: 12px;
+    margin: 1rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-align: left;
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: bubbleFloat 0.5s ease-out;
+}
+
+.definitionBubble::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid rgba(255, 255, 255, 0.95);
+    filter: drop-shadow(0 -2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.dictionaryIcon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.definitionContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.definitionWord {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #1a365d;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+}
+
+.definitionText {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #4a5568;
+    font-style: italic;
+}
+
+/* Different bubble styles for different popup types */
+.popup.finalReveal .definitionBubble {
+    background: rgba(255, 248, 220, 0.95);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.popup.finalReveal .definitionBubble::before {
+    border-bottom-color: rgba(255, 248, 220, 0.95);
+}
+
+.popup.directWordGuess .definitionBubble {
+    background: rgba(255, 240, 245, 0.95);
+    border: 2px solid rgba(233, 30, 99, 0.2);
+}
+
+.popup.directWordGuess .definitionBubble::before {
+    border-bottom-color: rgba(255, 240, 245, 0.95);
+}
+
 .finalRevealSection {
     margin-top: 1.5rem;
     padding: 1rem;
@@ -177,6 +257,20 @@
     }
 }
 
+@keyframes bubbleFloat {
+    0% {
+        transform: translateY(10px) scale(0.95);
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(-2px) scale(1.02);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
 @keyframes wordPulse {
     0% {
         transform: scale(1);
@@ -232,6 +326,23 @@
     .finalRevealSection {
         padding: 1.5rem;
     }
+
+    .definitionBubble {
+        padding: 1.25rem;
+        gap: 1rem;
+    }
+
+    .dictionaryIcon {
+        font-size: 1.75rem;
+    }
+
+    .definitionWord {
+        font-size: 1.2rem;
+    }
+
+    .definitionText {
+        font-size: 1rem;
+    }
 }
 
 /* Desktop styles */
@@ -263,6 +374,23 @@
     .gameEndMessage {
         font-size: 1.1rem;
     }
+
+    .definitionBubble {
+        padding: 1.5rem;
+        gap: 1.25rem;
+    }
+
+    .dictionaryIcon {
+        font-size: 2rem;
+    }
+
+    .definitionWord {
+        font-size: 1.3rem;
+    }
+
+    .definitionText {
+        font-size: 1.1rem;
+    }
 }
 
 /* Reduced motion */
@@ -284,6 +412,10 @@
     }
 
     .finalWord {
+        animation: none;
+    }
+
+    .definitionBubble {
         animation: none;
     }
 }

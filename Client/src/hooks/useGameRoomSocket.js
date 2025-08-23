@@ -106,7 +106,7 @@ export default function useGameRoomSocket(roomId) {
             console.log("iswordcomplete: ", data.isWordComplete);
             setGameState((prev) => ({
                 ...prev,
-                cluetact: { guesser: data.guesser, word: data.word },
+                cluetact: { guesser: data.guesser, word: data.word, definitionFromApi: data.definitionFromApi },
                 players: data.players,
                 clues: data.clues,
                 isSubmittingClue: data.clueGiverUsername === user.username,

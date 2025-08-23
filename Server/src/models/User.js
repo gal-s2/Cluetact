@@ -116,7 +116,7 @@ UserSchema.statics.register = async function (userData) {
     return user;
 };
 
-UserSchema.statics.loginWithGoogle = async function (googleId, email) {
+UserSchema.statics.loginWithGoogle = async function (googleId, email, country) {
     let user = await this.findOne({ googleId });
 
     if (!user) {
@@ -132,6 +132,7 @@ UserSchema.statics.loginWithGoogle = async function (googleId, email) {
             googleId,
             email,
             username,
+            country,
             authProvider: "google",
             avatar: Math.floor(Math.random() * 10) + 1,
         });
@@ -152,13 +153,14 @@ UserSchema.statics.login = async function (username, password) {
     return user;
 };
 
-UserSchema.statics.createGuest = async function () {
+UserSchema.statics.createGuest = async function (country) {
     const username = await this.generateRandomUsername();
 
     const guest = await this.create({
         guest: true,
         username,
         authProvider: "guest",
+        country,
         avatar: Math.floor(Math.random() * 10) + 1,
     });
 
