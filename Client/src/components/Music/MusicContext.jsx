@@ -16,7 +16,7 @@ export const MusicProvider = ({ children }) => {
     const audioRef = useRef(null);
     const retryTimeoutRef = useRef(null);
     const stateCheckIntervalRef = useRef(null);
-    const [isMusicOn, setIsMusicOn] = useState(true);
+    const [isMusicOn, setIsMusicOn] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
     const [hasInteracted, setHasInteracted] = useState(false);
     const [currentTrack, setCurrentTrack] = useState("lobby");
