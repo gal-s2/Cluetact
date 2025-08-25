@@ -1,0 +1,187 @@
+/* ============================================
+   DailyWordBanner.module.css
+   Matches Lobby's glass/green aesthetic
+   ============================================ */
+
+/* Outer container: glass card + green accent, like .card */
+.banner {
+    /* Glass look aligned with your .card */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(129, 199, 132, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(76, 175, 80, 0.1);
+
+    /* Layout */
+    padding: 0.85rem 1rem; /* a bit slimmer than your .card */
+    width: 100%;
+    max-width: 900px;
+    margin: 2rem auto 0 auto;
+
+    /* Scroller essentials */
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    isolation: isolate; /* keeps pseudo behind text */
+    color: #2e7d32; /* matches headings tint */
+    font-family: "Poppins", "Inter", sans-serif;
+}
+
+/* Subtle accent strip (echoes .header::before) */
+.banner::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4caf50, #81c784);
+    border-radius: 16px 16px 0 0;
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+/* Optional soft inner glow to match your green atmosphere */
+.banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+            120% 60% at 0% 0%,
+            rgba(129, 199, 132, 0.06) 0%,
+            transparent 45%
+        ),
+        radial-gradient(
+            120% 60% at 100% 0%,
+            rgba(79, 195, 247, 0.06) 0%,
+            transparent 45%
+        );
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Loading / error state text (inherits card look) */
+.fallback {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 0.98rem;
+    color: #555;
+    padding: 0.15rem 0;
+}
+
+/* ============================
+     Seamless scrolling mechanics
+     ============================ */
+
+/* Track: two copies inline; animate -50% for perfect loop */
+.track {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gap, 2rem);
+    will-change: transform;
+    animation: marquee var(--speed, 8s) linear infinite;
+}
+
+/* Pause when hovering anywhere on the banner */
+.banner:hover .track {
+    animation-play-state: paused;
+}
+
+/* Each item is a single copy of the sentence */
+.item {
+    display: inline-block;
+    font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+    line-height: 1.5;
+    color: #2e7d32; /* readable green to match .card h2 */
+}
+
+/* Make the emojis/leading label slightly stronger */
+.item::first-letter {
+    font-weight: 600;
+}
+
+/* Optional: emphasize "Word of the Day" label if present */
+.item strong {
+    color: #2e7d32;
+}
+
+/* Smooth continuous scroll (exact half-shift) */
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* ======================
+     Responsive refinements
+     ====================== */
+
+@media (max-width: 480px) {
+    .banner {
+        padding: 0.75rem 0.85rem;
+        border-radius: 14px;
+    }
+    .item {
+        font-size: 0.95rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .banner {
+        padding: 0.9rem 1.1rem;
+    }
+}
+
+/* =================
+     Dark mode support
+     ================= */
+
+@media (prefers-color-scheme: dark) {
+    .banner {
+        background: rgba(42, 42, 42, 0.95);
+        border-color: rgba(129, 199, 132, 0.3);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35),
+            0 2px 8px rgba(129, 199, 132, 0.1);
+        color: #81c784;
+    }
+
+    .banner::before {
+        background: linear-gradient(90deg, #81c784, #a5d6a7);
+        opacity: 0.9;
+    }
+
+    .item {
+        color: #a5d6a7;
+    }
+
+    .fallback {
+        color: #ccc;
+    }
+}
+
+/* ======================
+     Reduced motion support
+     ====================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .track {
+        animation: none;
+    }
+}
+
+/* ======================
+     Utility (optional)
+     ====================== */
+
+/* If you want a tiny separator bullet between sections */
+.dot {
+    margin: 0 0.5rem;
+    opacity: 0.45;
+}
+
+/* If you want the pronounciation/etymology dimmed slightly */
+.muted {
+    opacity: 0.8;
+}

@@ -20,7 +20,9 @@ process.on("unhandledRejection", (reason, promise) => {
 app.use(helmet());
 let corsOrigins = [];
 try {
-    corsOrigins = process.env.CORS_ORIGINS ? JSON.parse(process.env.CORS_ORIGINS) : [];
+    corsOrigins = process.env.CORS_ORIGINS
+        ? JSON.parse(process.env.CORS_ORIGINS)
+        : [];
 } catch (err) {
     console.error("Invalid JSON in CORS_ORIGINS env variable:", err);
 }
@@ -37,8 +39,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(require("./api/routes/router.js"));
-
+app.use("/api", require("./api/routes/router.js"));
 const http = require("http");
 const { Server } = require("socket.io");
 const server = http.createServer(app);
