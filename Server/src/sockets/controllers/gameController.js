@@ -111,6 +111,7 @@ const gameController = {
         if (!room) return;
         if (socket.user.username !== room.keeperUsername) return;
         if (room.status !== GAME_STAGES.KEEPER_CHOOSING_WORD || room.keeperChoosingWordTime < 1) return;
+
         const result = await room.setKeeperWordWithValidation(word.toLowerCase());
 
         if (result[0]) {
@@ -118,6 +119,7 @@ const gameController = {
             room.keepersWordsHistory.add(word.toLowerCase());
             const clueGiverUsername = room.getCurrentClueGiverUsername();
             room.setStatus(GAME_STAGES.CLUE_SUBMISSION);
+
             // send all players in room a word chosen
             for (const player of room.players) {
                 const data = {

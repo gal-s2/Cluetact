@@ -82,7 +82,7 @@ class Room {
     }
 
     get keeperChoosingWordTime() {
-        return this.keeperChoosingWordTimer?.getTimeLeft();
+        return this.keeperChoosingWordTimer?.getTimeLeft() - 1;
     }
 
     get isLastKeeper() {
@@ -596,10 +596,13 @@ class Room {
         }
 
         const valid = await isValidEnglishWord(word);
+
         if (!valid) {
             Logger.logInvalidKeeperWord(this.roomId, word);
             return [false, "Invalid English word, please try again"];
         }
+
+        // add guard against timer changing
 
         this.currentRound.setKeeperWord(word);
         this.keeperChoosingWordTimer?.stop();
