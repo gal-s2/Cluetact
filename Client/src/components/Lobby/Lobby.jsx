@@ -132,9 +132,7 @@ function Lobby() {
             socket.disconnect();
             console.log("Socket.disconnect() called");
         } else {
-            console.log(
-                "Socket is not connected, skipping socket.disconnect()."
-            );
+            console.log("Socket is not connected, skipping socket.disconnect().");
         }
 
         console.log("Navigating to home page BEFORE clearing user state...");
@@ -162,8 +160,7 @@ function Lobby() {
         navigate(`/waiting/${newCode}`, { state: { isCreator: true } });
 
         setGlobalNotification({
-            message:
-                "Waiting room created — invite friends! You can start once 3 or more players join.",
+            message: "Waiting room created — invite friends! You can start once 3 or more players join.",
             type: "info",
         });
     };
@@ -198,19 +195,8 @@ function Lobby() {
 
             <main className={styles.main}>
                 <div className={styles.sectionGroup}>
-                    <PlayCard
-                        playMenuOpen={playMenuOpen}
-                        setPlayMenuOpen={handlePlayMenuToggle}
-                        findGame={findGame}
-                        setShowJoinModal={handleShowJoinModal}
-                        handleCreateRoom={handleCreateRoom}
-                    />
-                    <ProfileCard
-                        profileMenuOpen={profileMenuOpen}
-                        setProfileMenuOpen={handleProfileMenuToggle}
-                        navigate={navigate}
-                        disconnect={disconnect}
-                    />
+                    <PlayCard playMenuOpen={playMenuOpen} setPlayMenuOpen={handlePlayMenuToggle} findGame={findGame} setShowJoinModal={handleShowJoinModal} handleCreateRoom={handleCreateRoom} />
+                    <ProfileCard profileMenuOpen={profileMenuOpen} setProfileMenuOpen={handleProfileMenuToggle} navigate={navigate} disconnect={disconnect} />
                 </div>
             </main>
 
@@ -219,14 +205,7 @@ function Lobby() {
             {/* Daily Word Banner at the bottom */}
             <DailyWordBanner />
 
-            {showJoinModal && (
-                <JoinRoomModal
-                    roomCodeInput={roomCodeInput}
-                    setRoomCodeInput={setRoomCodeInput}
-                    handleJoinRoom={handleJoinRoom}
-                    closeModal={() => setShowJoinModal(false)}
-                />
-            )}
+            {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
         </div>
     );
 }

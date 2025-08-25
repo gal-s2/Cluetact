@@ -12,7 +12,7 @@ const DailyWordBanner = () => {
         const fetchDailyWord = async () => {
             try {
                 // Fetch today's word
-                const { data } = await axios.get(`${baseUrl}/api/daily-word`);
+                const { data } = await axios.get(`${baseUrl}/daily-word`);
                 if (data?.success) {
                     setWordData(data.data);
                 } else {
@@ -38,10 +38,7 @@ const DailyWordBanner = () => {
     if (error || !wordData) {
         return (
             <div className={styles.banner}>
-                <div className={styles.fallback}>
-                    📚 Daily Word currently unavailable — check console for
-                    details
-                </div>
+                <div className={styles.fallback}>📚 Daily Word currently unavailable — check console for details</div>
             </div>
         );
     }
@@ -50,10 +47,7 @@ const DailyWordBanner = () => {
 
     return (
         <div className={styles.banner}>
-            <div
-                className={styles.track}
-                style={{ "--speed": "18s", "--gap": "2rem" }}
-            >
+            <div className={styles.track} style={{ "--speed": "30s", "--gap": "2rem" }}>
                 <span className={styles.item}>{scrollingText}</span>
                 <span className={styles.item} aria-hidden="true">
                     {scrollingText}
