@@ -1,4 +1,3 @@
-// Client: components/Lobby/DailyWordBanner.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import baseUrl from "@config/baseUrl";
@@ -47,18 +46,15 @@ const DailyWordBanner = () => {
         );
     }
 
-    // Build the single line of scrolling text
     const scrollingText = `📚 Word of the Day: ${wordData.word} (${wordData.partOfSpeech}) — ${wordData.meaning} • Etymology: ${wordData.origin} • Pronunciation: /${wordData.pronunciation}/`;
 
     return (
         <div className={styles.banner}>
-            {/* Only adds scrolling behavior; outer .banner keeps your original style */}
             <div
                 className={styles.track}
-                style={{ "--speed": "18s", "--gap": "2rem" }} // tweak speed/gap as you like
+                style={{ "--speed": "18s", "--gap": "2rem" }}
             >
                 <span className={styles.item}>{scrollingText}</span>
-                {/* Duplicate once for seamless wrap */}
                 <span className={styles.item} aria-hidden="true">
                     {scrollingText}
                 </span>

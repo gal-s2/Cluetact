@@ -1,4 +1,3 @@
-// Server: api/routes/dailyWord.js
 const express = require("express");
 const router = express.Router();
 const { getTodaysWord } = require("../../utils/dailyWords");
