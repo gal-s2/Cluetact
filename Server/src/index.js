@@ -38,7 +38,6 @@ app.use((req, res, next) => {
 });
 
 app.use(require("./api/routes/router.js"));
-
 const http = require("http");
 const { Server } = require("socket.io");
 const server = http.createServer(app);

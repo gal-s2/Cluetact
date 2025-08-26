@@ -10,6 +10,7 @@ import LobbyHeader from "./LobbyHeader";
 import JoinRoomModal from "./JoinRoomModal";
 import ProfileCard from "./ProfileCard";
 import PlayCard from "./PlayCard";
+import DailyWordBanner from "./DailyWordBanner";
 import generateRoomCode from "../../utils/generateRoomCode";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
 import Modal from "@common/Modal/Modal";
@@ -200,6 +201,9 @@ function Lobby() {
             </main>
 
             <InfoSection />
+
+            {/* Daily Word Banner at the bottom */}
+            <DailyWordBanner />
 
             {showJoinModal && <JoinRoomModal roomCodeInput={roomCodeInput} setRoomCodeInput={setRoomCodeInput} handleJoinRoom={handleJoinRoom} closeModal={() => setShowJoinModal(false)} />}
         </div>
