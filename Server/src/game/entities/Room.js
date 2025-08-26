@@ -219,7 +219,12 @@ class Room {
     }
 
     onKeeperWordTimeout() {
-        // Ignore stale/double timers
+        // If keeper is busy, retry shortly
+        if (this.isKeeperBusy) {
+            setTimeout(() => this.onKeeperWordTimeout(), 50);
+            return;
+        }
+
         if (this.status !== GAME_STAGES.KEEPER_CHOOSING_WORD) return;
 
         this.setNextRound();
@@ -585,30 +590,44 @@ class Room {
      * @returns {Array} [is word valid, reason for when word is not valid]
      */
     async setKeeperWordWithValidation(word) {
-        const regex = /^[A-Za-z]+$/;
-
-        if (!regex.test(word)) {
-            return [false, "Word must contain only letters A-Z"];
+        // If someone else is submitting, reject early
+        if (this.isKeeperBusy) {
+            return [false, "Keeper is currently submitting, please wait"];
         }
 
-        if (this.keepersWordsHistory.has(word)) {
-            return [false, "Previous keeper has already chose this word, Please enter another word"];
+        // Acquire lock
+        this.isKeeperBusy = true;
+        try {
+            const regex = /^[A-Za-z]+$/;
+
+            if (!regex.test(word)) {
+                return [false, "Word must contain only letters A-Z"];
+            }
+
+            if (this.keepersWordsHistory.has(word)) {
+                return [false, "Previous keeper has already chose this word, Please enter another word"];
+            }
+
+            const valid = await isValidEnglishWord(word);
+
+            if (!valid) {
+                Logger.logInvalidKeeperWord(this.roomId, word);
+                return [false, "Invalid English word, please try again"];
+            }
+
+            // add guard against timer changing
+
+            this.currentRound.setKeeperWord(word);
+            this.keeperChoosingWordTimer?.stop();
+
+            Logger.logKeeperWordSet(this.roomId, word);
+            return [true];
+        } catch (e) {
+            return [false, "An error occurred while setting the word"];
+        } finally {
+            // Release lock
+            this.isKeeperBusy = false;
         }
-
-        const valid = await isValidEnglishWord(word);
-
-        if (!valid) {
-            Logger.logInvalidKeeperWord(this.roomId, word);
-            return [false, "Invalid English word, please try again"];
-        }
-
-        // add guard against timer changing
-
-        this.currentRound.setKeeperWord(word);
-        this.keeperChoosingWordTimer?.stop();
-
-        Logger.logKeeperWordSet(this.roomId, word);
-        return [true];
     }
 }
 
