@@ -4,6 +4,7 @@ const { isValidEnglishWord } = require("../../utils/wordUtils");
 const Logger = require("../Logger");
 const User = require("../../models/User");
 const CountdownTimer = require("../entities/CountdownTimer");
+const globalLock = require("../managers/GlobalLock");
 
 // Constants
 const ROLES = require("../constants/roles");
@@ -42,10 +43,8 @@ class Room {
         this.isWordFullyRevealed = false;
         this.keepersWordsHistory = new Set();
 
-        // Timers
-        this.raceTimer = null;
-        this.keeperChoosingWordTimer = null;
-        this.clueSubmissionTimer = null;
+        //Timer
+        this.timer = new CountdownTimer();
 
         //Go into the first status - letting the keeper choose a word
         this.setStatus(GAME_STAGES.KEEPER_CHOOSING_WORD);
@@ -53,9 +52,7 @@ class Room {
 
     //Call on room destruction
     destroy() {
-        this.keeperChoosingWordTimer?.stop();
-        this.clueSubmissionTimer?.stop();
-        this.raceTimer?.stop();
+        this.timer.stop();
         this.setWinners();
         this.setStatus(GAME_STAGES.END);
         this.callbacks = null;
@@ -79,10 +76,6 @@ class Room {
 
     get roomId() {
         return this.#roomId;
-    }
-
-    get keeperChoosingWordTime() {
-        return this.keeperChoosingWordTimer?.getTimeLeft() - 1;
     }
 
     get isLastKeeper() {
@@ -115,8 +108,8 @@ class Room {
         return this.currentRound.guesses;
     }
 
-    getTimeLeft() {
-        return this.raceTimer ? this.raceTimer.getTimeLeft() : 0;
+    getTimeLeftUntilTimeout() {
+        return this.timer ? this.timer.getTimeLeft() : 0;
     }
 
     getRevealedLetters() {
@@ -152,49 +145,33 @@ class Room {
     setStatus(newStatus) {
         if (!newStatus) return;
 
-        // Stop timers that must not bleed into the next status
-        if (newStatus !== GAME_STAGES.KEEPER_CHOOSING_WORD) {
-            this.keeperChoosingWordTimer?.stop();
-            this.keeperChoosingWordTimer = null;
-        }
-        if (newStatus !== GAME_STAGES.CLUE_SUBMISSION && newStatus !== GAME_STAGES.CLUE_SUBMISSION_POST_CLUETACT) {
-            this.clueSubmissionTimer?.stop();
-            this.clueSubmissionTimer = null;
-        }
-        if (newStatus !== this.status) {
-            this.raceTimer?.stop();
-            this.raceTimer = null;
-        }
+        this.timer.stop();
 
         switch (newStatus) {
             case GAME_STAGES.KEEPER_CHOOSING_WORD: {
                 // Extra safety: ensure no previous keeper timer is running
-                this.keeperChoosingWordTimer?.stop();
-                this.keeperChoosingWordTimer = new CountdownTimer(TIMES.KEEPER_CHOOSING_WORD, this.onKeeperWordTimeout.bind(this));
-                this.keeperChoosingWordTimer.start();
+                this.timer.setNewTimerDetails(TIMES.KEEPER_CHOOSING_WORD, this.onKeeperWordTimeout.bind(this));
+                globalLock.isKeeperWordLockAcquired = false;
+                this.timer.start();
                 break;
             }
 
             case GAME_STAGES.CLUE_SUBMISSION: {
-                this.clueSubmissionTimer?.stop();
-                this.clueSubmissionTimer = new CountdownTimer(TIMES.CLUE_SUBMISSION, this.onClueSubmissionTimeout.bind(this));
-                this.clueSubmissionTimer.start();
+                this.timer.setNewTimerDetails(TIMES.CLUE_SUBMISSION, this.onClueSubmissionTimeout.bind(this));
+                globalLock.isSeekerTurnLockAcquired = false;
+                this.timer.start();
                 break;
             }
 
             case GAME_STAGES.CLUE_SUBMISSION_POST_CLUETACT: {
-                this.clueSubmissionTimer?.stop();
-                this.clueSubmissionTimer = new CountdownTimer(TIMES.CLUE_SUBMISSION_POST_CLUETACT, this.onClueSubmissionTimeout.bind(this));
-                this.clueSubmissionTimer.start();
+                this.timer.setNewTimerDetails(TIMES.CLUE_SUBMISSION_POST_CLUETACT, this.onClueSubmissionTimeout.bind(this));
+                globalLock.isSeekerTurnLockAcquired = false;
+                this.timer.start();
                 break;
             }
 
             case GAME_STAGES.END: {
-                // Hard stop everything at game end
-                this.keeperChoosingWordTimer?.stop();
-                this.clueSubmissionTimer?.stop();
-                this.raceTimer?.stop();
-                this.keeperChoosingWordTimer = this.clueSubmissionTimer = this.raceTimer = null;
+                this.timer.stop();
                 break;
             }
 
@@ -218,12 +195,20 @@ class Room {
         else this.setNextRound();
     }
 
-    onKeeperWordTimeout() {
-        // Ignore stale/double timers
-        if (this.status !== GAME_STAGES.KEEPER_CHOOSING_WORD) return;
+    async onKeeperWordTimeout() {
+        const release = await globalLock.acquire();
+        try {
+            if (!globalLock.isKeeperWordLockAcquired) {
+                globalLock.isKeeperWordLockAcquired = true;
+                // Ignore stale/double timers
+                if (this.status !== GAME_STAGES.KEEPER_CHOOSING_WORD) return;
 
-        this.setNextRound();
-        this.callbacks?.onKeeperWordTimeout?.(this);
+                this.setNextRound();
+                this.callbacks?.onKeeperWordTimeout?.(this);
+            }
+        } finally {
+            release();
+        }
     }
 
     revealNextLetter() {
@@ -259,7 +244,7 @@ class Room {
         if (lowerGuess === this.currentRound?.keeperWord.toLowerCase()) return { success: false, message: "You can't guess your own word" };
 
         if (!activeClue.blocked && activeClue.word === lowerGuess) {
-            this.raceTimer?.stop();
+            this.timer.stop();
             activeClue.blocked = true;
             activeClue.active = false;
             this.currentRound.guesses = [];
@@ -303,48 +288,64 @@ class Room {
             return [false, "Invalid guess, definition containing the word cannot be used."];
         }
 
-        this.clueSubmissionTimer?.stop();
+        this.timer.stop(); //stop the clue submission timer
         this.currentRound.countOfClueSubmittersInPrefix++;
         const clue = new Clue(clueGiverUsername, clueWord, clueDefinition, definitionFromApi);
         this.currentRound.clues.push(clue);
         Logger.logClueSet(this.roomId, clueGiverUsername, clueDefinition);
-
-        this.raceTimer = new CountdownTimer(TIMES.TURN_INTERVAL, onRaceTimeout);
-        this.raceTimer.start();
+        this.timer.setNewTimerDetails(TIMES.TURN_INTERVAL, onRaceTimeout);
+        globalLock.isRaceLockAcquired = false;
+        this.timer.start();
 
         return [true];
     }
 
-    handleRaceTimeout() {
-        const result = { isAdvancingToNextLetter: false };
-        const clue = this.currentRound.getActiveClue();
+    async handleRaceTimeout() {
+        const release = await globalLock.acquire();
+        try {
+            if (!globalLock.isRaceLockAcquired) {
+                globalLock.isRaceLockAcquired = true;
+                const result = { isAdvancingToNextLetter: false };
+                const clue = this.currentRound.getActiveClue();
 
-        // Block the clue without assigning points
-        clue.blocked = true;
-        clue.active = false;
+                // Block the clue without assigning points
+                clue.blocked = true;
+                clue.active = false;
 
-        // Advance to next seeker
-        this.advanceToNextSeeker();
+                // Advance to next seeker
+                this.advanceToNextSeeker();
 
-        if (this.currentRound.countOfClueSubmittersInPrefix === this.seekersUsernames.length) {
-            result.isAdvancingToNextLetter = true;
-            this.isWordFullyRevealed = this.revealNextLetter();
+                if (this.currentRound.countOfClueSubmittersInPrefix === this.seekersUsernames.length) {
+                    result.isAdvancingToNextLetter = true;
+                    this.isWordFullyRevealed = this.revealNextLetter();
+                }
+
+                // Reset clue history and guesses
+                this.currentRound.resetCluesHistory();
+                this.currentRound.resetGuessesHistory();
+
+                this.setStatus(GAME_STAGES.CLUE_SUBMISSION);
+
+                return result;
+            }
+        } finally {
+            release();
         }
-
-        // Reset clue history and guesses
-        this.currentRound.resetCluesHistory();
-        this.currentRound.resetGuessesHistory();
-
-        this.setStatus(GAME_STAGES.CLUE_SUBMISSION);
-
-        return result;
     }
 
-    onClueSubmissionTimeout() {
-        // If someone didn't submit in time, advance to next seeker and repeat
-        this.advanceToNextSeeker();
-        this.setStatus(GAME_STAGES.CLUE_SUBMISSION);
-        this.callbacks?.onClueSubmissionTimeout?.(this);
+    async onClueSubmissionTimeout() {
+        const release = await globalLock.acquire();
+        try {
+            if (!globalLock.isSeekerTurnLockAcquired) {
+                globalLock.isSeekerTurnLockAcquired = true;
+                // If someone didn't submit in time, advance to next seeker and repeat
+                this.advanceToNextSeeker();
+                this.setStatus(GAME_STAGES.CLUE_SUBMISSION);
+                this.callbacks?.onClueSubmissionTimeout?.(this);
+            }
+        } finally {
+            release();
+        }
     }
 
     async submitGuess(guesserUsername, guessWord, clueId) {
@@ -374,8 +375,7 @@ class Room {
         result.keeperWord = this.currentRound.keeperWord;
         // 1) Secret word guessed directly -> immediate round end
         if (keeperWordLower && guessLower === keeperWordLower) {
-            this.raceTimer?.stop();
-            this.clueSubmissionTimer?.stop();
+            this.timer.stop();
 
             result.correct = true;
             result.isWordComplete = true;
@@ -435,7 +435,7 @@ class Room {
             this.addPointsToPlayerByUsername(guesserUsername, pointsToGive);
             this.addPointsToPlayerByUsername(clue.from, pointsToGive);
 
-            this.raceTimer?.stop();
+            this.timer.stop();
             result.isGameEnded = this.isGameOver();
 
             if (result.isGameEnded) {
@@ -473,10 +473,7 @@ class Room {
      */
     setNextRound() {
         // Stop all timers from previous round to avoid stale/double fire
-        this.keeperChoosingWordTimer?.stop();
-        this.clueSubmissionTimer?.stop();
-        this.raceTimer?.stop();
-        this.keeperChoosingWordTimer = this.clueSubmissionTimer = this.raceTimer = null;
+        this.timer.stop();
         this.roundsHistory.push(this.currentRound);
         if (this.keeper && this.isLastKeeper) this.keeper.wasKeeper = true;
 
@@ -605,7 +602,7 @@ class Room {
         // add guard against timer changing
 
         this.currentRound.setKeeperWord(word);
-        this.keeperChoosingWordTimer?.stop();
+        this.timer.stop();
 
         Logger.logKeeperWordSet(this.roomId, word);
         return [true];
