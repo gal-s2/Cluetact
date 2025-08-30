@@ -100,24 +100,25 @@
 /* Lobby-specific section group */
 .sectionGroup {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     width: 100%;
-    max-width: 400px;
     align-items: center;
     min-height: auto; /* Remove fixed min-height */
     box-sizing: border-box;
     margin-left: auto;
     margin-right: auto;
+    justify-content: center;
 }
 
 /* Welcome page specific action cards */
 .actionCards {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 1.5vh; /* Changed from 2rem to 1.5vh */
     width: 100%;
-    max-width: 400px;
     align-items: center;
+    justify-content: center;
 }
 
 /* Enhanced Card Styling */
@@ -271,6 +272,14 @@
     animation: dropdownSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100;
     min-width: 100%;
+}
+
+.dropdown button {
+    margin: 8px 0;
+}
+
+.dropdown button:last-child {
+    margin: 0;
 }
 
 @keyframes dropdownSlide {
@@ -592,7 +601,6 @@
 
     .actionCards {
         gap: 2.5vh; /* Changed from 2.5rem to 2.5vh */
-        max-width: 700px;
     }
 
     .card {
@@ -636,7 +644,6 @@
 
     .actionCards {
         gap: 3vh; /* Changed from 3rem to 3vh */
-        max-width: 800px;
     }
 
     .card {
