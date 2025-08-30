@@ -15,6 +15,7 @@ async function getUserStatsById(req, res) {
         res.status(500).json({ error: "Server error" });
     }
 }
+
 async function getLeaderboard(req, res) {
     try {
         const topPlayersRaw = await User.aggregate([

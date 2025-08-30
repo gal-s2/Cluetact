@@ -5,6 +5,7 @@ const messageEmitter = require("../MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const ROLES = require("../../game/constants/roles");
 const GAME_STAGES = require("../../game/constants/gameStages");
+const globalLock = require("../../game/managers/GlobalLock");
 
 const handleRaceTimeout = (roomId) => {
     console.log("handleRaceTimeout", roomId);
@@ -23,7 +24,7 @@ const handleRaceTimeout = (roomId) => {
         clueGiverUsername,
         prevClueGiverUsername,
         keeperWord: null,
-        timeLeft: room.clueSubmissionTimer?.getTimeLeft(),
+        timeLeft: room.getTimeLeftUntilTimeout(),
     };
     const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
     messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
@@ -98,158 +99,192 @@ const gameController = {
                 isWordChosen: !!room.getKeeperWord(),
                 guesses: guesses,
                 clueGiverUsername: clueGiverUsername,
-                keeperTime: room.keeperChoosingWordTime,
+                keeperTime: room.getTimeLeftUntilTimeout(),
             },
             socket
         );
     },
 
     handleKeeperWordSubmission: async (socket, args) => {
-        let { word } = args;
-        const room = gameManager.getRoomBySocket(socket);
+        const release = await globalLock.acquire();
+        try {
+            if (!globalLock.isKeeperWordLockAcquired) {
+                let { word } = args;
+                const room = gameManager.getRoomBySocket(socket);
 
-        if (!room) return;
-        if (socket.user.username !== room.keeperUsername) return;
-        if (room.status !== GAME_STAGES.KEEPER_CHOOSING_WORD || room.keeperChoosingWordTime < 1) return;
-        const result = await room.setKeeperWordWithValidation(word.toLowerCase());
+                if (!room) return;
+                if (socket.user.username !== room.keeperUsername) return;
+                if (room.status !== GAME_STAGES.KEEPER_CHOOSING_WORD || room.getTimeLeftUntilTimeout() < 1) return;
 
-        if (result[0]) {
-            word = room.getKeeperWord();
-            room.keepersWordsHistory.add(word.toLowerCase());
-            const clueGiverUsername = room.getCurrentClueGiverUsername();
-            room.setStatus(GAME_STAGES.CLUE_SUBMISSION);
-            // send all players in room a word chosen
-            for (const player of room.players) {
-                const data = {
-                    success: true,
-                    word: player.role === ROLES.KEEPER ? word : undefined,
-                    revealedWord: room.getRevealedLetters(),
-                    length: word.length,
-                    clueGiverUsername,
-                    timeLeft: room.clueSubmissionTimer?.getTimeLeft() || 0,
-                };
+                const result = await room.setKeeperWordWithValidation(word.toLowerCase());
 
-                messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN, data, player.username);
+                if (result[0]) {
+                    globalLock.isKeeperWordLockAcquired = true;
+                    word = room.getKeeperWord();
+                    room.keepersWordsHistory.add(word.toLowerCase());
+                    const clueGiverUsername = room.getCurrentClueGiverUsername();
+                    room.setStatus(GAME_STAGES.CLUE_SUBMISSION);
+
+                    // send all players in room a word chosen
+                    for (const player of room.players) {
+                        const data = {
+                            success: true,
+                            word: player.role === ROLES.KEEPER ? word : undefined,
+                            revealedWord: room.getRevealedLetters(),
+                            length: word.length,
+                            clueGiverUsername,
+                            timeLeft: room.getTimeLeftUntilTimeout() || 0,
+                        };
+
+                        messageEmitter.emitToPlayer(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN, data, player.username);
+                    }
+                } else {
+                    messageEmitter.emitToSocket(
+                        SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN,
+                        {
+                            success: false,
+                            message: result[1],
+                        },
+                        socket
+                    );
+                }
             }
-        } else {
-            messageEmitter.emitToSocket(
-                SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN,
-                {
-                    success: false,
-                    message: result[1],
-                },
-                socket
-            );
+        } finally {
+            release();
         }
     },
 
     handleSubmitClue: async (socket, { definition, word }) => {
-        const room = gameManager.getRoomBySocket(socket);
-        if (!room) return;
+        const release = await globalLock.acquire();
+        try {
+            if (!globalLock.isSeekerTurnLockAcquired) {
+                const room = gameManager.getRoomBySocket(socket);
+                if (!room) return;
 
-        const username = socket.user.username;
-        const result = await room.startNewClueRound(username, word, definition, () => {
-            handleRaceTimeout(room.roomId);
-        });
-        const timeLeft = room.getTimeLeft();
+                const username = socket.user.username;
+                const result = await room.startNewClueRound(username, word, definition, () => {
+                    handleRaceTimeout(room.roomId);
+                });
+                const timeLeft = room.getTimeLeftUntilTimeout();
 
-        if (result[0]) {
-            messageEmitter.emitToKeeper(
-                SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK,
-                {
-                    status: room.status,
-                    clues: room.currentRound.getClues(),
-                    timeLeft,
-                },
-                room.roomId
-            );
-
-            for (const player of room.players) {
-                if (player.role === ROLES.SEEKER) {
-                    messageEmitter.emitToPlayer(
-                        SOCKET_EVENTS.SERVER_CLUE_REVEALED,
+                if (result[0]) {
+                    globalLock.isSeekerTurnLockAcquired = true;
+                    messageEmitter.emitToKeeper(
+                        SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK,
                         {
                             status: room.status,
                             clues: room.currentRound.getClues(),
                             timeLeft,
                         },
-                        player.username
+                        room.roomId
                     );
+
+                    for (const player of room.players) {
+                        if (player.role === ROLES.SEEKER) {
+                            messageEmitter.emitToPlayer(
+                                SOCKET_EVENTS.SERVER_CLUE_REVEALED,
+                                {
+                                    status: room.status,
+                                    clues: room.currentRound.getClues(),
+                                    timeLeft,
+                                },
+                                player.username
+                            );
+                        }
+                    }
+                } else {
+                    messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, result[1], socket);
                 }
             }
-        } else {
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, result[1], socket);
+        } finally {
+            release();
         }
     },
 
     handleTryCluetact: async (socket, { guess, clueId }) => {
-        const room = gameManager.getRoomBySocket(socket);
-        if (!room) return;
+        const release = await globalLock.acquire();
+        try {
+            if (!globalLock.isRaceLockAcquired) {
+                const room = gameManager.getRoomBySocket(socket);
+                if (!room) return;
 
-        const guesserUsername = socket.user.username;
-        const result = await room.submitGuess(guesserUsername, guess, clueId);
-        const clueGiverUsername = room.getCurrentClueGiverUsername();
+                const guesserUsername = socket.user.username;
+                const result = await room.submitGuess(guesserUsername, guess, clueId);
+                const clueGiverUsername = room.getCurrentClueGiverUsername();
 
-        if (result.correct) {
-            const dataToSeekers = {
-                status: room.status,
-                guesser: guesserUsername,
-                word: guess,
-                clues: room.currentRound.getClues(),
-                revealed: room.getRevealedLetters(),
-                isWordComplete: result.isWordComplete,
-                keeper: room.keeperUsername,
-                players: room.players,
-                clueGiverUsername: clueGiverUsername,
-                keeperWord: result.isWordComplete ? result.keeperWord : null,
-                timeLeft: room.clueSubmissionTimer?.getTimeLeft() || 0,
-                winners: room.winners,
-                definitionFromApi: result.definitionFromApi,
-            };
+                if (result.correct) {
+                    globalLock.isRaceLockAcquired = true;
+                    const dataToSeekers = {
+                        status: room.status,
+                        guesser: guesserUsername,
+                        word: guess,
+                        clues: room.currentRound.getClues(),
+                        revealed: room.getRevealedLetters(),
+                        isWordComplete: result.isWordComplete,
+                        keeper: room.keeperUsername,
+                        players: room.players,
+                        clueGiverUsername: clueGiverUsername,
+                        keeperWord: result.isWordComplete ? result.keeperWord : null,
+                        timeLeft: room.getTimeLeftUntilTimeout() || 0,
+                        winners: room.winners,
+                        definitionFromApi: result.definitionFromApi,
+                    };
 
-            const dataToKeeper = {
-                ...dataToSeekers,
-                keeperWord: result.keeperWord,
-            };
+                    const dataToKeeper = {
+                        ...dataToSeekers,
+                        keeperWord: result.keeperWord,
+                    };
 
-            messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToSeekers, room.roomId);
-            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToKeeper, room.roomId);
-        } else {
-            const guesses = room.getGuesses();
-            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_GUESS_FAILED, guesses, room.roomId);
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, result.message, socket);
+                    messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToSeekers, room.roomId);
+                    messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, dataToKeeper, room.roomId);
+                } else {
+                    const guesses = room.getGuesses();
+                    messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_GUESS_FAILED, guesses, room.roomId);
+                    messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, result.message, socket);
+                }
+            }
+        } finally {
+            release();
         }
     },
 
-    handleTryBlockClue: (socket, { guess }) => {
-        const room = gameManager.getRoomBySocket(socket);
-        if (!room) return;
+    handleTryBlockClue: async (socket, { guess }) => {
+        const release = await globalLock.acquire();
+        try {
+            if (!globalLock.isRaceLockAcquired) {
+                const room = gameManager.getRoomBySocket(socket);
+                if (!room) return;
 
-        const userId = socket.user.username;
-        const isKeeper = room.keeperUsername === userId;
+                const userId = socket.user.username;
+                const isKeeper = room.keeperUsername === userId;
 
-        if (!isKeeper) return;
+                if (!isKeeper) return;
 
-        const result = room.tryBlockClue(guess, userId);
+                const result = room.tryBlockClue(guess, userId);
 
-        if (result.success) {
-            const clueGiverUsername = room.getCurrentClueGiverUsername();
+                if (result.success) {
+                    globalLock.isRaceLockAcquired = true;
+                    const clueGiverUsername = room.getCurrentClueGiverUsername();
 
-            messageEmitter.broadcastToRoom(
-                SOCKET_EVENTS.SERVER_CLUE_BLOCKED,
-                {
-                    players: room.players,
-                    clue: result.blockedClue,
-                    clueGiverUsername: clueGiverUsername,
-                    timeLeft: room.clueSubmissionTimer?.getTimeLeft() || 0,
-                },
-                room.roomId
-            );
-        } else {
-            const guesses = room.getGuesses();
-            const message = result.message ? result.message : "Block attempt failed";
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, message, socket);
-            messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_GUESS_FAILED, guesses, room.roomId);
+                    messageEmitter.broadcastToRoom(
+                        SOCKET_EVENTS.SERVER_CLUE_BLOCKED,
+                        {
+                            players: room.players,
+                            clue: result.blockedClue,
+                            clueGiverUsername: clueGiverUsername,
+                            timeLeft: room.getTimeLeftUntilTimeout() || 0,
+                        },
+                        room.roomId
+                    );
+                } else {
+                    const guesses = room.getGuesses();
+                    const message = result.message ? result.message : "Block attempt failed";
+                    messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, message, socket);
+                    messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_GUESS_FAILED, guesses, room.roomId);
+                }
+            }
+        } finally {
+            release();
         }
     },
 
