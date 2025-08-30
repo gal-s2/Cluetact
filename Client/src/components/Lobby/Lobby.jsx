@@ -195,8 +195,10 @@ function Lobby() {
 
             <main className={styles.main}>
                 <div className={styles.sectionGroup}>
-                    <PlayCard playMenuOpen={playMenuOpen} setPlayMenuOpen={handlePlayMenuToggle} findGame={findGame} setShowJoinModal={handleShowJoinModal} handleCreateRoom={handleCreateRoom} />
-                    <ProfileCard profileMenuOpen={profileMenuOpen} setProfileMenuOpen={handleProfileMenuToggle} navigate={navigate} disconnect={disconnect} />
+                    <div className={styles.actionCards}>
+                        <PlayCard playMenuOpen={playMenuOpen} setPlayMenuOpen={handlePlayMenuToggle} findGame={findGame} setShowJoinModal={handleShowJoinModal} handleCreateRoom={handleCreateRoom} />
+                        <ProfileCard profileMenuOpen={profileMenuOpen} setProfileMenuOpen={handleProfileMenuToggle} navigate={navigate} disconnect={disconnect} />
+                    </div>
                 </div>
             </main>
 
