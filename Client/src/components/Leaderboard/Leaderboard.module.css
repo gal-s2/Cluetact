@@ -24,15 +24,22 @@
     color: #666;
 }
 
-.table {
+.tableContainer {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+    width: 100%;
     border-collapse: collapse;
     background: white;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .table th,
@@ -44,6 +51,9 @@
 .table thead {
     background: linear-gradient(135deg, #81c784, #66bb6a);
     color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .playerCell {
@@ -66,6 +76,25 @@
     background-color: rgba(76, 175, 80, 0.1);
 }
 
+/* Custom scrollbar for table container */
+.tableContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
 /* Mobile responsive styles */
 @media (max-width: 768px) {
     .container {
@@ -80,6 +109,10 @@
 
     .header p {
         font-size: 0.9rem;
+    }
+
+    .tableContainer {
+        max-height: 50vh;
     }
 
     .table {
@@ -117,6 +150,10 @@
 
     .header h1 {
         font-size: 1.25rem;
+    }
+
+    .tableContainer {
+        max-height: 45vh;
     }
 
     .table {
@@ -167,6 +204,10 @@
         font-size: 1.1rem;
     }
 
+    .tableContainer {
+        max-height: 40vh;
+    }
+
     .table {
         font-size: 0.75rem;
     }
@@ -187,15 +228,64 @@
     }
 }
 
+/* Dark mode support */
 @media (prefers-color-scheme: dark) {
     .container {
-        --bg-primary: #1f2937;
-        --text-primary: #f9fafb;
-        --text-secondary: #9ca3af;
-        --border-color: rgba(75, 85, 99, 0.3);
-        --shadow: rgba(0, 0, 0, 0.3);
-        --avatar-border: #4b5563;
-        --hover-bg: rgba(255, 255, 255, 0.05);
-        --highlight-bg: rgba(76, 175, 80, 0.2);
+        background: linear-gradient(135deg, #0a0a0a 0%, #0d2818 50%, #1a1a1a 100%);
+    }
+
+    .header h1 {
+        background: linear-gradient(135deg, #81c784, #a5d6a7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+        color: #ccc;
+    }
+
+    .tableContainer {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        border: 1px solid #4a5568;
+    }
+
+    .table {
+        background: #2d3748;
+        border: 1px solid #4a5568;
+    }
+
+    .table th,
+    .table td {
+        color: #e2e8f0;
+        border-bottom: 1px solid #4a5568;
+    }
+
+    .table thead {
+        background: linear-gradient(135deg, #4caf50, #66bb6a);
+    }
+
+    .playerCell {
+        color: #e2e8f0;
+    }
+
+    .avatar {
+        border-color: #4a5568;
+    }
+
+    .highlight {
+        background-color: rgba(76, 175, 80, 0.2);
+    }
+
+    /* Dark mode scrollbar */
+    .tableContainer::-webkit-scrollbar-track {
+        background: #4a5568;
+    }
+
+    .tableContainer::-webkit-scrollbar-thumb {
+        background: #718096;
+    }
+
+    .tableContainer::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
     }
 }
