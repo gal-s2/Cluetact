@@ -1,10 +1,16 @@
 const DEBUG = true;
 
 class CountdownTimer {
-    constructor(durationSeconds, onComplete) {
+    constructor(durationSeconds = 0, onComplete = () => {}) {
         this.duration = durationSeconds;
         this.interval = null;
         this.endTime = null;
+        this.onComplete = onComplete;
+    }
+
+    setNewTimerDetails(durationSeconds, onComplete) {
+        this.stop();
+        this.duration = durationSeconds;
         this.onComplete = onComplete;
     }
 
@@ -36,12 +42,6 @@ class CountdownTimer {
             clearInterval(this.interval);
             this.interval = null;
         }
-    }
-
-    reset(newDurationSeconds) {
-        this.stop();
-        this.duration = newDurationSeconds;
-        this.start();
     }
 }
 

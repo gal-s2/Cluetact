@@ -13,7 +13,13 @@ export default function AvatarPicker({ onAvatarSelect }) {
     return (
         <div className={styles.avatarGrid}>
             {Object.keys(avatarList).map((key) => (
-                <img key={key} src={avatarList[key]} alt="Avatar" className={`${styles.avatar} ${selected === key ? styles.selected : ""}`} onClick={() => handleAvatarClick(key)} />
+                <img
+                    key={key}
+                    src={avatarList[key]}
+                    alt="Avatar"
+                    className={`${styles.avatar} ${selected === parseInt(key) ? styles.selected : ""}`}
+                    onClick={() => handleAvatarClick(parseInt(key))}
+                />
             ))}
         </div>
     );
