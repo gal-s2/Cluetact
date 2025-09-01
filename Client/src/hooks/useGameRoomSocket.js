@@ -262,6 +262,10 @@ export default function useGameRoomSocket(roomId) {
                 message: `${data.leavingUsername} has left the game`,
                 type: "notification",
             });
+
+            if (data.status === "END") {
+                setTimeLeft(0);
+            }
         });
 
         return () => {
