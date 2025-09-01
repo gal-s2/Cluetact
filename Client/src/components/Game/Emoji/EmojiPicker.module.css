@@ -1,0 +1,57 @@
+.backdrop {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    z-index: 5090;
+}
+.picker {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    padding: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.25rem;
+    min-width: 168px;
+    animation: drop 0.14s ease-out;
+}
+.btn {
+    font-size: 1.25rem;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    padding: 0.35rem;
+    cursor: pointer;
+}
+.btn:hover {
+    background: #f7fafc;
+}
+@media (max-width: 768px) {
+    .picker {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .btn {
+        font-size: 1.1rem;
+    }
+}
+@keyframes drop {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@media (prefers-color-scheme: dark) {
+    .picker {
+        background: #2d3748;
+        border-color: #4a5568;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+    .btn:hover {
+        background: #4a5568;
+    }
+}

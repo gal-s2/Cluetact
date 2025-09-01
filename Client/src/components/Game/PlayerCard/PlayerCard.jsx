@@ -2,6 +2,8 @@ import classNames from "classnames";
 import styles from "./PlayerCard.module.css";
 import avatarList from "@utils/loadAvatars";
 import Flag from "@components/common/Flag/Flag";
+import React, { useEffect, useRef, useState } from "react";
+import EmojiPicker from "@components/Game/Emoji/EmojiPicker";
 
 const PlayerCard = ({
     player,
@@ -9,20 +11,33 @@ const PlayerCard = ({
     isActiveClueGiver,
     selectedPlayer,
     setSelectedPlayer,
+    onSendEmoji,
+    registerAnchor,
 }) => {
     const avatarSrc = avatarList[player.avatar] || avatarList[0];
     const isExpanded = selectedPlayer?.username === player.username;
+    const cardRef = useRef(null);
+    const emojiBtnRef = useRef(null);
+    const [openPicker, setOpenPicker] = useState(false);
 
-    const handleCardClick = () => {
-        if (isExpanded) {
-            setSelectedPlayer(null); // Close if already open
-        } else {
-            setSelectedPlayer(player);
-        }
+    useEffect(() => {
+        registerAnchor?.(player.username, cardRef.current);
+        return () => registerAnchor?.(player.username, null);
+    }, [player.username, registerAnchor]);
+
+    const handleCardClick = (e) => {
+        if (emojiBtnRef.current && emojiBtnRef.current.contains(e.target))
+            return;
+        setSelectedPlayer(isExpanded ? null : player);
+    };
+
+    const handleSelectEmoji = (emoji) => {
+        setOpenPicker(false);
+        onSendEmoji?.(emoji);
     };
 
     return (
-        <div className={styles.cardWrapper}>
+        <div className={styles.cardWrapper} ref={cardRef}>
             <div
                 className={classNames(styles.card, {
                     [styles.me]: me,
@@ -46,6 +61,7 @@ const PlayerCard = ({
                             </div>
                         )}
                     </div>
+
                     <div className={styles.playerDataContainer}>
                         <h3>{player.username}</h3>
                         <p>{player.gameScore} pts</p>
@@ -58,6 +74,29 @@ const PlayerCard = ({
                             )}
                         </div>
                     </div>
+
+                    {me && (
+                        <div className={styles.emojiButtonContainer}>
+                            <button
+                                ref={emojiBtnRef}
+                                className={styles.emojiButton}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setOpenPicker((v) => !v);
+                                }}
+                                aria-label="Send reaction"
+                            >
+                                😊
+                            </button>
+                            <EmojiPicker
+                                isOpen={openPicker}
+                                onSelect={handleSelectEmoji}
+                                onClose={() => setOpenPicker(false)}
+                                anchorEl={emojiBtnRef.current}
+                            />
+                        </div>
+                    )}
+
                     <div className={styles.expandIcon}>
                         <span
                             className={classNames(styles.chevron, {
@@ -70,7 +109,6 @@ const PlayerCard = ({
                 </div>
             </div>
 
-            {/* Dropdown Profile */}
             {isExpanded && (
                 <div className={styles.profileDropdown}>
                     <div className={styles.compactProfile}>

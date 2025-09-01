@@ -103,10 +103,13 @@ export default function useGameRoomSocket(roomId) {
         });
 
         socket.on(SOCKET_EVENTS.SERVER_CLUETACT_SUCCESS, (data) => {
-            console.log("iswordcomplete: ", data.isWordComplete);
             setGameState((prev) => ({
                 ...prev,
-                cluetact: { guesser: data.guesser, word: data.word, definitionFromApi: data.definitionFromApi },
+                cluetact: {
+                    guesser: data.guesser,
+                    word: data.word,
+                    definitionFromApi: data.definitionFromApi,
+                },
                 players: data.players,
                 clues: data.clues,
                 isSubmittingClue: data.clueGiverUsername === user.username,
@@ -120,15 +123,17 @@ export default function useGameRoomSocket(roomId) {
                 isKeeper: data.keeper === user.username,
                 isWordChosen: data.isWordComplete ? false : true,
             }));
-            setTimeLeft(data.timeLeft);
+
             if (data.status === "END") {
+                setTimeLeft(0);
                 setTimeout(() => {
                     setGameState((prev) => ({
                         ...prev,
                         status: data.status,
                     }));
-                }, 5000); // <-- delay belongs here
+                }, 10000);
             } else {
+                setTimeLeft(data.timeLeft);
                 setGameState((prev) => ({
                     ...prev,
                     status: data.status,
@@ -203,9 +208,7 @@ export default function useGameRoomSocket(roomId) {
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
-                message: gameState.isKeeper
-                    ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`
-                    : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
+                message: gameState.isKeeper ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"` : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
                 type: gameState.isKeeper ? "success" : "notification",
             });
         });
@@ -241,7 +244,7 @@ export default function useGameRoomSocket(roomId) {
             socket.off(SOCKET_EVENTS.SERVER_CLUE_SUBMISSION_TIMEOUT);
             socket.off(SOCKET_EVENTS.SERVER_RACE_TIMEOUT);
         };
-    }, [user?.username, gameState]);
+    }, [user?.username]);
 
     useEffect(() => {
         socket.on(SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM, (data) => {
@@ -259,6 +262,10 @@ export default function useGameRoomSocket(roomId) {
                 message: `${data.leavingUsername} has left the game`,
                 type: "notification",
             });
+
+            if (data.status === "END") {
+                setTimeLeft(0);
+            }
         });
 
         return () => {
@@ -324,5 +331,6 @@ export default function useGameRoomSocket(roomId) {
         setTimeLeft,
         isKeeperWordRejected,
         setIsKeeperWordRejected,
+        socket,
     };
 }

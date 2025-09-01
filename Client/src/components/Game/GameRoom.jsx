@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import { useMusic } from "../Music/MusicContext.jsx";
 import { useUser } from "@contexts/UserContext.jsx";
+import SOCKET_EVENTS from "@shared/socketEvents.json";
+
 import WordDisplay from "./WordDisplay/WordDisplay";
 import Spinner from "@common/Spinner/Spinner";
 import KeeperWordPopup from "./KeeperWordPopup/KeeperWordPopup";
@@ -19,25 +21,91 @@ import ExitGameButton from "./ExitGameButton/ExitGameButton";
 import ConfirmModal from "./ConfirmModal/ConfirmModal";
 import CountdownTimer from "./CountdownTimer/CountdownTimer";
 import MusicToggleButton from "../General/MusicToggleButton/MusicToggleButton.jsx";
+
+import FloatingReactionsOverlay from "./Emoji/FloatingReactionsOverlay";
+
 import styles from "./GameRoom.module.css";
 
 function GameRoom() {
-    const { timeLeft, setTimeLeft, gameState, loading, handleExitGame, notification } = useGameRoom();
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+    const {
+        timeLeft,
+        setTimeLeft,
+        gameState,
+        loading,
+        handleExitGame,
+        notification,
+        socket, // must be exposed from useGameRoom()
+    } = useGameRoom();
+
     const { user } = useUser();
-    const { changeTrack, currentTrack } = useMusic();
+    const { changeTrack } = useMusic();
+
     const [showConfirmModal, setShowConfirmModal] = useState(false);
-    const trackChangedRef = useRef(false);
+
+    // username -> HTMLElement (anchor for positioning reactions)
+    const anchorsRef = useRef(new Map());
+    const registerAnchor = (username, el) => {
+        if (!username) return;
+        if (el) anchorsRef.current.set(username, el);
+        else anchorsRef.current.delete(username);
+    };
+
+    // overlay state
+    const [activeReactions, setActiveReactions] = useState([]);
 
     useEffect(() => {
         changeTrack("gameRoom");
     }, [changeTrack]);
 
+    // listen for reactions from server, show for 5s
+    useEffect(() => {
+        if (!socket) return;
+
+        const onShow = ({ id, username, emoji }) => {
+            const anchorEl = anchorsRef.current.get(username);
+            // fallback coordinates if anchor not found
+            let x = window.innerWidth / 2;
+            let y = 96;
+            if (anchorEl) {
+                const rect = anchorEl.getBoundingClientRect();
+                x = rect.left + rect.width / 2;
+                y = rect.top; // float from above the card
+            }
+
+            x = Math.max(12, Math.min(x, window.innerWidth - 12));
+            y = Math.max(12, Math.min(y, window.innerHeight - 12));
+            const item = { id, emoji, x, y };
+            setActiveReactions((prev) => [...prev, item]);
+
+            // remove after 5 seconds
+            setTimeout(() => {
+                setActiveReactions((prev) => prev.filter((r) => r.id !== id));
+            }, 5000);
+        };
+
+        socket.on(SOCKET_EVENTS.SERVER_EMOJI_SHOW, onShow);
+        return () => socket.off(SOCKET_EVENTS.SERVER_EMOJI_SHOW, onShow);
+    }, [socket]);
+
+    // local send API (used by PlayerCard via PlayersList)
+    const sendEmoji = (emoji) => {
+        console.log("sendEmoji ->", emoji, "socket?", !!socket);
+        if (!socket || !emoji) return;
+        socket.emit(SOCKET_EVENTS.CLIENT_EMOJI_SEND, { emoji });
+    };
+
     if (loading) return <Spinner />;
 
     return (
         <div className={styles.room}>
-            {/* WHEN KEEPER CHOOSING WORD */}
-            {gameState.status === "KEEPER_CHOOSING_WORD" && <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />}
+            {/* When keeper is choosing word */}
+            {gameState.status === "KEEPER_CHOOSING_WORD" && (
+                <KeeperWordPopup
+                    showConfirmModal={() => setShowConfirmModal(true)}
+                />
+            )}
 
             {gameState.cluetact && <CluetactPopup />}
             {gameState.status === "END" && <GameOverPopup />}
@@ -46,41 +114,55 @@ function GameRoom() {
                 <WordDisplay />
             </div>
 
-            {/* MAIN CONTENT AREA */}
+            {/* Main content */}
             <div className={styles.mainContent}>
-                {/* SIDEBAR */}
+                {/* Sidebar */}
                 <div className={styles.sidebar}>
-                    {/* Timer Section */}
+                    {/* Timer */}
                     {timeLeft > 0 && (
                         <div className={styles.timerContainer}>
-                            <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />
+                            <CountdownTimer
+                                timeLeft={timeLeft}
+                                setTimeLeft={setTimeLeft}
+                            />
                         </div>
                     )}
 
-                    {/* Players List */}
+                    {/* Players */}
                     <div className={styles.playersContainer}>
-                        <PlayersList players={gameState.players} />
+                        <PlayersList
+                            onSendEmoji={sendEmoji}
+                            registerAnchor={registerAnchor}
+                        />
                     </div>
                 </div>
 
-                {/* MAIN GAME PANEL */}
+                {/* Main panel */}
                 <div className={styles.main}>
-                    {/* Header Message */}
                     <div className={styles.headerSection}>
                         <PlayerMainMessageHeader />
                     </div>
 
-                    {/* Clue Submit Section */}
-                    {!gameState.isKeeper && gameState.isWordChosen && gameState.isSubmittingClue && !gameState.activeClue && (
-                        <div className={styles.clueSubmitWrapper}>
-                            <SubmitClue />
-                        </div>
-                    )}
+                    {/* Clue submit */}
+                    {!gameState.isKeeper &&
+                        gameState.isWordChosen &&
+                        gameState.isSubmittingClue &&
+                        !gameState.activeClue && (
+                            <div className={styles.clueSubmitWrapper}>
+                                <SubmitClue />
+                            </div>
+                        )}
 
-                    {/* Main Clues Section */}
-                    <div className={styles.cluesSection}>{gameState.isKeeper ? <KeeperCluePanel /> : <SeekerCluePanel />}</div>
+                    {/* Clues section */}
+                    <div className={styles.cluesSection}>
+                        {gameState.isKeeper ? (
+                            <KeeperCluePanel />
+                        ) : (
+                            <SeekerCluePanel />
+                        )}
+                    </div>
 
-                    {/* Blocked Clues for Keeper */}
+                    {/* Blocked clues (keeper only) */}
                     {gameState.isKeeper && (
                         <div className={styles.blockedCluesContainer}>
                             <BlockedCluesSection maxVisibleItems={5} />
@@ -89,18 +171,26 @@ function GameRoom() {
                 </div>
             </div>
 
-            {/* FLOATING UI ELEMENTS */}
+            {/* Floating controls */}
             <div className={styles.floatingElements}>
                 <MusicToggleButton />
                 <ExitGameButton onExit={() => setShowConfirmModal(true)} />
             </div>
 
-            {/* MODALS & NOTIFICATIONS */}
-            {showConfirmModal && <ConfirmModal handleCloseModal={() => setShowConfirmModal(false)} handleConfirmExit={handleExitGame} />}
+            {/* Modals & notifications */}
+            {showConfirmModal && (
+                <ConfirmModal
+                    handleCloseModal={() => setShowConfirmModal(false)}
+                    handleConfirmExit={handleExitGame}
+                />
+            )}
 
             {notification.message && <NotificationBox />}
 
-            {/* BACKGROUND ANIMATIONS */}
+            {/* Emoji overlay (portal; high z-index; pointer-events: none) */}
+            {mounted && <FloatingReactionsOverlay items={activeReactions} />}
+
+            {/* Background animation */}
             <FloatingLetters />
         </div>
     );
