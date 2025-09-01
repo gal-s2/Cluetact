@@ -1,0 +1,64 @@
+.layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5000;
+}
+.floatItem {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    animation: floatUp 5s ease-out forwards,
+        subtleWiggle 2s ease-in-out infinite;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.25));
+}
+.mainEmoji {
+    font-size: clamp(24px, 4.2vw, 48px);
+    line-height: 1;
+}
+.sparkles {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    font-size: clamp(16px, 3vw, 28px);
+    animation: burst 600ms ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, calc(-50% + 10px)) scale(0.85);
+    }
+    10% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, calc(-50% - 90px)) scale(1.1);
+    }
+}
+@keyframes subtleWiggle {
+    0%,
+    100% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    50% {
+        transform: translate(-50%, -54%) rotate(2deg);
+    }
+}
+@keyframes burst {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.1);
+    }
+    60% {
+        opacity: 0.9;
+        transform: translate(-50%, -120%) scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -180%) scale(1.2);
+    }
+}

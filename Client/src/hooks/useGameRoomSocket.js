@@ -106,7 +106,11 @@ export default function useGameRoomSocket(roomId) {
             console.log("iswordcomplete: ", data.isWordComplete);
             setGameState((prev) => ({
                 ...prev,
-                cluetact: { guesser: data.guesser, word: data.word, definitionFromApi: data.definitionFromApi },
+                cluetact: {
+                    guesser: data.guesser,
+                    word: data.word,
+                    definitionFromApi: data.definitionFromApi,
+                },
                 players: data.players,
                 clues: data.clues,
                 isSubmittingClue: data.clueGiverUsername === user.username,
@@ -168,7 +172,8 @@ export default function useGameRoomSocket(roomId) {
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
-                message: "Clue submission time is over! Moving to the next seeker",
+                message:
+                    "Clue submission time is over! Moving to the next seeker",
                 type: "notification",
             });
         });
@@ -195,7 +200,11 @@ export default function useGameRoomSocket(roomId) {
             setGameState((prev) => ({
                 ...prev,
                 players: data.players,
-                clues: prev.clues.map((c) => (c.id === data.clue.id ? { ...c, blocked: true, word: data.clue.word } : c)),
+                clues: prev.clues.map((c) =>
+                    c.id === data.clue.id
+                        ? { ...c, blocked: true, word: data.clue.word }
+                        : c
+                ),
                 isSubmittingClue: data.clueGiverUsername === user.username,
                 clueGiverUsername: data.clueGiverUsername,
                 activeClue: null,
@@ -241,7 +250,7 @@ export default function useGameRoomSocket(roomId) {
             socket.off(SOCKET_EVENTS.SERVER_CLUE_SUBMISSION_TIMEOUT);
             socket.off(SOCKET_EVENTS.SERVER_RACE_TIMEOUT);
         };
-    }, [user?.username, gameState]);
+    }, [user?.username]);
 
     useEffect(() => {
         socket.on(SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM, (data) => {
@@ -268,24 +277,33 @@ export default function useGameRoomSocket(roomId) {
 
     useEffect(() => {
         socket.on(SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT, (data) => {
-            const keeper = gameStateRef.current.players.find((player) => player.role === "keeper");
+            const keeper = gameStateRef.current.players.find(
+                (player) => player.role === "keeper"
+            );
             setNotification({
                 message: `Choosing word timeout! Keeper ${keeper.username} didn't submit a word on time! Moving to the next keeper`,
                 type: "notification",
             });
-            console.log(data.players.find((p) => p.username === user.username)?.role === "keeper");
+            console.log(
+                data.players.find((p) => p.username === user.username)?.role ===
+                    "keeper"
+            );
             setGameState((prev) => ({
                 ...prev,
                 keeperTime: data.keeperTime,
                 status: data.status,
                 players: data.players,
-                isKeeper: data.players.find((p) => p.username === user.username)?.role === "keeper",
+                isKeeper:
+                    data.players.find((p) => p.username === user.username)
+                        ?.role === "keeper",
             }));
         });
 
         socket.on(SOCKET_EVENTS.SERVER_GAME_ENDED, (data) => {
             if (data.reason === "keeper word timeout") {
-                const keeper = gameStateRef.current.players.find((player) => player.role === "keeper");
+                const keeper = gameStateRef.current.players.find(
+                    (player) => player.role === "keeper"
+                );
                 setNotification({
                     message: `Choosing word timeout! Keeper ${keeper.username} didn't submit a word on time! Moving to the next keeper`,
                     type: "notification",
@@ -324,5 +342,6 @@ export default function useGameRoomSocket(roomId) {
         setTimeLeft,
         isKeeperWordRejected,
         setIsKeeperWordRejected,
+        socket,
     };
 }
