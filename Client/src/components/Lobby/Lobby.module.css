@@ -3,16 +3,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh; /* Changed from min-height to height */
+    min-height: 100vh;
     background: linear-gradient(135deg, #fefefe 0%, #f0fdf4 50%, #eafaf1 100%);
     position: relative;
-    padding: 1vh; /* Changed from 1rem to 1vh */
+    padding: 1vh;
     width: 100%;
-    overflow: hidden; /* Changed from overflow-x: hidden to prevent all scrolling */
     font-family: "Poppins", "Inter", sans-serif;
     box-sizing: border-box;
     margin: 0 auto;
-    position: relative;
     left: 0;
     right: 0;
 }
@@ -24,12 +22,12 @@
 /* Header Section - Enhanced to match welcome style */
 .header {
     text-align: center;
-    margin-bottom: 2vh; /* Changed from 3rem to 2vh */
+    margin-bottom: 2vh;
     width: 100%;
     max-width: 600px;
-    padding: 1.5vh 0; /* Changed from 2rem 0 to 1.5vh 0 */
+    padding: 1.5vh 0;
     position: relative;
-    flex-shrink: 0; /* Prevent header from shrinking */
+    flex-shrink: 0;
 }
 
 .header::before {
@@ -832,6 +830,20 @@
 
 .secondaryButton:focus {
     outline-color: rgba(129, 199, 132, 0.5);
+}
+
+.modalActions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .modalActions {
+        flex-direction: column;
+        gap: 16px;
+    }
 }
 
 /* Print Styles */

@@ -62,11 +62,8 @@
 }
 
 .seekersContainer {
-    max-height: 150px; /* Reduced from 200px */
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: #cbd5e0 #f7fafc;
+    max-height: none; /* Reduced from 200px */
+    overflow-y: visible;
 }
 
 .seekersContainer::-webkit-scrollbar {

@@ -121,10 +121,11 @@
 }
 
 .qrLabel {
+    margin-top: 12px;
     font-size: 0.9rem;
     color: #666;
     font-weight: 500;
-    margin: 0;
+    /* margin: 0; */
 }
 
 /* Players Section */
@@ -170,20 +171,32 @@
 
 /* Host styling */
 .hostItem {
-    background: linear-gradient(135deg, rgba(129, 199, 132, 0.15), rgba(129, 199, 132, 0.05)) !important;
+    background: linear-gradient(
+        135deg,
+        rgba(129, 199, 132, 0.15),
+        rgba(129, 199, 132, 0.05)
+    ) !important;
     font-weight: 600 !important;
     color: #2e7d32 !important;
 }
 
 /* Current user styling */
 .currentUser {
-    background: linear-gradient(135deg, rgba(79, 195, 247, 0.1), rgba(79, 195, 247, 0.05)) !important;
+    background: linear-gradient(
+        135deg,
+        rgba(79, 195, 247, 0.1),
+        rgba(79, 195, 247, 0.05)
+    ) !important;
     border-left: 4px solid #29b6f6;
     padding-left: calc(1.5rem - 4px);
 }
 
 .currentUser.hostItem {
-    background: linear-gradient(135deg, rgba(129, 199, 132, 0.2), rgba(79, 195, 247, 0.1)) !important;
+    background: linear-gradient(
+        135deg,
+        rgba(129, 199, 132, 0.2),
+        rgba(79, 195, 247, 0.1)
+    ) !important;
     border-left: 4px solid #4caf50;
 }
 
@@ -459,16 +472,28 @@
     }
 
     .hostItem {
-        background: linear-gradient(135deg, rgba(129, 199, 132, 0.25), rgba(129, 199, 132, 0.1)) !important;
+        background: linear-gradient(
+            135deg,
+            rgba(129, 199, 132, 0.25),
+            rgba(129, 199, 132, 0.1)
+        ) !important;
         color: #81c784 !important;
     }
 
     .currentUser {
-        background: linear-gradient(135deg, rgba(79, 195, 247, 0.15), rgba(79, 195, 247, 0.08)) !important;
+        background: linear-gradient(
+            135deg,
+            rgba(79, 195, 247, 0.15),
+            rgba(79, 195, 247, 0.08)
+        ) !important;
     }
 
     .currentUser.hostItem {
-        background: linear-gradient(135deg, rgba(129, 199, 132, 0.25), rgba(79, 195, 247, 0.15)) !important;
+        background: linear-gradient(
+            135deg,
+            rgba(129, 199, 132, 0.25),
+            rgba(79, 195, 247, 0.15)
+        ) !important;
     }
 
     .qrContainer {

@@ -34,6 +34,11 @@
     font-weight: 700;
 }
 
+.noWinText {
+    color: #ff9800;
+    text-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
+}
+
 .winText {
     color: #4caf50;
     text-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);

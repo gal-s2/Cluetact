@@ -174,7 +174,7 @@ function WaitingRoom() {
                 <p className={styles.passKey}>
                     Pass-key: <strong>{roomId}</strong>
                     <button onClick={handleCopy} className={styles.copyButton}>
-                        {copied ? "Copied!" : "Copy"}
+                        {copied ? "Copied!" : "🔗 Copy Link"}
                     </button>
                 </p>
 
