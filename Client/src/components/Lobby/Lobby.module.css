@@ -6,12 +6,11 @@
     min-height: 100vh;
     background: linear-gradient(135deg, #fefefe 0%, #f0fdf4 50%, #eafaf1 100%);
     position: relative;
-    padding: 1vh; /* Changed from 1rem to 1vh */
+    padding: 1vh;
     width: 100%;
     font-family: "Poppins", "Inter", sans-serif;
     box-sizing: border-box;
     margin: 0 auto;
-    position: relative;
     left: 0;
     right: 0;
 }
@@ -23,12 +22,12 @@
 /* Header Section - Enhanced to match welcome style */
 .header {
     text-align: center;
-    margin-bottom: 2vh; /* Changed from 3rem to 2vh */
+    margin-bottom: 2vh;
     width: 100%;
     max-width: 600px;
-    padding: 1.5vh 0; /* Changed from 2rem 0 to 1.5vh 0 */
+    padding: 1.5vh 0;
     position: relative;
-    flex-shrink: 0; /* Prevent header from shrinking */
+    flex-shrink: 0;
 }
 
 .header::before {
@@ -138,8 +137,7 @@
 
 .card:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15),
-        0 8px 16px rgba(76, 175, 80, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(76, 175, 80, 0.2);
     border-color: rgba(76, 175, 80, 0.4);
 }
 
@@ -205,12 +203,7 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: left 0.5s ease;
 }
 
@@ -247,12 +240,7 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: left 0.5s ease;
 }
 
@@ -277,8 +265,7 @@
     backdrop-filter: blur(20px);
     border: 1px solid rgba(129, 199, 132, 0.3);
     border-radius: 16px;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2),
-        0 4px 16px rgba(76, 175, 80, 0.15);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(76, 175, 80, 0.15);
     overflow: hidden;
     animation: dropdownSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100;
@@ -320,11 +307,7 @@
 }
 
 .dropdown button:hover {
-    background: linear-gradient(
-        135deg,
-        rgba(76, 175, 80, 0.08),
-        rgba(129, 199, 132, 0.08)
-    );
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(129, 199, 132, 0.08));
     color: #2e7d32;
     transform: translateX(4px);
 }
@@ -336,12 +319,7 @@
     left: 1.5vw; /* Changed from 1.5rem to 1.5vw */
     right: 1.5vw; /* Changed from 1.5rem to 1.5vw */
     height: 1px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(129, 199, 132, 0.3),
-        transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(129, 199, 132, 0.3), transparent);
 }
 
 /* Enhanced Bottom Info Section */
@@ -350,11 +328,7 @@
     flex-direction: column;
     gap: 1.5vh; /* Made smaller - changed from 2vh */
     padding: 1.5vh 2vw; /* Made smaller - changed from 2vh 2vw */
-    background: linear-gradient(
-        135deg,
-        rgba(240, 253, 244, 0.9),
-        rgba(232, 245, 233, 0.9)
-    );
+    background: linear-gradient(135deg, rgba(240, 253, 244, 0.9), rgba(232, 245, 233, 0.9));
     backdrop-filter: blur(10px);
     border-top: 2px solid rgba(200, 230, 201, 0.5);
     width: 100%;
@@ -393,11 +367,7 @@
 }
 
 .infoColumn h3 {
-    font-size: clamp(
-        1rem,
-        3vw,
-        1.3rem
-    ); /* Made smaller - changed from clamp(1.2rem, 3.5vw, 1.5rem) */
+    font-size: clamp(1rem, 3vw, 1.3rem); /* Made smaller - changed from clamp(1.2rem, 3.5vw, 1.5rem) */
     font-weight: 700;
     background: linear-gradient(135deg, #2e7d32, #4caf50);
     -webkit-background-clip: text;
@@ -421,11 +391,7 @@
 }
 
 .infoColumn p {
-    font-size: clamp(
-        0.75rem,
-        2vw,
-        0.9rem
-    ); /* Made smaller - changed from clamp(0.85rem, 2.2vw, 1rem) */
+    font-size: clamp(0.75rem, 2vw, 0.9rem); /* Made smaller - changed from clamp(0.85rem, 2.2vw, 1rem) */
     color: #555;
     line-height: 1.6;
     margin: 0;
@@ -768,12 +734,7 @@
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     .container {
-        background: linear-gradient(
-            135deg,
-            #0a0a0a 0%,
-            #0d2818 50%,
-            #1a1a1a 100%
-        );
+        background: linear-gradient(135deg, #0a0a0a 0%, #0d2818 50%, #1a1a1a 100%);
     }
 
     .card {
@@ -807,20 +768,12 @@
     }
 
     .dropdown button:hover {
-        background: linear-gradient(
-            135deg,
-            rgba(129, 199, 132, 0.15),
-            rgba(165, 214, 167, 0.15)
-        );
+        background: linear-gradient(135deg, rgba(129, 199, 132, 0.15), rgba(165, 214, 167, 0.15));
         color: #81c784;
     }
 
     .infoSection {
-        background: linear-gradient(
-            135deg,
-            rgba(13, 40, 24, 0.9),
-            rgba(26, 26, 26, 0.9)
-        );
+        background: linear-gradient(135deg, rgba(13, 40, 24, 0.9), rgba(26, 26, 26, 0.9));
         border-top-color: rgba(129, 199, 132, 0.3);
     }
 
