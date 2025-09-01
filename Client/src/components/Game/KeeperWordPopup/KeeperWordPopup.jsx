@@ -11,13 +11,12 @@ import { useUser } from "@contexts/UserContext.jsx";
 
 function KeeperWordPopup({ showConfirmModal }) {
     const { user } = useUser();
-    const { gameState, setKeeperWord, isKeeperWordRejected, setIsKeeperWordRejected } = useGameRoom();
+    const { gameState, isKeeperWordRejected, setIsKeeperWordRejected } = useGameRoom();
     const [loading, setLoading] = useState(false);
     const [keeperTimeLeft, setKeeperTimeLeft] = useState(gameState.keeperTime || 0);
     const [innerKeeperWord, setInnerKeeperWord] = useState("");
     const isKeeper = gameState.players.find((p) => p.username === user.username)?.role === "keeper";
-    console.log("game state:", gameState);
-    console.log("isKeeper: ", isKeeper);
+
     // Timer refs
     const endTimeRef = useRef(null);
     const intervalRef = useRef(null);
