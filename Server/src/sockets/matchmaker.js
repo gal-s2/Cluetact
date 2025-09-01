@@ -2,14 +2,16 @@ const messageEmitter = require("./MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 
 const MATCHMAKER_INTERVAL = 15;
+const MAX_PLAYERS = 5;
+const MIN_PLAYERS = 3;
 
 function startMatchmaker(gameManager) {
     setInterval(() => {
         const queue = gameManager.queue;
         const readyUsers = queue.getReadyUsers();
-        if (!readyUsers || readyUsers.length < 3) return;
+        if (!readyUsers || readyUsers.length < MIN_PLAYERS) return;
 
-        const playersToMatch = readyUsers.slice(0, 6); // Match 3–6 players
+        const playersToMatch = readyUsers.slice(0, MAX_PLAYERS);
         const keeper = playersToMatch[0];
         const seekers = playersToMatch.slice(1);
 
