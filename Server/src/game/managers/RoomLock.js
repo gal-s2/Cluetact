@@ -1,6 +1,6 @@
 const { Mutex } = require("async-mutex");
 
-class GlobalLock {
+class RoomLock {
     constructor() {
         this._mutex = new Mutex();
         this.isSeekerTurnLockAcquired = false;
@@ -17,4 +17,4 @@ class GlobalLock {
     }
 }
 
-module.exports = new GlobalLock();
+module.exports = RoomLock;
