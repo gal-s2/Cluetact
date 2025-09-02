@@ -157,7 +157,7 @@ export default function useGameRoomSocket(roomId) {
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
-                message: `guesser failed to guess ${data.prevClueGiverUsername}'s clue, turn moves to ${data.clueGiverUsername}`,
+                message: `Guesser failed to guess ${data.prevClueGiverUsername}'s clue, turn moves to ${data.clueGiverUsername}`,
                 type: "notification",
             });
         });
@@ -208,7 +208,9 @@ export default function useGameRoomSocket(roomId) {
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
-                message: gameState.isKeeper ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"` : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
+                message: gameState.isKeeper
+                    ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`
+                    : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
                 type: gameState.isKeeper ? "success" : "notification",
             });
         });
