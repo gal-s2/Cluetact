@@ -150,21 +150,21 @@ class Room {
         switch (newStatus) {
             case GAME_STAGES.KEEPER_CHOOSING_WORD: {
                 // Extra safety: ensure no previous keeper timer is running
-                this.timer.setNewTimerDetails(TIMES.KEEPER_CHOOSING_WORD, this.onKeeperWordTimeout.bind(this));
+                this.timer.setNewTimerDetails(TIMES.KEEPER_CHOOSING_WORD, this.onKeeperWordTimeout.bind(this), GAME_STAGES.KEEPER_CHOOSING_WORD);
                 globalLock.isKeeperWordLockAcquired = false;
                 this.timer.start();
                 break;
             }
 
             case GAME_STAGES.CLUE_SUBMISSION: {
-                this.timer.setNewTimerDetails(TIMES.CLUE_SUBMISSION, this.onClueSubmissionTimeout.bind(this));
+                this.timer.setNewTimerDetails(TIMES.CLUE_SUBMISSION, this.onClueSubmissionTimeout.bind(this), GAME_STAGES.CLUE_SUBMISSION);
                 globalLock.isSeekerTurnLockAcquired = false;
                 this.timer.start();
                 break;
             }
 
             case GAME_STAGES.CLUE_SUBMISSION_POST_CLUETACT: {
-                this.timer.setNewTimerDetails(TIMES.CLUE_SUBMISSION_POST_CLUETACT, this.onClueSubmissionTimeout.bind(this));
+                this.timer.setNewTimerDetails(TIMES.CLUE_SUBMISSION_POST_CLUETACT, this.onClueSubmissionTimeout.bind(this), GAME_STAGES.CLUE_SUBMISSION_POST_CLUETACT);
                 globalLock.isSeekerTurnLockAcquired = false;
                 this.timer.start();
                 break;
@@ -257,7 +257,7 @@ class Room {
         return { success: false };
     }
 
-    async startNewClueRound(clueGiverUsername, clueWord, clueDefinition, onRaceTimeout) {
+    async startNewClueRound(clueGiverUsername, clueWord, clueDefinition) {
         const { isValid, definitionFromApi } = await isValidEnglishWord(clueWord);
         if (!isValid) {
             Logger.logInvalidSeekerWord(this.roomId, clueWord);
@@ -293,7 +293,7 @@ class Room {
         const clue = new Clue(clueGiverUsername, clueWord, clueDefinition, definitionFromApi);
         this.currentRound.clues.push(clue);
         Logger.logClueSet(this.roomId, clueGiverUsername, clueDefinition);
-        this.timer.setNewTimerDetails(TIMES.TURN_INTERVAL, onRaceTimeout);
+        this.timer.setNewTimerDetails(TIMES.TURN_INTERVAL, this.handleRaceTimeout.bind(this), GAME_STAGES.RACE);
         globalLock.isRaceLockAcquired = false;
         this.timer.start();
 
@@ -305,6 +305,7 @@ class Room {
         try {
             if (!globalLock.isRaceLockAcquired) {
                 globalLock.isRaceLockAcquired = true;
+                const prevClueGiverUsername = this.getCurrentClueGiverUsername();
                 const result = { isAdvancingToNextLetter: false };
                 const clue = this.currentRound.getActiveClue();
 
@@ -326,7 +327,7 @@ class Room {
 
                 this.setStatus(GAME_STAGES.CLUE_SUBMISSION);
 
-                return result;
+                this.callbacks?.onRaceTimeout?.(this, prevClueGiverUsername);
             }
         } finally {
             release();

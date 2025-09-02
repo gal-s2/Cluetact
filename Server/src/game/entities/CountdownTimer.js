@@ -5,17 +5,19 @@ class CountdownTimer {
         this.duration = durationSeconds;
         this.interval = null;
         this.endTime = null;
+        this.name = null;
         this.onComplete = onComplete;
     }
 
-    setNewTimerDetails(durationSeconds, onComplete) {
+    setNewTimerDetails(durationSeconds, onComplete, name) {
         this.stop();
         this.duration = durationSeconds;
         this.onComplete = onComplete;
+        this.name = name;
     }
 
     start() {
-        if (DEBUG) console.log("[Countdown Timer - starting coundtown of", this.duration, "seconds");
+        if (DEBUG) console.log("Countdown Timer - starting coundtown of ", this.duration, " seconds for ", this.name);
 
         this.endTime = Date.now() + this.duration * 1000;
 
@@ -36,9 +38,8 @@ class CountdownTimer {
     }
 
     stop() {
-        if (DEBUG) console.log("[Countdown Timer - stopping coundtown");
-
         if (this.interval) {
+            if (DEBUG) console.log("Countdown Timer - stopping coundtown for ", this.name);
             clearInterval(this.interval);
             this.interval = null;
         }
