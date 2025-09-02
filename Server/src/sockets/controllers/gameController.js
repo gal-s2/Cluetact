@@ -5,7 +5,6 @@ const messageEmitter = require("../MessageEmitter");
 const SOCKET_EVENTS = require("@shared/socketEvents.json");
 const ROLES = require("../../game/constants/roles");
 const GAME_STAGES = require("../../game/constants/gameStages");
-const globalLock = require("../../game/managers/GlobalLock");
 const emojiThrottle = new Map();
 
 async function handleEmojiSend(socket, args) {
@@ -135,20 +134,21 @@ const gameController = {
     },
 
     handleKeeperWordSubmission: async (socket, args) => {
-        const release = await globalLock.acquire();
+        const room = gameManager.getRoomBySocket(socket);
+        if (!room) return;
+        const lock = room.lock;
+        const release = await lock.acquire();
         try {
-            if (!globalLock.isKeeperWordLockAcquired) {
+            if (!lock.isKeeperWordLockAcquired) {
                 let { word } = args;
-                const room = gameManager.getRoomBySocket(socket);
 
-                if (!room) return;
                 if (socket.user.username !== room.keeperUsername) return;
                 if (room.status !== GAME_STAGES.KEEPER_CHOOSING_WORD || room.getTimeLeftUntilTimeout() < 1) return;
 
                 const result = await room.setKeeperWordWithValidation(word.toLowerCase());
 
                 if (result[0]) {
-                    globalLock.isKeeperWordLockAcquired = true;
+                    lock.isKeeperWordLockAcquired = true;
                     word = room.getKeeperWord();
                     room.keepersWordsHistory.add(word.toLowerCase());
                     const clueGiverUsername = room.getCurrentClueGiverUsername();
@@ -184,18 +184,18 @@ const gameController = {
     },
 
     handleSubmitClue: async (socket, { definition, word }) => {
-        const release = await globalLock.acquire();
+        const room = gameManager.getRoomBySocket(socket);
+        if (!room) return;
+        const lock = room.lock;
+        const release = await lock.acquire();
         try {
-            if (!globalLock.isSeekerTurnLockAcquired) {
-                const room = gameManager.getRoomBySocket(socket);
-                if (!room) return;
-
+            if (!lock.isSeekerTurnLockAcquired) {
                 const username = socket.user.username;
                 const result = await room.startNewClueRound(username, word, definition);
                 const timeLeft = room.getTimeLeftUntilTimeout();
 
                 if (result[0]) {
-                    globalLock.isSeekerTurnLockAcquired = true;
+                    lock.isSeekerTurnLockAcquired = true;
                     messageEmitter.emitToKeeper(
                         SOCKET_EVENTS.SERVER_NEW_CLUE_TO_BLOCK,
                         {
@@ -229,18 +229,18 @@ const gameController = {
     },
 
     handleTryCluetact: async (socket, { guess, clueId }) => {
-        const release = await globalLock.acquire();
+        const room = gameManager.getRoomBySocket(socket);
+        if (!room) return;
+        const lock = room.lock;
+        const release = await lock.acquire();
         try {
-            if (!globalLock.isRaceLockAcquired) {
-                const room = gameManager.getRoomBySocket(socket);
-                if (!room) return;
-
+            if (!lock.isRaceLockAcquired) {
                 const guesserUsername = socket.user.username;
                 const result = await room.submitGuess(guesserUsername, guess, clueId);
                 const clueGiverUsername = room.getCurrentClueGiverUsername();
 
                 if (result.correct) {
-                    globalLock.isRaceLockAcquired = true;
+                    lock.isRaceLockAcquired = true;
                     const dataToSeekers = {
                         status: room.status,
                         guesser: guesserUsername,
@@ -276,12 +276,12 @@ const gameController = {
     },
 
     handleTryBlockClue: async (socket, { guess }) => {
-        const release = await globalLock.acquire();
+        const room = gameManager.getRoomBySocket(socket);
+        if (!room) return;
+        const lock = room.lock;
+        const release = await lock.acquire();
         try {
-            if (!globalLock.isRaceLockAcquired) {
-                const room = gameManager.getRoomBySocket(socket);
-                if (!room) return;
-
+            if (!lock.isRaceLockAcquired) {
                 const userId = socket.user.username;
                 const isKeeper = room.keeperUsername === userId;
 
@@ -290,7 +290,7 @@ const gameController = {
                 const result = room.tryBlockClue(guess, userId);
 
                 if (result.success) {
-                    globalLock.isRaceLockAcquired = true;
+                    lock.isRaceLockAcquired = true;
                     const clueGiverUsername = room.getCurrentClueGiverUsername();
 
                     messageEmitter.broadcastToRoom(
