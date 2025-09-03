@@ -226,7 +226,7 @@
 }
 
 .chevron {
-    font-size: 0.6875rem; /* Reduced from 0.75rem */
+    font-size: 0.6875rem;
     color: #a0aec0;
     transition: transform 0.2s ease;
     display: inline-block;
@@ -244,15 +244,15 @@
     background: white;
     border: 1px solid #e2e8f0;
     border-top: none;
-    border-bottom-left-radius: 8px; /* Reduced from 12px */
-    border-bottom-right-radius: 8px; /* Reduced from 12px */
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* Reduced shadow */
-    z-index: 10;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
     animation: slideDown 0.2s ease-out;
 }
 
 .compactProfile {
-    padding: 0.5rem; /* Reduced from 0.75rem */
+    padding: 0.5rem;
 }
 
 .countryRow {

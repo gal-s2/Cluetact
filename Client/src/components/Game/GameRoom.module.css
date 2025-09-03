@@ -41,6 +41,13 @@
     flex-shrink: 0;
 }
 
+.playersContainer {
+    flex: 1; /* Take remaining space */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Push content to the bottom */
+}
+
 .timerContainer {
     flex-shrink: 0;
 }
@@ -132,8 +139,8 @@
 
     .sidebar {
         width: 100%;
-        max-height: none; /* Remove max-height restriction */
-        min-height: auto; /* Allow natural height */
+        max-height: none;
+        min-height: auto;
         border-right: none;
         border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         overflow-y: auto;
