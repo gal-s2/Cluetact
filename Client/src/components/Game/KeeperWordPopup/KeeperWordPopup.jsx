@@ -87,7 +87,6 @@ function KeeperWordPopup({ showConfirmModal }) {
                             </>
                         ) : (
                             <>
-                                <p>{logMessage}</p>
                                 <input
                                     type="text"
                                     value={innerKeeperWord}
