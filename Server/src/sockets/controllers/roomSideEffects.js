@@ -53,6 +53,7 @@ const roomSideEffects = {
         if (room.status === GAME_STAGES.CLUE_SUBMISSION) {
             const clueGiverUsername = room.getCurrentClueGiverUsername();
             const dataToSeekers = {
+                status: room.status,
                 clues: room.currentRound.getClues(),
                 revealed: room.getRevealedLetters(),
                 isWordComplete: room.isWordFullyRevealed,

@@ -138,12 +138,12 @@ class Room {
 
     setPlayersData(keeper, seekers) {
         this.players = [];
-        const keeperPlayer = new Player(keeper.username, keeper.avatar);
+        const keeperPlayer = new Player(keeper, keeper.avatar);
         keeperPlayer.setRole(ROLES.KEEPER);
         this.players.push(keeperPlayer);
 
         seekers.forEach((seeker) => {
-            const seekerPlayer = new Player(seeker.username, seeker.avatar);
+            const seekerPlayer = new Player(seeker, seeker.avatar);
             seekerPlayer.setRole(ROLES.SEEKER);
             this.players.push(seekerPlayer);
         });
@@ -300,6 +300,7 @@ class Room {
         const clue = new Clue(clueGiverUsername, clueWord, clueDefinition, definitionFromApi);
         this.currentRound.clues.push(clue);
         Logger.logClueSet(this.roomId, clueGiverUsername, clueDefinition);
+        this.setStatus(GAME_STAGES.RACE);
         this.timer.setNewTimerDetails(TIMES.TURN_INTERVAL, this.handleRaceTimeout.bind(this), GAME_STAGES.RACE);
         this.roomLock.isRaceLockAcquired = false;
         this.timer.start();
