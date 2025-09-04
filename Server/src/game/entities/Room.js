@@ -138,12 +138,12 @@ class Room {
 
     setPlayersData(keeper, seekers) {
         this.players = [];
-        const keeperPlayer = new Player(keeper.username, keeper.avatar);
+        const keeperPlayer = new Player(keeper, keeper.avatar);
         keeperPlayer.setRole(ROLES.KEEPER);
         this.players.push(keeperPlayer);
 
         seekers.forEach((seeker) => {
-            const seekerPlayer = new Player(seeker.username, seeker.avatar);
+            const seekerPlayer = new Player(seeker, seeker.avatar);
             seekerPlayer.setRole(ROLES.SEEKER);
             this.players.push(seekerPlayer);
         });

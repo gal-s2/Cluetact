@@ -5,15 +5,7 @@ import Flag from "@components/common/Flag/Flag";
 import React, { useEffect, useRef, useState } from "react";
 import EmojiPicker from "@components/Game/Emoji/EmojiPicker";
 
-const PlayerCard = ({
-    player,
-    me,
-    isActiveClueGiver,
-    selectedPlayer,
-    setSelectedPlayer,
-    onSendEmoji,
-    registerAnchor,
-}) => {
+const PlayerCard = ({ player, me, isActiveClueGiver, selectedPlayer, setSelectedPlayer, onSendEmoji, registerAnchor }) => {
     const avatarSrc = avatarList[player.avatar] || avatarList[0];
     const isExpanded = selectedPlayer?.username === player.username;
     const cardRef = useRef(null);
@@ -26,8 +18,7 @@ const PlayerCard = ({
     }, [player.username, registerAnchor]);
 
     const handleCardClick = (e) => {
-        if (emojiBtnRef.current && emojiBtnRef.current.contains(e.target))
-            return;
+        if (emojiBtnRef.current && emojiBtnRef.current.contains(e.target)) return;
         setSelectedPlayer(isExpanded ? null : player);
     };
 
@@ -50,11 +41,7 @@ const PlayerCard = ({
             >
                 <div className={styles.inner}>
                     <div className={styles.playerImageContainer}>
-                        <img
-                            className={styles.playerImage}
-                            src={avatarSrc}
-                            alt={`${player.username}'s avatar`}
-                        />
+                        <img className={styles.playerImage} src={avatarSrc} alt={`${player.username}'s avatar`} />
                         {isActiveClueGiver && (
                             <div className={styles.turnIndicator}>
                                 <span className={styles.turnDot}></span>
@@ -67,11 +54,7 @@ const PlayerCard = ({
                         <p>{player.gameScore} pts</p>
                         <div className={styles.badgeContainer}>
                             {me && <span className={styles.youTag}>YOU</span>}
-                            {isActiveClueGiver && (
-                                <span className={styles.turnTag}>
-                                    CURRENT TURN
-                                </span>
-                            )}
+                            {isActiveClueGiver && <span className={styles.turnTag}>CURRENT TURN</span>}
                         </div>
                     </div>
 
@@ -88,12 +71,7 @@ const PlayerCard = ({
                             >
                                 😊
                             </button>
-                            <EmojiPicker
-                                isOpen={openPicker}
-                                onSelect={handleSelectEmoji}
-                                onClose={() => setOpenPicker(false)}
-                                anchorEl={emojiBtnRef.current}
-                            />
+                            <EmojiPicker isOpen={openPicker} onSelect={handleSelectEmoji} onClose={() => setOpenPicker(false)} anchorEl={emojiBtnRef.current} />
                         </div>
                     )}
 
@@ -114,20 +92,16 @@ const PlayerCard = ({
                     <div className={styles.compactProfile}>
                         <div className={styles.countryRow}>
                             <Flag country={player.country} />
-                            <span>US</span>
+                            <span>{player.country.toUpperCase()}</span>
                         </div>
                         <div className={styles.statsGrid}>
                             <div className={styles.stat}>
                                 <span className={styles.statLabel}>Wins</span>
-                                <span className={styles.statValue}>
-                                    {player.wins || 0}
-                                </span>
+                                <span className={styles.statValue}>{player.wins || 0}</span>
                             </div>
                             <div className={styles.stat}>
                                 <span className={styles.statLabel}>Games</span>
-                                <span className={styles.statValue}>
-                                    {player.totalGames || 0}
-                                </span>
+                                <span className={styles.statValue}>{player.totalGames || 0}</span>
                             </div>
                         </div>
                     </div>
