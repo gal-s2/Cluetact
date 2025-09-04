@@ -300,6 +300,7 @@ class Room {
         const clue = new Clue(clueGiverUsername, clueWord, clueDefinition, definitionFromApi);
         this.currentRound.clues.push(clue);
         Logger.logClueSet(this.roomId, clueGiverUsername, clueDefinition);
+        this.setStatus(GAME_STAGES.RACE);
         this.timer.setNewTimerDetails(TIMES.TURN_INTERVAL, this.handleRaceTimeout.bind(this), GAME_STAGES.RACE);
         this.roomLock.isRaceLockAcquired = false;
         this.timer.start();
