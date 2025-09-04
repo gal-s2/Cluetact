@@ -77,7 +77,7 @@ export default function useGameRoomSocket(roomId) {
                 clueGiverUsername: data.clueGiverUsername,
                 keeperTime: data.keeperTime,
             }));
-            setTimeLeft(data.timeLeft);
+            if (data.status !== "KEEPER_CHOOSING_WORD") setTimeLeft(data.timeLeft);
             setLoading(false);
         });
 
