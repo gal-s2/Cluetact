@@ -34,30 +34,6 @@ async function handleEmojiSend(socket, args) {
     }
 }
 
-const handleRaceTimeout = (roomId) => {
-    console.log("handleRaceTimeout", roomId);
-    const room = gameManager.getRoom(roomId);
-    if (!room) return;
-    const prevClueGiverUsername = room.getCurrentClueGiverUsername();
-    const result = room.handleRaceTimeout();
-    if (!result) return;
-    const clueGiverUsername = room.getCurrentClueGiverUsername();
-    const dataToSeekers = {
-        clues: room.currentRound.getClues(),
-        revealed: room.getRevealedLetters(),
-        isWordComplete: room.isWordFullyRevealed,
-        keeper: room.keeperUsername,
-        players: room.players,
-        clueGiverUsername,
-        prevClueGiverUsername,
-        keeperWord: null,
-        timeLeft: room.getTimeLeftUntilTimeout(),
-    };
-    const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
-    messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
-    messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
-};
-
 const gameController = {
     handleEmojiSend,
     handleJoinQueue: async (socket) => {
@@ -128,6 +104,7 @@ const gameController = {
                 guesses: guesses,
                 clueGiverUsername: clueGiverUsername,
                 keeperTime: room.getTimeLeftUntilTimeout(),
+                timeLeft: room.getTimeLeftUntilTimeout(),
             },
             socket
         );
@@ -158,6 +135,7 @@ const gameController = {
                     for (const player of room.players) {
                         const data = {
                             success: true,
+                            status: room.status,
                             word: player.role === ROLES.KEEPER ? word : undefined,
                             revealedWord: room.getRevealedLetters(),
                             length: word.length,
@@ -297,6 +275,7 @@ const gameController = {
                         SOCKET_EVENTS.SERVER_CLUE_BLOCKED,
                         {
                             players: room.players,
+                            status: room.status,
                             clue: result.blockedClue,
                             clueGiverUsername: clueGiverUsername,
                             timeLeft: room.getTimeLeftUntilTimeout() || 0,

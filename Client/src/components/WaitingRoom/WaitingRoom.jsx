@@ -79,13 +79,7 @@ function WaitingRoom() {
 
         const handleServerReady = () => {
             if (!hasJoinedRef.current) {
-                console.log(
-                    "Server ready, joining waiting room:",
-                    roomId,
-                    user.username,
-                    "isCreator:",
-                    isCreator
-                );
+                console.log("Server ready, joining waiting room:", roomId, user.username, "isCreator:", isCreator);
 
                 if (isCreator) {
                     // If user created the room, they should already be in it from the lobby
@@ -112,10 +106,7 @@ function WaitingRoom() {
         };
 
         // Attach listeners
-        socket.on(
-            SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
-            handleWaitingRoomUpdate
-        );
+        socket.on(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, handleWaitingRoomUpdate);
         socket.on(SOCKET_EVENTS.SERVER_READY_FOR_EVENTS, handleServerReady);
         socket.on(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, handleRedirectToRoom);
 
@@ -135,18 +126,9 @@ function WaitingRoom() {
         }
 
         return () => {
-            socket.off(
-                SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE,
-                handleWaitingRoomUpdate
-            );
-            socket.off(
-                SOCKET_EVENTS.SERVER_READY_FOR_EVENTS,
-                handleServerReady
-            );
-            socket.off(
-                SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM,
-                handleRedirectToRoom
-            );
+            socket.off(SOCKET_EVENTS.SERVER_WAITING_ROOM_UPDATE, handleWaitingRoomUpdate);
+            socket.off(SOCKET_EVENTS.SERVER_READY_FOR_EVENTS, handleServerReady);
+            socket.off(SOCKET_EVENTS.SERVER_REDIRECT_TO_ROOM, handleRedirectToRoom);
         };
     }, [roomId, user?.username, isCreator, navigate]);
 
@@ -157,12 +139,10 @@ function WaitingRoom() {
     };
 
     const handleCopy = () => {
-        navigator.clipboard
-            .writeText(`${window.location.origin}/waiting/${roomId}`)
-            .then(() => {
-                setCopied(true);
-                setTimeout(() => setCopied(false), 1500);
-            });
+        navigator.clipboard.writeText(`${window.location.origin}/waiting/${roomId}`).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+        });
     };
 
     return (
@@ -179,10 +159,7 @@ function WaitingRoom() {
                 </p>
 
                 <div className={styles.qrContainer}>
-                    <QRCode
-                        value={`${window.location.origin}/waiting/${roomId}`}
-                        size={128}
-                    />
+                    <QRCode value={`${window.location.origin}/waiting/${roomId}`} size={128} />
                     <p className={styles.qrLabel}>Scan to Join</p>
                 </div>
 
@@ -193,30 +170,19 @@ function WaitingRoom() {
                             key={username}
                             className={`
                                 ${username === host ? styles.hostItem : ""}
-                                ${
-                                    username === user?.username
-                                        ? styles.currentUser
-                                        : ""
-                                }
+                                ${username === user?.username ? styles.currentUser : ""}
                             `}
                         >
                             <span className={styles.greenDot}></span>
                             {username}
-                            {username === host && (
-                                <span className={styles.crownIcon}>👑</span>
-                            )}
-                            {username === user?.username && (
-                                <span className={styles.meIndicator}>•</span>
-                            )}
+                            {username === host && <span className={styles.crownIcon}>👑</span>}
+                            {username === user?.username && <span className={styles.meIndicator}>•</span>}
                         </li>
                     ))}
                 </ul>
 
                 {isHost && users.length >= 3 && (
-                    <button
-                        className={styles.startButton}
-                        onClick={handleStart}
-                    >
+                    <button className={styles.startButton} onClick={handleStart}>
                         Start Game
                     </button>
                 )}

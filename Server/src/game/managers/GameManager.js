@@ -115,7 +115,7 @@ class GameManager {
                 delete this.rooms[roomId];
 
                 return {
-                    message: `Room has been destroyed due to insufficient players`,
+                    message: "Oops! Not enough players to keep the game going — this room has closed.",
                     winners,
                     players,
                     status: room.status,

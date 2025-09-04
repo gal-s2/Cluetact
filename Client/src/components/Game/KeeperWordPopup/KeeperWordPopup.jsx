@@ -70,16 +70,15 @@ function KeeperWordPopup({ showConfirmModal }) {
 
     return (
         <Modal onClose={() => showConfirmModal()} showCloseButton={true}>
-            {isKeeper ? (
-                <div className={styles.container}>
-                    {/* Timer Display */}
-                    {keeperTimeLeft !== null && (
-                        <div className={styles.timerWrapper}>
-                            <div className={styles.timerLabel}>Time to choose word:</div>
-                            <div className={styles.timerDisplay}>{formatTime(keeperTimeLeft ?? 0)}</div>
-                        </div>
-                    )}
-
+            <div className={styles.container}>
+                {/* Timer Display */}
+                {keeperTimeLeft !== null && (
+                    <div className={styles.timerWrapper}>
+                        <div className={styles.timerLabel}>Time to choose word:</div>
+                        <div className={styles.timerDisplay}>{formatTime(keeperTimeLeft ?? 0)}</div>
+                    </div>
+                )}
+                {isKeeper ? (
                     <form onSubmit={onSubmit}>
                         {loading ? (
                             <>
@@ -88,7 +87,6 @@ function KeeperWordPopup({ showConfirmModal }) {
                             </>
                         ) : (
                             <>
-                                <p>{logMessage}</p>
                                 <input
                                     type="text"
                                     value={innerKeeperWord}
@@ -103,10 +101,10 @@ function KeeperWordPopup({ showConfirmModal }) {
                             Submit
                         </Button>
                     </form>
-                </div>
-            ) : (
-                <p>Waiting for the keeper to choose a word...</p>
-            )}
+                ) : (
+                    <p>Waiting for the keeper to choose a word...</p>
+                )}
+            </div>
         </Modal>
     );
 }

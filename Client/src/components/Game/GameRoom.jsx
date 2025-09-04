@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useGameRoom } from "@contexts/GameRoomContext";
 import { useMusic } from "../Music/MusicContext.jsx";
-import { useUser } from "@contexts/UserContext.jsx";
 import SOCKET_EVENTS from "@shared/socketEvents.json";
-
 import WordDisplay from "./WordDisplay/WordDisplay";
 import Spinner from "@common/Spinner/Spinner";
 import KeeperWordPopup from "./KeeperWordPopup/KeeperWordPopup";
@@ -21,9 +19,7 @@ import ExitGameButton from "./ExitGameButton/ExitGameButton";
 import ConfirmModal from "./ConfirmModal/ConfirmModal";
 import CountdownTimer from "./CountdownTimer/CountdownTimer";
 import MusicToggleButton from "../General/MusicToggleButton/MusicToggleButton.jsx";
-
 import FloatingReactionsOverlay from "./Emoji/FloatingReactionsOverlay";
-
 import styles from "./GameRoom.module.css";
 
 function GameRoom() {
@@ -39,7 +35,6 @@ function GameRoom() {
         socket, // must be exposed from useGameRoom()
     } = useGameRoom();
 
-    const { user } = useUser();
     const { changeTrack } = useMusic();
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -91,7 +86,6 @@ function GameRoom() {
 
     // local send API (used by PlayerCard via PlayersList)
     const sendEmoji = (emoji) => {
-        console.log("sendEmoji ->", emoji, "socket?", !!socket);
         if (!socket || !emoji) return;
         socket.emit(SOCKET_EVENTS.CLIENT_EMOJI_SEND, { emoji });
     };
@@ -101,11 +95,7 @@ function GameRoom() {
     return (
         <div className={styles.room}>
             {/* When keeper is choosing word */}
-            {gameState.status === "KEEPER_CHOOSING_WORD" && (
-                <KeeperWordPopup
-                    showConfirmModal={() => setShowConfirmModal(true)}
-                />
-            )}
+            {gameState.status === "KEEPER_CHOOSING_WORD" && <KeeperWordPopup showConfirmModal={() => setShowConfirmModal(true)} />}
 
             {gameState.cluetact && <CluetactPopup />}
             {gameState.status === "END" && <GameOverPopup />}
@@ -121,19 +111,13 @@ function GameRoom() {
                     {/* Timer */}
                     {timeLeft > 0 && (
                         <div className={styles.timerContainer}>
-                            <CountdownTimer
-                                timeLeft={timeLeft}
-                                setTimeLeft={setTimeLeft}
-                            />
+                            <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />
                         </div>
                     )}
 
                     {/* Players */}
                     <div className={styles.playersContainer}>
-                        <PlayersList
-                            onSendEmoji={sendEmoji}
-                            registerAnchor={registerAnchor}
-                        />
+                        <PlayersList onSendEmoji={sendEmoji} registerAnchor={registerAnchor} />
                     </div>
                 </div>
 
@@ -144,23 +128,14 @@ function GameRoom() {
                     </div>
 
                     {/* Clue submit */}
-                    {!gameState.isKeeper &&
-                        gameState.isWordChosen &&
-                        gameState.isSubmittingClue &&
-                        !gameState.activeClue && (
-                            <div className={styles.clueSubmitWrapper}>
-                                <SubmitClue />
-                            </div>
-                        )}
+                    {!gameState.isKeeper && gameState.isWordChosen && gameState.isSubmittingClue && !gameState.activeClue && (
+                        <div className={styles.clueSubmitWrapper}>
+                            <SubmitClue />
+                        </div>
+                    )}
 
                     {/* Clues section */}
-                    <div className={styles.cluesSection}>
-                        {gameState.isKeeper ? (
-                            <KeeperCluePanel />
-                        ) : (
-                            <SeekerCluePanel />
-                        )}
-                    </div>
+                    <div className={styles.cluesSection}>{gameState.isKeeper ? <KeeperCluePanel /> : <SeekerCluePanel />}</div>
 
                     {/* Blocked clues (keeper only) */}
                     {gameState.isKeeper && (
@@ -178,12 +153,7 @@ function GameRoom() {
             </div>
 
             {/* Modals & notifications */}
-            {showConfirmModal && (
-                <ConfirmModal
-                    handleCloseModal={() => setShowConfirmModal(false)}
-                    handleConfirmExit={handleExitGame}
-                />
-            )}
+            {showConfirmModal && <ConfirmModal handleCloseModal={() => setShowConfirmModal(false)} handleConfirmExit={handleExitGame} />}
 
             {notification.message && <NotificationBox />}
 

@@ -9,7 +9,7 @@ function CountdownTimer({ timeLeft, setTimeLeft, onComplete }) {
     const intervalRef = useRef(null);
 
     // Fixed: Use bracket notation for CSS module classes with hyphens
-    const colorClass = gameState.status === "CLUE_SUBMISSION" ? styles["clue-submission-color"] : styles["race-color"];
+    const colorClass = gameState.status === "RACE" ? styles["race-color"] : styles["clue-submission-color"];
 
     useEffect(() => {
         if (timeLeft === null) return;
