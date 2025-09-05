@@ -358,7 +358,7 @@ class Room {
     }
 
     async getSuggestionsFromApi(prefix, username) {
-        const suggestions = await getWordsByPrefix(prefix);
+        const suggestions = await getWordsByPrefix(prefix, this.currentRound.keeperWord);
         //for now i dont want points to be decreased
         // if (suggestions.length > 0) {
         //     this.decreasePointsToPlayerByUsername(username, POINTS.SUGGESTOINS_PENALTY);
@@ -615,9 +615,9 @@ class Room {
             return [false, "Previous keeper has already chose this word, Please enter another word"];
         }
 
-        const valid = await isValidEnglishWord(word);
+        const { isValid } = await isValidEnglishWord(word);
 
-        if (!valid) {
+        if (!isValid) {
             Logger.logInvalidKeeperWord(this.roomId, word);
             return [false, "Invalid English word, please try again"];
         }
