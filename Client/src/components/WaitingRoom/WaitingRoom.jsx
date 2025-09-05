@@ -78,9 +78,9 @@ function WaitingRoom() {
         };
 
         const handleServerReady = () => {
-            if (!hasJoinedRef.current) {
-                console.log("Server ready, joining waiting room:", roomId, user.username, "isCreator:", isCreator);
+            if (!location.pathname.startsWith("/waiting/")) return;
 
+            if (!hasJoinedRef.current) {
                 if (isCreator) {
                     // If user created the room, they should already be in it from the lobby
                     // Just request the current state
