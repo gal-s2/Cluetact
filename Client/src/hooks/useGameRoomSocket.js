@@ -30,6 +30,7 @@ export default function useGameRoomSocket(roomId) {
         winners: [],
         activeClue: null,
         isWordComplete: false,
+        isGameEnd: false,
     });
 
     // Creating a ref for gameState, making sure it getting updated in every state update
@@ -122,6 +123,7 @@ export default function useGameRoomSocket(roomId) {
                 winners: data.winners,
                 isKeeper: data.keeper === user.username,
                 isWordChosen: data.isWordComplete ? false : true,
+                isGameEnd: data.status === "END",
             }));
 
             if (data.status === "END") {
@@ -251,23 +253,25 @@ export default function useGameRoomSocket(roomId) {
 
     useEffect(() => {
         socket.on(SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM, (data) => {
-            setGameState((prev) => ({
-                ...prev,
-                players: data.players,
-                isSubmittingClue: data.clueGiverUsername === user?.username,
-                clueGiverUsername: data.clueGiverUsername,
-                status: data.status,
-                logMessage: data.message,
-                isKeeper: data.keeperUsername === user.username,
-                winners: data.winners || [],
-            }));
-            setNotification({
-                message: `${data.leavingUsername} has left the game`,
-                type: "notification",
-            });
+            if (!gameStateRef.current.isGameEnd) {
+                setGameState((prev) => ({
+                    ...prev,
+                    players: data.players,
+                    isSubmittingClue: data.clueGiverUsername === user?.username,
+                    clueGiverUsername: data.clueGiverUsername,
+                    status: data.status,
+                    logMessage: data.message,
+                    isKeeper: data.keeperUsername === user.username,
+                    winners: data.winners || [],
+                }));
+                setNotification({
+                    message: `${data.leavingUsername} has left the game`,
+                    type: "notification",
+                });
 
-            if (data.status === "END") {
-                setTimeLeft(0);
+                if (data.status === "END") {
+                    setTimeLeft(0);
+                }
             }
         });
 
@@ -301,7 +305,7 @@ export default function useGameRoomSocket(roomId) {
                     type: "notification",
                 });
             }
-            setGameState((prev) => ({ ...prev, ...data }));
+            setGameState((prev) => ({ ...prev, status: data.status, players: data.players, winners: data.winners }));
         });
 
         return () => {
