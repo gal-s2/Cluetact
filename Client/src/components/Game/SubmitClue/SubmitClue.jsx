@@ -54,7 +54,7 @@ function SubmitClue() {
                 {(!gameState.suggestions || gameState.suggestions.length === 0) && (
                     <div className={styles.suggestionsButtonContainer}>
                         <button type="button" className={styles.suggestButton} onClick={handleSuggest} disabled={word.trim() || definition.trim()}>
-                            Suggest
+                            Suggest Me Words
                         </button>
                     </div>
                 )}
