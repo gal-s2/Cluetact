@@ -31,6 +31,7 @@ export default function useGameRoomSocket(roomId) {
         activeClue: null,
         isWordComplete: false,
         isGameEnd: false,
+        suggestions: [],
     });
 
     // Creating a ref for gameState, making sure it getting updated in every state update
@@ -124,6 +125,7 @@ export default function useGameRoomSocket(roomId) {
                 isKeeper: data.keeper === user.username,
                 isWordChosen: data.isWordComplete ? false : true,
                 isGameEnd: data.status === "END",
+                suggestions: [],
             }));
 
             if (data.status === "END") {
@@ -156,6 +158,7 @@ export default function useGameRoomSocket(roomId) {
                 isWordComplete: data.isWordComplete,
                 guesses: [],
                 keeperWord: data.keeperWord,
+                suggestions: [],
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
@@ -172,6 +175,7 @@ export default function useGameRoomSocket(roomId) {
                 clueGiverUsername: data.clueGiverUsername,
                 isSubmittingClue: data.clueGiverUsername === user.username,
                 activeClue: null,
+                suggestions: [],
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
@@ -187,6 +191,7 @@ export default function useGameRoomSocket(roomId) {
                 status: data.status,
                 clues: data.clues,
                 activeClue: lastClue || null,
+                suggestions: [],
             }));
 
             if (lastClue?.from !== user.username) {
@@ -208,6 +213,7 @@ export default function useGameRoomSocket(roomId) {
                 clueGiverUsername: data.clueGiverUsername,
                 activeClue: null,
                 guesses: [],
+                suggestions: [],
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
@@ -238,6 +244,18 @@ export default function useGameRoomSocket(roomId) {
             setGameState((prev) => ({ ...prev, guesses }));
         });
 
+        socket.on(SOCKET_EVENTS.SERVER_SEND_SUGGESTIONS, (data) => {
+            setGameState((prev) => ({ ...prev, suggestions: data.suggestions }));
+        });
+
+        socket.on(SOCKET_EVENTS.SERVER_POINTS_UPDATE, (data) => {
+            setGameState((prev) => ({ ...prev, players: data.players }));
+            setNotification({
+                message: `${gameState.clueGiverUsername} requested suggestion for words`,
+                type: "notification",
+            });
+        });
+
         return () => {
             socket.off(SOCKET_EVENTS.SERVER_GAME_JOIN);
             socket.off(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN);
@@ -248,6 +266,8 @@ export default function useGameRoomSocket(roomId) {
             socket.off(SOCKET_EVENTS.SERVER_GUESS_FAILED);
             socket.off(SOCKET_EVENTS.SERVER_CLUE_SUBMISSION_TIMEOUT);
             socket.off(SOCKET_EVENTS.SERVER_RACE_TIMEOUT);
+            socket.off(SOCKET_EVENTS.SERVER_SEND_SUGGESTIONS);
+            socket.off(SOCKET_EVENTS.SERVER_POINTS_UPDATE);
         };
     }, [user?.username]);
 

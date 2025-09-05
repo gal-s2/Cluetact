@@ -1,6 +1,6 @@
 const Player = require("./Player");
 const GameRound = require("./GameRound");
-const { isValidEnglishWord } = require("../../utils/wordUtils");
+const { isValidEnglishWord, getWordsByPrefix } = require("../../utils/wordUtils");
 const Logger = require("../Logger");
 const User = require("../../models/User");
 const CountdownTimer = require("../entities/CountdownTimer");
@@ -357,6 +357,15 @@ class Room {
         }
     }
 
+    async getSuggestionsFromApi(prefix, username) {
+        const suggestions = await getWordsByPrefix(prefix);
+        //for now i dont want points to be decreased
+        // if (suggestions.length > 0) {
+        //     this.decreasePointsToPlayerByUsername(username, POINTS.SUGGESTOINS_PENALTY);
+        // }
+        return suggestions;
+    }
+
     async submitGuess(guesserUsername, guessWord, clueId) {
         const revealed = this.currentRound.revealedLetters;
         const revealedPrefix = revealed.toLowerCase();
@@ -541,6 +550,11 @@ class Room {
     addPointsToPlayerByUsername(username, points) {
         const p = this.players.find((player) => player.username === username);
         if (p) p.addScore(points);
+    }
+
+    decreasePointsToPlayerByUsername(username, points) {
+        const p = this.players.find((player) => player.username === username);
+        if (p && p.gameScore >= points) p.addScore(-points);
     }
 
     setWinners() {

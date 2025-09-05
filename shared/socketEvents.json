@@ -21,6 +21,7 @@
     "CLIENT_UPDATE_PASSWORD": "client_update_password",
     "CLIENT_CHECK_EVENTS_AVAILABILITY": "client_check_events_availability",
     "CLIENT_EMOJI_SEND": "client_emoji_send",
+    "CLIENT_GET_SUGGESTIONS": "client_get_suggestions",
     "CONNECTION": "connection",
     "CONNECT": "connect",
     "DISCONNECT": "disconnect",
@@ -49,5 +50,7 @@
     "SERVER_POST_ALL_USERS": "server_post_all_users",
     "SERVER_READY_FOR_EVENTS": "server_ready_for_events",
     "SERVER_CLUE_SUBMISSION_TIMEOUT": "server_clue_submission_timeout",
-    "SERVER_EMOJI_SHOW": "server_emoji_show"
+    "SERVER_EMOJI_SHOW": "server_emoji_show",
+    "SERVER_SEND_SUGGESTIONS": "server_send_suggestions",
+    "SERVER_POINTS_UPDATE": "server_points_update"
 }

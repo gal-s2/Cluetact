@@ -9,7 +9,7 @@ const WORD_MAX_LENGTH = 20;
 const DEFINITION_MAX_LENGTH = 100;
 
 function SubmitClue() {
-    const { gameState, setNotification } = useGameRoom();
+    const { gameState, setNotification, socket } = useGameRoom();
     const revealedPrefix = gameState.revealedWord || "";
     const [definition, setDefinition] = useState("");
     const [word, setWord] = useState("");
@@ -23,6 +23,10 @@ function SubmitClue() {
         socket.emit(SOCKET_EVENTS.CLIENT_SUBMIT_CLUE, { definition, word });
         setDefinition("");
         setWord("");
+    };
+
+    const handleSuggest = () => {
+        socket.emit(SOCKET_EVENTS.CLIENT_GET_SUGGESTIONS, { revealedPrefix });
     };
 
     function onChangeDefinition(value) {
@@ -45,6 +49,20 @@ function SubmitClue() {
             <input className={styles.input} value={definition} onChange={(e) => onChangeDefinition(e.target.value)} placeholder="Enter your definition" maxLength={DEFINITION_MAX_LENGTH} />
             <div className={styles.charCount}>
                 {definition.length} / {DEFINITION_MAX_LENGTH} characters
+            </div>
+            <div className={styles.suggestContainer}>
+                {(!gameState.suggestions || gameState.suggestions.length === 0) && (
+                    <div className={styles.suggestionsButtonContainer}>
+                        <button type="button" className={styles.suggestButton} onClick={handleSuggest} disabled={word.trim() || definition.trim()}>
+                            Suggest
+                        </button>
+                    </div>
+                )}
+                {gameState.suggestions && gameState.suggestions.length > 0 && (
+                    <div className={styles.suggestionsLabelContaiener}>
+                        <label className={styles.suggestLabel}>Found Suggestions: {gameState.suggestions.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(", ")}</label>
+                    </div>
+                )}
             </div>
 
             <Button type="submit" color="green" disabled={!definition.trim() || !word.trim()}>
