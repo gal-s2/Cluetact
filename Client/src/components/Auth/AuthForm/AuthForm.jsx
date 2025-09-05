@@ -9,6 +9,7 @@ import Logo from "@components/General/Logo/Logo";
 import GoogleButton from "../GoogleButton/GoogleButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import BackToLobbyButton from "@components/General/BackToLobbyButton/BackToLobbyButton";
 
 function AuthForm({ type }) {
     const navigate = useNavigate();
@@ -111,7 +112,14 @@ function AuthForm({ type }) {
                     {errors.username && <p className={styles.error}>{errors.username}</p>}
 
                     <div className={styles.passwordWrapper}>
-                        <input type={showPassword ? "text" : "password"} placeholder="Password" value={password || ""} onChange={(e) => setPassword(e.target.value)} className={errors.password ? styles.invalidInput : ""} required />
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            value={password || ""}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className={errors.password ? styles.invalidInput : ""}
+                            required
+                        />
                         <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className={styles.eyeIcon} onClick={() => setShowPassword((prev) => !prev)} />
                     </div>
                     {errors.password && <p className={styles.error}>{errors.password}</p>}
@@ -126,6 +134,7 @@ function AuthForm({ type }) {
                         {type === "login" ? "Sign up" : "Login"}
                     </Link>
                 </p>
+                <BackToLobbyButton />
             </div>
         </div>
     );
