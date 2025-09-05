@@ -30,7 +30,8 @@ export default function useGameRoomSocket(roomId) {
         winners: [],
         activeClue: null,
         isWordComplete: false,
-        keeperTime: 0,
+        isGameEnd: false,
+        suggestions: [],
     });
 
     // Creating a ref for gameState, making sure it getting updated in every state update
@@ -75,8 +76,8 @@ export default function useGameRoomSocket(roomId) {
                 guesses: data.guesses,
                 isSubmittingClue: data.clueGiverUsername === user?.username,
                 clueGiverUsername: data.clueGiverUsername,
-                keeperTime: data.keeperTime,
             }));
+            setTimeLeft(data.timeLeft);
             if (data.status !== "KEEPER_CHOOSING_WORD") setTimeLeft(data.timeLeft);
             setLoading(false);
         });
@@ -123,6 +124,8 @@ export default function useGameRoomSocket(roomId) {
                 winners: data.winners,
                 isKeeper: data.keeper === user.username,
                 isWordChosen: data.isWordComplete ? false : true,
+                isGameEnd: data.status === "END",
+                suggestions: [],
             }));
 
             if (data.status === "END") {
@@ -155,6 +158,7 @@ export default function useGameRoomSocket(roomId) {
                 isWordComplete: data.isWordComplete,
                 guesses: [],
                 keeperWord: data.keeperWord,
+                suggestions: [],
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
@@ -171,6 +175,7 @@ export default function useGameRoomSocket(roomId) {
                 clueGiverUsername: data.clueGiverUsername,
                 isSubmittingClue: data.clueGiverUsername === user.username,
                 activeClue: null,
+                suggestions: [],
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
@@ -186,6 +191,7 @@ export default function useGameRoomSocket(roomId) {
                 status: data.status,
                 clues: data.clues,
                 activeClue: lastClue || null,
+                suggestions: [],
             }));
 
             if (lastClue?.from !== user.username) {
@@ -207,10 +213,13 @@ export default function useGameRoomSocket(roomId) {
                 clueGiverUsername: data.clueGiverUsername,
                 activeClue: null,
                 guesses: [],
+                suggestions: [],
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
-                message: gameState.isKeeper ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"` : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
+                message: gameState.isKeeper
+                    ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`
+                    : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
                 type: gameState.isKeeper ? "success" : "notification",
             });
         });
@@ -235,6 +244,18 @@ export default function useGameRoomSocket(roomId) {
             setGameState((prev) => ({ ...prev, guesses }));
         });
 
+        socket.on(SOCKET_EVENTS.SERVER_SEND_SUGGESTIONS, (data) => {
+            setGameState((prev) => ({ ...prev, suggestions: data.suggestions }));
+        });
+
+        socket.on(SOCKET_EVENTS.SERVER_POINTS_UPDATE, (data) => {
+            setGameState((prev) => ({ ...prev, players: data.players }));
+            setNotification({
+                message: `${gameState.clueGiverUsername} requested suggestion for words`,
+                type: "notification",
+            });
+        });
+
         return () => {
             socket.off(SOCKET_EVENTS.SERVER_GAME_JOIN);
             socket.off(SOCKET_EVENTS.SERVER_KEEPER_WORD_CHOSEN);
@@ -245,28 +266,32 @@ export default function useGameRoomSocket(roomId) {
             socket.off(SOCKET_EVENTS.SERVER_GUESS_FAILED);
             socket.off(SOCKET_EVENTS.SERVER_CLUE_SUBMISSION_TIMEOUT);
             socket.off(SOCKET_EVENTS.SERVER_RACE_TIMEOUT);
+            socket.off(SOCKET_EVENTS.SERVER_SEND_SUGGESTIONS);
+            socket.off(SOCKET_EVENTS.SERVER_POINTS_UPDATE);
         };
     }, [user?.username]);
 
     useEffect(() => {
         socket.on(SOCKET_EVENTS.SERVER_PLAYER_EXITED_ROOM, (data) => {
-            setGameState((prev) => ({
-                ...prev,
-                players: data.players,
-                isSubmittingClue: data.clueGiverUsername === user?.username,
-                clueGiverUsername: data.clueGiverUsername,
-                status: data.status,
-                logMessage: data.message,
-                isKeeper: data.keeperUsername === user.username,
-                winners: data.winners || [],
-            }));
-            setNotification({
-                message: `${data.leavingUsername} has left the game`,
-                type: "notification",
-            });
+            if (!gameStateRef.current.isGameEnd) {
+                setGameState((prev) => ({
+                    ...prev,
+                    players: data.players,
+                    isSubmittingClue: data.clueGiverUsername === user?.username,
+                    clueGiverUsername: data.clueGiverUsername,
+                    status: data.status,
+                    logMessage: data.message,
+                    isKeeper: data.keeperUsername === user.username,
+                    winners: data.winners || [],
+                }));
+                setNotification({
+                    message: `${data.leavingUsername} has left the game`,
+                    type: "notification",
+                });
 
-            if (data.status === "END") {
-                setTimeLeft(0);
+                if (data.status === "END") {
+                    setTimeLeft(0);
+                }
             }
         });
 
@@ -285,11 +310,11 @@ export default function useGameRoomSocket(roomId) {
             console.log(data.players.find((p) => p.username === user.username)?.role === "keeper");
             setGameState((prev) => ({
                 ...prev,
-                keeperTime: data.keeperTime,
                 status: data.status,
                 players: data.players,
                 isKeeper: data.players.find((p) => p.username === user.username)?.role === "keeper",
             }));
+            setTimeLeft(data.timeLeft);
         });
 
         socket.on(SOCKET_EVENTS.SERVER_GAME_ENDED, (data) => {
@@ -300,7 +325,7 @@ export default function useGameRoomSocket(roomId) {
                     type: "notification",
                 });
             }
-            setGameState((prev) => ({ ...prev, ...data }));
+            setGameState((prev) => ({ ...prev, status: data.status, players: data.players, winners: data.winners }));
         });
 
         return () => {

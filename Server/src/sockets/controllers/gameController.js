@@ -73,7 +73,7 @@ const gameController = {
         const room = gameManager.getRoomBySocket(socket);
         if (room) return;
 
-        const username = await socketManager.getUsernameBySocketId(socket.id);
+        const username = socketManager.getUsernameBySocketId(socket.id);
         gameManager.removeUserFromQueue(username);
         // should send something?
     },
@@ -103,7 +103,6 @@ const gameController = {
                 isWordChosen: !!room.getKeeperWord(),
                 guesses: guesses,
                 clueGiverUsername: clueGiverUsername,
-                keeperTime: room.getTimeLeftUntilTimeout(),
                 timeLeft: room.getTimeLeftUntilTimeout(),
             },
             socket
@@ -322,6 +321,23 @@ const gameController = {
                 player
             );
         }
+    },
+
+    handleGetSuggestions: async (socket, { revealedPrefix }) => {
+        if (!socket.user) return;
+        const username = socketManager.getUsernameBySocketId(socket.id);
+
+        const roomId = gameManager.getRoomIdByUsername(socket.user.username);
+        const room = gameManager.getRoom(roomId);
+
+        if (!room) {
+            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
+            return;
+        }
+
+        messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_SEND_SUGGESTIONS, { suggestions: await room.getSuggestionsFromApi(revealedPrefix, username) }, socket);
+        //for now points are not decreased so no need to update points
+        // messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_POINTS_UPDATE, { players: room.players }, roomId);
     },
 
     disconnect: (socket, reason) => {

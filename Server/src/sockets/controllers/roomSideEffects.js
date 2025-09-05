@@ -12,7 +12,7 @@ const roomSideEffects = {
             const data = {
                 players: room.players,
                 status: room.status,
-                keeperTime: room.getTimeLeftUntilTimeout(),
+                timeLeft: room.getTimeLeftUntilTimeout(),
             };
 
             messageEmitter.broadcastToRoom(SOCKET_EVENTS.SERVER_KEEPER_WORD_TIMEOUT, data, room.roomId);

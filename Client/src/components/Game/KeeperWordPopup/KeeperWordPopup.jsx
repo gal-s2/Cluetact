@@ -11,9 +11,9 @@ import { useUser } from "@contexts/UserContext.jsx";
 
 function KeeperWordPopup({ showConfirmModal }) {
     const { user } = useUser();
-    const { gameState, isKeeperWordRejected, setIsKeeperWordRejected } = useGameRoom();
+    const { timeLeft, gameState, isKeeperWordRejected, setIsKeeperWordRejected } = useGameRoom();
     const [loading, setLoading] = useState(false);
-    const [keeperTimeLeft, setKeeperTimeLeft] = useState(gameState.keeperTime || 0);
+    const [keeperTimeLeft, setKeeperTimeLeft] = useState(timeLeft || 0);
     const [innerKeeperWord, setInnerKeeperWord] = useState("");
     const isKeeper = gameState.players.find((p) => p.username === user.username)?.role === "keeper";
 
@@ -34,7 +34,7 @@ function KeeperWordPopup({ showConfirmModal }) {
 
     // Timer logic
     useEffect(() => {
-        const newTimeLeft = gameState.keeperTime ?? 0;
+        const newTimeLeft = timeLeft ?? 0;
         setKeeperTimeLeft(newTimeLeft);
 
         if (newTimeLeft === null) return;
