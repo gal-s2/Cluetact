@@ -109,7 +109,7 @@ function GameRoom() {
                 {/* Sidebar */}
                 <div className={styles.sidebar}>
                     {/* Timer */}
-                    {timeLeft > 0 && (
+                    {timeLeft > 0 && gameState.status !== "KEEPER_CHOOSING_WORD" && (
                         <div className={styles.timerContainer}>
                             <CountdownTimer timeLeft={timeLeft} setTimeLeft={setTimeLeft} />
                         </div>

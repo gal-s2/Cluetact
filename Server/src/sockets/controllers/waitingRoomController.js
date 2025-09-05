@@ -48,7 +48,6 @@ const waitingRoomHandlers = {
     handleJoinWaitingRoom: (socket, { waitingRoomId, username }) => {
         const isWaitingRoomExist = WaitingRoomManager.isWaitingRoomExist(waitingRoomId);
         if (!isWaitingRoomExist) {
-            messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_ERROR_MESSAGE, "Waiting room does not exist.", socket);
             messageEmitter.emitToSocket(SOCKET_EVENTS.SERVER_REDIRECT_TO_LOBBY, null, socket);
             return;
         }

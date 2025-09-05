@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 
 //API Documentation: https://www.datamuse.com/api/
 const DATAMUSE_API_URL = "https://api.datamuse.com/words";
-const DEFAULT_WORD_COUNT = 5;
+const DEFAULT_WORD_COUNT = 3;
 
 async function isValidEnglishWord(word) {
     const url = `https://api.datamuse.com/words?sp=${word.toLowerCase()}&md=d&max=1`;
@@ -43,18 +43,17 @@ async function getNounsByMeaning(meaning, count = DEFAULT_WORD_COUNT) {
 }
 
 /**
- * Fetches noun words that start with a given prefix (sp param)
+ * Fetches words that start with a given prefix (sp param)
  */
-async function getNounsByPrefix(prefix, count = DEFAULT_WORD_COUNT) {
+async function getWordsByPrefix(prefix, count = DEFAULT_WORD_COUNT) {
     try {
         const response = await fetch(`${DATAMUSE_API_URL}?sp=${encodeURIComponent(prefix)}*&md=p&max=${count}`);
         const data = await response.json();
 
-        const nouns = data.filter((wordObj) => wordObj.tags && wordObj.tags.includes("n")).map((wordObj) => wordObj.word);
+        const allWords = data.map((wordObj) => wordObj.word);
 
-        return nouns;
+        return allWords;
     } catch (error) {
-        console.error("Error fetching nouns by prefix:", error);
         return [];
     }
 }
@@ -69,7 +68,7 @@ async function testWordUtils() {
         console.log('🍎 Nouns related to "soccer":');
         console.log(soccerWords.join(", "));
 
-        const paWords = await getNounsByPrefix("pa", 5);
+        const paWords = await getWordsByPrefix("pa", 5);
         console.log('\n🅿️ Nouns starting with "pa":');
         console.log(paWords.join(", "));
     } catch (err) {
@@ -79,7 +78,7 @@ async function testWordUtils() {
 
 module.exports = {
     getNounsByMeaning,
-    getNounsByPrefix,
+    getWordsByPrefix,
     testWordUtils,
     isValidEnglishWord,
 };
