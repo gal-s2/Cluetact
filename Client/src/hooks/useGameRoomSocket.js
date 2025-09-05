@@ -30,7 +30,6 @@ export default function useGameRoomSocket(roomId) {
         winners: [],
         activeClue: null,
         isWordComplete: false,
-        keeperTime: 0,
     });
 
     // Creating a ref for gameState, making sure it getting updated in every state update
@@ -75,8 +74,8 @@ export default function useGameRoomSocket(roomId) {
                 guesses: data.guesses,
                 isSubmittingClue: data.clueGiverUsername === user?.username,
                 clueGiverUsername: data.clueGiverUsername,
-                keeperTime: data.keeperTime,
             }));
+            setTimeLeft(data.timeLeft);
             if (data.status !== "KEEPER_CHOOSING_WORD") setTimeLeft(data.timeLeft);
             setLoading(false);
         });
@@ -210,7 +209,9 @@ export default function useGameRoomSocket(roomId) {
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
-                message: gameState.isKeeper ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"` : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
+                message: gameState.isKeeper
+                    ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`
+                    : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
                 type: gameState.isKeeper ? "success" : "notification",
             });
         });
@@ -285,11 +286,11 @@ export default function useGameRoomSocket(roomId) {
             console.log(data.players.find((p) => p.username === user.username)?.role === "keeper");
             setGameState((prev) => ({
                 ...prev,
-                keeperTime: data.keeperTime,
                 status: data.status,
                 players: data.players,
                 isKeeper: data.players.find((p) => p.username === user.username)?.role === "keeper",
             }));
+            setTimeLeft(data.timeLeft);
         });
 
         socket.on(SOCKET_EVENTS.SERVER_GAME_ENDED, (data) => {

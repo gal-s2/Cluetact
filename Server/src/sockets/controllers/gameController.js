@@ -103,7 +103,6 @@ const gameController = {
                 isWordChosen: !!room.getKeeperWord(),
                 guesses: guesses,
                 clueGiverUsername: clueGiverUsername,
-                keeperTime: room.getTimeLeftUntilTimeout(),
                 timeLeft: room.getTimeLeftUntilTimeout(),
             },
             socket
