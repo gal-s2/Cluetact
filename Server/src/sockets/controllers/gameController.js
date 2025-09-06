@@ -104,6 +104,7 @@ const gameController = {
                 guesses: guesses,
                 clueGiverUsername: clueGiverUsername,
                 timeLeft: room.getTimeLeftUntilTimeout(),
+                winners: room.winners,
             },
             socket
         );
