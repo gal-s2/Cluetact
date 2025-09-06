@@ -149,7 +149,7 @@ class Room {
         });
     }
 
-    setStatus(newStatus) {
+    setStatus(newStatus, delayTimer = 0) {
         if (!newStatus) return;
 
         this.timer.stop();
@@ -157,7 +157,7 @@ class Room {
         switch (newStatus) {
             case GAME_STAGES.KEEPER_CHOOSING_WORD: {
                 // Extra safety: ensure no previous keeper timer is running
-                this.timer.setNewTimerDetails(TIMES.KEEPER_CHOOSING_WORD, this.onKeeperWordTimeout.bind(this), GAME_STAGES.KEEPER_CHOOSING_WORD);
+                this.timer.setNewTimerDetails(TIMES.KEEPER_CHOOSING_WORD + delayTimer, this.onKeeperWordTimeout.bind(this), GAME_STAGES.KEEPER_CHOOSING_WORD);
                 this.roomLock.isKeeperWordLockAcquired = false;
                 this.timer.start();
                 break;
@@ -412,7 +412,7 @@ class Room {
             this.currentRound.resetCluesHistory();
 
             // Move to next round (or end)
-            this.setNextRound();
+            this.setNextRound(10);
             return result; // EARLY RETURN — do not override status or start timers
         }
 
@@ -445,7 +445,7 @@ class Room {
                 this.addPointsToPlayerByUsername(guesserUsername, pointsToGive);
                 this.addPointsToPlayerByUsername(clue.from, pointsToGive);
 
-                this.setNextRound();
+                this.setNextRound(10);
                 return result; // EARLY RETURN — do not override status
             }
 
@@ -489,7 +489,7 @@ class Room {
      * Setting next round / end game if completed.
      * New keeper and seekers update, changing status
      */
-    setNextRound() {
+    setNextRound(delayTimer = 0) {
         // Stop all timers from previous round to avoid stale/double fire
         this.timer.stop();
         this.roundsHistory.push(this.currentRound);
@@ -512,7 +512,7 @@ class Room {
             this.currentRound.roundNum = this.roundsHistory.length + 1;
 
             // Start seeker cycle from the beginning each round
-            this.setStatus(GAME_STAGES.KEEPER_CHOOSING_WORD);
+            this.setStatus(GAME_STAGES.KEEPER_CHOOSING_WORD, delayTimer);
             Logger.logNextKeeper(this.roomId, nextKeeperUsername);
         }
     }

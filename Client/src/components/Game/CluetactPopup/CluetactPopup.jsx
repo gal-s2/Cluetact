@@ -5,7 +5,7 @@ import Confetti from "@components/Animations/Confetti/Confetti";
 
 function CluetactPopup() {
     const [secondsLeft, setSecondsLeft] = useState(10);
-    const { gameState, setCluetact } = useGameRoom();
+    const { gameState, setCluetact, timeLeft, setTimeLeft } = useGameRoom();
     const { setKeeperWord } = useGameRoom();
     const word = gameState.cluetact?.word || "";
     const guesser = gameState.cluetact?.guesser || "";
@@ -26,6 +26,7 @@ function CluetactPopup() {
         const timeout = setTimeout(() => {
             setCluetact(null);
             if (!isKeeper) setKeeperWord("");
+            setTimeLeft(timeLeft - 10); // temp
         }, 10000);
 
         return () => {

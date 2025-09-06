@@ -21,9 +21,6 @@ function KeeperWordPopup({ showConfirmModal }) {
     const endTimeRef = useRef(null);
     const intervalRef = useRef(null);
 
-    const keeperWord = gameState.keeperWord || "";
-    const logMessage = gameState.logMessage;
-
     useEffect(() => {
         // Reset loading state when the keeper word is rejected
         if (isKeeperWordRejected) {
@@ -58,7 +55,7 @@ function KeeperWordPopup({ showConfirmModal }) {
                 clearInterval(intervalRef.current);
             }
         };
-    }, [gameState]);
+    }, [gameState, timeLeft]);
 
     const onSubmit = (e) => {
         // on form submit, emit the event to the server
