@@ -159,6 +159,7 @@ export default function useGameRoomSocket(roomId) {
                 guesses: [],
                 keeperWord: data.keeperWord,
                 suggestions: [],
+                isKeeper: data.players.find((p) => p.username === user.username)?.role === "keeper",
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
@@ -217,7 +218,9 @@ export default function useGameRoomSocket(roomId) {
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
-                message: gameState.isKeeper ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"` : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
+                message: gameState.isKeeper
+                    ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`
+                    : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
                 type: gameState.isKeeper ? "success" : "notification",
             });
         });

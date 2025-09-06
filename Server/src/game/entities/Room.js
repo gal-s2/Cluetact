@@ -314,7 +314,6 @@ class Room {
             if (!this.roomLock.isRaceLockAcquired) {
                 this.roomLock.isRaceLockAcquired = true;
                 const prevClueGiverUsername = this.getCurrentClueGiverUsername();
-                const result = { isAdvancingToNextLetter: false };
                 const clue = this.currentRound.getActiveClue();
 
                 // Block the clue without assigning points
@@ -325,7 +324,6 @@ class Room {
                 this.advanceToNextSeeker();
 
                 if (this.currentRound.countOfClueSubmittersInPrefix === this.seekersUsernames.length) {
-                    result.isAdvancingToNextLetter = true;
                     this.isWordFullyRevealed = this.revealNextLetter();
                 }
 
@@ -333,7 +331,11 @@ class Room {
                 this.currentRound.resetCluesHistory();
                 this.currentRound.resetGuessesHistory();
 
-                this.setStatus(GAME_STAGES.CLUE_SUBMISSION);
+                if (this.isWordFullyRevealed) {
+                    this.setNextRound();
+                } else {
+                    this.setStatus(GAME_STAGES.CLUE_SUBMISSION);
+                }
 
                 this.callbacks?.onRaceTimeout?.(this, prevClueGiverUsername);
             }

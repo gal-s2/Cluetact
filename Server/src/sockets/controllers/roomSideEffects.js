@@ -50,24 +50,22 @@ const roomSideEffects = {
         console.log("roomSideEffects onRaceTimeout", room.roomId, room.status);
         if (!room) return;
 
-        if (room.status === GAME_STAGES.CLUE_SUBMISSION) {
-            const clueGiverUsername = room.getCurrentClueGiverUsername();
-            const dataToSeekers = {
-                status: room.status,
-                clues: room.currentRound.getClues(),
-                revealed: room.getRevealedLetters(),
-                isWordComplete: room.isWordFullyRevealed,
-                keeper: room.keeperUsername,
-                players: room.players,
-                clueGiverUsername,
-                prevClueGiverUsername,
-                keeperWord: null,
-                timeLeft: room.getTimeLeftUntilTimeout(),
-            };
-            const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
-            messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
-            messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
-        }
+        const clueGiverUsername = room.getCurrentClueGiverUsername();
+        const dataToSeekers = {
+            status: room.status,
+            clues: room.currentRound.getClues(),
+            revealed: room.getRevealedLetters(),
+            isWordComplete: room.isWordFullyRevealed,
+            keeper: room.keeperUsername,
+            players: room.players,
+            clueGiverUsername,
+            prevClueGiverUsername,
+            keeperWord: null,
+            timeLeft: room.getTimeLeftUntilTimeout(),
+        };
+        const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
+        messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
+        messageEmitter.emitToKeeper(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToKeeper, room.roomId);
     },
 };
 
