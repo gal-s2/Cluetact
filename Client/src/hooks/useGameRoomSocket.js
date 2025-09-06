@@ -160,6 +160,7 @@ export default function useGameRoomSocket(roomId) {
                 keeperWord: data.keeperWord,
                 suggestions: [],
                 isKeeper: data.players.find((p) => p.username === user.username)?.role === "keeper",
+                winners: data.winners,
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
