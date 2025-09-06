@@ -76,9 +76,9 @@ export default function useGameRoomSocket(roomId) {
                 guesses: data.guesses,
                 isSubmittingClue: data.clueGiverUsername === user?.username,
                 clueGiverUsername: data.clueGiverUsername,
+                winners: data.winners || [],
             }));
             setTimeLeft(data.timeLeft);
-            if (data.status !== "KEEPER_CHOOSING_WORD") setTimeLeft(data.timeLeft);
             setLoading(false);
         });
 
@@ -217,9 +217,7 @@ export default function useGameRoomSocket(roomId) {
             }));
             setTimeLeft(data.timeLeft);
             setNotification({
-                message: gameState.isKeeper
-                    ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`
-                    : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
+                message: gameState.isKeeper ? `You blocked "${data.clue.from}" by guessing the word "${data.clue.word}"` : `The keeper blocked "${data.clue.from}" by guessing the word "${data.clue.word}"`,
                 type: gameState.isKeeper ? "success" : "notification",
             });
         });
