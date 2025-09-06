@@ -62,6 +62,7 @@ const roomSideEffects = {
             prevClueGiverUsername,
             keeperWord: null,
             timeLeft: room.getTimeLeftUntilTimeout(),
+            winners: room.winners,
         };
         const dataToKeeper = { ...dataToSeekers, keeperWord: room.getKeeperWord() };
         messageEmitter.emitToSeekers(SOCKET_EVENTS.SERVER_RACE_TIMEOUT, dataToSeekers, room.roomId);
